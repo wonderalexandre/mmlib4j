@@ -23,13 +23,6 @@ public class PriorityQueue<T> {
     	this(maxPriority, 0);
     }
     
-    /**
-     * Creates an priority queue to store elements with priorities up to
-     * <code>maxPriority</code>.
-     * 
-     * @param maxPriority
-     *            the maximum priority given to an element in this queue
-     */
     public PriorityQueue(int maxPriority, int policy) {
         this.maxPriority = maxPriority;
         this.policy = policy;
@@ -39,12 +32,7 @@ public class PriorityQueue<T> {
         }
     }
 
-    /**
-     * Returns the element with lowest priority.
-     * 
-     * @return the element with lowest priority, <code>null</code> if this
-     *         queue is empty
-     */
+
     public T remove() {
         for (int i = priorityLowerBound; i <= maxPriority; i++) {
             if (!buckets.get(i).isEmpty()) {
@@ -87,14 +75,6 @@ public class PriorityQueue<T> {
 
     
         
-    /**
-     * Appends the specified element to the queue with the given priority.
-     * 
-     * @param element
-     *            element to be appended to this queue
-     * @param priority
-     *            priority given to the element to be appended
-     */
     public void add(T element, int priority) {
         if (priority < priorityLowerBound) {
             priorityLowerBound = priority;
@@ -111,21 +91,10 @@ public class PriorityQueue<T> {
         }
     }
 
-
-    /**
-     * Returns <code>true</code> if this queue contains no elements.
-     * 
-     * @return <code>true</code> if this queue contains no elements
-     */
     public boolean isEmpty() {
         return (numElements == 0);
     }
 
-    /**
-     * Returns the number of elements in this queue.
-     * 
-     * @return the number of elements in this queue
-     */
     public int size() {
         return numElements;
     }
