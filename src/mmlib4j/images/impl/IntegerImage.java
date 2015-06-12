@@ -123,6 +123,8 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
     public ColorImage labeling(AdjacencyRelation adj){
     	return Labeling.labeling(this, adj).randomColor();
     }
+
+	
 	
 }
 

@@ -44,6 +44,7 @@ public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
     	stats = new Statistics();
     }
     
+	
     
     /**
      * Cria uma copia da imagem original

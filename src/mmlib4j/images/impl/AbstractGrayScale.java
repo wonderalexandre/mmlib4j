@@ -16,6 +16,7 @@ import mmlib4j.utils.ImageUtils;
 public abstract class AbstractGrayScale extends AbstractImage2D implements GrayScaleImage{
 
 	private Statistics stats = null;
+    protected int padding = Integer.MIN_VALUE; 
     
     public void paintBoundBox(int x1, int y1, int x2, int y2, int color){
         int w = x2 - x1;
@@ -60,6 +61,15 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     	}
     }
  
+	public int getValue(int x, int y) {
+		return isPixelValid(x, y) ? getPixel(x, y): padding;
+	}
+	
+	public int getValue(int i) {
+		return isPixelValid(i) ? getPixel(i): padding;
+		
+	}
+
  
     /**
      * Pega um histograma da imagem
@@ -93,6 +103,10 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
             if(h[i] > 0) numPixel++;
         return numPixel;
         
+    }
+    
+    public void setPadding(int value){
+    	this.padding = value;
     }
     
     /**
