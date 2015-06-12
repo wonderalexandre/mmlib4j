@@ -13,6 +13,7 @@ import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.attribute.AttributePatternEuler;
 import mmlib4j.representation.tree.attribute.BitQuadsNodesTree;
 import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueCT;
 import mmlib4j.representation.tree.pruningStrategy.ComputerMserCT;
@@ -521,26 +522,16 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	
 	public void computerAttributeEuler(NodeCT root){
-		root.initAttributeEuler();
+		root.attributeEuler = new AttributePatternEuler(imgInput, adj, isMaxtree);
+		for(int p: root.pixels){
+			root.attributeEuler.computerLocalPattern(p);
+		}
 		
 		for(NodeCT son: root.children){
 			computerAttributeEuler(son);
-			/*root.attributeEuler.countPatternC1 += son.attributeEuler.countPatternC1;
-			root.attributeEuler.countPatternC2 += son.attributeEuler.countPatternC2;
-			root.attributeEuler.countPatternC3 += son.attributeEuler.countPatternC3;
-			root.attributeEuler.countPatternC4 += son.attributeEuler.countPatternC4;*/
+			root.attributeEuler.countPatternChildren( son.attributeEuler );
 		}
-		
-		//computacao dos padroes
-		for(int p: root.pixels){
-			root.attributeEuler.addPixel(p, imgInput, adj);
-		}
-		
-		for(NodeCT son: root.children){	
-			root.attributeEuler.merge( son.attributeEuler );
-		}
-		
-		
+		root.attributeEuler.mergeChildren();
 		
 		
 	}

@@ -342,13 +342,6 @@ public class NodeCT implements INodeTree, Cloneable{
 		
 	}
 	
-	public void initAttributeEuler(){
-		attributeEuler = new AttributePatternEuler();
-	}
-	
-	
-	
-
 	
 	
 	public void initAttributes(int dimensionAttributes){
