@@ -246,7 +246,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 		
 		
 	public static void printTree(NodeCT no, PrintStream out, String s){
-		out.printf(s + "[%3d; %d]\n", no.level, no.getPixels().size());
+		out.printf(s + "[%3d; %d]\n", no.level, no.getCanonicalPixels().size());
 		if(no.children != null)
 			for(NodeCT son: no.children){
 				printTree(son, out, s + "------");

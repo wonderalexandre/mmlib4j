@@ -152,7 +152,7 @@ public class VisualizationComponentTree extends JPanel {
 			public void graphPressed(NodeCT v, MouseEvent me) {	}
 			public void graphClicked(NodeCT v, MouseEvent me) {
 				if(prunedTree.getNodeOfPrunedTree(v).isLeaf())
-					WindowImages.show(v.createImageSC(255), "Node:" + v.getLevel() + "; Attribute value: " + v.getAttributeValue(prunedTree.getAttributeType()));
+					WindowImages.show(v.createImageSC(255), "Node:" + v.getLevel() + "; Attribute value: " + v.getAttribute(prunedTree.getAttributeType()));
 			}
 		});
 
@@ -269,7 +269,7 @@ class LabelNodes implements Transformer<NodeCT, String> {
 		if(prunedTree == null)
 			return String.valueOf(v.getArea());		
 		else
-			return String.valueOf(v.getAttributeValue(prunedTree.getAttributeType()));
+			return String.valueOf(v.getAttribute(prunedTree.getAttributeType()).getValue() );
 			//return String.valueOf(v.getLevel() + " : " + v.getAttributeValue(prunedTree.getAttributeType()));
 			
 	}

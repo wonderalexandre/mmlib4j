@@ -79,7 +79,7 @@ public class ComputerMserCT {
 	
 	public double getStabilityByBoundary(NodeCT node){
 		if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
-			return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double)node.getPattern().getPerimeter();
+			return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double)node.getPerimeterExternal();
 		}
 		else{
 			return Double.MAX_VALUE;
@@ -279,7 +279,7 @@ public class ComputerMserCT {
 	public ColorImage getPointImageMSER(int delta){
 		ColorImage img = ImageFactory.createColorImage(tree.getInputImage());
 		for(NodeCT node: getNodesByMSER(delta)){
-			for(int p: node.getPixels()){
+			for(int p: node.getCanonicalPixels()){
 				img.setPixel(p, Color.RED.getRGB());
 			}
 		}

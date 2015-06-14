@@ -2,6 +2,7 @@ package mmlib4j.representation.tree.pruningStrategy;
 
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -53,8 +54,8 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 
 
 	public boolean isNodeTextLocation(NodeCT node){
-		int widthNode = node.getWidthNode();
-		int heightNode = node.getHeightNode();
+		int widthNode = (int)node.getAttribute(Attribute.WIDTH).getValue();
+		int heightNode = (int)node.getAttribute(Attribute.HEIGHT).getValue();
 		int areaBB = widthNode * heightNode;
 		double ratioAreaBB = node.getArea() / (double) areaBB;
 		double ratioWH = Math.max(widthNode, heightNode) / (double) Math.min(widthNode, heightNode);

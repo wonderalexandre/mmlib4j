@@ -252,7 +252,7 @@ public class ComputerMserToS {
 	public ColorImage getPointImageMSER(int delta){
 		ColorImage img = ImageFactory.createColorImage(tree.getInputImage());
 		for(NodeToS node: getNodesByMSER(delta)){
-			for(int p: node.getPixels()){
+			for(int p: node.getCanonicalPixels()){
 				img.setPixel(p, Color.RED.getRGB());
 			}
 		}

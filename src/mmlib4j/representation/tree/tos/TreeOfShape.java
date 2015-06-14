@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueToS;
 import mmlib4j.utils.AdjacencyRelation;
 
@@ -84,7 +84,7 @@ public class TreeOfShape{
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				map[p] = no;
 			}
 			listNode.add(no);
@@ -263,12 +263,12 @@ public class TreeOfShape{
 		root.numDescendent += root.children.size();
 		for(NodeToS son: root.children){
 			computerAttribute(son);
-			root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX] = Math.max(root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX], son.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX]); 
-			root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX] = Math.max(root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX], son.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX]);
-			root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN] = Math.min(root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN], son.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN]); 
-			root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN] = Math.min(root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN], son.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN]);
-			root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_AREA] += son.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_AREA]; //area
-			root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_VOLUME] += son.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_VOLUME]; //volume
+			root.attributeValue[Attribute.YMAX] = Math.max(root.attributeValue[Attribute.YMAX], son.attributeValue[Attribute.YMAX]); 
+			root.attributeValue[Attribute.XMAX] = Math.max(root.attributeValue[Attribute.XMAX], son.attributeValue[Attribute.XMAX]);
+			root.attributeValue[Attribute.YMIN] = Math.min(root.attributeValue[Attribute.YMIN], son.attributeValue[Attribute.YMIN]); 
+			root.attributeValue[Attribute.XMIN] = Math.min(root.attributeValue[Attribute.XMIN], son.attributeValue[Attribute.XMIN]);
+			root.attributeValue[Attribute.AREA] += son.attributeValue[Attribute.AREA]; //area
+			root.attributeValue[Attribute.VOLUME] += son.attributeValue[Attribute.VOLUME]; //volume
 			root.numDescendent += son.numDescendent;
 			root.highest = Math.max(root.highest, son.highest);
 			root.lowest = Math.min(root.lowest, son.lowest);
@@ -281,9 +281,9 @@ public class TreeOfShape{
 			root.area += son.area;
 			
 		}
-		root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_WIDTH] = root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX] - root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN] + 1;
-		root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT] = root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX] - root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN] + 1;
-		root.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE] = Math.max(root.highest - root.level  + 1, root.level - root.lowest + 1);
+		root.attributeValue[Attribute.WIDTH] = root.attributeValue[Attribute.XMAX] - root.attributeValue[Attribute.XMIN] + 1;
+		root.attributeValue[Attribute.HEIGHT] = root.attributeValue[Attribute.YMAX] - root.attributeValue[Attribute.YMIN] + 1;
+		root.attributeValue[Attribute.ALTITUDE] = Math.max(root.highest - root.level  + 1, root.level - root.lowest + 1);
 		
 	}
 	
@@ -360,7 +360,7 @@ public class TreeOfShape{
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(int p: no.getPixels()){
+			for(int p: no.getCanonicalPixels()){
 				imgOut.setPixel(p, no.level);
 			}
 			
@@ -381,7 +381,7 @@ public class TreeOfShape{
 			for(NodeToS no: node.getNodesDescendants()){
 				tree.listNode.remove(no);
 				tree.numNode--;
-				for(int p: no.getPixels()){
+				for(int p: no.getCanonicalPixels()){
 					parent.addPixel(p);
 					tree.map[p] = parent;	
 				}

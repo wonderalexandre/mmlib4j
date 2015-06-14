@@ -94,7 +94,7 @@ public class UltimateGrainFilter {
 		boolean flagPropag = false;
 		NodeToS parentNode = currentNode.getParent();
 		
-		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && selectedForPruning[parentNode.getId()]){
+		if(currentNode.getAttributeValueOLD(typeParam) <= maxCriterion && selectedForPruning[parentNode.getId()]){
 			flagInit = true;
 		}
 		
@@ -126,7 +126,7 @@ public class UltimateGrainFilter {
 					linkedAttributesPos = associatedNodePos[parentNode.getId()];
 				}
 				else{
-					linkedAttributesPos = currentNode.getAttributeValue(typeParam) + 1;
+					linkedAttributesPos = currentNode.getAttributeValueOLD(typeParam) + 1;
 				}
 				
 			}
@@ -143,7 +143,7 @@ public class UltimateGrainFilter {
 					linkedAttributesNeg = associatedNodeNeg[parentNode.getId()];
 				}
 				else{
-					linkedAttributesNeg = currentNode.getAttributeValue(typeParam) + 1;
+					linkedAttributesNeg = currentNode.getAttributeValueOLD(typeParam) + 1;
 				}
 				
 			}
@@ -185,7 +185,7 @@ public class UltimateGrainFilter {
 		boolean selected[] = new boolean[tree.getNumNode()];
 		for(NodeToS node: tree.getListNodes()){
 			if(node.getParent() != null){
-				if ( node.getParent().getAttributeValue(typeParam) != node.getAttributeValue(typeParam)) {
+				if ( node.getParent().getAttributeValueOLD(typeParam) != node.getAttributeValueOLD(typeParam)) {
 					selected[node.getParent().getId()] = true;
 				}
 			}
@@ -259,7 +259,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, residuesNodePos[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -282,7 +282,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, residuesNodeNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -305,7 +305,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, Math.max(residuesNodePos[no.getId()], residuesNodeNeg[no.getId()]));
 			}
 			if(no.getChildren() != null){
@@ -324,7 +324,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedNodePos[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -342,7 +342,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				if(residuesNodePos[no.getId()] > residuesNodeNeg[no.getId()])
 					associateImg.setPixel(p, associatedNodePos[no.getId()]);
 				else
@@ -363,7 +363,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedNodeNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -381,7 +381,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedNodeType[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -399,7 +399,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, residuesNodeType[no.getId()]);
 			}
 			if(no.getChildren() != null){

@@ -122,14 +122,14 @@ public class UltimateAttributeOpening {
 		}
 		
 		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && flagInit){ //currentNode pertence a Nr(lambda)?		
-			int id = currentNode.getAttributeValue(typeParam);
+			int id = (int)currentNode.getAttributeValue(typeParam);
 			if( selectedForPruning[currentNode.getId()] ){
 				firstNodeInNR = currentNode;
 				firstNodeNotInNR = parentNode;
 				isCalculateResidue = (selectedForFiltering == null? true : hasNodeSelectedInPrimitive(currentNode) );
 			}
 			else{
-				id = firstNodeInNR.getAttributeValue(typeParam);
+				id = (int) firstNodeInNR.getAttributeValue(typeParam);
 				flagResido = true;
 			}
 			
@@ -151,7 +151,7 @@ public class UltimateAttributeOpening {
 					associatedIndex = associatedIndexLUT[parentNode.getId()];
 				}
 				else{
-					associatedIndex = currentNode.getAttributeValue(typeParam) + 1;
+					associatedIndex = (int)currentNode.getAttributeValue(typeParam) + 1;
 				}
 				flagPropag = true;
 				
@@ -201,7 +201,7 @@ public class UltimateAttributeOpening {
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeCT no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, maxContrastLUT[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -253,7 +253,7 @@ public class UltimateAttributeOpening {
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeCT no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedIndexLUT[no.getId()]);
 			}
 			if(no.getChildren() != null){

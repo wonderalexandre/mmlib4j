@@ -3,6 +3,7 @@ package mmlib4j.representation.tree.pruningStrategy;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -32,7 +33,7 @@ public class PruningBasedMSERWithElongation extends PruningBasedMSER{
 		if(tree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) this.tree;
 			for(NodeCT node: tree.getNodesMap()){
-				if(isNodeElongation( node ) || (mser[node.getId()] && node.moment.elongation() < 0.7 && node.getArea() > 50)){
+				if(isNodeElongation( node ) || (mser[node.getId()] && node.getAttributeValue(Attribute.ELONGATION) < 0.7 && node.getArea() > 50)){
 					mserElongation[node.getId()] = true;
 				}
 			}
@@ -83,7 +84,7 @@ public class PruningBasedMSERWithElongation extends PruningBasedMSER{
 
 	public boolean isNodeElongation(NodeCT node){
 		//System.out.println(node.moment.elongation());
-		if(node.moment.elongation() < 1 && node.getArea() > 1000 && node.getArea() < 23500){
+		if(node.getAttributeValue(Attribute.ELONGATION) < 1 && node.getArea() > 1000 && node.getArea() < 23500){
 			//WindowImages.show(node.createImageSC());
 			return true;
 		}

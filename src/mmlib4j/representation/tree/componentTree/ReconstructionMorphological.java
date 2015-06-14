@@ -137,7 +137,7 @@ public class ReconstructionMorphological {
 					for(NodeCT song: nodePruning.children){ 
 						fifoPruning.enqueue(song);
 					}
-					for(Integer pixel: nodePruning.getPixels()){
+					for(Integer pixel: nodePruning.getCanonicalPixels()){
 						imgInput.setPixel(pixel, levelPropagation);
 					}
 				}
@@ -200,7 +200,7 @@ public class ReconstructionMorphological {
 					for(NodeCT song: nodePruning.children){ 
 						fifoPruning.enqueue(song);
 					}
-					for(Integer pixel: nodePruning.getPixels()){
+					for(Integer pixel: nodePruning.getCanonicalPixels()){
 						imgInput.setPixel(pixel, levelPropagation);
 					}
 				}
@@ -262,7 +262,7 @@ public class ReconstructionMorphological {
 							fifoPruning.enqueue(song);
 						}
 					}
-					for(Integer pixel: nodePruning.getPixels()){
+					for(Integer pixel: nodePruning.getCanonicalPixels()){
 						imgOut.setPixel(pixel, levelPropagation);
 					}
 				}
@@ -469,7 +469,7 @@ public class ReconstructionMorphological {
 								fifoPruning.enqueue(song);
 							}
 						}
-						for(Integer pixel: nodePruning.getPixels()){
+						for(Integer pixel: nodePruning.getCanonicalPixels()){
 							imgMarcador.setPixel(pixel, levelPropagation);
 						}
 					}

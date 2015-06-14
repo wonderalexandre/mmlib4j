@@ -2,7 +2,6 @@ package mmlib4j.representation.tree.tos;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import mmlib4j.datastruct.Queue;
@@ -12,9 +11,8 @@ import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.INodeTree;
-import mmlib4j.representation.tree.attribute.BitQuadAttributePattern;
+import mmlib4j.representation.tree.attribute.Attribute;
 
 
 /**
@@ -35,8 +33,6 @@ public class NodeToS implements INodeTree, Cloneable{
 	boolean isClone = false;
 	double moment[][];
 	
-	BitQuadAttributePattern attributePattern;
-	
 	boolean isNodeMaxtree;
 	int xmin;
 	int ymin;
@@ -48,7 +44,7 @@ public class NodeToS implements INodeTree, Cloneable{
 	int sumXX;
 	int sumXY;
 	int area;
-	
+	int countPixelInFrame;
 	int countHoles;
 	
 	public boolean flagPruning;
@@ -56,8 +52,18 @@ public class NodeToS implements INodeTree, Cloneable{
 	
 	NodeToS parent;
 	List<NodeToS> children = new ArrayList<NodeToS>();
-	private List<Integer> pixels = new ArrayList<Integer>();
+	private SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
 	Contour contour = new Contour();
+	
+	public void addAttribute(int key, Attribute attr){
+		
+	}
+	public Attribute getAttribute(int key){
+		return null;
+	}
+	public double getAttributeValue(int key){
+		return 0;
+	}
 	
 	public NodeToS(int numCreate, int level, GrayScaleImage img, int canonicalPixel){
 		this.id = numCreate;
@@ -98,6 +104,19 @@ public class NodeToS implements INodeTree, Cloneable{
 		return isNodeMaxtree;
 	}
 	
+	public int getXmin(){
+		return xmin;
+	}
+	public int getYmin(){
+		return ymin;
+	}
+	public int getXmax(){
+		return xmax;
+	}
+	public int getYmax(){
+		return ymax;
+	}
+	
 	public int getNumHoles(){
 		return countHoles;
 	}
@@ -109,7 +128,7 @@ public class NodeToS implements INodeTree, Cloneable{
 			NodeToS no = (NodeToS) this.clone();
 			no.isClone = true;
 			no.children = new ArrayList<NodeToS>();
-			no.pixels = new ArrayList<Integer>();
+			no.pixels = new SimpleLinkedList<Integer>();
 			return no;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -125,8 +144,17 @@ public class NodeToS implements INodeTree, Cloneable{
 		if(y < ymin) ymin = y;
 		if(y > ymax) ymax = y;
 		
-		//if(x == 0 || y == 0 || x == width-1 || y == height-1)
-		//	countPixelInFrame++;
+		if(x == 0 || y == 0 || x == img.getWidth()-1 || y == img.getHeight()-1){
+			countPixelInFrame++;
+			if(x == 0 && y == 0)
+				countPixelInFrame++;
+			else if(x==0 && y == img.getHeight()-1)
+				countPixelInFrame++;
+			else if(x == img.getWidth()-1 && y == 0)
+				countPixelInFrame++;
+			else if(x == img.getWidth()-1 && y == img.getHeight()-1)
+				countPixelInFrame++;
+		}
 		sumX += x;
 		sumY += y;
 		sumXX += x*x;
@@ -137,22 +165,26 @@ public class NodeToS implements INodeTree, Cloneable{
 		pixels.add(p);
 	}
 	
-	public List<Integer> getPixels(){
+	public int getNumPixelInFrame(){
+		return countPixelInFrame;
+	}
+	
+	public SimpleLinkedList<Integer> getCanonicalPixels(){
 		return pixels;
 	}
 
 	public void initAttributes(int dimensionAttributes){
 		this.attributeValue = new int[dimensionAttributes];
 		//largura
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX] = this.xmax;
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN] = this.xmin;
+		this.attributeValue[Attribute.XMAX] = this.xmax;
+		this.attributeValue[Attribute.XMIN] = this.xmin;
 		//altura
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX] = this.ymax;
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN] = this.ymin;
+		this.attributeValue[Attribute.YMAX] = this.ymax;
+		this.attributeValue[Attribute.YMIN] = this.ymin;
 		//area
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_AREA] = this.pixels.size();
+		this.attributeValue[Attribute.AREA] = this.pixels.size();
 		//volume
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_VOLUME] += this.pixels.size() * this.level; 
+		this.attributeValue[Attribute.VOLUME] += this.pixels.size() * this.level; 
 
 	}
 	
@@ -161,15 +193,15 @@ public class NodeToS implements INodeTree, Cloneable{
 	}
 	
 	public int getWidthNode(){
-		return (this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX] - this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN] + 1);
+		return (this.attributeValue[Attribute.XMAX] - this.attributeValue[Attribute.XMIN] + 1);
 	}
 	
 	public int getHeightNode(){
-		return (this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX] - this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN] + 1);
+		return (this.attributeValue[Attribute.YMAX] - this.attributeValue[Attribute.YMIN] + 1);
 	}
 	
 	public int getArea(){
-		return this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_AREA];
+		return this.attributeValue[Attribute.AREA];
 	}
 	
 
@@ -178,11 +210,11 @@ public class NodeToS implements INodeTree, Cloneable{
 	}
 	
 	public double getPerimeter(){
-		return attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_PERIMETER];
+		return attributeValue[0];
 	}
 	
 	
-	public int getAttributeValue(int index){
+	public int getAttributeValueOLD(int index){
 		return attributeValue[index];
 	}
 	
@@ -285,14 +317,6 @@ public class NodeToS implements INodeTree, Cloneable{
 				this.moment[p][q] += moment[p][q]; 
 			}
 		}
-	}
-	
-	public BitQuadAttributePattern getPattern(){
-		return attributePattern;
-	}
-	
-	public void initAttributePattern(){
-		attributePattern = new BitQuadAttributePattern();
 	}
 	
 

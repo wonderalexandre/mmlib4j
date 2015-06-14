@@ -12,7 +12,6 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.InfoPrunedTree;
-import mmlib4j.representation.tree.attribute.BitQuadsNodesTree;
 import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueToS;
 import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueToS.ExtinctionValueNode;
 import mmlib4j.utils.Utils;
@@ -81,55 +80,16 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 		
 	}
 	
-	public void computerAttributePattern( ){
-		long ti = System.currentTimeMillis();
-		computerAttributePattern(getRoot());
-		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao [ToS - computer attribute pattern]  "+ ((tf - ti) /1000.0)  + "s");
-	}
-	
-	private BitQuadsNodesTree bitQuads = null;
-	public void computerAttributePattern(NodeToS node){
-		if(bitQuads == null)
-			bitQuads = new BitQuadsNodesTree(imgInput.getWidth(), imgInput.getHeight());
-		
-		node.initAttributePattern();
-		
-		for(NodeToS son: node.children){
-			computerAttributePattern(son);
-			node.attributePattern.merge(son.attributePattern);
-		}
-		
-		//atualiza os pixels
-		for(int p: node.getPixels()){ 
-			bitQuads.updatePixel(p);
-		}
-		
-		//calcula o hit-or-miss
-		for(int w=node.xmin; w<= node.xmax; w++){
-			for(int h=node.ymin; h<= node.ymax; h++){
-				bitQuads.computerLocalHitOrMiss(node.attributePattern, w, h);
-			}
-		}
-		
-		
-		//double c = (4.0 * Math.PI * root.getArea()) / Math.pow(root.getPattern().getPerimeter(), 2);
-		//root.showNode(root.isLeaf()+"=>"+ root.attributePattern.numberHoles8());
-		
-	}
-
-	
-
 	
 
 	private double getAttribute(NodeToS node, int type){
-		if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ECCENTRICITY)
+		/*if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ECCENTRICITY)
 			return node.eccentricity();
 		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_MAJOR_AXES)
 			return node.getLengthMajorAxes();
 		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ORIENTATION)
 			return node.getMomentOrientation();
-		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_CIRCULARITY)
+		else*/ if(type == IMorphologicalTreeFiltering.ATTRIBUTE_CIRCULARITY)
 			return (4.0 * Math.PI * node.getArea()) / (node.contour.getPixels().size());
 		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_RETANGULARITY)
 			return node.getArea() / (double) (node.getWidthNode() * node.getHeightNode());
@@ -159,7 +119,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 				}
 			}
 			if(!countors){
-				for(int p: node.getPixels()){
+				for(int p: node.getCanonicalPixels()){
 					imgOut.setPixel(p, node.getLevel());
 				}
 			}else{
@@ -219,7 +179,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 						for(NodeToS song: nodePruning.children){
 							fifoPruning.enqueue(song);
 						}
-						for(Integer p: nodePruning.getPixels())
+						for(Integer p: nodePruning.getCanonicalPixels())
 							imgOut.setPixel(p, levelPropagation);
 						
 					}
@@ -238,7 +198,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 						imgOut.setPixel(p, 255);
 					}
 				}else{
-					for(Integer p: no.getPixels()){
+					for(Integer p: no.getCanonicalPixels()){
 						imgOut.setPixel(p, no.level);
 					}
 					
@@ -293,7 +253,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				imgOut.setPixel(p, no.level);
 			}
 			if(no.children != null){
@@ -318,7 +278,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 							fifoPruning.enqueue(song);	 
 						}
 					}
-					for(Integer p: nodePruning.getPixels()){
+					for(Integer p: nodePruning.getCanonicalPixels()){
 						imgOut.setPixel(p, levelPropagation);
 					}
 				}
@@ -375,7 +335,7 @@ class ThreadNodeToSPerimeter extends Thread {
 					fifo.enqueue(son);
 				}
 			}
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				contour.addPixelForeground(p);
 			}
 		}

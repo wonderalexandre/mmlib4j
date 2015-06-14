@@ -255,7 +255,7 @@ public class CorrespondenceTree extends JPanel{
     public LinkedList<NodeCT> getNodeCorrespondece(NodeCT node, ComponentTree tree, int level){
     	LinkedList<NodeCT> list = new LinkedList<NodeCT>();
     	boolean flag[] = new boolean[tree.getNumNode()];
-    	for(Integer p: node.getPixels()){
+    	for(Integer p: node.getCanonicalPixels()){
     		if(level == -1){
     			if(! flag[tree.getSC(p).getId()]){
     				flag[tree.getSC(p).getId()] = true;

@@ -132,7 +132,7 @@ public class ComponentTree {
 		Arrays.fill(flags, -1);
 		
 		for(NodeCT node: listNode){
-			for(int p: node.getPixels()){
+			for(int p: node.getCanonicalPixels()){
 				for(int q: adj.getAdjacencyPixels(imgInput, p)){
 					if(map[p] != map[q]){
 						if(flags[map[q].getId()] != map[p].getId()){
@@ -158,7 +158,7 @@ public class ComponentTree {
 			for(NodeCT no: node.getNodesDescendants()){
 				listNode.remove(no);
 				numNode--;
-				for(int p: no.getPixels()){
+				for(int p: no.getCanonicalPixels()){
 					parent.addPixel(p);
 					map[p] = parent;	
 				}
@@ -176,7 +176,7 @@ public class ComponentTree {
 			for(NodeCT no: node.getNodesDescendants()){
 				tree.listNode.remove(no);
 				tree.numNode--;
-				for(int p: no.getPixels()){
+				for(int p: no.getCanonicalPixels()){
 					parent.addPixel(p);
 					tree.map[p] = parent;	
 				}
@@ -207,7 +207,7 @@ public class ComponentTree {
 					}
 				}
 			}
-			for(int p: node.getPixels()){
+			for(int p: node.getCanonicalPixels()){
 				imgOut.setPixel(p, node.level);
 			}
 			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){
@@ -225,7 +225,7 @@ public class ComponentTree {
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
 			NodeCT no = fifo.dequeue();
-			for(int p: no.getPixels()){
+			for(int p: no.getCanonicalPixels()){
 				imgOut.setPixel(p, no.level);
 			}
 			
@@ -359,7 +359,7 @@ public class ComponentTree {
 		while(!fifo.isEmpty()){
 			NodeCT no = fifo.dequeue();
 			listNode.add(no);
-			for(Integer p: no.getPixels()){
+			for(Integer p: no.getCanonicalPixels()){
 				map[p] = no;
 			}
 			for(NodeCT son: no.children){
@@ -463,12 +463,6 @@ public class ComponentTree {
 
 	public int getValueMax() {
 		return imgInput.maxValue();
-	}
-
-
-	public GrayScaleImage segmentation(double attributeValue, int type){
-		ComputerExtinctionValueCT ev = new ComputerExtinctionValueCT(this);
-		return ev.segmentationByKmax((int)attributeValue, type); 
 	}
 
 	

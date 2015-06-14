@@ -5,6 +5,7 @@ import java.awt.Color;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -53,9 +54,10 @@ public class PruningBasedMSERForHDIBCO extends PruningBasedMSER{
 	
 	
 	public boolean isNodeText(NodeCT node){
-		double bbArea = node.getArea() / (double)(node.getWidthNode() * node.getHeightNode());
-		double relationWH = Math.max(node.getWidthNode(), node.getHeightNode()) / Math.min(node.getWidthNode(), node.getHeightNode()); 
-		if(node.getHeightNode() < tree.getInputImage().getHeight() * 0.3 && 
+		double bbArea = node.getArea() / (double)(node.getAttribute(Attribute.WIDTH).getValue() * node.getAttribute(Attribute.HEIGHT).getValue());
+		double relationWH = Math.max(node.getAttribute(Attribute.WIDTH).getValue(), node.getAttribute(Attribute.HEIGHT).getValue()) / (double)Math.min(node.getAttribute(Attribute.WIDTH).getValue(), node.getAttribute(Attribute.HEIGHT).getValue());
+
+		if(node.getAttribute(Attribute.HEIGHT).getValue() < tree.getInputImage().getHeight() * 0.3 && 
 				relationWH > 0.4 &&
 				node.getArea() > 60 //&&
 				&& node.getLevelMean() > 20

@@ -1,6 +1,7 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -44,7 +45,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 	}
 		
 	public boolean[] getExtinctionValueNodeToS(int type, int valueMin){
-		if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE){
+		if(type == Attribute.ALTITUDE){
 			return getExtinctionToSByAltitude( valueMin );
 		}else{
 			return getExtinctionToSByAttribute(type, valueMin);
@@ -56,7 +57,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		TreeOfShape tree = (TreeOfShape) this.tree;
 		for(NodeToS folha: tree.getLeaves()){
-			int extinction = tree.getRoot().getAttributeValue(type);
+			int extinction = (int)tree.getRoot().getAttribute(type).getValue();
 			NodeToS aux = folha;
 			NodeToS pai = aux.getParent();
 			boolean flag = true;
@@ -64,10 +65,10 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 				if (pai.getNumChildren() > 1) {
 					for(NodeToS filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
-							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttributeValue(type) == aux.getAttributeValue(type)) { //EMPATE Grimaud,92
+							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttribute(type) == aux.getAttribute(type)) { //EMPATE Grimaud,92
 								flag = false;
 							}
-							else if (filho != aux  &&  filho.getAttributeValue(type) > aux.getAttributeValue(type)) {
+							else if (filho != aux  &&  filho.getAttribute(type).getValue() > aux.getAttribute(type).getValue()) {
 								flag = false;
 							}
 							visitado[filho.getId()] = true;
@@ -79,7 +80,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 					pai = aux.getParent();
 				}
 			}
-			extinction = aux.getAttributeValue(type);
+			extinction =(int) aux.getAttribute(type).getValue();
 			if(!selected[aux.getId()] && extinction > valueMin){
 				selected[aux.getId()] = true;
 				this.num = this.num + 1;
@@ -93,10 +94,10 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		TreeOfShape tree = (TreeOfShape) this.tree;
 		for(NodeToS folha: tree.getLeaves()){
-			int extinction = tree.getRoot().getAttributeValue(IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE);
+			int extinction = (int)tree.getRoot().getAttribute(Attribute.ALTITUDE).getValue();
 			NodeToS pai = folha.getParent();
-			while (pai != null &&  pai.getAttributeValue(IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE) <= Math.abs(folha.getLevel() - pai.getLevel())) {
-				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttributeValue(IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE) == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
+			while (pai != null &&  pai.getAttribute(Attribute.ALTITUDE).getValue() <= Math.abs(folha.getLevel() - pai.getLevel())) {
+				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttribute(Attribute.ALTITUDE).getValue() == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
 					break;
 				}
 				visitado[pai.getId()] = true;
@@ -116,7 +117,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 	
 	
 	private boolean[] getExtinctionValueNodeCT(int type, int valueMin){
-		if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE){
+		if(type == Attribute.ALTITUDE){
 			return getExtinctionCTByAltitude(valueMin);
 		}else{
 			return getExtinctionCTByAttribute(type, valueMin);
@@ -130,7 +131,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		ComponentTree tree = (ComponentTree) this.tree;
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		for(NodeCT folha: tree.getLeaves()){
-			int extinction = tree.getRoot().getAttributeValue(type);
+			int extinction = (int)tree.getRoot().getAttribute(type).getValue();
 			NodeCT aux = folha;
 			NodeCT pai = aux.getParent();
 			boolean flag = true;
@@ -138,10 +139,10 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 				if (pai.getNumChildren() > 1) {
 					for(NodeCT filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
-							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttributeValue(type) == aux.getAttributeValue(type)) { //EMPATE Grimaud,92
+							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttribute(type) == aux.getAttribute(type)) { //EMPATE Grimaud,92
 								flag = false;
 							}
-							else if (filho != aux  &&  filho.getAttributeValue(type) > aux.getAttributeValue(type)) {
+							else if (filho != aux  &&  filho.getAttribute(type).getValue() > aux.getAttribute(type).getValue()) {
 								flag = false;
 							}
 							visitado[filho.getId()] = true;
@@ -153,14 +154,14 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 					pai = aux.getParent();
 				}
 			}
-			extinction = aux.getAttributeValue(type);
+			extinction = (int) aux.getAttribute(type).getValue();
 			if(!selected[aux.getId()] && extinction > valueMin){
 				selected[aux.getId()] = true;
 				this.num = this.num + 1;
 			}
 			/*
 			if (pai != null){
-				extinction = aux.getAttributeValue(type);
+				extinction = aux.getAttribute(type);
 				//if(!selected[pai.getId()] && extinction > valueMin){
 				if(extinction > valueMin){
 					selected[aux.getId()] = true;
@@ -181,10 +182,10 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		ComponentTree tree = (ComponentTree) this.tree;
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		for(NodeCT folha: tree.getLeaves()){
-			int extinction = tree.getRoot().getAttributeValue(IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE);
+			int extinction = (int) tree.getRoot().getAttribute(Attribute.ALTITUDE).getValue();
 			NodeCT pai = folha.getParent();
-			while (pai != null &&  pai.getAttributeValue(IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE) <= Math.abs(folha.getLevel() - pai.getLevel())) {
-				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttributeValue(IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE) == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
+			while (pai != null &&  pai.getAttribute(Attribute.ALTITUDE).getValue() <= Math.abs(folha.getLevel() - pai.getLevel())) {
+				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttribute(Attribute.ALTITUDE).getValue() == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
 					break;
 				}
 				visitado[pai.getId()] = true;

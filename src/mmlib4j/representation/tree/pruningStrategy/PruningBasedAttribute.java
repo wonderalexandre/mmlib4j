@@ -31,7 +31,7 @@ public class PruningBasedAttribute implements MappingStrategyOfPruning{
 			boolean selected[] = new boolean[tree.getNumNode()];
 			for(NodeCT node: tree.getListNodes()){
 				if(node.getParent() != null){
-					if ( node.getParent().getAttributeValue(typeParam) != node.getAttributeValue(typeParam)) {
+					if ( node.getParent().getAttribute(typeParam).getValue() != node.getAttribute(typeParam).getValue()) {
 						selected[node.getId()] = true;
 						num++;
 					}
@@ -44,7 +44,7 @@ public class PruningBasedAttribute implements MappingStrategyOfPruning{
 			boolean selected[] = new boolean[tree.getNumNode()];
 			for(NodeToS node: tree.getListNodes()){
 				if(node.getParent() != null){
-					if ( node.getParent().getAttributeValue(typeParam) != node.getAttributeValue(typeParam)) {
+					if ( node.getParent().getAttributeValueOLD(typeParam) != node.getAttributeValueOLD(typeParam)) {
 						selected[node.getId()] = true;
 						num++;
 					}

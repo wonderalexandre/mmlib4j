@@ -762,7 +762,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
     
 
 	public static void printTree(NodeToS no, PrintStream out, String s){
-		out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getPixels().size());
+		out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCanonicalPixels().size());
 		if(no.children != null)
 			for(NodeToS son: no.children){
 				printTree(son, out, s + "------");

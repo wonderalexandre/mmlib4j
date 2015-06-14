@@ -1,6 +1,7 @@
 package mmlib4j.representation.tree.componentTree;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,9 +14,7 @@ import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.INodeTree;
-import mmlib4j.representation.tree.attribute.AttributePatternEuler;
-import mmlib4j.representation.tree.attribute.BitQuadAttributePattern;
-import mmlib4j.representation.tree.attribute.CentralMoments;
+import mmlib4j.representation.tree.attribute.Attribute;
 
 
 /**
@@ -25,62 +24,56 @@ import mmlib4j.representation.tree.attribute.CentralMoments;
  */
 public class NodeCT implements INodeTree, Cloneable{
 	int level;
-	int highest;
-	int lowest;
-	
+	int heightNode;
 	GrayScaleImage img;
-	private int canonicalPixel;
+	int canonicalPixel;
 	int id;
 	int numDescendent;
 	int numDescendentLeaf;
-	int countPixelInFrame;
-	double perimeter;
-	
-	public int attributeValueNC[]; //vetor de atributos decrescentes
-	public int attributeValue[]; //vetor de atributos crescentes
-	public CentralMoments moment;
-	public BitQuadAttributePattern attributePattern;
-	public AttributePatternEuler attributeEuler;
-	public double mser;
-	
-	int heightNode;
-	int xmin;
-	int ymin;
-	int xmax;
-	int ymax;
-	int sumX;
-	int sumY;
-	
-	int pixelXmax;
-	int pixelXmin;
-	int pixelYmin;
-	int pixelYmax;
-	
-	/*double moment20; 
-	double moment02;
-	double moment11;*/
-	int area;
-	
-	public Contour getContour() {
-		return contour;
-	}
 
-	public boolean isMaxtree() {
-		return isMaxtree;
-	}
-
-	public Contour contour = null;
-	
-	boolean isMaxtree;
 	public boolean flagProcess;
 	public boolean flagPruning = true;
+	private int countPixelInFrame;
 	boolean isClone = false;
-	
+	boolean isMaxtree;
 	NodeCT parent;
 	List<NodeCT> children = new ArrayList<NodeCT>();
 	SimpleLinkedList<NodeCT> adjcencyNodes = new SimpleLinkedList<NodeCT>();
 	SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
 	
+	//basic attribute node
+	int xmin;
+	int ymin;
+	int xmax;
+	int ymax;
+	int sumX;
+	int sumY;	
+	int pixelXmax;
+	int pixelXmin;
+	int pixelYmin;
+	int pixelYmax;
+	int area;
+	
+	Hashtable<Integer, Attribute> attributes = new Hashtable<Integer, Attribute>();
+	public void addAttribute(int key, Attribute attr){
+		attributes.put(key, attr);
+	}
+	public Attribute getAttribute(int key){
+		return attributes.get(key);
+	}
+	
+	public double getAttributeValue(int key){
+		return attributes.get(key).getValue();
+	}
+	
+	public int getNumPixelInFrame(){
+		return countPixelInFrame;
+	}
+	
+	double perimeter;
+	public int attributeValueNC[]; //vetor de atributos decrescente
+	public double mser;
+	public Contour contour = null;
 	
 	
 	public NodeCT(boolean isMaxtree, int numCreate, GrayScaleImage img, int canonicalPixel){
@@ -89,10 +82,14 @@ public class NodeCT implements INodeTree, Cloneable{
 		this.img = img;
 		this.canonicalPixel = canonicalPixel; 
 		this.level = img.getPixel(canonicalPixel);
-		this.highest = lowest = level;
 		xmin = ymin = Integer.MAX_VALUE;
 		xmax = ymax = Integer.MIN_VALUE;
 	}
+	
+	public boolean isMaxtree() {
+		return isMaxtree;
+	}
+
 	
 	public SimpleLinkedList<NodeCT> getAdjacencyNodes(){
 		return adjcencyNodes;
@@ -113,23 +110,6 @@ public class NodeCT implements INodeTree, Cloneable{
 	public boolean isClone(){
 		return isClone;
 	}
-	
-	public int getCentroid(){
-		int xc = sumX / getArea();
-		int yc = sumY / getArea();
-		
-		return (xc + yc * img.getWidth());
-	}
-	
-	public CentralMoments getMoments(){
-		if(moment == null){
-			double xc = sumX / (double)getArea();
-			double yc = sumY / (double)getArea();
-			moment = new CentralMoments(xc, yc, area, img.getWidth());
-		}
-		return moment; 
-	}
-	
 	
 	public NodeCT getClone(){
 		try {
@@ -173,6 +153,19 @@ public class NodeCT implements INodeTree, Cloneable{
 		return numDescendent;
 	}
 	
+	public int getXmin(){
+		return xmin;
+	}
+	public int getYmin(){
+		return ymin;
+	}
+	public int getXmax(){
+		return xmax;
+	}
+	public int getYmax(){
+		return ymax;
+	}
+	
 	public void addPixel(int p){		
 		int x = p % img.getWidth();
 		int y = p / img.getWidth();
@@ -192,9 +185,18 @@ public class NodeCT implements INodeTree, Cloneable{
 			ymax = y;
 			pixelYmax = p;
 		}
-		
-		if(x == 0 || y == 0 || x == img.getWidth()-1 || y == img.getHeight()-1)
+		if(x == 0 || y == 0 || x == img.getWidth()-1 || y == img.getHeight()-1){
 			countPixelInFrame++;
+			if(x == 0 && y == 0)
+				countPixelInFrame++;
+			else if(x==0 && y == img.getHeight()-1)
+				countPixelInFrame++;
+			else if(x == img.getWidth()-1 && y == 0)
+				countPixelInFrame++;
+			else if(x == img.getWidth()-1 && y == img.getHeight()-1)
+				countPixelInFrame++;
+		}
+		
 		sumX += x;
 		sumY += y;
 		area += 1;
@@ -271,10 +273,13 @@ public class NodeCT implements INodeTree, Cloneable{
 		return isDescendant(node) || isAncestral(node);
 	}
 	
-	public SimpleLinkedList<Integer> getPixels(){
+	public SimpleLinkedList<Integer> getCanonicalPixels(){
 		return pixels;
 	}
 	
+	public int getNumCanonicalPixel(){
+		return pixels.size();
+	}
 
 	public Iterable<NodeCT> getPathToRoot(){
 		final NodeCT node = this;
@@ -342,96 +347,7 @@ public class NodeCT implements INodeTree, Cloneable{
 		
 	}
 	
-	
-	
-	public void initAttributes(int dimensionAttributes){
-		this.attributeValue = new int[dimensionAttributes];
-		//largura
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX] = this.xmax;
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN] = this.xmin;
-		//altura
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX] = this.ymax;
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN] = this.ymin;
-		//area
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_AREA] = this.pixels.size();
-		//volume
-		this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_VOLUME] = this.pixels.size() * this.level; 
-		
-	}
 
-	public int xMinBoundBox(){
-		return this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN];
-	}
-	public int xMaxBoundBox(){
-		return this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX];
-	}
-	public int yMinBoundBox(){
-		return this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN];
-	}
-	public int yMaxBoundBox(){
-		return this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX];
-	}
-	
-	
-	public void initAttributesNC(int dimensionAttributes){
-		this.attributeValueNC = new int[dimensionAttributes]; 
-
-		//atributo decrecente
-		this.attributeValueNC[IMorphologicalTreeFiltering.ATTRIBUTE_NC_VARIANCIA] = (int) (Math.pow(this.level, 2) * this.pixels.size());
-		this.attributeValueNC[IMorphologicalTreeFiltering.ATTRIBUTE_NC_PERIMETRO] = 0;
-	}
-	
-	
-	public BitQuadAttributePattern getPattern(){
-		return attributePattern;
-	}
-	
-	public void initAttributePattern(){
-		attributePattern = new BitQuadAttributePattern();
-	}
-	public void initMoment(){
-		moment = new CentralMoments(sumX / getArea(), sumY / getArea(), getArea(), img.getWidth(), pixels);
-	}
-	
-	public int getWidthNode(){
-		return attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_WIDTH];
-		//return (this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MAX] - this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_X_MIN] + 1);
-	}
-	
-	public int getHeightNode(){
-		return attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT];
-		//return (this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MAX] - this.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_Y_MIN] + 1);
-	}
-	
-	public int getArea(){
-		return area;
-	}
-	
-	public int getVolume(){
-		return attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_VOLUME];
-	}
-	
-	public double getCircularity(){
-		return (4.0 * Math.PI * getArea()) / Math.pow(getPerimeterExternal(), 2);
-	}
-	
-	public double getCompacity(){
-		return Math.pow(getPerimeterExternal(),2) / getArea();
-	}
-	
-	
-	
-	public double getPerimeterExternal(){
-		return attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_PERIMETER];
-	}
-	
-	public int getAttributeValue(int index){
-		return attributeValue[index];
-	}
-	
-
-
-	
 
 	public GrayScaleImage createImageSC(int levelNotSC){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(this.img);;
@@ -482,6 +398,61 @@ public class NodeCT implements INodeTree, Cloneable{
 		}
 		return img;
 	}
+	
+
+	public int hashCode(){
+		return id;
+	}
+	
+	
+	
+	
+	
+	
+	
+
+	public int getCentroid(){
+		int xc = sumX / getArea();
+		int yc = sumY / getArea();
+		
+		return (xc + yc * img.getWidth());
+	}
+	
+	
+	public Contour getContour() {
+		return contour;
+	}
+	
+	public void initAttributesNC(int dimensionAttributes){
+		this.attributeValueNC = new int[dimensionAttributes]; 
+
+		//atributo decrecente
+		this.attributeValueNC[IMorphologicalTreeFiltering.ATTRIBUTE_NC_VARIANCIA] = (int) (Math.pow(this.level, 2) * this.pixels.size());
+		this.attributeValueNC[IMorphologicalTreeFiltering.ATTRIBUTE_NC_PERIMETRO] = 0;
+	}
+	
+	
+	
+	public int getArea(){
+		return area;
+	}
+	
+	public double getCircularity(){
+		return (4.0 * Math.PI * getArea()) / Math.pow(getPerimeterExternal(), 2);
+	}
+	
+	public double getCompacity(){
+		return Math.pow(getPerimeterExternal(),2) / getArea();
+	}
+	
+	
+	
+	public double getPerimeterExternal(){
+		return contour.getPerimeter();
+	}
+	
+
+	
 	
 	Double homogeneity = null;
 	public double getHomogeneity(){
@@ -542,25 +513,7 @@ public class NodeCT implements INodeTree, Cloneable{
 		
 	}
 	
-	public int hashCode(){
-		return id;
-	}
 	
 	
-	public void binarization(BinaryImage imgOut){
-		int min=255;
-		int max=0;
-		for(int p: pixels){
-			if(min > this.img.getPixel(p))
-				min = img.getPixel(p);
-			if(max < this.img.getPixel(p))
-				max = img.getPixel(p);
-		}
-		int d = (int) Math.round( 255 * (1 - ((max - min) / (max + min + 0.00001))));
-		for(int p: pixels){
-			imgOut.setPixel(p, d==1);
-		}
-
-	}
 	
 }

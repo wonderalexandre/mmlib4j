@@ -13,13 +13,14 @@ import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.InfoPrunedTree;
-import mmlib4j.representation.tree.attribute.AttributePatternEuler;
-import mmlib4j.representation.tree.attribute.BitQuadsNodesTree;
+import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
+import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
+import mmlib4j.representation.tree.attribute.ComputerPatternEulerAttribute;
 import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueCT;
+import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueCT.ExtinctionValueNode;
 import mmlib4j.representation.tree.pruningStrategy.ComputerMserCT;
 import mmlib4j.representation.tree.pruningStrategy.ComputerTbmrCT;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
-import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueCT.ExtinctionValueNode;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -31,13 +32,19 @@ import mmlib4j.utils.Utils;
  */
 public class ConnectedFilteringByComponentTree extends ComponentTree implements IMorphologicalTreeFiltering{
 	
+	
+	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree, boolean isCountours){
 		super(img, adj, isMaxtree);
 		long ti = System.currentTimeMillis();
-		computerAttribute(this.root);
-		computerMoment(this.root);
+		new ComputerBasicAttribute(numNode, getRoot(), img).addAttributeInNodesCT(getListNodes());
+		new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesCT(getListNodes());
+		new ComputerPatternEulerAttribute(numNode, getRoot(), img, adj).addAttributeInNodesCT(getListNodes());
+		//computerAttribute(this.root);
+		//computerMoment(this.root);
 		//computerAttributePattern(this.root);
-		computerAttributeEuler(this.root);
+		//computerAttributeEuler(this.root);
+		
 		if(isCountours)
 			setContours(false);
 		long tf = System.currentTimeMillis();
@@ -48,11 +55,14 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		super(img, adj, isMaxtree);
 		long ti = System.currentTimeMillis();
-		computerAttribute(this.root);
-		computerMoment(this.root);
+		new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesCT(getListNodes());
+		new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesCT(getListNodes());
+		new ComputerPatternEulerAttribute(numNode, getRoot(), img, adj).addAttributeInNodesCT(getListNodes());
+		//computerAttribute(this.root);
+		//computerMoment(this.root);
 		//computerAttributePattern(this.root);
-		computerAttributeEuler(root);
-		//setContours(false);
+		//computerAttributeEuler(root);
+		setContours(false);
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
 			System.out.println("Tempo de execucao [computer attributes] "+ ((tf - ti) /1000.0)  + "s");
@@ -61,8 +71,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public ConnectedFilteringByComponentTree(ComponentTree c) {
 		super(c);
 		long ti = System.currentTimeMillis();
-		computerAttribute(this.root);
-		computerMoment(this.root);
+		//computerAttribute(this.root);
+		//computerMoment(this.root);
 		//computerAttributePattern(this.root);
 		//setContours(false);
 		long tf = System.currentTimeMillis();
@@ -72,9 +82,6 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	}
 	
 	
-	public void computerMoment( ){
-		computerMoment(this.root);
-	}
 		
 	public void simplificationByCriterion(int alpha){
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
@@ -104,9 +111,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		
 		createNodesMap();
 		computerHeightNodes(this.root, 0);
-		computerAttribute(this.root);
-		computerMoment(this.root);
-		computerAttributePattern(this.root);
+
 	}
 	
 	
@@ -151,7 +156,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 					imgOut.setPixel(p, 255);
 				}
 			}else{
-				for(Integer p: no.getPixels()){
+				for(Integer p: no.getCanonicalPixels()){
 					imgOut.setPixel(p, no.level);
 				}
 			}
@@ -181,7 +186,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 							imgOut.setPixel(p, 0);
 						}
 					}else{	
-						for(Integer p: nodePruning.getPixels())
+						for(Integer p: nodePruning.getCanonicalPixels())
 							imgOut.setPixel(p, levelPropagation);
 					}
 				}
@@ -197,18 +202,11 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	}
 	
 	private double getAttribute(NodeCT node, int type){
-		if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ECCENTRICITY)
-			return node.moment.eccentricity();
-		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_MAJOR_AXES)
-			return node.moment.elongation();//return node.moment.getLengthMajorAxes();
-		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ORIENTATION)
-			return node.moment.getMomentOrientation();
-		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_CIRCULARITY)
+		if(type == IMorphologicalTreeFiltering.ATTRIBUTE_CIRCULARITY)
 			return  node.getCircularity();
-		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ELONGATION)
-			return node.moment.elongation();
-		else
-			return node.attributeValue[type];
+		else 
+			return node.getAttributeValue(type);
+		
 	}
 	
 	
@@ -243,7 +241,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		boolean resultPruning[] = new boolean[this.getNumNode()];
 		for(ExtinctionValueNode nodeEV: extincaoPorNode){
 			
-			if(nodeEV.nodeAncestral.getAttributeValue(type) < attributeValue){ //poda				
+			if(getAttribute(nodeEV.nodeAncestral, type) < attributeValue){ //poda				
 				NodeCT node = nodeEV.nodeAncestral;	
 				for(NodeCT song: node.children){
 					if(!resultPruning[song.getId()])
@@ -293,7 +291,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				}
 			}
 			if(!countor){
-				for(int p: node.getPixels()){
+				for(int p: node.getCanonicalPixels()){
 					imgOut.setPixel(p, node.getLevel());
 				}
 			}else{
@@ -333,7 +331,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		boolean resultPruning[] = new boolean[this.getNumNode()];
 		LinkedList<NodeCT> list = mser.getNodesByMSER(delta);
 		for(NodeCT node: list){
-			if(node.getAttributeValue(type) <= attributeValue){ //poda				
+			if(getAttribute(node, type) <= attributeValue){ //poda				
 				for(NodeCT song: node.children){
 					for(NodeCT n: song.getNodesDescendants())
 						resultPruning[n.getId()] = true;	 
@@ -364,7 +362,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		LinkedList<INodeTree> list = gt.getListOfSelectedNodes( );
 		for(INodeTree obj: list){
 			NodeCT node = (NodeCT) obj;
-			if(node.getAttributeValue(type) <= attributeValue){ //poda				
+			if(getAttribute(node, type) <= attributeValue){ //poda				
 				for(NodeCT song: node.children){
 					for(NodeCT n: song.getNodesDescendants())
 						resultPruning[n.getId()] = true;	 
@@ -392,7 +390,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		boolean resultPruning[] = new boolean[this.getNumNode()];
 		boolean result[] = tbmr.getSelectedNode(tMin, tMax);
 		for(NodeCT node: listNode){
-			if(node.getAttributeValue(type) <= attributeValue && result[node.getId()]){ //poda				
+			if(getAttribute(node, type) <= attributeValue && result[node.getId()]){ //poda				
 				for(NodeCT song: node.children){
 					for(NodeCT n: song.getNodesDescendants())
 						resultPruning[n.getId()] = true;	 
@@ -452,7 +450,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * Os atributos computados sao crescentes
 	 * @param img - imagem de entrada
 	 * @return Maxtree
-	 */
+	 *
 	public void computerAttribute(NodeCT node){
 		node.initAttributes(NUM_ATTRIBUTES);
 		for(NodeCT son: node.children){
@@ -500,75 +498,12 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				node.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_ALTITUDE] = node.level - node.lowest + 1;
 		}
 	}
-	
-	
-	
-	/**
-	 * Metodo utilizado para criar uma instancia da maxtree. 
-	 * Os atributos computados sao crescentes
-	 * @param img - imagem de entrada
-	 * @return Maxtree
-	 */
-	public void computerMoment(NodeCT root){
-		root.initMoment();
-		if(root.children != null){ //computa os atributos para os filhos
-			for(NodeCT son: root.children){
-				computerMoment(son);
-				root.moment.updateMoment(son.moment);
-			}
-		}
-	}
-	
-	
-	
-	public void computerAttributeEuler(NodeCT root){
-		root.attributeEuler = new AttributePatternEuler(imgInput, adj, isMaxtree);
-		for(int p: root.pixels){
-			root.attributeEuler.computerLocalPattern(p);
-		}
-		
-		for(NodeCT son: root.children){
-			computerAttributeEuler(son);
-			root.attributeEuler.countPatternChildren( son.attributeEuler );
-		}
-		root.attributeEuler.mergeChildren();
-		
-		
-	}
+	*/
 	
 	
 	
 	
-	private BitQuadsNodesTree bitQuads = null;
-	public void computerAttributePattern(NodeCT node){
-		if(bitQuads == null)
-			bitQuads = new BitQuadsNodesTree(imgInput.getWidth(), imgInput.getHeight());
-		
-		node.initAttributePattern();
-		
-		for(NodeCT son: node.children){
-			computerAttributePattern(son);
-			node.attributePattern.merge(son.attributePattern);
-		}
-		
-		//atualiza os pixels
-		for(int p: node.pixels){ 
-			bitQuads.updatePixel(p);
-		}
-		
-		//calcula o hit-or-miss
-		for(int w=node.xmin; w<= node.xmax; w++){
-			for(int h=node.ymin; h<= node.ymax; h++){
-				bitQuads.computerLocalHitOrMiss(node.attributePattern, w, h);
-			}
-		}
-		
-		
-		//double c = (4.0 * Math.PI * root.getArea()) / Math.pow(root.getPattern().getPerimeter(), 2);
-		//root.showNode(root.isLeaf()+"=>"+ root.attributePattern.numberHoles8());
-		
-	}
-
+	
 	
 	
 	
@@ -602,7 +537,7 @@ class ThreadNodeCTPerimeter extends Thread {
 		}*/
 		node.contour = contour.findOuterContours(node.pixelYmin % node.img.getWidth(), node.pixelYmin / node.img.getWidth() );
 		//node.contour = contour.findOuterContours();
-		node.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_PERIMETER] = (int) node.contour.getPerimeter();
+		//node.attributeValueNC[IMorphologicalTreeFiltering.ATTRIBUTE_PERIMETER] = (int) node.contour.getPerimeter();
 		//System.out.println("terminou: " + node.getId());
 	}
 	
