@@ -275,6 +275,34 @@ public class AdjacencyRelation {
         
     }
 	
+
+	public Iterable<Integer> getAdjacencyPixelsWithoutValidation(final Image2D img, final int i) {
+    	return getAdjacencyPixelsWithoutValidation(img, i % img.getWidth(), i / img.getWidth());
+    }
+	
+	public Iterable<Integer> getAdjacencyPixelsWithoutValidation(final Image2D img, final int x, final int y) {
+        return new Iterable<Integer>() {
+			public Iterator<Integer> iterator() {
+				return new Iterator<Integer>() {
+					private int i = 0;
+					public boolean hasNext() {
+						if(i < px.length)
+							return true;
+						else 
+							return false;
+					}
+					public Integer next() {
+						int pixel = (px[i] + x) + (py[i] + y) * img.getWidth();
+						i += 1;
+						return pixel;
+					}
+					public void remove() { }
+					
+				};
+			}
+		};
+    }
+	
 	
 	public int[] getVectorX(){
 		return px;
