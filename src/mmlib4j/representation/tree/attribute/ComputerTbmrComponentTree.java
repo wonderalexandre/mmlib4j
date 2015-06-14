@@ -1,4 +1,4 @@
-package mmlib4j.representation.tree.pruningStrategy;
+package mmlib4j.representation.tree.attribute;
 
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -12,12 +12,12 @@ import mmlib4j.representation.tree.componentTree.NodeCT;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ComputerTbmrCT {
+public class ComputerTbmrComponentTree {
 
 	private ComponentTree tree;
 	private int num;
 	
-	public ComputerTbmrCT(ComponentTree tree){
+	public ComputerTbmrComponentTree(ComponentTree tree){
 		this.tree = tree;
 	}
 	

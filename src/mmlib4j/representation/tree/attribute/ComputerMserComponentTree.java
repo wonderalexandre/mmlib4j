@@ -1,13 +1,13 @@
-package mmlib4j.representation.tree.pruningStrategy;
+package mmlib4j.representation.tree.attribute;
 
 import java.awt.Color;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
@@ -21,18 +21,18 @@ import mmlib4j.utils.ImageBuilder;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ComputerMserCT {
+public class ComputerMserComponentTree implements ComputerMser {
 	
 	private ComponentTree tree;
 	private NodeCT ascendant[];
 	private NodeCT descendants[];
 	private int num;
-	private Double q[];
+	private Attribute stability[];
 	private double maxVariation = Double.MAX_VALUE;
 	private int minArea=0;
 	private int maxArea=Integer.MAX_VALUE;
 	
-	public ComputerMserCT(ComponentTree tree){
+	public ComputerMserComponentTree(ComponentTree tree){
 		this.tree = tree;
 		
 	}
@@ -41,7 +41,7 @@ public class ComputerMserCT {
 		maxVariation = d;
 	}
 	
-	public void setMinArea(int a){
+	public void setMinArea(int a){ 
 		minArea = a;
 	}
 	
@@ -77,7 +77,7 @@ public class ComputerMserCT {
 	}
 	
 	
-	public double getStabilityByBoundary(NodeCT node){
+	protected double getStabilityByBoundary(NodeCT node){
 		if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
 			return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double)node.getPerimeterExternal();
 		}
@@ -86,7 +86,7 @@ public class ComputerMserCT {
 		}
 	}
 	
-	public double getStability(NodeCT node){
+	protected double getStability(NodeCT node){
 		if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
 			return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double) node.getArea();
 			//return (ascendant[node.getId()].getHeightNode() - descendants[node.getId()].getHeightNode()) / (double) node.getHeightNode();
@@ -111,20 +111,20 @@ public class ComputerMserCT {
 			}
 		}
 		
-		q = new Double[tree.getNumNode()];
+		stability = new Attribute[tree.getNumNode()];
 		for(NodeCT node: tree.getListNodes()){
 			if(ascendant[node.getId()] != null && descendants[node.getId()] != null)
-				q[node.getId()] = getStability(node);
+				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
 		}
 		
 		boolean mser[] = new boolean[tree.getNumNode()];
 		for(NodeCT node: tree.getListNodes()){
 			
-			if(q[node.getId()] != null && q[ ascendant[node.getId()].getId() ] != null && q[ descendants[node.getId()].getId() ] != null){
-				double minStabilityDesc = q[ descendants[node.getId()].getId() ];
-				double minStabilityAsc = q[ ascendant[node.getId()].getId() ];
-				if(q[node.getId()] < minStabilityDesc && q[node.getId()] < minStabilityAsc){
-					if(q[node.getId()] < maxVariation && node.getArea() > minArea && node.getArea() < maxArea){
+			if(stability[node.getId()] != null && stability[ ascendant[node.getId()].getId() ] != null && stability[ descendants[node.getId()].getId() ] != null){
+				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
+				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
+				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
+					if(stability[node.getId()].getValue() < maxVariation && node.getArea() > minArea && node.getArea() < maxArea){
 						mser[node.getId()] = true;
 						list.add(node);
 					}
@@ -152,23 +152,21 @@ public class ComputerMserCT {
 			}
 		}
 		
-		q= new Double[tree.getNumNode()];
-
+		stability = new Attribute[tree.getNumNode()];
 		for(NodeCT node: tree.getListNodes()){
 			if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
-				q[node.getId()] = getStability(node);
-				node.mser = q[node.getId()];
+				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
 				
 			}
 			
 		}
 		
 		for(NodeCT node: tree.getListNodes()){
-			if(q[node.getId()] != null && q[ ascendant[node.getId()].getId() ] != null && q[ descendants[node.getId()].getId() ] != null){
-				double minStabilityDesc = q[ descendants[node.getId()].getId() ];
-				double minStabilityAsc = q[ ascendant[node.getId()].getId() ];
-				if(q[node.getId()] < minStabilityDesc && q[node.getId()] < minStabilityAsc){
-					if(q[node.getId()] < maxVariation){
+			if(stability[node.getId()] != null && stability[ ascendant[node.getId()].getId() ] != null && stability[ descendants[node.getId()].getId() ] != null){
+				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
+				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
+				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
+					if(stability[node.getId()].getValue() < maxVariation){
 						mser[node.getId()] = true;
 						num++;
 					}
@@ -200,14 +198,14 @@ public class ComputerMserCT {
 			}
 		}
 		
-		q = new Double[tree.getNumNode()];
+		stability = new Attribute[tree.getNumNode()];
 
 		for(NodeCT node: tree.getListNodes()){
 			if(prunedTree.wasPruned(node))
 				continue;
 			
 			if(ascendant[node.getId()] != null && descendants[node.getId()] != null)
-				q[node.getId()] = getStability(node);
+				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
 		}
 		
 		for(NodeCT node: tree.getListNodes()){
@@ -215,12 +213,12 @@ public class ComputerMserCT {
 				continue;
 			
 			
-			if(q[node.getId()] != null && q[ ascendant[node.getId()].getId() ] != null && q[ descendants[node.getId()].getId() ] != null){
-				double minStabilityDesc = q[ descendants[node.getId()].getId() ];
-				double minStabilityAsc = q[ ascendant[node.getId()].getId() ];
+			if(stability[node.getId()] != null && stability[ ascendant[node.getId()].getId() ] != null && stability[ descendants[node.getId()].getId() ] != null){
+				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
+				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
 				
-				if(q[node.getId()] < minStabilityDesc && q[node.getId()] < minStabilityAsc){
-					if(q[node.getId()] < maxVariation){
+				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
+					if(stability[node.getId()].getValue() < maxVariation){
 						mser[node.getId()] = true;
 					}
 				}
@@ -231,36 +229,18 @@ public class ComputerMserCT {
 		
 	}
 	
-	public Double[] getScore(){
-		return q;
+	public Attribute[] getAttributeStability(){
+		return stability;
 	}
 	
-	public Double[] getScoreOfBranch(NodeCT no){
-		
-		q= new Double[tree.getNumNode()];
-		
-		for(NodeCT node: no.getPathToRoot()){
+	public Double[] getScoreOfBranch(INodeTree no){
+		Double score[] = new Double[tree.getNumNode()];
+		for(NodeCT node: ((NodeCT)no).getPathToRoot()){
 			if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
-				q[node.getId()] = getStability(node);
+				score[node.getId()] = getStability(node);
 			}
 		}
-		
-		/*
-		for(NodeCT node:  no.getPathToRoot()){
-			if(q[node.getId()] != null && q[ ascendant[node.getId()].getId() ] != null && q[ descendants[node.getId()].getId() ] != null){
-				double minStabilityDesc = q[ descendants[node.getId()].getId() ];
-				double minStabilityAsc = q[ ascendant[node.getId()].getId() ];
-				
-				if(q[node.getId()] < minStabilityDesc && q[node.getId()] < minStabilityAsc){
-					//System.out.println("***" + q[node.getId()]);
-				}else{
-					//System.out.println(q[node.getId()]);
-				}
-			}
-		}
-		*/
-		
-		return q;
+		return score;
 	}
 	
 	
@@ -291,7 +271,7 @@ public class ComputerMserCT {
 		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
 		//tree.extendedTree();
 		//.extendedTree();
-		ComputerMserCT m = new ComputerMserCT(tree);
+		ComputerMserComponentTree m = new ComputerMserComponentTree(tree);
 		int delta = 10;
 		//WindowImages.show(m.getPointImageMSER(delta));
 		

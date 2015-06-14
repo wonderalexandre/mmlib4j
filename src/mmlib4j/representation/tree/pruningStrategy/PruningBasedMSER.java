@@ -5,6 +5,8 @@ import java.awt.Color;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
+import mmlib4j.representation.tree.attribute.ComputerMserTreeOfShapes;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.TreeOfShape;
@@ -49,7 +51,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			this.num = 0;
 			int rank[] = new int[tree.getNumNode()];
 			boolean rankSelected[] = new boolean[tree.getNumNode()];
-			ComputerMserCT mser = new ComputerMserCT( (ComponentTree) tree);
+			ComputerMserComponentTree mser = new ComputerMserComponentTree( (ComponentTree) tree);
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
@@ -73,7 +75,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			int rank[] = new int[tree.getNumNode()];
 			boolean rankSelected[] = new boolean[tree.getNumNode()];
 			this.num = 0;
-			ComputerMserToS mser = new ComputerMserToS((TreeOfShape) tree);
+			ComputerMserTreeOfShapes mser = new ComputerMserTreeOfShapes((TreeOfShape) tree);
 			for(int i=0; i < 50; i++){
 				boolean result[] = mser.getMappingNodesByMSER(i);
 				for(int k=0; k < result.length; k++){
@@ -95,7 +97,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	
 	public boolean[] getMappingSelectedNodes() {
 		if(tree instanceof ComponentTree){
-			ComputerMserCT mser = new ComputerMserCT( (ComponentTree) tree);
+			ComputerMserComponentTree mser = new ComputerMserComponentTree( (ComponentTree) tree);
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
@@ -104,7 +106,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			return result;
 		}
 		else if(tree instanceof TreeOfShape){
-			ComputerMserToS mser = new ComputerMserToS((TreeOfShape) tree);
+			ComputerMserTreeOfShapes mser = new ComputerMserTreeOfShapes((TreeOfShape) tree);
 			boolean result[] = mser.getMappingNodesByMSER(delta);
 			this.num = mser.getNumMSER();
 			return result;

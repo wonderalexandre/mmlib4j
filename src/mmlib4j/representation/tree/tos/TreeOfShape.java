@@ -8,7 +8,7 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueToS;
+import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
 import mmlib4j.utils.AdjacencyRelation;
 
 
@@ -313,7 +313,7 @@ public class TreeOfShape{
 	}
 
 	public GrayScaleImage segmentation(double attributeValue, int type){
-		return new ComputerExtinctionValueToS(this).segmentationByKmax((int) attributeValue, type);
+		return new ComputerExtinctionValueTreeOfShapes(this).segmentationByKmax((int) attributeValue, type);
 	}
 
 	

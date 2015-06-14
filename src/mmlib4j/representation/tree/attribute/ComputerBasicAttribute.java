@@ -49,7 +49,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	}
 	
 	
-	public void initialization(INodeTree node) {
+	public void preProcessing(INodeTree node) {
 		attr[node.getId()] = new BasicAttribute();
 		//area e volume
 		attr[node.getId()].area.value = node.getCanonicalPixels().size();
@@ -90,7 +90,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	
 	
 	
-	public void updateChildren(INodeTree node, INodeTree son) {
+	public void mergeChildren(INodeTree node, INodeTree son) {
 		attr[node.getId()].area.value = attr[node.getId()].area.value + attr[son.getId()].area.value;
 		attr[node.getId()].volume.value = attr[node.getId()].volume.value + attr[son.getId()].volume.value;
 				

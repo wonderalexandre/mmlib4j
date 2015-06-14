@@ -55,26 +55,9 @@ public class NodeCT implements INodeTree, Cloneable{
 	int area;
 	
 	Hashtable<Integer, Attribute> attributes = new Hashtable<Integer, Attribute>();
-	public void addAttribute(int key, Attribute attr){
-		attributes.put(key, attr);
-	}
-	public Attribute getAttribute(int key){
-		return attributes.get(key);
-	}
 	
-	public double getAttributeValue(int key){
-		return attributes.get(key).getValue();
-	}
-	
-	public int getNumPixelInFrame(){
-		return countPixelInFrame;
-	}
-	
-	double perimeter;
-	public int attributeValueNC[]; //vetor de atributos decrescente
-	public double mser;
 	public Contour contour = null;
-	
+
 	
 	public NodeCT(boolean isMaxtree, int numCreate, GrayScaleImage img, int canonicalPixel){
 		this.isMaxtree = isMaxtree;
@@ -105,6 +88,21 @@ public class NodeCT implements INodeTree, Cloneable{
 	
 	public boolean isNodeMaxtree(){
 		return isMaxtree;
+	}
+	
+	public void addAttribute(int key, Attribute attr){
+		attributes.put(key, attr);
+	}
+	public Attribute getAttribute(int key){
+		return attributes.get(key);
+	}
+	
+	public double getAttributeValue(int key){
+		return attributes.get(key).getValue();
+	}
+	
+	public int getNumPixelInFrame(){
+		return countPixelInFrame;
 	}
 	
 	public boolean isClone(){
@@ -139,6 +137,13 @@ public class NodeCT implements INodeTree, Cloneable{
 	
 	public int getLevel(){
 		return level;
+	}
+	
+	public int getCentroid(){
+		int xc = sumX / getArea();
+		int yc = sumY / getArea();
+		
+		return (xc + yc * img.getWidth());
 	}
 	
 	public boolean isLeaf(){
@@ -410,27 +415,10 @@ public class NodeCT implements INodeTree, Cloneable{
 	
 	
 	
-
-	public int getCentroid(){
-		int xc = sumX / getArea();
-		int yc = sumY / getArea();
-		
-		return (xc + yc * img.getWidth());
-	}
-	
 	
 	public Contour getContour() {
 		return contour;
 	}
-	
-	public void initAttributesNC(int dimensionAttributes){
-		this.attributeValueNC = new int[dimensionAttributes]; 
-
-		//atributo decrecente
-		this.attributeValueNC[IMorphologicalTreeFiltering.ATTRIBUTE_NC_VARIANCIA] = (int) (Math.pow(this.level, 2) * this.pixels.size());
-		this.attributeValueNC[IMorphologicalTreeFiltering.ATTRIBUTE_NC_PERIMETRO] = 0;
-	}
-	
 	
 	
 	public int getArea(){

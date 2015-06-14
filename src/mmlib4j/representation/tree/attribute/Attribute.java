@@ -56,6 +56,9 @@ public class Attribute {
 	//pattern euler
 	public static final int NUM_HOLES = 30;
 	
+	//mser
+	public static final int MSER = 40;
+	
 	public String toString(){
 		return String.valueOf(value);
 	}

@@ -1,4 +1,4 @@
-package mmlib4j.representation.tree.pruningStrategy;
+package mmlib4j.representation.tree.attribute;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -11,7 +11,6 @@ import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
-import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
@@ -23,19 +22,19 @@ import mmlib4j.utils.ImageBuilder;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ComputerExtinctionValueCT implements IExtinctionValue {
+public class ComputerExtinctionValueComponentTree implements ComputerExtinctionValue {
 
 	private ComponentTree tree;
 	private int type;
 	
-	public ComputerExtinctionValueCT(ComponentTree tree){
+	public ComputerExtinctionValueComponentTree(ComponentTree tree){
 		this.tree = tree;
 	}
 
 	public static void main(String args[]){
 		GrayScaleImage img  = ImageBuilder.openGrayImage();
 		ComponentTree ct = new ComponentTree(img, AdjacencyRelation.getCircular(1.5), false);
-		ComputerExtinctionValueCT e = new ComputerExtinctionValueCT(ct);
+		ComputerExtinctionValueComponentTree e = new ComputerExtinctionValueComponentTree(ct);
 		//ct.printTree();
 		WindowImages.show(e.extinctionByAttribute(100, 500, Attribute.AREA));
 	}

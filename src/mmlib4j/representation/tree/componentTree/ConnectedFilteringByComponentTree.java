@@ -15,11 +15,11 @@ import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
+import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
+import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerPatternEulerAttribute;
-import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueCT;
-import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueCT.ExtinctionValueNode;
-import mmlib4j.representation.tree.pruningStrategy.ComputerMserCT;
-import mmlib4j.representation.tree.pruningStrategy.ComputerTbmrCT;
+import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
+import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -135,11 +135,11 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	
 	ArrayList<ExtinctionValueNode> extincaoPorNode;
-	ComputerExtinctionValueCT extinctionValue;
+	ComputerExtinctionValueComponentTree extinctionValue;
 	public GrayScaleImage filteringByExtinctionValue(double attributeValue, int type){
 		long ti = System.currentTimeMillis();
 		if(extinctionValue == null){
-			extinctionValue = new ComputerExtinctionValueCT(this);
+			extinctionValue = new ComputerExtinctionValueComponentTree(this);
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(type);
 		}
 		if(extinctionValue.getType() != type)
@@ -233,7 +233,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		long ti = System.currentTimeMillis();
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
 		
-		extinctionValue = new ComputerExtinctionValueCT(this);
+		extinctionValue = new ComputerExtinctionValueComponentTree(this);
 		extincaoPorNode = extinctionValue.getExtinctionValueCut(type);
 		if(Utils.debug)
 			System.out.println("EV: Tempo1: "+ ((System.currentTimeMillis() - ti) /1000.0)  + "s");
@@ -327,7 +327,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public InfoPrunedTree getPrunedTreeByMSER(double attributeValue, int type, int delta){
 		long ti = System.currentTimeMillis();
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
-		ComputerMserCT mser = new ComputerMserCT(this);
+		ComputerMserComponentTree mser = new ComputerMserComponentTree(this);
 		boolean resultPruning[] = new boolean[this.getNumNode()];
 		LinkedList<NodeCT> list = mser.getNodesByMSER(delta);
 		for(NodeCT node: list){
@@ -386,7 +386,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public InfoPrunedTree getPrunedTreeByTBMR(double attributeValue, int type, int tMin, int tMax){
 		long ti = System.currentTimeMillis();
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
-		ComputerTbmrCT tbmr = new ComputerTbmrCT(this);
+		ComputerTbmrComponentTree tbmr = new ComputerTbmrComponentTree(this);
 		boolean resultPruning[] = new boolean[this.getNumNode()];
 		boolean result[] = tbmr.getSelectedNode(tMin, tMax);
 		for(NodeCT node: listNode){

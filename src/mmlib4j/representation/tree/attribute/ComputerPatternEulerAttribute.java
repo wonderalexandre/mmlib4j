@@ -40,7 +40,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 		}
 	}
 	
-	public void initialization(INodeTree node) {
+	public void preProcessing(INodeTree node) {
 		attr[node.getId()] = new PatternEulerAttribute();
 		this.isMaxtree = node.isNodeMaxtree();
 		if(isMaxtree)
@@ -54,7 +54,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 		
 	}
 	
-	public void updateChildren(INodeTree node, INodeTree son) {
+	public void mergeChildren(INodeTree node, INodeTree son) {
 		attr[node.getId()].countPatternChildrenC1 += attr[son.getId()].countPatternC1;
 		attr[node.getId()].countPatternChildrenC2 += attr[son.getId()].countPatternC2;
 	}

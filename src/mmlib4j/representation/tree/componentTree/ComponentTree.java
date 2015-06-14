@@ -11,7 +11,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
-import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueCT;
+import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 

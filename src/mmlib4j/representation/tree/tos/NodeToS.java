@@ -13,6 +13,7 @@ import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 
 
 /**
@@ -465,4 +466,29 @@ public class NodeToS implements INodeTree, Cloneable{
 	public int hashCode(){
 		return id;
 	}
+	
+
+	public Iterable<NodeToS> getPathToRoot(){
+		final NodeToS node = this;
+		return new Iterable<NodeToS>() {
+			public Iterator<NodeToS> iterator() {
+				return new Iterator<NodeToS>() {
+					NodeToS nodeRef = node;
+					public boolean hasNext() {
+						return nodeRef != null;
+					}
+
+					public NodeToS next() {
+						NodeToS n = nodeRef;
+						nodeRef = nodeRef.parent;
+						return n;
+					}
+
+					public void remove() { }
+					
+				};
+			}
+		};
+	}
+	
 }

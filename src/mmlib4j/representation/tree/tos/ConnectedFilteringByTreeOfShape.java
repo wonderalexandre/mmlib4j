@@ -12,8 +12,8 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.InfoPrunedTree;
-import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueToS;
-import mmlib4j.representation.tree.pruningStrategy.ComputerExtinctionValueToS.ExtinctionValueNode;
+import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
+import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
 import mmlib4j.utils.Utils;
 
 
@@ -238,11 +238,11 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 	
 	
 	ArrayList<ExtinctionValueNode> extincaoPorNode;
-	ComputerExtinctionValueToS extinctionValue;
+	ComputerExtinctionValueTreeOfShapes extinctionValue;
 	public GrayScaleImage filteringExtinctionValue(double attributeValue, int type){
 		long ti = System.currentTimeMillis();
 		if(extinctionValue == null){
-			extinctionValue = new ComputerExtinctionValueToS(this);
+			extinctionValue = new ComputerExtinctionValueTreeOfShapes(this);
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(attributeValue, type);
 		}
 		if(extinctionValue.getType() != type)

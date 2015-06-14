@@ -6,19 +6,20 @@ import mmlib4j.representation.tree.INodeTree;
 
 public abstract class AttributeComputedIncrementally {
 	
-	public abstract void initialization(INodeTree v);
+	public abstract void preProcessing(INodeTree v);
 	
-	public abstract void updateChildren(INodeTree parent, INodeTree son);
+	public abstract void mergeChildren(INodeTree parent, INodeTree son);
 	
 	public abstract void posProcessing(INodeTree parent);
 	
 	public void computerAttribute(INodeTree root){
-		initialization(root);
+		preProcessing(root);
 		List<INodeTree> children = root.getChildren();
 		for(INodeTree son: children){
 			computerAttribute(son);
-			updateChildren(root, son);
+			mergeChildren(root, son);
 		}
 		posProcessing(root);
 	}
+	
 }
