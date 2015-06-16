@@ -260,7 +260,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 	 * @param imgWidth => largura da imagem
 	 * @param imgHeight => altura da imagem
 	 * @param adj => relacao de adjacentes
-	 * @param isMaxtree => true para maxtree e false para mintree
+	 * @param isNodeMaxtree => true para maxtree e false para mintree
 	 * 
 	 * @return raiz da arvore de componentes
 	 */

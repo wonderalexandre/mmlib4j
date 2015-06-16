@@ -7,7 +7,9 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
@@ -26,6 +28,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img){
 		super(img, -1, -1);
+		loadAttribute();
 	}
 	
 	protected ConnectedFilteringByTreeOfShape(BuilderTreeOfShapeByUnionFind build){
@@ -33,20 +36,25 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 	}
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
-		super(img, xInfinito, yInfinito);		
+		super(img, xInfinito, yInfinito);
+		loadAttribute();
 	}
 	
 	public HashSet<NodeToS> getListNodes(){
 		return listNode; 
 	}
-
+	
 
 	public void loadAttribute(){
 		long ti = System.currentTimeMillis();
 		new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesToS(getListNodes());
 		new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
 		new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesToS(getListNodes());
-		new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesToS(getListNodes());
+		
+		//new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesToS(getListNodes());
+		for(NodeToS node: getListNodes()){
+			node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, node.getNumHoles()));
+		}
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
 			System.out.println("Tempo de execucao [computer attributes] "+ ((tf - ti) /1000.0)  + "s");

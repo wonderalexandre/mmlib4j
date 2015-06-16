@@ -1,5 +1,9 @@
 package mmlib4j.representation.tree.attribute;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -10,6 +14,7 @@ public class Attribute {
 	
 	double value;
 	int type;
+	private static DecimalFormat df;
 	
 	public Attribute(int t){
 		type = t;
@@ -29,12 +34,13 @@ public class Attribute {
 	}
 	
 	
+	
 	//basic attributes
 	public static final int AREA = 0;
 	public static final int VOLUME = 1;
 	public static final int HEIGHT = 2;
 	public static final int WIDTH = 3;
-	public static final int ALTITUDE = 9;
+	public static final int ALTITUDE = 4;
 	public static final int PERIMETER = 10;
 	public static final int VARIANCE_LEVEL = 11;
 	
@@ -42,7 +48,7 @@ public class Attribute {
 	public static final int CIRCULARITY = 15;
 	public static final int COMPACTNESS = 16;
 	public static final int ELONGATION = 17;
-	public static final int RECTANGULARITY = 17;
+	public static final int RECTANGULARITY = 18;
 	
 	//attributes based on moments
 	public static final int MOMENT_CENTRAL_20 = 20;
@@ -63,10 +69,46 @@ public class Attribute {
 	//mser
 	public static final int MSER = 40;
 	
+	public String getHeader(){
+		switch(type){
+			case ALTITUDE: return "ALTITUDE";	
+			case AREA: return "AREA";
+			case CIRCULARITY: return "CIRCULARITY";
+			case COMPACTNESS: return "COMPACTNESS";
+			case ELONGATION: return "ELONGATION";
+			case HEIGHT: return "HEIGHT";
+			case MOMENT_ASPECT_RATIO: return "MOMENT_ASPECT_RATIO";
+			case MOMENT_CENTRAL_02: return "MOMENT_CENTRAL_02";
+			case MOMENT_CENTRAL_11: return "MOMENT_CENTRAL_11";
+			case MOMENT_CENTRAL_20: return "MOMENT_CENTRAL_20";
+			case MOMENT_COMPACTNESS: return "MOMENT_COMPACTNESS";
+			case MOMENT_ECCENTRICITY: return "MOMENT_ECCENTRICITY";
+			case MOMENT_ELONGATION: return "MOMENT_ELONGATION";
+			case MOMENT_LENGTH_MAJOR_AXES: return "MOMENT_LENGTH_MAJOR_AXES";
+			case MOMENT_LENGTH_MINOR_AXES: return "MOMENT_LENGTH_MINOR_AXES";
+			case MOMENT_ORIENTATION: return "MOMENT_ORIENTATION";
+			case MSER: return "MSER";
+			case NUM_HOLES: return "NUM_HOLES";
+			case PERIMETER: return "PERIMETER";
+			case PERIMETER_EXTERNAL: return "PERIMETER_EXTERNAL";
+			case RECTANGULARITY: return "RECTANGULARITY";
+			case VARIANCE_LEVEL: return "VARIANCE_LEVEL";
+			case VOLUME: return "VOLUME";
+			case WIDTH: return "WIDTH";
+			default: return "UNDEFINED";
+		}
+	}
 	
+
+	public String getValueFormat(){
+		if(df == null){
+			 df = new DecimalFormat("0.0000000", new DecimalFormatSymbols(Locale.ENGLISH));
+		}
+		return df.format(value);
+	}
 	
 	public String toString(){
-		return String.valueOf(value);
+		return String.valueOf(getValueFormat());
 	}
 	
 }

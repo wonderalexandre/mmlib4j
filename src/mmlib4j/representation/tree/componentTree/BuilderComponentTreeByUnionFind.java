@@ -277,7 +277,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
  	 * Ordencao crescente dos pixels: imgR[lenght-1], imgR[lenght-2], ..., imgR[0]   
  	 * Ordencao decrescente dos pixels: imgR[0], imgR[1], ..., imgR[lenght-1]
 	 * @param img => pixels da imagem
-	 * @param isMaxtree => true para maxtree e false para mintree 
+	 * @param isNodeMaxtree => true para maxtree e false para mintree 
 	 */
 	public void sort(){
 		PriorityQueueDial fifo = null;

@@ -1,6 +1,7 @@
 package mmlib4j.representation.tree.tos;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,41 +28,49 @@ public class NodeToS implements INodeTree, Cloneable{
 	int id;
 	int heightNode;
 	int numDescendent;
-	boolean isClone = false;
+	int numDescendentLeaf;
+	int numSiblings;
 	
+	int countPixelInFrame;
 	boolean isNodeMaxtree;
+	boolean isClone = false;
+	NodeToS parent;
+	List<NodeToS> children = new ArrayList<NodeToS>();
+	SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
+	
+	
+	public boolean flagPruning;
+	public boolean flagProcess;
+	
+	
+	//basic attribute node
 	int xmin;
 	int ymin;
 	int xmax;
 	int ymax;
 	int sumX;
-	int sumY;
-	int area;
-	int countPixelInFrame;
-	int countHoles;
-
+	int sumY;	
 	int pixelXmax;
 	int pixelXmin;
 	int pixelYmin;
 	int pixelYmax;
+	int area;
+	int countHoles;
+	Hashtable<Integer, Attribute> attributes = new Hashtable<Integer, Attribute>();
+	Contour contourE = null;
 	
-	public boolean flagPruning;
-	public boolean flagProcess;
-	
-	NodeToS parent;
-	List<NodeToS> children = new ArrayList<NodeToS>();
-	private SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
-	Contour contour = null;
-	
+
 	public void addAttribute(int key, Attribute attr){
-		
+		attributes.put(key, attr);
 	}
 	public Attribute getAttribute(int key){
-		return null;
+		return attributes.get(key);
 	}
+	
 	public double getAttributeValue(int key){
-		return 0;
+		return attributes.get(key).getValue();
 	}
+	
 	
 	public NodeToS(int numCreate, int level, GrayScaleImage img, int canonicalPixel){
 		this.id = numCreate;

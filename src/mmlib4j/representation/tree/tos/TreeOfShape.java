@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -53,7 +54,7 @@ public class TreeOfShape{
 		this.build = new BuilderTreeOfShapeByUnionFindParallel(img, xInfinito, yInfinito);
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
-		computerHeightNodes(this.root, 0);
+		computerInforTree(this.root, 0);
 		createNodesMap();
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
@@ -107,23 +108,43 @@ public class TreeOfShape{
 	}
 	
 
-	public void computerHeightNodes(NodeToS node, int height){
+	public void computerInforTree(NodeToS node, int height){
+		
 		node.heightNode = height;
+		if(height > heightTree)
+			heightTree = height;
+		
 		if(node != root){
+			node.numSiblings = node.parent.children.size();
 			if(node.parent.level <= node.level)
 				node.isNodeMaxtree = true; //maxtree
 			else if(node.parent.level >= node.level)
 				node.isNodeMaxtree = false; //mintree
 		}
-		if(height > heightTree)
-			heightTree = height;
-		if(node.children != null){
-			for(NodeToS son: node.children){
-				computerHeightNodes(son, height + 1);
-				if(node.isNodeMaxtree != son.isNodeMaxtree)
-					node.countHoles++;
+		else{
+			node.numSiblings = 0;
+			if(node.getLevel() == imgInput.minValue()){
+				node.isNodeMaxtree = true;
+			}else{
+				node.isNodeMaxtree = false;
 			}
 		}
+		
+		for(NodeToS son: node.children){
+			computerInforTree(son, height + 1);
+			
+			if(node.isNodeMaxtree != son.isNodeMaxtree)
+				node.countHoles++;
+			if(son.isLeaf())
+				node.numDescendentLeaf += 1; 
+			node.numDescendent += son.numDescendent;
+			node.numDescendentLeaf += son.numDescendentLeaf;
+			node.sumX += son.sumX;
+			node.sumY += son.sumY;
+			node.area += son.area;
+		}
+		
+		
 	}
 	
 	public Iterable<NodeToS> getPathToRoot(final NodeToS node){

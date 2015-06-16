@@ -11,6 +11,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -56,7 +57,7 @@ public class ComponentTree {
 		this.numNode = builder.getNunNode();
 		this.map = builder.getMap();
 		this.listNode = builder.getListNodes();
-		computerHeightNodes(this.root, 0);
+		computerInforTree(this.root, 0);
 		
 		//computerAdjcencyNodes();
 		long tf = System.currentTimeMillis();
@@ -84,7 +85,7 @@ public class ComponentTree {
 		this.map = builder.getMap();
 		this.listNode = builder.getListNodes();
 		
-		computerHeightNodes(this.root, 0);
+		computerInforTree(this.root, 0);
 		
 	}
 	
@@ -367,27 +368,30 @@ public class ComponentTree {
 		return map;
 	}
 	
-	public void computerHeightNodes(NodeCT node, int height){
+	public void computerInforTree(NodeCT node, int height){
+		node.isNodeMaxtree = isMaxtree;
 		node.heightNode = height;
 		if(height > heightTree)
 			heightTree = height;
 		
-		node.numDescendent = node.children.size();
+		if(node != root){
+			node.numSiblings = node.parent.children.size();
+		}
 		
 		for(NodeCT son: node.children){
+			computerInforTree(son, height + 1);
+			
 			if(son.isLeaf())
 				node.numDescendentLeaf += 1; 
-			
-			computerHeightNodes(son, height + 1);
-			
 			node.numDescendent += son.numDescendent;
+			node.numDescendentLeaf += son.numDescendentLeaf;
 			node.sumX += son.sumX;
 			node.sumY += son.sumY;
 			node.area += son.area;
-			node.numDescendentLeaf += son.numDescendentLeaf;
 		}
 		
 	}
+	
 	
 	public HashSet<NodeCT> getListNodes(){
 		return listNode;

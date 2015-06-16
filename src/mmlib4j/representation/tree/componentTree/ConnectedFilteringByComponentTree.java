@@ -83,7 +83,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 		
 		createNodesMap();
-		computerHeightNodes(this.root, 0);
+		computerInforTree(this.root, 0);
 
 	}
 	

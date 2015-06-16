@@ -30,12 +30,14 @@ public class NodeCT implements INodeTree, Cloneable{
 	int id;
 	int numDescendent;
 	int numDescendentLeaf;
-
+	int numSiblings;
+	
 	public boolean flagProcess;
 	public boolean flagPruning = true;
-	private int countPixelInFrame;
+	
+	int countPixelInFrame;
 	boolean isClone = false;
-	boolean isMaxtree;
+	boolean isNodeMaxtree;
 	NodeCT parent;
 	List<NodeCT> children = new ArrayList<NodeCT>();
 	SimpleLinkedList<NodeCT> adjcencyNodes = new SimpleLinkedList<NodeCT>();
@@ -54,11 +56,11 @@ public class NodeCT implements INodeTree, Cloneable{
 	int pixelYmax;
 	int area;
 	Hashtable<Integer, Attribute> attributes = new Hashtable<Integer, Attribute>();
-	public Contour contourE = null;
+	Contour contourE = null;
 
 	
 	public NodeCT(boolean isMaxtree, int numCreate, GrayScaleImage img, int canonicalPixel){
-		this.isMaxtree = isMaxtree;
+		this.isNodeMaxtree = isMaxtree;
 		this.id = numCreate;
 		this.img = img;
 		this.canonicalPixel = canonicalPixel; 
@@ -68,7 +70,7 @@ public class NodeCT implements INodeTree, Cloneable{
 	}
 	
 	public boolean isMaxtree() {
-		return isMaxtree;
+		return isNodeMaxtree;
 	}
 
 	
@@ -85,7 +87,7 @@ public class NodeCT implements INodeTree, Cloneable{
 	}
 	
 	public boolean isNodeMaxtree(){
-		return isMaxtree;
+		return isNodeMaxtree;
 	}
 	
 	public void addAttribute(int key, Attribute attr){
@@ -210,7 +212,7 @@ public class NodeCT implements INodeTree, Cloneable{
 
 	public NodeCT getAncestral(int level){
 		NodeCT node = this;
-		if(isMaxtree){
+		if(isNodeMaxtree){
 			while(node.level > level){
 				node = node.parent;
 			}
@@ -409,7 +411,7 @@ public class NodeCT implements INodeTree, Cloneable{
 	
 	public Contour getContour() {
 		if(contourE == null){
-			ContourTracer c = new ContourTracer(true, isMaxtree, img, level);
+			ContourTracer c = new ContourTracer(true, isNodeMaxtree, img, level);
 			int x = pixelYmin % img.getWidth();
 			int y = pixelYmin / img.getWidth(); 
 			this.contourE = c.findOuterContours(x, y);
