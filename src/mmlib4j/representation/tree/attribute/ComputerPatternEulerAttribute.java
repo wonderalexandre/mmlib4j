@@ -14,6 +14,8 @@ import mmlib4j.utils.Utils;
  * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
+ * Implementation of paper:
+ * Juan Climent, Luiz S. Oliveira, A new algorithm for number of holes attribute filtering of grey-level images, Pattern Recognition Letters, 2014.
  */
 public class ComputerPatternEulerAttribute extends AttributeComputedIncrementally{
 

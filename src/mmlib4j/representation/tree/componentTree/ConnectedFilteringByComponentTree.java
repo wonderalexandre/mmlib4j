@@ -47,7 +47,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesCT(getListNodes());
 		new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesCT(getListNodes());
 		new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
-		new ComputerDistanceTransform(numNode, getRoot(), imgInput);
+		//new ComputerDistanceTransform(numNode, getRoot(), imgInput);
 		
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();

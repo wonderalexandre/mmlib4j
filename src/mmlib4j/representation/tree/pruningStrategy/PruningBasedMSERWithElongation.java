@@ -30,7 +30,7 @@ public class PruningBasedMSERWithElongation extends PruningBasedMSER{
 		if(tree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) this.tree;
 			for(NodeCT node: tree.getNodesMap()){
-				if(isNodeElongation( node ) || (mser[node.getId()] && node.getAttributeValue(Attribute.MOMENT_ELONGATION) < 0.7 && node.getArea() > 50)){
+				if(isNodeElongation( node ) || (mser[node.getId()] && node.getAttributeValue(Attribute.MOMENT_ELONGATION) < 1) ){
 					mserElongation[node.getId()] = true;
 				}
 			}
@@ -77,12 +77,20 @@ public class PruningBasedMSERWithElongation extends PruningBasedMSER{
 		}
 	}
 	
+	int areaMin;
+	int areaMax;
+	double elongation;
+	
+	public void setParametersElongationFunction(int areaMin, int areaMax, double elon){
+		this.areaMin = areaMin;
+		this.areaMax = areaMax;
+		this.elongation = elon;
+	}
 
 
 	public boolean isNodeElongation(NodeCT node){
 		//System.out.println(node.moment.elongation());
-		if(node.getAttributeValue(Attribute.MOMENT_ELONGATION) < 1 && node.getArea() > 1000 && node.getArea() < 23500){
-			//WindowImages.show(node.createImageSC());
+		if(node.getAttributeValue(Attribute.MOMENT_ELONGATION) < elongation && node.getArea() >= areaMin && node.getArea() <= areaMax){
 			return true;
 		}
 		else
