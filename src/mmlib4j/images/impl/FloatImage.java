@@ -4,14 +4,14 @@ import mmlib4j.images.RealImage;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  * @description
  * Classe que representa uma imagem float   
  * 
  */ 
-public class FloatImageImpl extends AbstractImage2D implements RealImage {
+public class FloatImage extends AbstractImage2D implements RealImage {
 
     private float pixels[]; //matriz de pixel da imagem
     
@@ -21,7 +21,7 @@ public class FloatImageImpl extends AbstractImage2D implements RealImage {
      * @param width - largura
      * @param height - altura
      */
-    FloatImageImpl(int width, int height) {
+    FloatImage(int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = new float[width * height];
@@ -32,7 +32,7 @@ public class FloatImageImpl extends AbstractImage2D implements RealImage {
      * @param width - largura
      * @param height - altura
      */
-    FloatImageImpl(float pixels[], int width, int height) {
+    FloatImage(float pixels[], int width, int height) {
         setPixels(width, height,pixels);
     }
     
@@ -52,8 +52,8 @@ public class FloatImageImpl extends AbstractImage2D implements RealImage {
      * Cria uma copia da imagem original
      * @return FloatImage - nova imagem
      */
-    public FloatImageImpl duplicate(){
-        FloatImageImpl clone = new FloatImageImpl(getWidth(), getHeight());
+    public FloatImage duplicate(){
+        FloatImage clone = new FloatImage(getWidth(), getHeight());
         System.arraycopy(this.pixels, 0, clone.pixels, 0, this.pixels.length);
         return clone;
     }
@@ -147,7 +147,7 @@ public class FloatImageImpl extends AbstractImage2D implements RealImage {
      * @return true se forem iguais false caso contrario
      */
     public boolean equals(Object o){
-        FloatImageImpl img = (FloatImageImpl) o;
+        FloatImage img = (FloatImage) o;
         for(int x = 0 ; x < getWidth() ; x++)
             for(int y = 0 ; y < getHeight(); y++)
                 if(getPixel(x, y) != img.getPixel(x, y)) 

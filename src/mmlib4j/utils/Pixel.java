@@ -2,14 +2,13 @@ package mmlib4j.utils;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
 public class Pixel {
 	public int x;
 	public int y;
-	
 	public int direction;
 	
 	public Pixel(int x, int y){

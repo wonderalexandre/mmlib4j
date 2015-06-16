@@ -15,7 +15,7 @@ import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageAlgebra;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -41,8 +41,8 @@ public class UltimateLevelingByReconstruction {
 	
 	public UltimateLevelingByReconstruction(GrayScaleImage img, int type) {
 		this.imgInput = img;
-		this.mintree = new ComponentTree(img,AdjacencyRelation.getAdjacency8(), false, false);
-		this.maxtree = new ComponentTree(img,AdjacencyRelation.getAdjacency8(), true, false);
+		this.mintree = new ComponentTree(img,AdjacencyRelation.getAdjacency8(), false);
+		this.maxtree = new ComponentTree(img,AdjacencyRelation.getAdjacency8(), true);
 		this.maxtree.extendedTree();
 		this.mintree.extendedTree();
 	}

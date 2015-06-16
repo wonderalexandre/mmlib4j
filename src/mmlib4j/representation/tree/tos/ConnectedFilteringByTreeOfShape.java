@@ -2,30 +2,27 @@ package mmlib4j.representation.tree.tos;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import mmlib4j.datastruct.Queue;
-import mmlib4j.filtering.binary.ContourTracer;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
+import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
+import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
+import mmlib4j.representation.tree.attribute.ComputerPatternEulerAttribute;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
 import mmlib4j.utils.Utils;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
 public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMorphologicalTreeFiltering{
-	
-	protected boolean isLine = false;
-	protected boolean processedLine = false;
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img){
 		super(img, -1, -1);
@@ -33,76 +30,33 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 	
 	protected ConnectedFilteringByTreeOfShape(BuilderTreeOfShapeByUnionFind build){
 		super(build);
-		computerMoment(this.root);
-		//computerAttributePattern();
-		//setContours(false);
 	}
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
-		super(img, xInfinito, yInfinito);
-		//computerAttributePattern();
-		computerMoment(this.root);
-		//setContours(false);
-		
+		super(img, xInfinito, yInfinito);		
 	}
 	
 	public HashSet<NodeToS> getListNodes(){
 		return listNode; 
 	}
 
-	public void computerMoment( ){
-		computerMoment(this.root);
-	}
 
-	private ThreadPoolExecutor pool; 
-	public void setContours(boolean b){
-		isLine = b;
-		if(!processedLine){
-			pool =  new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-			processedLine = true;
-			long ti = System.currentTimeMillis();
-			computerCountors(root);
-			while(pool.getActiveCount() != 0);
-			long tf = System.currentTimeMillis();
-			System.out.println("Tempo de execucao [ToS - extraction of countors]  "+ ((tf - ti) /1000.0)  + "s");
-		}
+	public void loadAttribute(){
+		long ti = System.currentTimeMillis();
+		new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesToS(getListNodes());
+		new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
+		new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesToS(getListNodes());
+		new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesToS(getListNodes());
+		long tf = System.currentTimeMillis();
+		if(Utils.debug)
+			System.out.println("Tempo de execucao [computer attributes] "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
-	public void computerCountors(NodeToS root){
-		if(root.children != null){ //computa os atributos para os filhos
-			for(NodeToS son: root.children){
-				computerCountors(son);
-			}
-		}
-		if(root.getArea() > 10){
-			pool.execute(new ThreadNodeToSPerimeter(root, width, height));
-		}
-		
-	}
-	
-	
-
 	private double getAttribute(NodeToS node, int type){
-		/*if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ECCENTRICITY)
-			return node.eccentricity();
-		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_MAJOR_AXES)
-			return node.getLengthMajorAxes();
-		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_ORIENTATION)
-			return node.getMomentOrientation();
-		else*/ if(type == IMorphologicalTreeFiltering.ATTRIBUTE_CIRCULARITY)
-			return (4.0 * Math.PI * node.getArea()) / (node.contour.getPixels().size());
-		else if(type == IMorphologicalTreeFiltering.ATTRIBUTE_RETANGULARITY)
-			return node.getArea() / (double) (node.getWidthNode() * node.getHeightNode());
-		else
-			return node.attributeValue[type];
+		return node.getAttributeValue(type);
 	}
-
 	
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		return reconstruction(prunedTree, false);
-	}
-	
-	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree, boolean countors){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(getInputImage());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
 		fifo.enqueue( prunedTree.getRoot() );
@@ -111,26 +65,17 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 			NodeToS node = (NodeToS) node_.getInfo();
 			for(NodeToS son: node.getChildren()){
 				if(prunedTree.wasPruned(son)){
-					if(!countors){
-						for(int p: son.getPixelsOfCC()){
-							imgOut.setPixel(p, node.getLevel());
-						}
+					for(int p: son.getPixelsOfCC()){
+						imgOut.setPixel(p, node.getLevel());
 					}
 				}
 			}
-			if(!countors){
-				for(int p: node.getCanonicalPixels()){
-					imgOut.setPixel(p, node.getLevel());
-				}
-			}else{
-				for(int p: node.contour.getPixels()){
-					imgOut.setPixel(p, 255);
-				}
+			for(int p: node.getCanonicalPixels()){
+				imgOut.setPixel(p, node.getLevel());
 			}
 			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){
 				fifo.enqueue( son );	
 			}
-			
 		}
 		return imgOut;
 	}
@@ -141,7 +86,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
 		for(NodeToS no: getListNodes()){
 			if(! (getAttribute(no, type) <= attributeValue) ){ //poda
-				
 				prunedTree.addNodeNotPruned(no);
 			}
 		}
@@ -168,40 +112,22 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 			NodeToS no = fifo.dequeue();
 			//double bb = no.getArea() / ((double) no.getWidthNode() * no.getHeightNode());
 			if(getAttribute(no, type) <= attributeValue){// && bb > 0.85){ // ){ //poda
-				
-				if(!isLine){
-					int levelPropagation = no.parent == null ? no.level : no.parent.level;
-					//propagacao do nivel do pai para os filhos 
-					Queue<NodeToS> fifoPruning = new Queue<NodeToS>();
-					fifoPruning.enqueue(no);	
-					while(!fifoPruning.isEmpty()){
-						NodeToS nodePruning = fifoPruning.dequeue();
-						for(NodeToS song: nodePruning.children){
-							fifoPruning.enqueue(song);
-						}
-						for(Integer p: nodePruning.getCanonicalPixels())
-							imgOut.setPixel(p, levelPropagation);
-						
+				int levelPropagation = no.parent == null ? no.level : no.parent.level;
+				//propagacao do nivel do pai para os filhos 
+				Queue<NodeToS> fifoPruning = new Queue<NodeToS>();
+				fifoPruning.enqueue(no);	
+				while(!fifoPruning.isEmpty()){
+					NodeToS nodePruning = fifoPruning.dequeue();
+					for(NodeToS song: nodePruning.children){
+						fifoPruning.enqueue(song);
 					}
-				}else{
-					if(isLine){
-						if(no.parent != null)
-							for(Integer p: no.parent.contour.getPixels()){
-								imgOut.setPixel(p, 255);
-							}
-					}
+					for(Integer p: nodePruning.getCanonicalPixels())
+						imgOut.setPixel(p, levelPropagation);
 				}
 			}
 			else{
-				if(isLine){
-					for(Integer p: no.contour.getPixels()){
-						imgOut.setPixel(p, 255);
-					}
-				}else{
-					for(Integer p: no.getCanonicalPixels()){
-						imgOut.setPixel(p, no.level);
-					}
-					
+				for(Integer p: no.getCanonicalPixels()){
+					imgOut.setPixel(p, no.level);
 				}
 				
 				if(no.children != null){
@@ -230,8 +156,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 	public GrayScaleImage filtering(double attributeValue, int type, int typePruning){
 		if(typePruning == IMorphologicalTreeFiltering.EXTINCTION_VALUE)
 			return filteringExtinctionValue(attributeValue, type);
-		else if(typePruning == IMorphologicalTreeFiltering.PRUNING)
-			return filteringByPruning(attributeValue, type);
 		else	
 			return filteringByPruning(attributeValue, type);
 	}
@@ -291,57 +215,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 			System.out.println("Tempo de execucao [tree of shape - extinction value - direct]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 		return imgOut;
-	}
-	
-	
-
-	/**
-	 * Metodo utilizado para criar uma instancia da maxtree. 
-	 * Os atributos computados sao crescentes
-	 * @param img - imagem de entrada
-	 * @return Maxtree
-	 */
-	public void computerMoment(NodeToS root){
-		root.initMoment();
-		if(root.children != null){ //computa os atributos para os filhos
-			for(NodeToS son: root.children){
-				computerMoment(son);
-				root.updateMoment(son.moment);
-			}
-		}
-	}
-
-	
-	
-}
-
-
-
-class ThreadNodeToSPerimeter extends Thread {
-	NodeToS node;
-	ContourTracer contour;
-	public ThreadNodeToSPerimeter(NodeToS node, int w, int h){
-		this.node = node;
-		this.contour = new ContourTracer(w, h, true);
-	}
-		
-	public void run() {
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
-		fifo.enqueue(node);
-		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
-			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
-					fifo.enqueue(son);
-				}
-			}
-			for(Integer p: no.getCanonicalPixels()){
-				contour.addPixelForeground(p);
-			}
-		}
-		node.contour = contour.findOuterContours();
-		node.attributeValue[IMorphologicalTreeFiltering.ATTRIBUTE_PERIMETER] = (int) node.contour.getPerimeter();
-		//System.out.println("terminou: " + node.getId());
 	}
 	
 }

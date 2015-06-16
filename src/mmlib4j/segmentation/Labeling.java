@@ -8,11 +8,10 @@ import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
-import mmlib4j.utils.ImageUtils;
 import mmlib4j.utils.Pixel;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */

@@ -17,7 +17,7 @@ import mmlib4j.utils.ImageBuilder;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -79,7 +79,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	protected double getStabilityByBoundary(NodeCT node){
 		if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
-			return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double)node.getPerimeterExternal();
+			return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double)node.getAttributeValue(Attribute.PERIMETER_EXTERNAL);
 		}
 		else{
 			return Double.MAX_VALUE;

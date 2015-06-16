@@ -7,7 +7,7 @@ import mmlib4j.images.RealImage;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -80,11 +80,11 @@ public class ImageFactory {
 	}
 	
 	public static RealImage createFloatImage(int width, int height){
-		return new FloatImageImpl(width, height);
+		return new FloatImage(width, height);
 	}
 	
 	public static RealImage createFloatImage(float pixels[], int width, int height){
-		return new FloatImageImpl(pixels, width, height);
+		return new FloatImage(pixels, width, height);
 	}
 	
 	

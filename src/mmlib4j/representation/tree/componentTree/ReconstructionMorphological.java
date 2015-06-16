@@ -13,7 +13,7 @@ import mmlib4j.utils.Utils;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -24,8 +24,8 @@ public class ReconstructionMorphological {
 	
 	public ReconstructionMorphological(GrayScaleImage img){
 		this.imgInput = img;
-		this.mintree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), false, false);
-		this.maxtree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), true, false);
+		this.mintree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
+		this.maxtree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), true);
 		this.maxtree.extendedTree();
 		this.mintree.extendedTree();
 	}
@@ -33,10 +33,10 @@ public class ReconstructionMorphological {
 	public ReconstructionMorphological(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		this.imgInput = img;
 		if(isMaxtree){
-			this.maxtree = new ComponentTree(img, adj, isMaxtree, false);
+			this.maxtree = new ComponentTree(img, adj, isMaxtree);
 			this.maxtree.extendedTree();
 		}else{	
-			this.mintree = new ComponentTree(img, adj, isMaxtree, false);
+			this.mintree = new ComponentTree(img, adj, isMaxtree);
 			this.mintree.extendedTree();
 		}
 		

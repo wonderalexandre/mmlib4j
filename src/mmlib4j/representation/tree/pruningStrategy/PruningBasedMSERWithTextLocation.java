@@ -1,6 +1,5 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -10,17 +9,14 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
 public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
-
-	private GrayScaleImage imgInput;
 	
 	public PruningBasedMSERWithTextLocation(IMorphologicalTreeFiltering tree, int delta){
 		super(tree, delta);
-		imgInput = tree.getInputImage();
 	}
 	
 	public boolean[] getMappingSelectedNodes() {		
@@ -91,7 +87,7 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 		}
 		
 		int psiColor = 0;
-		if(node.getHomogeneity() <= 30)
+		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 30)
 			psiColor = 1;
 		
 		return psiArea + psiRect + psiRate + psiColor + psiHeight + psiWidth == 6;
@@ -101,10 +97,10 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 
 
 	public boolean isNodeTextLocation(NodeToS node){
-		int widthNode = node.getWidthNode();
-		int heightNode = node.getHeightNode();
-		int areaBB = widthNode * heightNode;
-		double ratioAreaBB = node.getArea() / (double) areaBB;
+		double widthNode = node.getAttributeValue(Attribute.WIDTH);
+		double heightNode = node.getAttributeValue(Attribute.HEIGHT);
+		double areaBB = widthNode * heightNode;
+		double ratioAreaBB = node.getArea() / areaBB;
 		double ratioWH = Math.max(widthNode, heightNode) / Math.min(widthNode, heightNode);
 		int numHoles= node.getNumHoles();
 		
@@ -138,7 +134,7 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 		}
 		
 		int psiColor = 0;
-		if(node.getHomogeneity() <= 30)
+		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 30)
 			psiColor = 1;
 		
 

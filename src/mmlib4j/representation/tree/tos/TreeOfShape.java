@@ -7,13 +7,12 @@ import java.util.LinkedList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
 import mmlib4j.utils.AdjacencyRelation;
+import mmlib4j.utils.Utils;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -43,6 +42,7 @@ public class TreeOfShape{
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
 		createNodesMap();
+
 	}
 	
 	public TreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
@@ -53,14 +53,12 @@ public class TreeOfShape{
 		this.build = new BuilderTreeOfShapeByUnionFindParallel(img, xInfinito, yInfinito);
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
-		
-		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao [create tree of shape] "+ ((tf - ti) /1000.0)  + "s");
 		computerHeightNodes(this.root, 0);
-		computerAttribute(this.root);
 		createNodesMap();
-		tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao [create tree of shape + attributes] "+ ((tf - ti) /1000.0)  + "s");
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [create tree of shape] "+ ((tf - ti) /1000.0)  + "s");
+		}
 	}
 	
 	public GrayScaleImage getInputImage(){
@@ -251,44 +249,6 @@ public class TreeOfShape{
 	}
 	
 	
-
-	/**
-	 * Metodo utilizado para criar uma instancia da maxtree. 
-	 * Os atributos computados sao crescentes
-	 * @param img - imagem de entrada
-	 * @return Maxtree
-	 */
-	public void computerAttribute(NodeToS root){
-		root.initAttributes(NUM_ATTRIBUTES);
-		root.numDescendent += root.children.size();
-		for(NodeToS son: root.children){
-			computerAttribute(son);
-			root.attributeValue[Attribute.YMAX] = Math.max(root.attributeValue[Attribute.YMAX], son.attributeValue[Attribute.YMAX]); 
-			root.attributeValue[Attribute.XMAX] = Math.max(root.attributeValue[Attribute.XMAX], son.attributeValue[Attribute.XMAX]);
-			root.attributeValue[Attribute.YMIN] = Math.min(root.attributeValue[Attribute.YMIN], son.attributeValue[Attribute.YMIN]); 
-			root.attributeValue[Attribute.XMIN] = Math.min(root.attributeValue[Attribute.XMIN], son.attributeValue[Attribute.XMIN]);
-			root.attributeValue[Attribute.AREA] += son.attributeValue[Attribute.AREA]; //area
-			root.attributeValue[Attribute.VOLUME] += son.attributeValue[Attribute.VOLUME]; //volume
-			root.numDescendent += son.numDescendent;
-			root.highest = Math.max(root.highest, son.highest);
-			root.lowest = Math.min(root.lowest, son.lowest);
-				
-			root.sumX += son.sumX;
-			root.sumY += son.sumY;
-			root.sumYY += son.sumYY;
-			root.sumXX += son.sumXX;
-			root.sumXY += son.sumXY;
-			root.area += son.area;
-			
-		}
-		root.attributeValue[Attribute.WIDTH] = root.attributeValue[Attribute.XMAX] - root.attributeValue[Attribute.XMIN] + 1;
-		root.attributeValue[Attribute.HEIGHT] = root.attributeValue[Attribute.YMAX] - root.attributeValue[Attribute.YMIN] + 1;
-		root.attributeValue[Attribute.ALTITUDE] = Math.max(root.highest - root.level  + 1, root.level - root.lowest + 1);
-		
-	}
-	
-
-
 	public NodeToS getRoot() {
 		return root;
 	}
@@ -312,46 +272,7 @@ public class TreeOfShape{
 		return heightTree;
 	}
 
-	public GrayScaleImage segmentation(double attributeValue, int type){
-		return new ComputerExtinctionValueTreeOfShapes(this).segmentationByKmax((int) attributeValue, type);
-	}
 
-	
-
-
-	public TreeOfShape getClone(){
-		TreeOfShape treeClone = new TreeOfShape(this.build.getClone());
-		
-		treeClone.root.isNodeMaxtree = this.root.isNodeMaxtree;
-		treeClone.root.area = this.root.area;
-		treeClone.root.countHoles = this.root.countHoles;
-		treeClone.root.heightNode = this.root.heightNode;
-		if(this.root.attributeValue != null)
-			treeClone.root.attributeValue = this.root.attributeValue.clone();
-		if(this.root.moment != null)
-			treeClone.root.moment = this.root.moment.clone();
-		if(this.root.contour != null)
-			treeClone.root.contour = this.root.contour.getClone();
-		
-		for(int p=0; p < imgInput.getSize(); p++){
-			if(treeClone.map[p].attributeValue == null){
-				NodeToS no = getSC(p);
-				treeClone.map[p].isNodeMaxtree = no.isNodeMaxtree; 
-				treeClone.map[p].area = no.area;
-				treeClone.map[p].countHoles = no.countHoles;
-				treeClone.map[p].heightNode = no.heightNode;
-				
-				if(no.attributeValue != null && treeClone.map[p].attributeValue == null)
-					treeClone.map[p].attributeValue = no.attributeValue.clone();
-				if(no.moment != null && treeClone.map[p].moment == null)
-					treeClone.map[p].moment = no.moment.clone();
-				if(no.contour != null && treeClone.map[p].contour == null)
-					treeClone.map[p].contour = no.contour.getClone();
-			}	
-		}
-		
-		return treeClone;
-	}
 	
 
 	public GrayScaleImage reconstruction(){

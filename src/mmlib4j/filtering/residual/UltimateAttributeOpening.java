@@ -14,7 +14,7 @@ import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
 import mmlib4j.segmentation.Labeling;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */

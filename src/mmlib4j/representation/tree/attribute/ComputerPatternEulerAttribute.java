@@ -5,11 +5,13 @@ import java.util.HashSet;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
+import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
+import mmlib4j.utils.Utils;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -22,23 +24,39 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 	boolean isMaxtree;
 	
 	public ComputerPatternEulerAttribute(int numNode, INodeTree root, GrayScaleImage img, AdjacencyRelation adj){
+		long ti = System.currentTimeMillis();
 		this.numNode = numNode;
 		this.attr = new PatternEulerAttribute[numNode];
 		this.img = img;
 		this.adj = adj;
 		computerAttribute(root);
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [extraction of attribute - euler number]  "+ ((tf - ti) /1000.0)  + "s");
+		}
 	}
 
 	public PatternEulerAttribute[] getAttribute(){
 		return attr;
 	}
 	
-	public void addAttributeInNodesCT(HashSet<NodeCT> hashSet){
-		for(INodeTree node: hashSet){
-			node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, attr[ node.getId() ].getNumberHoles()));
-			
+
+	public void addAttributeInNodesCT(HashSet<NodeCT> list){
+		for(NodeCT node: list){
+			addAttributeInNodes(node);
 		}
 	}
+	
+	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
+		for(INodeTree node: hashSet){
+			addAttributeInNodes(node);
+		}
+	} 
+	
+	public void addAttributeInNodes(INodeTree node){
+		node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, attr[ node.getId() ].getNumberHoles()));
+	}
+	
 	
 	public void preProcessing(INodeTree node) {
 		attr[node.getId()] = new PatternEulerAttribute();

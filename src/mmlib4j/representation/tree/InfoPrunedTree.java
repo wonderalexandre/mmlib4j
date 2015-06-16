@@ -10,7 +10,7 @@ import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -24,7 +24,7 @@ public class InfoPrunedTree {
 
 	private int attributeType;
 	private double attributeValue;
-	private int area;
+	
 	
 	public int getAttributeType() {
 		return attributeType;
@@ -34,10 +34,6 @@ public class InfoPrunedTree {
 		return attributeValue;
 	}
 	
-	public int getArea(){
-		return area;
-	}
-
 	public void setAttributeType(int attributeType) {
 		this.attributeType = attributeType;
 	}
@@ -59,7 +55,6 @@ public class InfoPrunedTree {
 		INodeTree parent = node.getParent();
 		if(parent != null){
 			this.numNode += 1;
-			this.area += node.getArea();
 			if(map[node.hashCode()] == null)
 				map[node.hashCode()] = new NodePrunedTree(node);
 			
@@ -124,20 +119,6 @@ public class InfoPrunedTree {
 		else{
 			return null;
 		}
-		
-	}
-	
-	public GrayScaleImage reconstruction(boolean countor){
-		if(tree instanceof ConnectedFilteringByComponentTree){
-			return ((ConnectedFilteringByComponentTree) tree).reconstruction(this, countor);
-		}
-		else if (tree instanceof ConnectedFilteringByTreeOfShape){
-			return ((ConnectedFilteringByTreeOfShape) tree).reconstruction(this, countor);
-		}
-		else{
-			return null;
-		}
-		
 	}
 	
 

@@ -1,19 +1,14 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import java.awt.Color;
-
-import mmlib4j.images.ColorImage;
-import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerMserTreeOfShapes;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */

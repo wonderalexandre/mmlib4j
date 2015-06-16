@@ -5,7 +5,7 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.Pixel;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -17,46 +17,24 @@ public class ContourTracer {
 			{-1,0}, {-1,-1}, {0,-1}, { 1,-1}};
 	
 	private boolean is8Connected;
-	int width;
-	int height;
 	int level;
-	boolean[][] pixels;
 	GrayScaleImage img;
 	boolean isMaxtree;
 	
-	public ContourTracer (int w, int h, boolean is8Connected) {
-		width = w;
-		height = h;
-		this.pixels = new boolean[width+2][height+2];
-		this.is8Connected = is8Connected;
-	}
-	
-	public ContourTracer (int w, int h, boolean is8Connected, boolean isMaxtree, GrayScaleImage img, int level) {
-		width = w;
-		height = h;
+	public ContourTracer (boolean is8Connected, boolean isMaxtree, GrayScaleImage img, int level) {
 		this.isMaxtree = isMaxtree;
 		this.img = img;
 		this.level = level;
-		//this.pixels = new boolean[width+2][height+2];
 		this.is8Connected = is8Connected;
 	}
 
 	public boolean isForeground(int x, int y){
-		if(pixels == null){
-			if(!img.isPixelValid(x, y)) return false;
-			if(isMaxtree)
-				return img.getPixel(x, y) >= level;
-			else
-				return img.getPixel(x, y) <= level;
-		}
+		if(!img.isPixelValid(x, y)) return false;
+		if(isMaxtree)
+			return img.getPixel(x, y) >= level;
+		else
+			return img.getPixel(x, y) <= level;
 		
-		return pixels[x][y] == FOREGROUND;
-	}
-	
-	public void addPixelForeground(int p){
-		int px = p % width;
-		int qx = p / width;
-		pixels[px+1][qx+1] = FOREGROUND;
 	}
 	
 	public Contour traceOuterContour (int cx, int cy) {
@@ -74,10 +52,8 @@ public class ContourTracer {
 		int xC, yC; 
 		Pixel pt = new Pixel(xS, yS, dS); 
 		int dNext = findNextPoint(pt, dS);
-		if(pixels == null)
-			cont.addPoint((pt.x) + width * (pt.y), dS);
-		else
-			cont.addPoint((pt.x-1) + width * (pt.y-1), dS); 
+		cont.addPoint((pt.x) + img.getWidth() * (pt.y), dS);
+		 
 		xP = xS; yP = yS;
 		xC = xT = pt.x;
 		yC = yT = pt.y;
@@ -93,10 +69,7 @@ public class ContourTracer {
 			xC = pt.x; yC = pt.y; 
 			done = (xP==xS && yP==yS && xC==xT && yC==yT);
 			if (!done) {
-				if(pixels == null)
-					cont.addPoint((pt.x) + width * (pt.y), dNext);
-				else
-					cont.addPoint((pt.x-1) + width * (pt.y-1), dNext);
+				cont.addPoint((pt.x) + img.getWidth() * (pt.y), dNext);
 			}
 		}
 		return cont;
@@ -133,18 +106,6 @@ public class ContourTracer {
 	}
 	
 	
-	
-	public Contour findOuterContours() {
-		for (int y = 1; y < height+1; y++) {
-			for (int x = 1; x < width+1; x++) {
-				if (isForeground(x, y) == FOREGROUND) { 
-					return traceOuterContour(x, y);	
-				} 
-			}
-		}
-		throw new RuntimeException("ops..");
-	}
-	
 	public Contour findOuterContours(int x, int y) {
 		return traceOuterContour(x, y);	
 	}
@@ -152,8 +113,8 @@ public class ContourTracer {
 	void findAllContours() {
 		LinkedList<Contour> outerContours = new LinkedList<Contour>();
 		LinkedList<Contour> innerContours = new LinkedList<Contour>();
-		for (int y = 1; y < height+1; y++) {
-			for (int x = 1; x < width+1; x++) {
+		for (int y = 0; y < img.getHeight(); y++) {
+			for (int x = 0; x < img.getWidth(); x++) {
 				if (isForeground(x, y) == FOREGROUND) { 
 					Contour oc = traceOuterContour(x, y);
 					outerContours.add(oc);	

@@ -13,7 +13,7 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -60,7 +60,7 @@ public class PruningBasedMSERForHDIBCO extends PruningBasedMSER{
 		if(node.getAttribute(Attribute.HEIGHT).getValue() < tree.getInputImage().getHeight() * 0.3 && 
 				relationWH > 0.4 &&
 				node.getArea() > 60 //&&
-				&& node.getLevelMean() > 20
+				//&& node.getLevelMean() > 20
 				//node.getCompacity() < 0.9
 				//node.getHeightNode() > 5 //&&
 				//bbArea > 0.2 && bbArea < 0.9  

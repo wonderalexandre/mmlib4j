@@ -3,17 +3,19 @@ package mmlib4j.filtering.binary;
 import mmlib4j.datastruct.SimpleLinkedList;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
 public class Contour {
 	
-	SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
+	SimpleLinkedList<Integer> pixels = null;
 	double perimeter;
+	//int widthImg;
 	
 	public Contour () {
-		perimeter = 0;
+		this.perimeter = 0;
+		this.pixels = new SimpleLinkedList<Integer>();
 	}
 	
 	void addPoint (Integer n, int direction){
@@ -41,5 +43,31 @@ public class Contour {
 		c.perimeter = this.perimeter;
 		return c;
 	}
+	
+
+	/*
+	byte[] makeChainCode8(int widthImg) {
+		int m = pixels.size();
+		if (m>1){
+			int[] xPoints = new int[m];
+			int[] yPoints = new int[m];
+			int k = 0;
+			Iterator<Integer> itr = pixels.iterator();
+			while (itr.hasNext() && k < m) {
+				Integer p = itr.next();
+				xPoints[k] = p % widthImg;
+				yPoints[k] = p / widthImg;
+				k = k + 1;
+			}
+			return null;
+		}
+		else {	// use circles for isolated pixels
+			//Point cn = points.get(0);
+			return null;
+		}
+	}
+	*/
+	
+	
 	
 }

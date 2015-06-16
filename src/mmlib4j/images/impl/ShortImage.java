@@ -5,7 +5,7 @@ import mmlib4j.images.GrayScaleImage;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  *

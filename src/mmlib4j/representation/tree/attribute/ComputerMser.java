@@ -4,6 +4,12 @@ import mmlib4j.images.ColorImage;
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.InfoPrunedTree;
 
+
+/**
+ * MMLib4J - Mathematical Morphology Library for Java 
+ * @author Wonder Alexandre Luz Alves
+ *
+ */
 public interface ComputerMser {
 
 	public void setMaxVariation(double d);

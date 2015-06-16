@@ -7,9 +7,11 @@ import mmlib4j.utils.ArrayUtils;
 
 
 /**
- * Esta classe é baseado na classe RankFilter do ImageJ
- * @author wonderalexandre
- *
+ * MMLib4J - Mathematical Morphology Library for Java 
+ * @author Wonder Alexandre Luz Alves
+ * 
+ * Fast implementation filters
+ * Adapted of ImageJ - ij.plugin.filter.RankFilters 
  */
 public class RankFilters  {
 	public static final int	 MEAN=0, MIN=1, MAX=2, VARIANCE=3, MEDIAN=4;

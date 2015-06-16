@@ -12,7 +12,7 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -50,7 +50,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 			selected = new boolean[tree.getNumNode()];
 			for(NodeToS node: tree.getListNodes()){
 				if(node.getParent() != null){
-					if ( node.getParent().getAttributeValueOLD(typeParam) - node.getAttributeValueOLD(typeParam)  > delta) {
+					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
 						selected[node.getParent().getId()] = true;
 						this.num = this.num + 1;
 					}
@@ -79,7 +79,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 			selected = new boolean[tree.getNumNode()];
 			for(NodeToS node: tree.getListNodes()){
 				if(node.getParent() != null && !prunedTree.wasPruned(node)){
-					if ( node.getParent().getAttributeValueOLD(typeParam) - node.getAttributeValueOLD(typeParam)  > delta) {
+					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
 						selected[node.getId()] = true;
 						this.num = this.num + 1;
 					}
@@ -109,7 +109,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 			TreeOfShape tree = (TreeOfShape) inputTree;
 			for(NodeToS node: tree.getListNodes()){
 				if(node.getParent() != null){
-					if ( node.getParent().getAttributeValueOLD(typeParam) - node.getAttributeValueOLD(typeParam)  > delta) {
+					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
 						list.add(node.getParent());
 					}
 				}

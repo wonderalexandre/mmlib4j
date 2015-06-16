@@ -13,26 +13,21 @@ import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
 public class NodeToS implements INodeTree, Cloneable{
 	int level;
 	GrayScaleImage img;
-	private int canonicalPixel;
+	int canonicalPixel;
 	int id;
-	int attributeValue[]; //vetor de atributos crescentes
 	int heightNode;
-	int highest;
-	int lowest;
 	int numDescendent;
 	boolean isClone = false;
-	double moment[][];
 	
 	boolean isNodeMaxtree;
 	int xmin;
@@ -41,12 +36,14 @@ public class NodeToS implements INodeTree, Cloneable{
 	int ymax;
 	int sumX;
 	int sumY;
-	int sumYY;
-	int sumXX;
-	int sumXY;
 	int area;
 	int countPixelInFrame;
 	int countHoles;
+
+	int pixelXmax;
+	int pixelXmin;
+	int pixelYmin;
+	int pixelYmax;
 	
 	public boolean flagPruning;
 	public boolean flagProcess;
@@ -54,7 +51,7 @@ public class NodeToS implements INodeTree, Cloneable{
 	NodeToS parent;
 	List<NodeToS> children = new ArrayList<NodeToS>();
 	private SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
-	Contour contour = new Contour();
+	Contour contour = null;
 	
 	public void addAttribute(int key, Attribute attr){
 		
@@ -71,10 +68,8 @@ public class NodeToS implements INodeTree, Cloneable{
 		this.level = level; 
 		this.img = img;
 		this.canonicalPixel = canonicalPixel;
-		this.highest = this.lowest = level;
 		xmin = ymin = Integer.MAX_VALUE;
 		xmax = ymax = Integer.MIN_VALUE;
-		moment = new double[4][4];
 	}
 	
 	public int getId(){
@@ -140,11 +135,22 @@ public class NodeToS implements INodeTree, Cloneable{
 	public void addPixel(int p){		
 		int x = p % img.getWidth();
 		int y = p / img.getWidth();
-		if(x < xmin) xmin = x;
-		if(x > xmax) xmax = x;
-		if(y < ymin) ymin = y;
-		if(y > ymax) ymax = y;
-		
+		if(x < xmin){ 
+			xmin = x;
+			pixelXmin = p;
+		}
+		if(x > xmax) {
+			xmax = x;
+			pixelXmax = p;
+		}
+		if(y < ymin) {
+			ymin = y;
+			pixelYmin = p;
+		}
+		if(y > ymax){
+			ymax = y;
+			pixelYmax = p;
+		}
 		if(x == 0 || y == 0 || x == img.getWidth()-1 || y == img.getHeight()-1){
 			countPixelInFrame++;
 			if(x == 0 && y == 0)
@@ -158,11 +164,7 @@ public class NodeToS implements INodeTree, Cloneable{
 		}
 		sumX += x;
 		sumY += y;
-		sumXX += x*x;
-		sumYY += y*y;
-		sumXY += x*y;
 		area += 1;
-		
 		pixels.add(p);
 	}
 	
@@ -174,153 +176,20 @@ public class NodeToS implements INodeTree, Cloneable{
 		return pixels;
 	}
 
-	public void initAttributes(int dimensionAttributes){
-		this.attributeValue = new int[dimensionAttributes];
-		//largura
-		this.attributeValue[Attribute.XMAX] = this.xmax;
-		this.attributeValue[Attribute.XMIN] = this.xmin;
-		//altura
-		this.attributeValue[Attribute.YMAX] = this.ymax;
-		this.attributeValue[Attribute.YMIN] = this.ymin;
-		//area
-		this.attributeValue[Attribute.AREA] = this.pixels.size();
-		//volume
-		this.attributeValue[Attribute.VOLUME] += this.pixels.size() * this.level; 
-
-	}
-	
 	public int getNumChildren(){
 		return children.size();
 	}
 	
-	public int getWidthNode(){
-		return (this.attributeValue[Attribute.XMAX] - this.attributeValue[Attribute.XMIN] + 1);
-	}
-	
-	public int getHeightNode(){
-		return (this.attributeValue[Attribute.YMAX] - this.attributeValue[Attribute.YMIN] + 1);
-	}
-	
 	public int getArea(){
-		return this.attributeValue[Attribute.AREA];
+		return area;
 	}
 	
-
-	public double getCircularity(){
-		return (4.0 * Math.PI * getArea()) / Math.pow(getPerimeter(), 2);
-	}
-	
-	public double getPerimeter(){
-		return attributeValue[0];
-	}
-	
-	
-	public int getAttributeValueOLD(int index){
-		return attributeValue[index];
-	}
-	
-	Double homogeneity = null;
-	public double getHomogeneity(){
-		if(homogeneity != null) return homogeneity;
-		int count = 0;
-		int sum = 0;
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
-		fifo.enqueue(this);
-		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
-			if(this.isNodeMaxtree == no.isNodeMaxtree){
-				count += no.getArea();
-				sum += (no.level+1) * no.getArea();
-			}
-			if(no.children != null){
-				for(NodeToS son: no.children){
-					fifo.enqueue(son);
-				}
-			}
-		}
-		
-		double means = sum / (double) count;
-		double var = 0;
-		fifo.enqueue(this);
-		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
-			if(this.isNodeMaxtree == no.isNodeMaxtree){ 
-				var += Math.pow(no.level+1 - means, 2); 
-			}
-			if(no.children != null){
-				for(NodeToS son: no.children){
-					fifo.enqueue(son);
-				}
-			}
-		}
-		homogeneity = var / count;
-		return homogeneity;
-		
-	}
-	
-	
-
 	public int getCentroid(){
 		int xc = (sumX / getArea());
 		int yc = (sumY / getArea());
 		return xc + yc * img.getWidth();     
 	}
 	
-	public double getMoment(int p, int q){
-		return moment[p][q];
-	}
-	
-	public double getMomentNormalized(int p, int q){
-		return moment[p][q] / Math.pow( getArea(), (p + q + 2.0) / 2.0);
-	}
-	
-	public double getMomentOrientation(){
-		return 0.5 * Math.atan2( 2 * moment[1][1], moment[2][0] - moment[0][2]);
-	}
-	
-	public double eccentricity(){
-		double a = moment[2][0] + moment[0][2] + Math.sqrt( Math.pow(moment[2][0] - moment[0][2], 2) + 4 * Math.pow(moment[1][1], 2));
-		double b = moment[2][0] + moment[0][2] - Math.sqrt( Math.pow(moment[2][0] - moment[0][2], 2) + 4 * Math.pow(moment[1][1], 2));
-		return a / b; 
-	}
-	
-	public double getLengthMajorAxes(){
-		double a = moment[2][0] + moment[0][2] + Math.sqrt( Math.pow(moment[2][0] - moment[0][2], 2) + 4 * Math.pow(moment[1][1], 2));
-		return Math.sqrt( (2 * a) / getArea() );
-	}
-
-	public double getLengthMinorAxes(){
-		double b = moment[2][0] + moment[0][2] - Math.sqrt( Math.pow(moment[2][0] - moment[0][2], 2) + 4 * Math.pow(moment[1][1], 2));
-		return Math.sqrt( (2 * b) / getArea() );
-	}
-
-	public double getElongation(){
-		return getArea() / Math.pow(2 * getLengthMajorAxes(), 2);
-	}
-	
-	public void initMoment(){
-		int xc = (sumX / getArea());
-		int yc = (sumY / getArea());
-		for(int pixel: pixels){
-			int x = pixel % img.getWidth();
-			int y = pixel / img.getWidth();
-			for(int p=0; p < 4; p++){
-				for(int q=0; q < 4; q++){
-					moment[p][q] += Math.pow(x - xc, p) * Math.pow(y - yc, q); 
-				}
-			}
-		}
-	}
-	
-	public void updateMoment(double moment[][]){
-		for(int p=0; p < 4; p++){
-			for(int q=0; q < 4; q++){
-				this.moment[p][q] += moment[p][q]; 
-			}
-		}
-	}
-	
-
 	public Iterable<Integer> getPixelsOfCC(){
 		final Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this);
@@ -416,7 +285,7 @@ public class NodeToS implements INodeTree, Cloneable{
 	}
 	
 	
-	public GrayScaleImage createImageSC(){
+	public GrayScaleImage createImageSC(int levelNotPixelCanonical){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);;
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this);
@@ -433,11 +302,16 @@ public class NodeToS implements INodeTree, Cloneable{
 				if(img.getPixel(p) == level)
 					imgOut.setPixel(p, 255);
 				else
-					imgOut.setPixel(p, 220);
+					imgOut.setPixel(p, levelNotPixelCanonical);
 			}
 			
 		}
 		return imgOut;
+	}
+	
+
+	public GrayScaleImage createImageSC(){
+		return createImageSC(level);
 	}
 	
 	
@@ -489,6 +363,56 @@ public class NodeToS implements INodeTree, Cloneable{
 				};
 			}
 		};
+	}
+	
+
+	public void setXmin(int p) {
+		xmin = p;
+	}
+
+	public void setYmin(int p) {
+		ymin = p;
+	}
+
+	public void setXmax(int p) {
+		xmax = p;
+	}
+
+	public void setYmax(int p) {
+		ymax = p;
+	}
+
+	public void setPixelWithXmax(int p) {
+		pixelXmax = p;
+	}
+
+	public void setPixelWithYmax(int p) {
+		pixelYmax = p;
+	}
+
+	public void setPixelWithXmin(int p) {
+		pixelXmin = p;
+	}
+
+	public void setPixelWithYmin(int p) {
+		pixelYmin = p;
+	}
+
+
+	public int getPixelWithXmax() {
+		return pixelXmax ;
+	}
+
+	public int getPixelWithYmax() {
+		return pixelYmax;
+	}
+
+	public int getPixelWithXmin() {
+		return pixelXmin;
+	}
+
+	public int getPixelWithYmin() {
+		return pixelYmin;
 	}
 	
 }

@@ -4,21 +4,14 @@ import mmlib4j.images.GrayScaleImage;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
 public interface IMorphologicalTreeFiltering {
 	
-	
-	public final static int ATTRIBUTE_CIRCULARITY = 13;
-	public final static int ATTRIBUTE_RETANGULARITY = 14;
-	
-	
 	public final static int ATTRIBUTE_NC_VARIANCIA = 0;
 	public final static int ATTRIBUTE_NC_PERIMETRO = 1;
-	
-	public final static int ATTRIBUTE_PERIMETER = 4;
 	
 	public final static int PRUNING = 0;
 	public final static int EXTINCTION_VALUE = 1;
@@ -39,8 +32,6 @@ public interface IMorphologicalTreeFiltering {
 	
 	public INodeTree getRoot();
 		
-	public void setContours(boolean b);
-	
 	public int getNumNode();
 		
 }

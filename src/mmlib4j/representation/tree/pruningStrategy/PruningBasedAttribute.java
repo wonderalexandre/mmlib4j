@@ -8,7 +8,7 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -44,7 +44,7 @@ public class PruningBasedAttribute implements MappingStrategyOfPruning{
 			boolean selected[] = new boolean[tree.getNumNode()];
 			for(NodeToS node: tree.getListNodes()){
 				if(node.getParent() != null){
-					if ( node.getParent().getAttributeValueOLD(typeParam) != node.getAttributeValueOLD(typeParam)) {
+					if ( node.getParent().getAttributeValue(typeParam) != node.getAttributeValue(typeParam)) {
 						selected[node.getId()] = true;
 						num++;
 					}

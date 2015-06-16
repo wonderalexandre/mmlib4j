@@ -5,13 +5,14 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -94,7 +95,7 @@ public class UltimateGrainFilter {
 		boolean flagPropag = false;
 		NodeToS parentNode = currentNode.getParent();
 		
-		if(currentNode.getAttributeValueOLD(typeParam) <= maxCriterion && selectedForPruning[parentNode.getId()]){
+		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && selectedForPruning[parentNode.getId()]){
 			flagInit = true;
 		}
 		
@@ -126,7 +127,7 @@ public class UltimateGrainFilter {
 					linkedAttributesPos = associatedNodePos[parentNode.getId()];
 				}
 				else{
-					linkedAttributesPos = currentNode.getAttributeValueOLD(typeParam) + 1;
+					linkedAttributesPos = (int)currentNode.getAttributeValue(typeParam) + 1;
 				}
 				
 			}
@@ -143,7 +144,7 @@ public class UltimateGrainFilter {
 					linkedAttributesNeg = associatedNodeNeg[parentNode.getId()];
 				}
 				else{
-					linkedAttributesNeg = currentNode.getAttributeValueOLD(typeParam) + 1;
+					linkedAttributesNeg = (int)currentNode.getAttributeValue(typeParam) + 1;
 				}
 				
 			}
@@ -185,7 +186,7 @@ public class UltimateGrainFilter {
 		boolean selected[] = new boolean[tree.getNumNode()];
 		for(NodeToS node: tree.getListNodes()){
 			if(node.getParent() != null){
-				if ( node.getParent().getAttributeValueOLD(typeParam) != node.getAttributeValueOLD(typeParam)) {
+				if ( node.getParent().getAttributeValue(typeParam) != node.getAttributeValue(typeParam)) {
 					selected[node.getParent().getId()] = true;
 				}
 			}
@@ -420,10 +421,10 @@ public class UltimateGrainFilter {
 	
 
 	public double funcTextLocation(NodeToS node, int parentLevel){
-		int width = node.getWidthNode();
-		int heigth = node.getHeightNode();
-		int areaBB = width * heigth;
-		double ratioAreaBB = node.getArea() / (double) areaBB;
+		double width = node.getAttributeValue(Attribute.WIDTH);
+		double heigth = node.getAttributeValue(Attribute.HEIGHT);
+		double areaBB = width * heigth;
+		double ratioAreaBB = node.getArea() / areaBB;
 		double ratioWH = Math.max(width, heigth) / Math.min(width, heigth);
 		int numHoles= node.getNumHoles();
 		
@@ -433,12 +434,12 @@ public class UltimateGrainFilter {
 		}
 		
 		int psiHeight = 0;
-		if(20 <= node.getHeightNode() && node.getHeightNode() < 300){
+		if(20 <= width && heigth < 300){
 			psiHeight = 1;
 		}
 		
 		int psiWidth = 0;
-		if(10 <= node.getWidthNode() && node.getWidthNode() < 200){
+		if(10 <= width && heigth < 200){
 			psiWidth = 1;
 		}
 		
@@ -459,7 +460,7 @@ public class UltimateGrainFilter {
 		int psiColor = 0;
 		//if(psiArea == 1 && psiHole == 1 && psiRect == 1 && psiRate == 1)
 		//	System.out.println(node.getHomogeneity() + "   ==>> " + Math.abs(node.getLevel() - parentLevel));
-		if(node.getHomogeneity() <= 15)
+		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 15)
 			psiColor = 1;
 		
 		

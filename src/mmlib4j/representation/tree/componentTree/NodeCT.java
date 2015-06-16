@@ -8,17 +8,17 @@ import java.util.List;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.filtering.binary.Contour;
+import mmlib4j.filtering.binary.ContourTracer;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.attribute.Attribute;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -53,10 +53,8 @@ public class NodeCT implements INodeTree, Cloneable{
 	int pixelYmin;
 	int pixelYmax;
 	int area;
-	
 	Hashtable<Integer, Attribute> attributes = new Hashtable<Integer, Attribute>();
-	
-	public Contour contour = null;
+	public Contour contourE = null;
 
 	
 	public NodeCT(boolean isMaxtree, int numCreate, GrayScaleImage img, int canonicalPixel){
@@ -409,15 +407,14 @@ public class NodeCT implements INodeTree, Cloneable{
 		return id;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 	public Contour getContour() {
-		return contour;
+		if(contourE == null){
+			ContourTracer c = new ContourTracer(true, isMaxtree, img, level);
+			int x = pixelYmin % img.getWidth();
+			int y = pixelYmin / img.getWidth(); 
+			this.contourE = c.findOuterContours(x, y);
+		}
+		return contourE;
 	}
 	
 	
@@ -425,83 +422,53 @@ public class NodeCT implements INodeTree, Cloneable{
 		return area;
 	}
 	
-	public double getCircularity(){
-		return (4.0 * Math.PI * getArea()) / Math.pow(getPerimeterExternal(), 2);
-	}
-	
-	public double getCompacity(){
-		return Math.pow(getPerimeterExternal(),2) / getArea();
-	}
-	
-	
-	
-	public double getPerimeterExternal(){
-		return contour.getPerimeter();
-	}
-	
 
-	
-	
-	Double homogeneity = null;
-	public double getHomogeneity(){
-		if(homogeneity != null) return homogeneity;
-		int count = 0;
-		int sum = 0;
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
-		fifo.enqueue(this);
-		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
-			count += no.pixels.size();
-			sum += (no.level+1) * no.pixels.size();
-			if(no.children != null){
-				for(NodeCT son: no.children){
-					fifo.enqueue(son);
-				}
-			}
-		}
-		
-		double means = sum / (double) count;
-		double var = 0;
-		fifo.enqueue(this);
-		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
-			var += Math.pow(no.level+1 - means, 2); 
-			if(no.children != null){
-				for(NodeCT son: no.children){
-					fifo.enqueue(son);
-				}
-			}
-		}
-		homogeneity = Math.sqrt(var / count);
-		return homogeneity;
-		
+	public void setXmin(int p) {
+		xmin = p;
 	}
-	
-	Double levelMeans = null;
-	public double getLevelMean(){
-		if(levelMeans != null) return levelMeans;
-		int count = 0;
-		int sum = 0;
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
-		fifo.enqueue(this);
-		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
-			count += no.pixels.size();
-			sum += (no.level+1) * no.pixels.size();
-			if(no.children != null){
-				for(NodeCT son: no.children){
-					fifo.enqueue(son);
-				}
-			}
-		}
-		
-		levelMeans = sum / (double) count;
-		
-		return levelMeans;
-		
+
+	public void setYmin(int p) {
+		ymin = p;
 	}
-	
-	
-	
+
+	public void setXmax(int p) {
+		xmax = p;
+	}
+
+	public void setYmax(int p) {
+		ymax = p;
+	}
+
+	public void setPixelWithXmax(int p) {
+		pixelXmax = p;
+	}
+
+	public void setPixelWithYmax(int p) {
+		pixelYmax = p;
+	}
+
+	public void setPixelWithXmin(int p) {
+		pixelXmin = p;
+	}
+
+	public void setPixelWithYmin(int p) {
+		pixelYmin = p;
+	}
+
+	public int getPixelWithXmax() {
+		return pixelXmax ;
+	}
+
+	public int getPixelWithYmax() {
+		return pixelYmax;
+	}
+
+	public int getPixelWithXmin() {
+		return pixelXmin;
+	}
+
+	public int getPixelWithYmin() {
+		return pixelYmin;
+	}
 	
 }

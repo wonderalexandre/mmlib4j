@@ -50,7 +50,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */

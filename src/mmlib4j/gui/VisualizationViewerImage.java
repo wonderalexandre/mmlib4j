@@ -1,6 +1,5 @@
 package mmlib4j.gui;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -15,22 +14,24 @@ import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
 import edu.uci.ics.jung.visualization.util.Caching;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
 public class VisualizationViewerImage<T> extends VisualizationViewer<T, Edge<T>>{
-
+	
+	private static final long serialVersionUID = 1L;
+	BufferedImage img;
+	
 	public VisualizationViewerImage(Layout<T, Edge<T>> layout) {
 		super(layout);
 	}
-	BufferedImage img;
+	
 	public void setImage(GrayScaleImage img){
 		this.img = ImageBuilder.convertToImage(img);
 		
 	}
 	
-    
 	protected void renderGraph(Graphics2D g2d) {
 	    if(renderContext.getGraphicsContext() == null) {
 	        renderContext.setGraphicsContext(new GraphicsDecorator(g2d));
@@ -41,27 +42,15 @@ public class VisualizationViewerImage<T> extends VisualizationViewer<T, Edge<T>>
 	    Layout<T, Edge<T>> layout = model.getGraphLayout();
 
 		g2d.setRenderingHints(renderingHints);
-		
-		// the size of the VisualizationViewer
-		Dimension d = getSize();
-		
-		// clear the offscreen image
-		//g2d.setColor(getBackground());
-		//g2d.fillRect(0,0,d.width,d.height);
-		
 		g2d.drawImage(img, null, 0, 0);
 		
 		AffineTransform oldXform = g2d.getTransform();
         AffineTransform newXform = new AffineTransform(oldXform);
-        newXform.concatenate(
-        		renderContext.getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform());
-//        		viewTransformer.getTransform());
-		
+        newXform.concatenate(renderContext.getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform());
         g2d.setTransform(newXform);
 
-		// if there are  preRenderers set, paint them
-		for(Paintable paintable : preRenderers) {
 
+		for(Paintable paintable : preRenderers) {
 		    if(paintable.useTransform()) {
 		        paintable.paint(g2d);
 		    } else {
@@ -74,12 +63,9 @@ public class VisualizationViewerImage<T> extends VisualizationViewer<T, Edge<T>>
         if(layout instanceof Caching) {
         	((Caching)layout).clear();
         }
-        
         renderer.render(renderContext, layout);
         
-		// if there are postRenderers set, do it
 		for(Paintable paintable : postRenderers) {
-
 		    if(paintable.useTransform()) {
 		        paintable.paint(g2d);
 		    } else {

@@ -5,7 +5,16 @@ import java.util.Iterator;
 
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
+import mmlib4j.representation.tree.tos.NodeToS;
+import mmlib4j.utils.ImageUtils;
+import mmlib4j.utils.Utils;
 
+
+/**
+ * MMLib4J - Mathematical Morphology Library for Java 
+ * @author Wonder Alexandre Luz Alves
+ *
+ */
 public class ComputerCentralMomentAttribute extends AttributeComputedIncrementally{
 	
 	CentralMomentsAttribute attr[];
@@ -13,10 +22,15 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	int withImg;
 	
 	public ComputerCentralMomentAttribute(int numNode, INodeTree root, int withImg){
+		long ti = System.currentTimeMillis();
 		this.numNode = numNode;
 		this.withImg = withImg;
 		attr = new CentralMomentsAttribute[numNode];
 		computerAttribute(root);
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [extraction of attribute - moments]  "+ ((tf - ti) /1000.0)  + "s");
+		}
 	}
 
 	public ComputerCentralMomentAttribute(){	}
@@ -25,22 +39,31 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		return attr;
 	}
 	
-	public void addAttributeInNodesCT(HashSet<NodeCT> hashSet){
-		for(INodeTree node: hashSet){
-			node.addAttribute(Attribute.MOMENT_CENTRAL_02, attr[ node.getId() ].moment02);
-			node.addAttribute(Attribute.MOMENT_CENTRAL_20, attr[ node.getId() ].moment20);
-			node.addAttribute(Attribute.MOMENT_CENTRAL_11, attr[ node.getId() ].moment11);
-			
-			node.addAttribute(Attribute.COMPACTNESS, new Attribute(Attribute.COMPACTNESS, attr[ node.getId() ].compactness()));
-			node.addAttribute(Attribute.ECCENTRICITY, new Attribute(Attribute.ECCENTRICITY, attr[ node.getId() ].eccentricity()));
-			node.addAttribute(Attribute.ELONGATION, new Attribute(Attribute.ELONGATION, attr[ node.getId() ].elongation()));
-			node.addAttribute(Attribute.LENGTH_MAJOR_AXES, new Attribute(Attribute.LENGTH_MAJOR_AXES, attr[ node.getId() ].getLengthMajorAxes()));
-			node.addAttribute(Attribute.LENGTH_MINOR_AXES, new Attribute(Attribute.LENGTH_MINOR_AXES, attr[ node.getId() ].getLengthMinorAxes()));
-			node.addAttribute(Attribute.MOMENT_ORIENTATION, new Attribute(Attribute.MOMENT_ORIENTATION, attr[ node.getId() ].getMomentOrientation()));
-			
+	public void addAttributeInNodesCT(HashSet<NodeCT> list){
+		for(NodeCT node: list){
+			addAttributeInNodes(node);
 		}
 	}
 	
+	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
+		for(INodeTree node: hashSet){
+			addAttributeInNodes(node);
+		}
+	} 
+	
+	public void addAttributeInNodes(INodeTree node){
+		node.addAttribute(Attribute.MOMENT_CENTRAL_02, attr[ node.getId() ].moment02);
+		node.addAttribute(Attribute.MOMENT_CENTRAL_20, attr[ node.getId() ].moment20);
+		node.addAttribute(Attribute.MOMENT_CENTRAL_11, attr[ node.getId() ].moment11);
+		
+		node.addAttribute(Attribute.MOMENT_COMPACTNESS, new Attribute(Attribute.MOMENT_COMPACTNESS, attr[ node.getId() ].compactness()));
+		node.addAttribute(Attribute.MOMENT_ECCENTRICITY, new Attribute(Attribute.MOMENT_ECCENTRICITY, attr[ node.getId() ].eccentricity()));
+		node.addAttribute(Attribute.MOMENT_ELONGATION, new Attribute(Attribute.MOMENT_ELONGATION, attr[ node.getId() ].elongation()));
+		node.addAttribute(Attribute.MOMENT_LENGTH_MAJOR_AXES, new Attribute(Attribute.MOMENT_LENGTH_MAJOR_AXES, attr[ node.getId() ].getLengthMajorAxes()));
+		node.addAttribute(Attribute.MOMENT_LENGTH_MINOR_AXES, new Attribute(Attribute.MOMENT_LENGTH_MINOR_AXES, attr[ node.getId() ].getLengthMinorAxes()));
+		node.addAttribute(Attribute.MOMENT_ORIENTATION, new Attribute(Attribute.MOMENT_ORIENTATION, attr[ node.getId() ].getMomentOrientation()));
+		node.addAttribute(Attribute.MOMENT_ASPECT_RATIO, new Attribute(Attribute.MOMENT_ASPECT_RATIO, attr[ node.getId() ].getLengthMinorAxes() /  attr[ node.getId() ].getLengthMajorAxes() ));
+	}
 	
 	public void preProcessing(INodeTree node) {
 		attr[node.getId()] = new CentralMomentsAttribute(node.getCentroid(), node.getArea(), withImg);
@@ -118,6 +141,13 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 			return 0.5 * Math.atan2(2 * moment11.value, moment20.value - moment02.value );
 		}
 		
+		/**
+		 * Shows elongation: 
+		 *  -  for disc, eccentricity() = 0; 
+		 *  -  for line, eccentricity() = 1;
+		 *  -  Less robust than compactness()
+		 *  0 <= eccentricity() ≤ 1 is normalised feature of eccentricity 
+		 */
 		public double eccentricity(){
 			double a = moment20.value + moment02.value + Math.sqrt( Math.pow(moment20.value - moment02.value, 2) + 4 * Math.pow(moment11.value, 2));
 			double b = moment20.value + moment02.value - Math.sqrt( Math.pow(moment20.value - moment02.value, 2) + 4 * Math.pow(moment11.value, 2));
@@ -125,12 +155,22 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 			
 		}
 		
+		/**
+		 * Shows radial distribution of points: for disc, compactness() = 1
+		 * 0 <= compactness() <= 1 is normalised feature of compactness
+		 * Robust: insensitive to noise and to rotation of discrete shape
+		 */
 		public double compactness(){
-			return 1/(2*Math.PI) *   area / (moment20.value + moment02.value); 
+			return ( 1 / (2*Math.PI) ) *  ( area / (moment20.value + moment02.value) ); 
 		}
 		
+
+		/**
+		 * Shows elongation:
+		 * Defined by Xu et al, Two Applications of Shape-Based Morphology: Blood Vessels Segmentation and a Generalization of Constrained Connectivity, ISMM, 2013
+		 */
 		public double elongation(){
-			return area / (getLengthMajorAxes() * getLengthMajorAxes());
+			return area / Math.pow(getLengthMajorAxes(), 2);
 		}
 		
 

@@ -11,13 +11,12 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
-import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -46,7 +45,7 @@ public class ComponentTree {
 	protected int sup = 255;
 	protected int inf = 0;
 	
-	public ComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree, boolean doPre){
+	public ComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		long ti = System.currentTimeMillis();
 		this.imgInput = img;
 		this.isMaxtree = isMaxtree;
@@ -62,11 +61,10 @@ public class ComponentTree {
 		//computerAdjcencyNodes();
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
-		System.out.println("Tempo de execucao [create component tree] "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [create component tree] "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
 	public ComponentTree(BuilderComponentTree builder){
-		//long ti = System.currentTimeMillis();
 		this.builder = builder;
 		if(builder instanceof BuilderComponentTreeByUnionFind){
 			BuilderComponentTreeByUnionFind builderUF = (BuilderComponentTreeByUnionFind) builder;
@@ -88,9 +86,6 @@ public class ComponentTree {
 		
 		computerHeightNodes(this.root, 0);
 		
-		//long tf = System.currentTimeMillis();
-		//System.out.println("Tempo de execucao [create component tree] "+ ((tf - ti) /1000.0)  + "s");
-		
 	}
 	
 	public ComponentTree getClone(){
@@ -104,9 +99,6 @@ public class ComponentTree {
 		return c;
 	}
 	
-	public ComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
-		this(img, adj, isMaxtree, true);
-	}
 	
 	public ComponentTree(ComponentTree c){
 		this.builder = c.builder;
@@ -146,7 +138,7 @@ public class ComponentTree {
 		flags = null;
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
-		System.out.println("Tempo de execucao [computerAdjcencyNodes] "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [computerAdjcencyNodes] "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
 	

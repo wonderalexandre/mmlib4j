@@ -27,7 +27,7 @@ import mmlib4j.images.Image2D;
 import mmlib4j.utils.ImageBuilder;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -56,14 +56,13 @@ public abstract class WindowImages {
     }
     
     public abstract void showImpl(Image2D[] img, String[] titles);
-    
     	    
 }
 
 class WindowSwing extends WindowImages{
 
 	private Map<String, BufferedImage> map = new HashMap<String, BufferedImage>();
-    private static final String PROJECT_NAME = "MMorph4J";
+    private static final String PROJECT_NAME = "MMLib4J";
     
 	public void showImpl(Image2D[] img, String[] titles) {
         BufferedImage im[] = new BufferedImage[img.length];
@@ -75,7 +74,7 @@ class WindowSwing extends WindowImages{
         	else if(img[i] instanceof BinaryImage)
         		im[i] = ImageBuilder.convertToImage((BinaryImage) img[i]);
         	else
-        		throw new RuntimeException("Tipo de imagem invalido");
+        		throw new RuntimeException("Error: type image");
         }
         final JFrame dialog = getJFrame(im, PROJECT_NAME, titles, true);
         dialog.setVisible(true);
@@ -86,7 +85,6 @@ class WindowSwing extends WindowImages{
     public JFrame getJFrame(BufferedImage img[], String title, String titles[], boolean isSalvar){
         final JFrame dialog = new JFrame();
         dialog.setTitle(title);
-        //dialog.setBackground(Color.BLACK);
         dialog.setLayout(new BorderLayout());
         boolean flag = false;
         JPanel panelPrincipal = new JPanel();

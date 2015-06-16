@@ -18,7 +18,7 @@ import mmlib4j.utils.ImageBuilder;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -279,10 +279,10 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		ArrayList<ExtinctionValueNode> extincaoPorNode = new ArrayList<ExtinctionValueNode>();		
 		LinkedList<NodeToS> folhas = tree.getLeaves();
 		for(NodeToS folha: folhas){
-			extincao = tree.getRoot().getAttributeValueOLD(Attribute.ALTITUDE);
+			extincao = (int) tree.getRoot().getAttributeValue(Attribute.ALTITUDE);
 			NodeToS pai = folha.getParent();
-			while (pai != null &&  pai.getAttributeValueOLD(Attribute.ALTITUDE) <= Math.abs(folha.getLevel() - pai.getLevel())) {
-				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttributeValueOLD(Attribute.ALTITUDE) == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
+			while (pai != null &&  pai.getAttributeValue(Attribute.ALTITUDE) <= Math.abs(folha.getLevel() - pai.getLevel())) {
+				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttributeValue(Attribute.ALTITUDE) == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
 					break;
 				}
 				visitado[pai.getId()] = true;
@@ -311,7 +311,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		ArrayList<ExtinctionValueNode> extincaoPorNode = new ArrayList<ExtinctionValueNode>();
 		LinkedList<NodeToS> folhas = tree.getLeaves();
 		for(NodeToS folha: folhas){
-			extinction = tree.getRoot().getAttributeValueOLD(type);
+			extinction = (int)tree.getRoot().getAttributeValue(type);
 			NodeToS aux = folha;
 			NodeToS pai = aux.getParent();
 			boolean flag = true;
@@ -319,10 +319,10 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 				if (pai.getNumChildren() > 1) {
 					for(NodeToS filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
-							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttributeValueOLD(type) == aux.getAttributeValueOLD(type)) { //EMPATE Grimaud,92
+							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttributeValue(type) == aux.getAttributeValue(type)) { //EMPATE Grimaud,92
 								flag = false;
 							}
-							else if (filho != aux  &&  filho.getAttributeValueOLD(type) > aux.getAttributeValueOLD(type)) {
+							else if (filho != aux  &&  filho.getAttributeValue(type) > aux.getAttributeValue(type)) {
 								flag = false;
 							}
 							visitado[filho.getId()] = true;
@@ -336,7 +336,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 				}
 			}
 			if (pai != null){
-				extinction = aux.getAttributeValueOLD(type);
+				extinction = (int) aux.getAttributeValue(type);
 				//extincaoPorNode[folha.getId()] = extinction;
 				extincaoPorNode.add( new ExtinctionValueNode(folha, pai, extinction) );
 			}
@@ -369,10 +369,10 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		//LinkedList<NodeToS> folhas = tree.getLeaves();
 		for(Object obj: folhas){
 			NodeToS folha = (NodeToS) obj;
-			extincao = tree.getRoot().getAttributeValueOLD(Attribute.ALTITUDE);
+			extincao = (int) tree.getRoot().getAttributeValue(Attribute.ALTITUDE);
 			NodeToS pai = folha.getParent();
-			while (pai != null &&  pai.getAttributeValueOLD(Attribute.ALTITUDE) <= Math.abs(folha.getLevel() - pai.getLevel())) {
-				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttributeValueOLD(Attribute.ALTITUDE) == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
+			while (pai != null &&  pai.getAttributeValue(Attribute.ALTITUDE) <= Math.abs(folha.getLevel() - pai.getLevel())) {
+				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttributeValue(Attribute.ALTITUDE) == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
 					break;
 				}
 				visitado[pai.getId()] = true;
@@ -402,7 +402,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		//LinkedList<NodeToS> folhas = tree.getLeaves();
 		for(Object obj: folhas){
 			NodeToS folha = (NodeToS) obj;
-			extinction = tree.getRoot().getAttributeValueOLD(type);
+			extinction = (int) tree.getRoot().getAttributeValue(type);
 			NodeToS aux = folha;
 			NodeToS pai = aux.getParent();
 			boolean flag = true;
@@ -410,10 +410,10 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 				if (pai.getNumChildren() > 1) {
 					for(NodeToS filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
-							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttributeValueOLD(type) == aux.getAttributeValueOLD(type)) { //EMPATE Grimaud,92
+							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttributeValue(type) == aux.getAttributeValue(type)) { //EMPATE Grimaud,92
 								flag = false;
 							}
-							else if (filho != aux  &&  filho.getAttributeValueOLD(type) > aux.getAttributeValueOLD(type)) {
+							else if (filho != aux  &&  filho.getAttributeValue(type) > aux.getAttributeValue(type)) {
 								flag = false;
 							}
 							visitado[filho.getId()] = true;
@@ -427,7 +427,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 				}
 			}
 			if (pai != null){
-				extinction = aux.getAttributeValueOLD(type);
+				extinction = (int) aux.getAttributeValue(type);
 				extincaoPorNode.add( new ExtinctionValueNode(folha, pai, extinction) );
 			}
 		}
@@ -441,7 +441,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		boolean continua = true;
 		LinkedList<NodeToS> folhas = tree.getLeaves();
 		for(NodeToS folha: folhas){
-			extincao = tree.getRoot().getAttributeValueOLD(Attribute.VOLUME) * 2;
+			extincao = (int) tree.getRoot().getAttributeValue(Attribute.VOLUME) * 2;
 			NodeToS aux = folha;
 			NodeToS pai = aux.getParent();
 			while (continua  &&  pai != null) {
@@ -449,8 +449,8 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 					for(NodeToS filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(continua){
 							
-							int vF = filho.getAttributeValueOLD(Attribute.VOLUME) + filho.getArea() * (filho.getLevel() - pai.getLevel());
-							int vA =   aux.getAttributeValueOLD(Attribute.VOLUME) +   aux.getArea() * (aux.getLevel() - pai.getLevel());
+							int vF =  (int) filho.getAttributeValue(Attribute.VOLUME) + filho.getArea() * (filho.getLevel() - pai.getLevel());
+							int vA =  (int) aux.getAttributeValue(Attribute.VOLUME) +   aux.getArea() * (aux.getLevel() - pai.getLevel());
 							if (visitado[filho.getId()]  &&  filho != aux  &&  vF == vA) { //EMPATE Grimaud,92
 								continua = false;
 							}
@@ -468,7 +468,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 			}
 			continua = true;
 			if (pai != null){
-				extincao = aux.getAttributeValueOLD(Attribute.VOLUME) + aux.getArea() * (aux.getLevel() - pai.getLevel());
+				extincao = (int) aux.getAttributeValue(Attribute.VOLUME) + aux.getArea() * (aux.getLevel() - pai.getLevel());
 			
 				//extincaoPorNode[folha.getId()] = extincao;
 				extincaoPorNode.add( new ExtinctionValueNode(folha, pai, extincao) );

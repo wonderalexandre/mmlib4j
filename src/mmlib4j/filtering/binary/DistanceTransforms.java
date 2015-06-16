@@ -5,7 +5,7 @@ import mmlib4j.images.RealImage;
 import mmlib4j.images.impl.ImageFactory;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
@@ -56,21 +56,22 @@ public class DistanceTransforms {
 		return ImageFactory.createGrayScaleImage(32, distanceTransform(img, k1, k2), img.getWidth(), img.getHeight());
 	}
 	
-	public int[] distanceTransform(BinaryImage ip, int k1, int k2){
-		int w = ip.getWidth();
-		int h = ip.getHeight();
-		
-		int[] dpix = new int[ip.getSize()];
+	public int[] distanceTransform(BinaryImage img, int k1, int k2){
+		int[] dpix = new int[img.getSize()];
 		
 		//Initialization: 
 		//foreground pixels (>0) -> 0, background -> infinity
-		for(int p: ip.scanForward()){
-			if (ip.isPixelForeground(p)) // this is a foreground pixel
+		for(int p: img.scanForward()){
+			if (img.isPixelForeground(p)) // this is a foreground pixel
 				dpix[p] = Integer.MAX_VALUE; // zero distance to foregorund
 			else
 				dpix[p] = 0;
 		}
-		
+		distanceTransform(img.getWidth(), img.getHeight(), dpix, k1, k2);
+		return dpix;
+	}
+	
+	public void distanceTransform(int w, int h, int dpix[], int k1, int k2){
 		int d1, d2, d3, d4, dmin;
 		//L->R pass:
 		for (int v = 0; v < h; v++) {
@@ -125,13 +126,9 @@ public class DistanceTransforms {
 			}
 		}
 		
-		return dpix;
 	}
     
-	
 	public float[] distanceTransformFloat(BinaryImage ip, float k1, float k2){
-		int w = ip.getWidth();
-		int h = ip.getHeight();
 		float[] dpix = new float[ip.getSize()];
 		
 		//Initialization: 
@@ -142,6 +139,12 @@ public class DistanceTransforms {
 			else
 				dpix[p] = 0;
 		}
+		distanceTransformFloat(ip.getWidth(), ip.getHeight(), dpix, k1, k2);
+		return dpix;
+	}
+	
+	
+	public void distanceTransformFloat(int w, int h, float dpix[], float k1, float k2){
 		
 		float d1, d2, d3, d4, dmin;
 		//L->R pass:
@@ -197,7 +200,6 @@ public class DistanceTransforms {
 			}
 		}
 		
-		return dpix;
 	}
     
 	
@@ -232,7 +234,8 @@ public class DistanceTransforms {
     	img.setPixel(4, 17, true);
     	
     	
-    	
+    	System.out.println();
+    	System.out.println();
     	int map[] = new DistanceTransforms().chessbordDistanceMap(img);
     	
     	for(int h=0; h < img.getHeight(); h++){

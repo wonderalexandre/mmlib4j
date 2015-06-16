@@ -1,7 +1,7 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -9,17 +9,14 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
 public class PruningBasedMSERWithCircularity extends PruningBasedMSER{
-
-	private GrayScaleImage imgInput;
 	
 	public PruningBasedMSERWithCircularity(IMorphologicalTreeFiltering tree, int delta){
 		super(tree, delta);
-		imgInput = tree.getInputImage();
 	}
 	
 	public boolean[] getMappingSelectedNodes2() {
@@ -76,11 +73,11 @@ public class PruningBasedMSERWithCircularity extends PruningBasedMSER{
 
 
 	public boolean isNodeCircle(NodeCT node){
-		if(node.getPerimeterExternal() < 50)
+		if(node.getAttributeValue(Attribute.PERIMETER_EXTERNAL) < 50)
 			return false;
 		else if (node.getArea() < 200)
 			return false;
-		else if(node.getCircularity() < 0.4)
+		else if(node.getAttributeValue(Attribute.CIRCULARITY) < 0.4)
 			return false;
 		else
 			return true;
@@ -90,11 +87,11 @@ public class PruningBasedMSERWithCircularity extends PruningBasedMSER{
 
 
 	public boolean isNodeCircle(NodeToS node){
-		if(node.getPerimeter() < 50)
+		if(node.getAttributeValue(Attribute.PERIMETER_EXTERNAL) < 50)
 			return false;
 		else if (node.getArea() < 200)
 			return false;
-		else if(node.getCircularity() < 0.4)
+		else if(node.getAttributeValue(Attribute.CIRCULARITY) < 0.4)
 			return false;
 		else
 			return true;

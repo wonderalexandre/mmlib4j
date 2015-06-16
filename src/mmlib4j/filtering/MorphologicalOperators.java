@@ -6,11 +6,10 @@ import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageAlgebra;
 import mmlib4j.utils.ImageBuilder;
-import mmlib4j.utils.ImageUtils;
 import mmlib4j.utils.Utils;
 
 /**
- * MMorph4J - Mathematical Morphology Library for Java 
+ * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
