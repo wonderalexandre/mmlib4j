@@ -33,14 +33,15 @@ public class Attribute {
 		return type;
 	}
 	
-	
-	
 	//basic attributes
 	public static final int AREA = 0;
 	public static final int VOLUME = 1;
 	public static final int HEIGHT = 2;
 	public static final int WIDTH = 3;
 	public static final int ALTITUDE = 4;
+	public static final int LEVEL = 5;
+	public static final int RATIO_WIDTH_HEIGHT = 6;
+	public static final int RECTANGULARITY = 7;
 	public static final int PERIMETER = 10;
 	public static final int VARIANCE_LEVEL = 11;
 	
@@ -48,7 +49,7 @@ public class Attribute {
 	public static final int CIRCULARITY = 15;
 	public static final int COMPACTNESS = 16;
 	public static final int ELONGATION = 17;
-	public static final int RECTANGULARITY = 18;
+	
 	
 	//attributes based on moments
 	public static final int MOMENT_CENTRAL_20 = 20;
@@ -77,6 +78,7 @@ public class Attribute {
 			case COMPACTNESS: return "COMPACTNESS";
 			case ELONGATION: return "ELONGATION";
 			case HEIGHT: return "HEIGHT";
+			case LEVEL: return "LEVEL";
 			case MOMENT_ASPECT_RATIO: return "MOMENT_ASPECT_RATIO";
 			case MOMENT_CENTRAL_02: return "MOMENT_CENTRAL_02";
 			case MOMENT_CENTRAL_11: return "MOMENT_CENTRAL_11";
@@ -92,6 +94,7 @@ public class Attribute {
 			case PERIMETER: return "PERIMETER";
 			case PERIMETER_EXTERNAL: return "PERIMETER_EXTERNAL";
 			case RECTANGULARITY: return "RECTANGULARITY";
+			case RATIO_WIDTH_HEIGHT: return "RATIO_WIDTH_HEIGHT";
 			case VARIANCE_LEVEL: return "VARIANCE_LEVEL";
 			case VOLUME: return "VOLUME";
 			case WIDTH: return "WIDTH";

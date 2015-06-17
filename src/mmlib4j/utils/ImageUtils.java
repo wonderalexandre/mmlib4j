@@ -51,6 +51,10 @@ public class ImageUtils {
         return imgOut;
     }
     
+    public static int normalized255(double value, double max, double min){
+    	return (int) (( 255.0 / (max - min)) * (value - min));
+    }
+    
 
     public void print(GrayScaleImage img, int dig){
     	for(int h=0; h < img.getHeight(); h++){

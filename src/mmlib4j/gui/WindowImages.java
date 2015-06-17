@@ -24,6 +24,7 @@ import mmlib4j.images.BinaryImage;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.Image2D;
+import mmlib4j.images.RealImage;
 import mmlib4j.utils.ImageBuilder;
 
 /**
@@ -73,6 +74,8 @@ class WindowSwing extends WindowImages{
         		im[i] = ImageBuilder.convertToImage((ColorImage) img[i]);
         	else if(img[i] instanceof BinaryImage)
         		im[i] = ImageBuilder.convertToImage((BinaryImage) img[i]);
+        	else if(img[i] instanceof RealImage)
+        		im[i] = ImageBuilder.convertToImage(img[i]);
         	else
         		throw new RuntimeException("Error: type image");
         }

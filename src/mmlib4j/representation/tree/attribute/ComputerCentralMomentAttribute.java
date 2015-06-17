@@ -55,6 +55,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		node.addAttribute(Attribute.MOMENT_CENTRAL_02, attr[ node.getId() ].moment02);
 		node.addAttribute(Attribute.MOMENT_CENTRAL_20, attr[ node.getId() ].moment20);
 		node.addAttribute(Attribute.MOMENT_CENTRAL_11, attr[ node.getId() ].moment11);
+		node.addAttribute(Attribute.VARIANCE_LEVEL, attr[ node.getId() ].variance);
 		
 		node.addAttribute(Attribute.MOMENT_COMPACTNESS, new Attribute(Attribute.MOMENT_COMPACTNESS, attr[ node.getId() ].compactness()));
 		node.addAttribute(Attribute.MOMENT_ECCENTRICITY, new Attribute(Attribute.MOMENT_ECCENTRICITY, attr[ node.getId() ].eccentricity()));
@@ -66,12 +67,14 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	}
 	
 	public void preProcessing(INodeTree node) {
-		attr[node.getId()] = new CentralMomentsAttribute(node.getCentroid(), node.getArea(), withImg);
+		attr[node.getId()] = new CentralMomentsAttribute(node, withImg);
 		//area e volume
 		
 		for(int pixel: node.getCanonicalPixels()){
 			int x = pixel % withImg;
 			int y = pixel / withImg;
+			
+			attr[node.getId()].variance.value += Math.pow(node.getLevel() - attr[node.getId()].levelMean, 2);
 			attr[node.getId()].moment11.value += Math.pow(x - attr[node.getId()].xCentroid, 1) * Math.pow(y - attr[node.getId()].yCentroid, 1);
 			attr[node.getId()].moment20.value += Math.pow(x - attr[node.getId()].xCentroid, 2) * Math.pow(y - attr[node.getId()].yCentroid, 0);
 			attr[node.getId()].moment02.value += Math.pow(x - attr[node.getId()].xCentroid, 0) * Math.pow(y - attr[node.getId()].yCentroid, 2);
@@ -85,12 +88,25 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		attr[node.getId()].moment11.value += attr[son.getId()].moment11.value;
 		attr[node.getId()].moment02.value +=  attr[son.getId()].moment02.value;
 		attr[node.getId()].moment20.value += attr[son.getId()].moment20.value;
-		
+		attr[node.getId()].variance.value += attr[son.getId()].variance.value;
 	}
 
-	public void posProcessing(INodeTree root) {
+	public void posProcessing(INodeTree node) {
 		//pos-processing root
-		
+		attr[node.getId()].variance.value = attr[node.getId()].variance.value / node.getArea();
+	}
+	
+	public static CentralMomentsAttribute getInstance(INodeTree node, int widthImg){
+		CentralMomentsAttribute c = new ComputerCentralMomentAttribute().new CentralMomentsAttribute();
+		c.area = node.getArea();
+		c.xCentroid = node.getCentroid() % widthImg;
+		c.yCentroid = node.getCentroid() / widthImg;
+		c.width = widthImg;
+		c.moment02 = node.getAttribute(Attribute.MOMENT_CENTRAL_02);
+		c.moment20 = node.getAttribute(Attribute.MOMENT_CENTRAL_20);
+		c.moment11 = node.getAttribute(Attribute.MOMENT_CENTRAL_11);
+		c.variance = node.getAttribute(Attribute.VARIANCE_LEVEL);
+		return c;
 	}
 	
 	
@@ -99,34 +115,25 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		Attribute moment20 = new Attribute(Attribute.MOMENT_CENTRAL_20);
 		Attribute moment02 = new Attribute(Attribute.MOMENT_CENTRAL_02);
 		Attribute moment11 = new Attribute(Attribute.MOMENT_CENTRAL_11);
+		Attribute variance = new Attribute(Attribute.VARIANCE_LEVEL);
 		
 		double area; 
 		double xCentroid;
 		double yCentroid;
 		int width;
+		double levelMean;
 		
-		public CentralMomentsAttribute(double xc, double yc, int area, int width){
-			this.area = (double) area;
-			this.xCentroid = xc;
-			this.yCentroid = yc;
+		
+		public CentralMomentsAttribute(){}
+		public CentralMomentsAttribute(INodeTree node, int width){
+			this.area = (double) node.getArea();
+			this.xCentroid = node.getCentroid() % width;
+			this.yCentroid = node.getCentroid() / width;
 			this.width = width;
+			this.levelMean = node.getAttributeValue(Attribute.VOLUME) / node.getAttributeValue(Attribute.AREA);
+
 		}
-		
-		public CentralMomentsAttribute(INodeTree node, int widthImg){
-			this.area = node.getArea();
-			this.xCentroid = node.getCentroid() % widthImg;
-			this.yCentroid = node.getCentroid() / widthImg;
-			this.width = widthImg;
-			this.moment02 = node.getAttribute(Attribute.MOMENT_CENTRAL_02);
-			this.moment20 = node.getAttribute(Attribute.MOMENT_CENTRAL_20);
-			this.moment11 = node.getAttribute(Attribute.MOMENT_CENTRAL_11);
-		}
-		
-		public CentralMomentsAttribute(int centroid, int area, int width){
-			this(centroid % width, centroid / width, area, width);
-			
-		}
-		
+				
 		
 		//=> moment[p][q] / norm;
 		public double getFatorNormalized(int p, int q){

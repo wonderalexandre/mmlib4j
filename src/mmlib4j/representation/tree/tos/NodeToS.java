@@ -55,6 +55,7 @@ public class NodeToS implements INodeTree, Cloneable{
 	int pixelYmin;
 	int pixelYmax;
 	int area;
+	int volume;
 	int countHoles;
 	Hashtable<Integer, Attribute> attributes = new Hashtable<Integer, Attribute>();
 	Contour contourE = null;
@@ -174,6 +175,8 @@ public class NodeToS implements INodeTree, Cloneable{
 		sumX += x;
 		sumY += y;
 		area += 1;
+		volume += (level);
+		
 		pixels.add(p);
 	}
 	
@@ -191,6 +194,9 @@ public class NodeToS implements INodeTree, Cloneable{
 	
 	public int getArea(){
 		return area;
+	}
+	public int getVolume(){
+		return volume;
 	}
 	
 	public int getCentroid(){

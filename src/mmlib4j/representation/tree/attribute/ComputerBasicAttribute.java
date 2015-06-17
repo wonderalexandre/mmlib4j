@@ -56,6 +56,9 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		node.addAttribute(Attribute.HEIGHT, attr[ node.getId() ].height);
 		node.addAttribute(Attribute.ALTITUDE, attr[ node.getId() ].altitude);
 		node.addAttribute(Attribute.PERIMETER, attr[ node.getId() ].perimeter);
+		node.addAttribute(Attribute.LEVEL, new Attribute(Attribute.LEVEL, node.getLevel()));
+		node.addAttribute(Attribute.RECTANGULARITY, attr[ node.getId() ].rect);
+		node.addAttribute(Attribute.RATIO_WIDTH_HEIGHT, attr[ node.getId() ].ratioWH);
 	} 
 	
 	
@@ -78,6 +81,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		attr[node.getId()].pixelYmin = node.getPixelWithYmin();
 		
 		attr[node.getId()].perimeter.value = node.getNumPixelInFrame();
+		
 		for(int p: node.getCanonicalPixels()){
 			for(int q: AdjacencyRelation.getAdjacency4().getAdjacencyPixels(img, p)){
 				if(p != q){
@@ -96,7 +100,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	public void mergeChildren(INodeTree node, INodeTree son) {
 		attr[node.getId()].area.value = attr[node.getId()].area.value + attr[son.getId()].area.value;
 		attr[node.getId()].volume.value = attr[node.getId()].volume.value + attr[son.getId()].volume.value;
-				
+		
 		if(attr[son.getId()].ymax > attr[node.getId()].ymax){
 			attr[node.getId()].pixelYmax = attr[son.getId()].pixelYmax;
 		}
@@ -135,7 +139,8 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		root.setPixelWithXmin( attr[ root.getId() ].pixelXmin );
 		root.setPixelWithYmin( attr[ root.getId() ].pixelYmin );
 		
-		
+		attr[root.getId()].rect.value = root.getArea() / attr[root.getId()].width.value * attr[root.getId()].height.value;
+		attr[root.getId()].ratioWH.value =  Math.max(attr[root.getId()].width.value, attr[root.getId()].height.value) / Math.min(attr[root.getId()].width.value, attr[root.getId()].height.value);
 		
 		if(root.isNodeMaxtree()){
 			if(root.isLeaf())
@@ -164,7 +169,8 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		
 		int highest;
 		int lowest;
-		
+		Attribute rect = new Attribute(Attribute.RECTANGULARITY);
+		Attribute ratioWH = new Attribute(Attribute.RATIO_WIDTH_HEIGHT);
 		Attribute area = new Attribute(Attribute.AREA);
 		Attribute volume = new Attribute(Attribute.VOLUME);
 		Attribute altitude = new Attribute(Attribute.ALTITUDE);

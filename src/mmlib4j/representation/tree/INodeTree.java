@@ -23,6 +23,7 @@ public interface INodeTree {
 	public SimpleLinkedList<Integer> getCanonicalPixels();
 	
 	public int getArea();
+	public int getVolume();
 	public int getCentroid();
 	
 	public int getXmin();

@@ -71,7 +71,6 @@ public class ComputerAttributeBasedPerimeterExternal {
 		node.addAttribute(Attribute.CIRCULARITY, new Attribute(Attribute.CIRCULARITY, getCircularity(node)));
 		node.addAttribute(Attribute.COMPACTNESS, new Attribute(Attribute.COMPACTNESS, getCompacity(node)));
 		node.addAttribute(Attribute.ELONGATION, new Attribute(Attribute.ELONGATION, getElongation(node)));
-		node.addAttribute(Attribute.RECTANGULARITY, new Attribute(Attribute.RECTANGULARITY, node.getArea() / (node.getAttributeValue(Attribute.WIDTH) * node.getAttributeValue(Attribute.HEIGHT))));
 	}
 	
 	public double getCircularity(INodeTree node){

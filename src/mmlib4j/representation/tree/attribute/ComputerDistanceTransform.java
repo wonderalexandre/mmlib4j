@@ -5,7 +5,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import mmlib4j.filtering.binary.DistanceTransforms;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.RealImage;
 import mmlib4j.images.impl.ImageFactory;
@@ -29,7 +28,7 @@ public class ComputerDistanceTransform {
 		imgsDT = new RealImage[256];
 		this.img = img;
 		pool =  new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-		computerAttribute(root);
+		computerDT(root);
 		while(pool.getActiveCount() != 0);
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
@@ -41,11 +40,18 @@ public class ComputerDistanceTransform {
 		return imgsDT[node.getLevel()].getPixel(p);
 	}
 	
+	public RealImage getDistanceTransform(INodeTree node){
+		return imgsDT[node.getLevel()];
+	}
+	
+	public RealImage getDistanceTransform(int level){
+		return imgsDT[level];
+	}
 
-	public void computerAttribute(INodeTree root){
+	public void computerDT(INodeTree root){
 		List<INodeTree> children = root.getChildren();
 		for(INodeTree son: children){
-			computerAttribute(son);
+			computerDT(son);
 		}
 		if(imgsDT[root.getLevel()] == null){
 			imgsDT[root.getLevel()] = ImageFactory.createFloatImage(img.getWidth(), img.getHeight());
@@ -73,8 +79,67 @@ public class ComputerDistanceTransform {
 				else
 					imgDT.setPixel(p, 0);	
 			}
-			DistanceTransforms dt = new DistanceTransforms();
-			dt.distanceTransformFloat(img.getWidth(), img.getHeight(), imgDT.getPixels(), 1, (float) Math.sqrt(2));
+			
+			distanceTransformFloat(img.getWidth(), img.getHeight(), imgDT.getPixels(), 1, (float) Math.sqrt(2));
+		}
+		
+
+		public void distanceTransformFloat(int w, int h, float dpix[], float k1, float k2){
+			
+			float d1, d2, d3, d4, dmin;
+			//L->R pass:
+			for (int v = 0; v < h; v++) {
+				for (int u = 0; u < w; u++) {
+					int i = v * w + u;
+					if (dpix[i]>0) { //not a foreground pixel
+						//compute distances via neighboring pixels
+						d1 = Float.POSITIVE_INFINITY;
+						d2 = Float.POSITIVE_INFINITY;
+						d3 = Float.POSITIVE_INFINITY;
+						d4 = Float.POSITIVE_INFINITY;
+						
+						if (u>0) 			d1 = k1 + dpix[v*w+u-1];
+						if (u>0 && v>0) 	d2 = k2 + dpix[(v-1)*w+u-1];
+						if (v>0)			d3 = k1 + dpix[(v-1)*w+u];
+						if (v>0 && u<w-1)	d4 = k2 + dpix[(v-1)*w+u+1];
+						
+						dmin = dpix[i];
+						if (d1<dmin) dmin = d1;
+						if (d2<dmin) dmin = d2;
+						if (d3<dmin) dmin = d3;
+						if (d4<dmin) dmin = d4;
+						dpix[i] = dmin;
+					}
+				}
+			}
+			
+			//R->L pass:
+			for (int v = h - 1; v >= 0; v--) {
+				for (int u = w - 1; u >= 0; u--) {
+					int i = v * w + u;
+					if (dpix[i] > 0) { //not a foreground pixel
+						
+						//compute distances via neighboring pixels
+						d1 = Float.POSITIVE_INFINITY;
+						d2 = Float.POSITIVE_INFINITY;
+						d3 = Float.POSITIVE_INFINITY;
+						d4 = Float.POSITIVE_INFINITY;
+						
+						if (u<w-1) 			d1 = k1 + dpix[v*w+u+1];
+						if (u<w-1 && v<h-1)	d2 = k2 + dpix[(v+1)*w+u+1];
+						if (v<h-1)			d3 = k1 + dpix[(v+1)*w+u];
+						if (v<h-1 && u>0)	d4 = k2 + dpix[(v+1)*w+u-1];
+						
+						dmin = dpix[i];
+						if (d1<dmin) dmin = d1;
+						if (d2<dmin) dmin = d2;
+						if (d3<dmin) dmin = d3;
+						if (d4<dmin) dmin = d4;
+						dpix[i] = dmin;
+					}
+				}
+			}
+			
 		}
 	}
 	

@@ -142,8 +142,8 @@ public class TreeOfShape{
 			node.sumX += son.sumX;
 			node.sumY += son.sumY;
 			node.area += son.area;
+			node.volume += son.volume;
 		}
-		
 		
 	}
 	

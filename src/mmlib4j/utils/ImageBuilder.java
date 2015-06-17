@@ -13,6 +13,7 @@ import mmlib4j.images.BinaryImage;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.Image2D;
+import mmlib4j.images.RealImage;
 import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
 
@@ -54,6 +55,19 @@ public class ImageBuilder {
 			for (int w = 0; w < img.getWidth(); w++) {
 				for (int h = 0; h < img.getHeight(); h++) {
 					bi.setRGB(w, h, img.getPixel(w, h));
+				}
+			}
+		}
+		else if (image instanceof RealImage){
+			bi = new BufferedImage(image.getWidth(), image.getHeight(),	BufferedImage.TYPE_INT_RGB);
+			RealImage img = (RealImage) image;
+			double max = img.getPixelMax();
+			double min = img.getPixelMin();
+			int value;
+			for (int w = 0; w < img.getWidth(); w++) {
+				for (int h = 0; h < img.getHeight(); h++) {
+					value = ImageUtils.normalized255(img.getPixel(w, h), max, min);
+					bi.setRGB(w, h,  new Color(value, value, value).getRGB());
 				}
 			}
 		}

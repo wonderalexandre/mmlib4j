@@ -55,6 +55,7 @@ public class NodeCT implements INodeTree, Cloneable{
 	int pixelYmin;
 	int pixelYmax;
 	int area;
+	int volume;
 	Hashtable<Integer, Attribute> attributes = new Hashtable<Integer, Attribute>();
 	Contour contourE = null;
 
@@ -205,7 +206,7 @@ public class NodeCT implements INodeTree, Cloneable{
 		sumX += x;
 		sumY += y;
 		area += 1;
-		
+		volume += (level);
 		pixels.add(p);
 	}
 	
@@ -424,7 +425,11 @@ public class NodeCT implements INodeTree, Cloneable{
 		return area;
 	}
 	
+	public int getVolume(){
+		return volume;
+	}
 
+	
 	public void setXmin(int p) {
 		xmin = p;
 	}
