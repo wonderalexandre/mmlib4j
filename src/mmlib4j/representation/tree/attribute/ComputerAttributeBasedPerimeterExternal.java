@@ -6,6 +6,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import mmlib4j.filtering.binary.ContourTracer;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.INodeTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -25,10 +26,14 @@ public class ComputerAttributeBasedPerimeterExternal {
 	private Attribute perimeters[];
 	private GrayScaleImage img;
 	private static final int[][] delta = { { 1,0}, { 1, 1}, {0, 1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, { 1,-1} };
+	int levelRoot;
 	
+
 	public ComputerAttributeBasedPerimeterExternal(int numNode, INodeTree root, GrayScaleImage img){
 		long ti = System.currentTimeMillis();
 		this.img = img;
+		
+		this.levelRoot = root.getLevel();
 		perimeters = new Attribute[numNode];
 		pool =  new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 		computerAttribute(root);
@@ -46,7 +51,10 @@ public class ComputerAttributeBasedPerimeterExternal {
 		for(INodeTree son: children){
 			computerAttribute(son);
 		}
-		pool.execute(new ThreadNodeCTPerimeter(root, perimeters[root.getId()]));
+		if(root.getLevel() == levelRoot){
+			perimeters[root.getId()].value = img.getWidth() * 2 + img.getHeight() * 2;
+		}else
+			pool.execute(new ThreadNodeCTPerimeter(root, perimeters[root.getId()]));
 	}
 	
 	
@@ -90,10 +98,17 @@ public class ComputerAttributeBasedPerimeterExternal {
 	class ThreadNodeCTPerimeter extends Thread {
 		private INodeTree node;
 		private Attribute perimeter;
-		
+		boolean pixels[][] = null;
 		public ThreadNodeCTPerimeter(INodeTree node, Attribute perimeter){
 			this.node = node;
 			this.perimeter = perimeter;
+			if(node instanceof NodeToS){
+				pixels = new boolean[img.getWidth()][img.getHeight()];
+				NodeToS nnode = (NodeToS) node;
+				for(Integer p: nnode.getPixelsOfCC()){
+					pixels[p%img.getWidth()][p/img.getWidth()] = true;
+				}
+			}
 		}
 			
 		public void run() {
@@ -103,11 +118,14 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 		private boolean isForeground(int x, int y){
 			if(!img.isPixelValid(x, y)) return false;
-			if(node.isNodeMaxtree())
-				return img.getPixel(x, y) >= node.getLevel();
-			else
-				return img.getPixel(x, y) <= node.getLevel();
-			
+			if(pixels == null){
+				if(!img.isPixelValid(x, y)) return false;
+				if(node.isNodeMaxtree())
+					return img.getPixel(x, y) >= node.getLevel();
+				else
+					return img.getPixel(x, y) <= node.getLevel();
+			}
+			return pixels[x][y];
 		}
 		
 		double computerContour (int xS, int yS) {

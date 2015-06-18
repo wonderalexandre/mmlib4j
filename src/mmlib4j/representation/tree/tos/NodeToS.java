@@ -172,11 +172,11 @@ public class NodeToS implements INodeTree, Cloneable{
 			else if(x == img.getWidth()-1 && y == img.getHeight()-1)
 				countPixelInFrame++;
 		}
+		
 		sumX += x;
 		sumY += y;
 		area += 1;
 		volume += (level);
-		
 		pixels.add(p);
 	}
 	

@@ -116,11 +116,12 @@ public class TreeOfShape{
 		
 		if(node != root){
 			node.numSiblings = node.parent.children.size();
-			if(node.parent.level <= node.level)
+			if(node.parent.level < node.level)
 				node.isNodeMaxtree = true; //maxtree
-			else if(node.parent.level >= node.level)
+			else if(node.parent.level > node.level)
 				node.isNodeMaxtree = false; //mintree
 		}
+		
 		else{
 			node.numSiblings = 0;
 			if(node.getLevel() == imgInput.minValue()){

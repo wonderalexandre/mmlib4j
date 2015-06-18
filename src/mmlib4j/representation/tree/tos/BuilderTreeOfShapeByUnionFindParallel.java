@@ -8,6 +8,8 @@ import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.utils.ImageBuilder;
+import mmlib4j.utils.Utils;
 
 
 /**
@@ -30,7 +32,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	private byte imgU[];
 	private int parent[];
 	private int numNode; 
-	private boolean isLog = true;
+	
 	private int xInfinito=-1;
 	private int yInfinito=-1;
 	
@@ -46,7 +48,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		b.interpWidth = this.interpWidth;
 		b.interpHeight = this.interpHeight;
 		b.parent = this.parent;
-		b.isLog = this.isLog;
+		
 		b.xInfinito = this.xInfinito;
 		b.yInfinito = this.yInfinito;
 		b.img = this.img;	
@@ -229,7 +231,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		
 		long tf = System.currentTimeMillis();
-        if(isLog)
+        if(Utils.debug)
         	System.out.println("Tempo de execucao [unInterpolate] "+ ((tf - ti) /1000.0)  + "s");
 		
         nodesMapTmp = null;
@@ -347,7 +349,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		}*/
 		
 		long tf = System.currentTimeMillis();
-        if(isLog)
+        if(Utils.debug)
         	System.out.println("Tempo de execucao [union-find] "+ ((tf - ti) /1000.0)  + "s");
 		
         return parent;
@@ -418,7 +420,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		}*/
   		
   		long tf = System.currentTimeMillis();
-  		if(isLog)
+  		if(Utils.debug)
   			System.out.println("Tempo de execucao [sort] "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
@@ -452,7 +454,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		for(int p=0; p < order.length; p++){
 			if(value == orderOri[p]){
-				//if(isLog)
+				//if(Utils.debug)
 		  		//	System.out.println("Tempo de execucao [getInfinity] "+ ((System.currentTimeMillis() - ti) /1000.0)  + "s");
 				
 				if(p < interpWidth){
@@ -565,21 +567,25 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 
 		this.interpWidth = (img.getWidth()*4-3);
         this.interpHeight = (img.getHeight()*4-3);
-        final short interpolation0[] = new short[interpWidth * interpHeight];
-        final short interpolation1[] = new short[interpWidth * interpHeight];
+        final short interpolationMin[] = new short[interpWidth * interpHeight];
+        final short interpolationMax[] = new short[interpWidth * interpHeight];
+        final boolean infiniteMax[] = new boolean[interpWidth * interpHeight];
+        final boolean infiniteMin[] = new boolean[interpWidth * interpHeight];
 
         //interpolation tem tamanho 4 vezes para x e y
         // tem 2 valores ( 0 -> menor e 1 -> maior )
         
         int px, py;
-        for(int p=0; p < interpolation0.length; p++){
+        for(int p=0; p < interpolationMin.length; p++){
         	px = p % interpWidth;
 			py = p / interpWidth;
 			if(px % 4 == 0 && py % 4 == 0){
-				interpolation0[p] = interpolation1[p] = (short) img.getPixel((px/4) + (py/4) * img.getWidth());
+				interpolationMin[p] = interpolationMax[p] = (short) img.getPixel((px/4) + (py/4) * img.getWidth());
+				infiniteMax[p] = true;
+	        	infiniteMin[p] = true;
 			}else{
-				interpolation0[p] = maxValue;
-	        	interpolation1[p] = minValue;
+				interpolationMin[p] = maxValue;
+	        	interpolationMax[p] = minValue;
 			}	
         }
        
@@ -600,11 +606,11 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	        	
         	public void run(){
         		int px, py, vx, vy, pixelP, pixelV;
-        		for (int m = mBegin; m <= mEnd; m++) { // para todos os moves
+        		for (int face = mBegin; face <= mEnd; face++) { // para todos os moves
         			for (int y = 0; y < img.getHeight(); y++) { //para todos os pixels
         				for (int x = 0; x < img.getWidth(); x++) { 
-        					px = x * 4 + moves[m][1]; // em x
-        					py = y * 4 + moves[m][0]; // em y
+        					px = x * 4 + moves[face][1]; // em x
+        					py = y * 4 + moves[face][0]; // em y
 	                            
         					// check bounds!!
         					if (py < 0 || py >= interpHeight || px < 0 || px >= interpWidth)
@@ -612,9 +618,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	                            
         					pixelP = px + py * interpWidth;
 	                            
-        					for (int k = 0; k < vizinhos[m].length; k++) {
-        						vx = px + vizinhos[m][k][1]; 
-        						vy = py + vizinhos[m][k][0]; 
+        					for (int k = 0; k < vizinhos[face].length; k++) {
+        						vx = px + vizinhos[face][k][1]; 
+        						vy = py + vizinhos[face][k][0]; 
 	                                   
         						// check bounds!!
         						if (vy < 0 || vy >= interpHeight || vx < 0 || vx >= interpWidth)
@@ -623,20 +629,26 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
         						pixelV = vx + vy * interpWidth; 
 	                                    
 	                                    
-        						// para m = 1 ate m = 3 se tem o maximo para os 2 valores
-        						if (m >= 1 && m <= 3) {
-        							if (interpolation1[pixelP] < interpolation1[pixelV]) {
-        								interpolation0[pixelP] = interpolation0[pixelV];
-        								interpolation1[pixelP] = interpolation1[pixelV];
+        						
+        						if (face >= 1 && face <= 3) { //2-face // para m = 1 ate m = 3 se tem o maximo para os 2 valores
+        							if ( (!infiniteMax[pixelP] && infiniteMax[pixelV]) || (interpolationMax[pixelP] < interpolationMax[pixelV])) {
+        								interpolationMin[pixelP] = interpolationMin[pixelV];
+        								interpolationMax[pixelP] = interpolationMax[pixelV];
+        								infiniteMax[pixelV] = true;
+        								infiniteMax[pixelP] = true;
         							}
         						}
-        						else { //m = [4 .. 15], maximo e minimo 
-        							if (interpolation0[pixelP] > interpolation0[pixelV]){
-        								interpolation0[pixelP] = interpolation0[pixelV];
+        						else { //m = [4 .. 15], maximo e minimo  
+        							if ( (!infiniteMin[pixelP] && infiniteMin[pixelV])  || (interpolationMin[pixelP] > interpolationMin[pixelV])){
+        								interpolationMin[pixelP] = interpolationMin[pixelV];
+        								infiniteMax[pixelV] = true;
+        								infiniteMax[pixelP] = true;
         							}
         							
-        							if (interpolation1[pixelP] < interpolation1[pixelV]){
-        								interpolation1[pixelP] = interpolation1[pixelV];
+        							if ( (!infiniteMax[pixelP] && infiniteMax[pixelV]) || (interpolationMax[pixelP] < interpolationMax[pixelV])){
+        								interpolationMax[pixelP] = interpolationMax[pixelV];
+        								infiniteMax[pixelV] = true;
+        								infiniteMax[pixelP] = true;
         							}
         						}
         					}
@@ -665,9 +677,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		}
 		
         long tf = System.currentTimeMillis();
-        if(isLog)
+        if(Utils.debug)
         	System.out.println("Tempo de execucao [interpolacao parallel] "+ ((tf - ti) /1000.0)  + "s");
-        return new Object[]{interpolation0, interpolation1};
+        return new Object[]{interpolationMin, interpolationMax};
 	}
 
 	
@@ -716,8 +728,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		}
 		GrayScaleImage img = ImageFactory.createGrayScaleImage(32, pixels5, width, height);
 		
-		BuilderTreeOfShapeByUnionFindParallel builder = new BuilderTreeOfShapeByUnionFindParallel(img, 3,0);
-		
+		BuilderTreeOfShapeByUnionFindParallel builder = new BuilderTreeOfShapeByUnionFindParallel(ImageBuilder.openGrayImage());
+		if(true) return;
 		Object inter[] = (Object[]) BuilderTreeOfShapeByUnionFindParallel.getImageInterpolate(img);
 		
 		int interpWidth = (img.getWidth()*4-3);

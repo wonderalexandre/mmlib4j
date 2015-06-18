@@ -20,11 +20,13 @@ public class ContourTracer {
 	int level;
 	GrayScaleImage img;
 	boolean isMaxtree;
+	//boolean[][] pixels;
 	
 	public ContourTracer (boolean is8Connected, boolean isMaxtree, GrayScaleImage img, int level) {
 		this.isMaxtree = isMaxtree;
 		this.img = img;
 		this.level = level;
+		//pixels = new boolean[img.getWidth()][img.getHeight()];
 		this.is8Connected = is8Connected;
 	}
 
@@ -35,8 +37,26 @@ public class ContourTracer {
 		else
 			return img.getPixel(x, y) <= level;
 		
+		/*
+		if(!img.isPixelValid(x, y)) return false;
+		if(pixels == null){
+			if(!img.isPixelValid(x, y)) return false;
+			if(isMaxtree)
+				return img.getPixel(x, y) >= level;
+			else
+				return img.getPixel(x, y) <= level;
+		}
+		
+		return pixels[x][y] == FOREGROUND;
+		*/
 	}
-	
+	/*
+	public void addPixelForeground(int p){
+		int px = p % img.getWidth();
+		int qx = p / img.getWidth();
+		pixels[px][qx] = FOREGROUND;
+	}
+	*/
 	public Contour traceOuterContour (int cx, int cy) {
 		return traceContour(cx, cy, 0); 
 	}
