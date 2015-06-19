@@ -8,7 +8,7 @@ import mmlib4j.images.GrayScaleImage;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public interface IMorphologicalTreeFiltering {
+public interface MorphologicalTreeFiltering {
 	
 	public final static int ATTRIBUTE_NC_VARIANCIA = 0;
 	public final static int ATTRIBUTE_NC_PERIMETRO = 1;
@@ -30,7 +30,7 @@ public interface IMorphologicalTreeFiltering {
 	
 	public GrayScaleImage getInputImage();
 	
-	public INodeTree getRoot();
+	public NodeLevelSets getRoot();
 		
 	public int getNumNode();
 		

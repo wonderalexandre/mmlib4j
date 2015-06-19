@@ -1,9 +1,11 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerMserTreeOfShapes;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
@@ -14,7 +16,7 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedMSER implements MappingStrategyOfPruning{
 
-	protected IMorphologicalTreeFiltering tree;
+	protected MorphologicalTreeFiltering tree;
 	protected int delta;
 	protected int num;
 	protected Double q[];
@@ -36,7 +38,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 		maxArea = a;
 	}
 	
-	public PruningBasedMSER(IMorphologicalTreeFiltering tree, int delta){
+	public PruningBasedMSER(MorphologicalTreeFiltering tree, int delta){
 		this.tree = tree;
 		this.delta = delta;
 	}
@@ -97,11 +99,18 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
 			boolean result[] = mser.getMappingNodesByMSER(delta);
+			/*for(NodeCT n: ((ComponentTree) tree).getListNodes()){
+				if(result[n.getId()])
+					System.out.println(Attribute.print(n.getAttributes()));;
+			}*/
 			this.num = mser.getNumMSER();
 			return result;
 		}
 		else if(tree instanceof TreeOfShape){
 			ComputerMserTreeOfShapes mser = new ComputerMserTreeOfShapes((TreeOfShape) tree);
+			mser.setMaxArea(maxArea);
+			mser.setMinArea(minArea);
+			mser.setMaxVariation(maxVariation);
 			boolean result[] = mser.getMappingNodesByMSER(delta);
 			this.num = mser.getNumMSER();
 			return result;

@@ -2,6 +2,8 @@ package mmlib4j.representation.tree.componentTree;
 
 import java.util.HashSet;
 
+import mmlib4j.representation.tree.NodeLevelSets;
+
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 

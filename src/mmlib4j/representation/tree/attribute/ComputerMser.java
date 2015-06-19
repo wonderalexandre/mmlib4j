@@ -1,7 +1,7 @@
 package mmlib4j.representation.tree.attribute;
 
 import mmlib4j.images.ColorImage;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
 
 
@@ -26,7 +26,7 @@ public interface ComputerMser {
 		
 	public Attribute[] getAttributeStability();
 	
-	public Double[] getScoreOfBranch(INodeTree no);
+	public Double[] getScoreOfBranch(NodeLevelSets no);
 	
 	public ColorImage getImageMSER(int delta);
 

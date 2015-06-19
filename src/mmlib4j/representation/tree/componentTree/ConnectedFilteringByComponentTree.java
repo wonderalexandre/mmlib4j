@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
@@ -28,7 +28,7 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ConnectedFilteringByComponentTree extends ComponentTree implements IMorphologicalTreeFiltering{
+public class ConnectedFilteringByComponentTree extends ComponentTree implements MorphologicalTreeFiltering{
 	
 	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
@@ -98,9 +98,9 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * @return imagem filtrada
 	 */
 	public GrayScaleImage filtering(double attributeValue, int type, int typePruning, int typeRec){
-		if(typePruning == IMorphologicalTreeFiltering.EXTINCTION_VALUE)
+		if(typePruning == MorphologicalTreeFiltering.EXTINCTION_VALUE)
 			return filteringByExtinctionValue(attributeValue, type);
-		else if(typePruning == IMorphologicalTreeFiltering.PRUNING)
+		else if(typePruning == MorphologicalTreeFiltering.PRUNING)
 			return filteringByPruning(attributeValue, type);
 		
 		throw new RuntimeException("type filtering invalid");
@@ -300,8 +300,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
 		PruningBasedGradualTransition gt = new PruningBasedGradualTransition(this, type, delta); 
 		boolean resultPruning[] = gt.getMappingSelectedNodes( );
-		LinkedList<INodeTree> list = gt.getListOfSelectedNodes( );
-		for(INodeTree obj: list){
+		LinkedList<NodeLevelSets> list = gt.getListOfSelectedNodes( );
+		for(NodeLevelSets obj: list){
 			NodeCT node = (NodeCT) obj;
 			if(getAttribute(node, type) <= attributeValue){ //poda				
 				for(NodeCT song: node.children){

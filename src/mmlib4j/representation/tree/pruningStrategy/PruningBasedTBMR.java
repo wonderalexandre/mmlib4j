@@ -1,6 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -14,12 +14,12 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedTBMR implements MappingStrategyOfPruning{
 
-	private IMorphologicalTreeFiltering tree;
+	private MorphologicalTreeFiltering tree;
 	private int tMin;
 	private int tMax;
 	private int num;
 	
-	public PruningBasedTBMR(IMorphologicalTreeFiltering tree, int tmin, int tmax){
+	public PruningBasedTBMR(MorphologicalTreeFiltering tree, int tmin, int tmax){
 		this.tree = tree;
 		this.tMin = tmin;
 		this.tMax = tmax;

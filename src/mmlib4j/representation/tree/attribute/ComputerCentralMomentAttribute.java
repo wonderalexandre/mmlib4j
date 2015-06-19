@@ -3,7 +3,7 @@ package mmlib4j.representation.tree.attribute;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.ImageUtils;
@@ -21,7 +21,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	int numNode;
 	int withImg;
 	
-	public ComputerCentralMomentAttribute(int numNode, INodeTree root, int withImg){
+	public ComputerCentralMomentAttribute(int numNode, NodeLevelSets root, int withImg){
 		long ti = System.currentTimeMillis();
 		this.numNode = numNode;
 		this.withImg = withImg;
@@ -46,12 +46,12 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	}
 	
 	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
-		for(INodeTree node: hashSet){
+		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}
 	} 
 	
-	public void addAttributeInNodes(INodeTree node){
+	public void addAttributeInNodes(NodeLevelSets node){
 		node.addAttribute(Attribute.MOMENT_CENTRAL_02, attr[ node.getId() ].moment02);
 		node.addAttribute(Attribute.MOMENT_CENTRAL_20, attr[ node.getId() ].moment20);
 		node.addAttribute(Attribute.MOMENT_CENTRAL_11, attr[ node.getId() ].moment11);
@@ -66,7 +66,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		node.addAttribute(Attribute.MOMENT_ASPECT_RATIO, new Attribute(Attribute.MOMENT_ASPECT_RATIO, attr[ node.getId() ].getLengthMinorAxes() /  attr[ node.getId() ].getLengthMajorAxes() ));
 	}
 	
-	public void preProcessing(INodeTree node) {
+	public void preProcessing(NodeLevelSets node) {
 		attr[node.getId()] = new CentralMomentsAttribute(node, withImg);
 		//area e volume
 		
@@ -84,19 +84,19 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		
 	}
 	
-	public void mergeChildren(INodeTree node, INodeTree son) {
+	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
 		attr[node.getId()].moment11.value += attr[son.getId()].moment11.value;
 		attr[node.getId()].moment02.value +=  attr[son.getId()].moment02.value;
 		attr[node.getId()].moment20.value += attr[son.getId()].moment20.value;
 		attr[node.getId()].variance.value += attr[son.getId()].variance.value;
 	}
 
-	public void posProcessing(INodeTree node) {
+	public void posProcessing(NodeLevelSets node) {
 		//pos-processing root
 		attr[node.getId()].variance.value = attr[node.getId()].variance.value / node.getArea();
 	}
 	
-	public static CentralMomentsAttribute getInstance(INodeTree node, int widthImg){
+	public static CentralMomentsAttribute getInstance(NodeLevelSets node, int widthImg){
 		CentralMomentsAttribute c = new ComputerCentralMomentAttribute().new CentralMomentsAttribute();
 		c.area = node.getArea();
 		c.xCentroid = node.getCentroid() % widthImg;
@@ -125,7 +125,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		
 		
 		public CentralMomentsAttribute(){}
-		public CentralMomentsAttribute(INodeTree node, int width){
+		public CentralMomentsAttribute(NodeLevelSets node, int width){
 			this.area = (double) node.getArea();
 			this.xCentroid = node.getCentroid() % width;
 			this.yCentroid = node.getCentroid() / width;

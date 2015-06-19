@@ -2,6 +2,7 @@ package mmlib4j.representation.tree.attribute;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
 import java.util.Locale;
 
 
@@ -102,6 +103,30 @@ public class Attribute {
 		}
 	}
 	
+	public static String printWithHeader(HashMap<Integer, Attribute> hashMap){
+		StringBuffer sb = new StringBuffer();
+		for(Attribute attr: hashMap.values()){
+			sb.append(attr+ "\t");
+		}
+		return sb.toString();
+	}
+	
+	public static String printHeader(HashMap<Integer, Attribute> hashMap){
+		StringBuffer sb = new StringBuffer();
+		for(Attribute attr: hashMap.values()){
+			sb.append(attr.getHeader()+ "\t");
+		}
+		return sb.toString();
+	}
+	
+	public static String print(HashMap<Integer, Attribute> hashMap){
+		StringBuffer sb = new StringBuffer();
+		for(Attribute attr: hashMap.values()){
+			sb.append(attr.getValueFormat()+ "\t");
+		}
+		return sb.toString();
+	}
+	
 
 	public String getValueFormat(){
 		if(df == null){
@@ -111,7 +136,7 @@ public class Attribute {
 	}
 	
 	public String toString(){
-		return String.valueOf(getValueFormat());
+		return getHeader() +": "+ getValueFormat();
 	}
 	
 }

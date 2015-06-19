@@ -1,6 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -14,11 +14,11 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedAttribute implements MappingStrategyOfPruning{
 
-	private IMorphologicalTreeFiltering tree;
+	private MorphologicalTreeFiltering tree;
 	private int typeParam;
 	private int num;
 	
-	public PruningBasedAttribute(IMorphologicalTreeFiltering tree, int typeParam){
+	public PruningBasedAttribute(MorphologicalTreeFiltering tree, int typeParam){
 		this.tree = tree;
 		this.typeParam = typeParam;
 		

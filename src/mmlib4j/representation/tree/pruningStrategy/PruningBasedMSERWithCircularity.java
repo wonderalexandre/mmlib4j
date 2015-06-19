@@ -1,6 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -15,7 +15,7 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedMSERWithCircularity extends PruningBasedMSER{
 	
-	public PruningBasedMSERWithCircularity(IMorphologicalTreeFiltering tree, int delta){
+	public PruningBasedMSERWithCircularity(MorphologicalTreeFiltering tree, int delta){
 		super(tree, delta);
 	}
 	

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
@@ -82,10 +82,10 @@ public class UltimateAttributeOpening {
 
 	
 	public void computeUAO(int paramValueMax, int typeParam){
-		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((IMorphologicalTreeFiltering) tree, typeParam));	
+		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam));	
 	}
 	public void computeUAO(int paramValueMax, int typeParam, boolean selectedShape[]){
-		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((IMorphologicalTreeFiltering) tree, typeParam), selectedShape);	
+		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam), selectedShape);	
 	}
 	
 	public boolean hasNodeSelectedInPrimitive(NodeCT currentNode){

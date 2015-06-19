@@ -19,8 +19,8 @@ public class InfoPrunedTree {
 	private NodePrunedTree root;
 	private NodePrunedTree map[];
 	private int numNode;
-	private IMorphologicalTreeFiltering tree;
-	private LinkedList<INodeTree> listLeaves;
+	private MorphologicalTreeFiltering tree;
+	private LinkedList<NodeLevelSets> listLeaves;
 
 	private int attributeType;
 	private double attributeValue;
@@ -42,7 +42,7 @@ public class InfoPrunedTree {
 		this.attributeValue = attributeValue;
 	}
 
-	public InfoPrunedTree(IMorphologicalTreeFiltering tree, INodeTree root, int numNodes, int attributeType, double attributeValue) {
+	public InfoPrunedTree(MorphologicalTreeFiltering tree, NodeLevelSets root, int numNodes, int attributeType, double attributeValue) {
 		this.tree = tree;
 		this.map = new NodePrunedTree[numNodes];
 		this.root = map[root.hashCode()] = new NodePrunedTree(root);
@@ -51,8 +51,8 @@ public class InfoPrunedTree {
         this.numNode = 1;
     }
 	
-	public void addNodeNotPruned(INodeTree node){
-		INodeTree parent = node.getParent();
+	public void addNodeNotPruned(NodeLevelSets node){
+		NodeLevelSets parent = node.getParent();
 		if(parent != null){
 			this.numNode += 1;
 			if(map[node.hashCode()] == null)
@@ -66,15 +66,15 @@ public class InfoPrunedTree {
 		}
 	}
 	
-	public IMorphologicalTreeFiltering getTree(){
+	public MorphologicalTreeFiltering getTree(){
 		return tree;
 	}
 	
-	public boolean wasPruned(INodeTree node){
+	public boolean wasPruned(NodeLevelSets node){
 		return map[node.hashCode()] == null;
 	}
 	
-	public NodePrunedTree getNodeOfPrunedTree(INodeTree node){
+	public NodePrunedTree getNodeOfPrunedTree(NodeLevelSets node){
 		return map[node.hashCode()];
 	}
 	
@@ -90,9 +90,9 @@ public class InfoPrunedTree {
 		return numNode;
 	}
 	
-	public LinkedList<INodeTree> getLeaves(){
+	public LinkedList<NodeLevelSets> getLeaves(){
 		if(listLeaves == null){
-			listLeaves = new LinkedList<INodeTree>();
+			listLeaves = new LinkedList<NodeLevelSets>();
 			Queue<NodePrunedTree> fifo = new Queue<NodePrunedTree>();
 			fifo.enqueue(root);
 			while(!fifo.isEmpty()){
@@ -123,11 +123,11 @@ public class InfoPrunedTree {
 	
 
 	public class NodePrunedTree{
-		INodeTree info;
+		NodeLevelSets info;
 		NodePrunedTree parent;
 	    SimpleLinkedList<NodePrunedTree> children = new SimpleLinkedList<NodePrunedTree>();
 	    
-	    public NodePrunedTree(INodeTree node){
+	    public NodePrunedTree(NodeLevelSets node){
 			info = node;
 		}
 	    
@@ -143,7 +143,7 @@ public class InfoPrunedTree {
 	    	return children;
 	    }
 	    
-	    public INodeTree getInfo(){
+	    public NodeLevelSets getInfo(){
 	    	return info;
 	    }
 	    

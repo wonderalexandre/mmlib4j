@@ -7,7 +7,7 @@ import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
@@ -233,7 +233,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 		return stability;
 	}
 	
-	public Double[] getScoreOfBranch(INodeTree no){
+	public Double[] getScoreOfBranch(NodeLevelSets no){
 		Double score[] = new Double[tree.getNumNode()];
 		for(NodeCT node: ((NodeCT)no).getPathToRoot()){
 			if(ascendant[node.getId()] != null && descendants[node.getId()] != null){

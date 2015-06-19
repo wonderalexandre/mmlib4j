@@ -4,7 +4,7 @@ package mmlib4j.filtering.residual;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
@@ -51,7 +51,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public void computeUAO(int paramValueMax, int typeParam){
-		this.computeUGF(paramValueMax, typeParam, new PruningBasedAttribute((IMorphologicalTreeFiltering) tree, typeParam));	
+		this.computeUGF(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam));	
 	}
 	
 	public void computeUGF(int paramValueMax, int typeParam, MappingStrategyOfPruning msp){

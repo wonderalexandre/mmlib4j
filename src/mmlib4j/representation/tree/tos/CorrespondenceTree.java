@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
@@ -48,9 +48,9 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 public class CorrespondenceTree extends JPanel{
 
 
-	DelegateForest<INodeTree,String> graph;
-    VisualizationViewer<INodeTree,String> vv;
-    TreeLayout<INodeTree,String> treeLayout;
+	DelegateForest<NodeLevelSets,String> graph;
+    VisualizationViewer<NodeLevelSets,String> vv;
+    TreeLayout<NodeLevelSets,String> treeLayout;
     
     ComponentTree mintree;
 	ComponentTree maxtree;
@@ -61,7 +61,7 @@ public class CorrespondenceTree extends JPanel{
 	int cont = 0;
 	
     public void addToS(TreeOfShape tos){
-    	DelegateTree<INodeTree,String> tree = new DelegateTree<INodeTree,String>(); 
+    	DelegateTree<NodeLevelSets,String> tree = new DelegateTree<NodeLevelSets,String>(); 
     	tree.setRoot(tos.getRoot());
     	createTree(tos.getRoot(), tree, "ToS_");
     	  
@@ -79,7 +79,7 @@ public class CorrespondenceTree extends JPanel{
     		id = "mintree_";
     	}
     	
-    	DelegateTree<INodeTree,String> tree = new DelegateTree<INodeTree,String>(); 
+    	DelegateTree<NodeLevelSets,String> tree = new DelegateTree<NodeLevelSets,String>(); 
     	tree.setRoot(ct.getRoot());
     	createTree(ct.getRoot(), tree, id);
         
@@ -88,7 +88,7 @@ public class CorrespondenceTree extends JPanel{
     
     public CorrespondenceTree(GrayScaleImage img) {
     	super.setLayout(new BorderLayout());
-    	this.graph = new DelegateForest<INodeTree,String>();
+    	this.graph = new DelegateForest<NodeLevelSets,String>();
     	this.img = img;
     	
 		this.mintree = new ComponentTree(img, adj8, false);
@@ -109,9 +109,9 @@ public class CorrespondenceTree extends JPanel{
     
     public void createLayout(){
 
-        treeLayout = new TreeLayout<INodeTree,String>(graph, 70, 70);
+        treeLayout = new TreeLayout<NodeLevelSets,String>(graph, 70, 70);
         
-        vv =  new VisualizationViewer<INodeTree,String>(treeLayout);
+        vv =  new VisualizationViewer<NodeLevelSets,String>(treeLayout);
         vv.setBackground(Color.white);
         vv.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<String, Paint>() {
 			public Paint transform(String id) {
@@ -136,10 +136,10 @@ public class CorrespondenceTree extends JPanel{
         final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
         graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
         vv.setGraphMouse(graphMouse);
-        vv.addGraphMouseListener(new GraphMouseListener<INodeTree>() {
-			public void graphReleased(INodeTree v, MouseEvent me) {}
-			public void graphPressed(INodeTree v, MouseEvent me) {}
-			public void graphClicked(INodeTree v, MouseEvent me) {
+        vv.addGraphMouseListener(new GraphMouseListener<NodeLevelSets>() {
+			public void graphReleased(NodeLevelSets v, MouseEvent me) {}
+			public void graphPressed(NodeLevelSets v, MouseEvent me) {}
+			public void graphClicked(NodeLevelSets v, MouseEvent me) {
 				if(v instanceof NodeCT){
 					NodeCT no = (NodeCT) v;
 					if(no.isNodeMaxtree()){
@@ -214,7 +214,7 @@ public class CorrespondenceTree extends JPanel{
     /**
      * 
      */
-    private void createTree(INodeTree node, DelegateTree<INodeTree,String> tree, String id) {
+    private void createTree(NodeLevelSets node, DelegateTree<NodeLevelSets,String> tree, String id) {
     	if(node instanceof NodeToS){
     		NodeToS nodeToS = (NodeToS) node;
     		if(node != tree.getRoot()){
@@ -384,9 +384,9 @@ public class CorrespondenceTree extends JPanel{
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-class LabelNodesTree implements Transformer<INodeTree,String> {
+class LabelNodesTree implements Transformer<NodeLevelSets,String> {
 
-    public String transform(INodeTree v) {
+    public String transform(NodeLevelSets v) {
     	if(v instanceof NodeCT)
     		return  String.valueOf(((NodeCT) v).getLevel());
     	else
@@ -394,17 +394,17 @@ class LabelNodesTree implements Transformer<INodeTree,String> {
     }
  }
 
-class NodeShapeTree implements Transformer<INodeTree, Paint> {
+class NodeShapeTree implements Transformer<NodeLevelSets, Paint> {
 	//vermelho = mintree
-	Transformer<INodeTree, Paint> t2 = new ConstantTransformer(Color.RED);
-	Transformer<INodeTree, Paint> t2Leaf = new ConstantTransformer(Color.decode("0X990000"));
+	Transformer<NodeLevelSets, Paint> t2 = new ConstantTransformer(Color.RED);
+	Transformer<NodeLevelSets, Paint> t2Leaf = new ConstantTransformer(Color.decode("0X990000"));
 	
 	//azul = maxtree
-	Transformer<INodeTree, Paint> t1 = new ConstantTransformer(Color.BLUE);
-	Transformer<INodeTree, Paint> t1Leaf = new ConstantTransformer(Color.decode("0X000099"));
+	Transformer<NodeLevelSets, Paint> t1 = new ConstantTransformer(Color.BLUE);
+	Transformer<NodeLevelSets, Paint> t1Leaf = new ConstantTransformer(Color.decode("0X000099"));
 	
 	
-	public Paint transform(INodeTree nodeTmp) {
+	public Paint transform(NodeLevelSets nodeTmp) {
 		if(nodeTmp instanceof NodeCT){
 			NodeCT node = (NodeCT) nodeTmp;
 			if(node.isNodeMaxtree()){

@@ -1,6 +1,8 @@
 package mmlib4j.representation.tree.componentTree;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +15,7 @@ import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 
 
@@ -22,7 +24,7 @@ import mmlib4j.representation.tree.attribute.Attribute;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class NodeCT implements INodeTree, Cloneable{
+public class NodeCT implements NodeLevelSets, Cloneable{
 	int level;
 	int heightNode;
 	GrayScaleImage img;
@@ -56,7 +58,7 @@ public class NodeCT implements INodeTree, Cloneable{
 	int pixelYmax;
 	int area;
 	int volume;
-	Hashtable<Integer, Attribute> attributes = new Hashtable<Integer, Attribute>();
+	HashMap<Integer, Attribute> attributes = new HashMap<Integer, Attribute>();
 	Contour contourE = null;
 
 	
@@ -96,6 +98,10 @@ public class NodeCT implements INodeTree, Cloneable{
 	}
 	public Attribute getAttribute(int key){
 		return attributes.get(key);
+	}
+	
+	public HashMap<Integer, Attribute> getAttributes(){
+		return attributes;
 	}
 	
 	public double getAttributeValue(int key){
@@ -183,9 +189,15 @@ public class NodeCT implements INodeTree, Cloneable{
 			xmax = x;
 			pixelXmax = p;
 		}
-		if(y < ymin) {
-			ymin = y;
-			pixelYmin = p;
+		if(y <= ymin) {
+			if( y < ymin){
+				ymin = y;
+				pixelYmin = p;
+			}
+			else {
+				if(x < pixelYmin % img.getWidth())
+					pixelYmin = p;
+			}
 		}
 		if(y > ymax){
 			ymax = y;

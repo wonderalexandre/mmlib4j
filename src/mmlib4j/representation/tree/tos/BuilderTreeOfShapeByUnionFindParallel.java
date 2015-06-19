@@ -385,12 +385,6 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
   			int h = queue.priorityPop();
   			imgU[h] = (byte) (0xFF & queue.getCurrentPriority()); //l = prioridade corrente da queue
   			imgR[order] = h;
-  			/*for(int n: AdjacencyRelation.getAdjacency4().getAdjacencyPixels(interpWidth, interpHeight, h)){
-  				if(!dejavu[n]){
-  					queue.priorityPush(n, interpolation0[n], interpolation1[n]);
-  	  				dejavu[n] = true;
-  				}
-  			}*/
   			for(int n: getAdjPixels(h, dejavu)){
   				queue.priorityPush(n, interpolation0[n], interpolation1[n]);
   				dejavu[n] = true;

@@ -1,6 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -17,10 +17,10 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 
 	private int delta;
 	private int typeParam;
-	private IMorphologicalTreeFiltering tree;
+	private MorphologicalTreeFiltering tree;
 	private int num;
 	
-	public PruningBasedExtinctionValue(IMorphologicalTreeFiltering tree, int typeParam, int delta){
+	public PruningBasedExtinctionValue(MorphologicalTreeFiltering tree, int typeParam, int delta){
 		this.tree = tree;
 		this.typeParam = typeParam;
 		this.delta = delta;

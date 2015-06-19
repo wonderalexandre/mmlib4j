@@ -2,8 +2,8 @@ package mmlib4j.representation.tree.pruningStrategy;
 
 import java.util.LinkedList;
 
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -18,12 +18,12 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 	
-	private IMorphologicalTreeFiltering inputTree;
+	private MorphologicalTreeFiltering inputTree;
 	private int typeParam;
 	private int delta;
 	private int num;
 	
-	public PruningBasedGradualTransition(IMorphologicalTreeFiltering tree, int typeParam, int delta){
+	public PruningBasedGradualTransition(MorphologicalTreeFiltering tree, int typeParam, int delta){
 		this.inputTree = tree;
 		this.typeParam = typeParam;
 		this.delta = delta;
@@ -94,8 +94,8 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 		return num;
 	}
 	
-	public LinkedList<INodeTree> getListOfSelectedNodes( ){
-		LinkedList<INodeTree> list = new LinkedList<INodeTree>();
+	public LinkedList<NodeLevelSets> getListOfSelectedNodes( ){
+		LinkedList<NodeLevelSets> list = new LinkedList<NodeLevelSets>();
 		if(inputTree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) inputTree;
 			for(NodeCT node: tree.getListNodes()){

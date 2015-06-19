@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
@@ -51,7 +51,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 		return stability;
 	}
 	
-	public Double[] getScoreOfBranch(INodeTree no){
+	public Double[] getScoreOfBranch(NodeLevelSets no){
 		
 		Double score[] = new Double[tree.getNumNode()];
 		for(NodeToS node: ((NodeToS)no).getPathToRoot()){

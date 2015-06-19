@@ -1,5 +1,7 @@
 package mmlib4j.representation.tree;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import mmlib4j.datastruct.SimpleLinkedList;
@@ -12,9 +14,9 @@ import mmlib4j.representation.tree.attribute.Attribute;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public interface INodeTree {
+public interface NodeLevelSets {
 	
-	public INodeTree getParent();
+	public NodeLevelSets getParent();
 	public List getChildren();
 	public int getLevel();
 	public boolean isNodeMaxtree();
@@ -49,10 +51,7 @@ public interface INodeTree {
 	public void addAttribute(int key, Attribute attr);
 	public Attribute getAttribute(int key);
 	public double getAttributeValue(int key);
-	
-	
-	
-
+	public HashMap<Integer, Attribute>  getAttributes();
 
 	public BinaryImage createImage();
 	

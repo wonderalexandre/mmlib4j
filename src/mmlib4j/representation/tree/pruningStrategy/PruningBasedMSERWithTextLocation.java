@@ -1,6 +1,7 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -15,7 +16,7 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 	
-	public PruningBasedMSERWithTextLocation(IMorphologicalTreeFiltering tree, int delta){
+	public PruningBasedMSERWithTextLocation(MorphologicalTreeFiltering tree, int delta){
 		super(tree, delta);
 	}
 	
@@ -49,53 +50,54 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 	
 
 
-	public boolean isNodeTextLocation(NodeCT node){
-		int widthNode = (int)node.getAttribute(Attribute.WIDTH).getValue();
-		int heightNode = (int)node.getAttribute(Attribute.HEIGHT).getValue();
-		int areaBB = widthNode * heightNode;
-		double ratioAreaBB = node.getArea() / (double) areaBB;
-		double ratioWH = Math.max(widthNode, heightNode) / (double) Math.min(widthNode, heightNode);
-		//int numHoles= node.getNumHoles();
+	public boolean isNodeTextLocation(NodeLevelSets node){
 		
 		int psiArea = 0;
-		if(50 <= node.getArea() && node.getArea() < 100000){
+		if(50 <= node.getAttributeValue(Attribute.AREA) && node.getAttributeValue(Attribute.AREA) < 100000){
 			psiArea = 1;
 		}
+		System.out.println(node.getAttribute(Attribute.AREA));
 		
 		int psiHeight = 0;
-		if(8 <= heightNode && heightNode < 500){
+		if(8 <= node.getAttributeValue(Attribute.HEIGHT) && node.getAttributeValue(Attribute.HEIGHT) < 500){
 			psiHeight = 1;
 		}
+		System.out.println(node.getAttribute(Attribute.HEIGHT));
 		
 		int psiWidth = 0;
-		if(4 <= widthNode && widthNode < 400){
+		if(4 <= node.getAttributeValue(Attribute.WIDTH) && node.getAttributeValue(Attribute.WIDTH) < 400){
 			psiWidth = 1;
 		}
+		System.out.println(node.getAttribute(Attribute.WIDTH));
 		
-		//int psiHole = 0;
-		//if(numHoles <= 3){
-		//	psiHole = 1;
-		//}
+		int psiHole = 0;
+		if(node.getAttributeValue(Attribute.NUM_HOLES) <= 10){
+			psiHole = 1;
+		}
+		System.out.println(node.getAttribute(Attribute.NUM_HOLES));
 		
 		int psiRect = 0;
-		if(0.2 <= ratioAreaBB && ratioAreaBB <= 0.95)
+		if(0.2 <= node.getAttributeValue(Attribute.RECTANGULARITY) && node.getAttributeValue(Attribute.RECTANGULARITY) <= 0.95)
 			psiRect = 1;
+		System.out.println(node.getAttribute(Attribute.RECTANGULARITY));
 		
 		int psiRate = 0;
-		if(ratioWH <= 8){
+		if(node.getAttributeValue(Attribute.RATIO_WIDTH_HEIGHT) <= 8){
 			psiRate = 1;
 		}
+		System.out.println(node.getAttribute(Attribute.RATIO_WIDTH_HEIGHT));
 		
 		int psiColor = 0;
-		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 30)
+		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 40)
 			psiColor = 1;
+		System.out.println(node.getAttribute(Attribute.VARIANCE_LEVEL));
 		
-		return psiArea + psiRect + psiRate + psiColor + psiHeight + psiWidth == 6;
+		return psiArea + psiRect + psiRate + psiColor + psiHeight + psiWidth == 6;//+ psiHole == 7;
 	}
 	
 	
 
-
+/*
 	public boolean isNodeTextLocation(NodeToS node){
 		double widthNode = node.getAttributeValue(Attribute.WIDTH);
 		double heightNode = node.getAttributeValue(Attribute.HEIGHT);
@@ -141,6 +143,6 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 		
 		//System.out.printf("%d %d %d %d %d\n", psiHeight, psiWidth, psiRect, psiRate, psiColor);
 		return psiArea + psiRect + psiHole + psiRate + psiColor + psiHeight + psiWidth == 7;
-	}
+	}*/
 	
 }

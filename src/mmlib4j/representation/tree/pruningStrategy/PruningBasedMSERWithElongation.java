@@ -1,6 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -18,7 +18,7 @@ public class PruningBasedMSERWithElongation extends PruningBasedMSER{
 	
 	private int delta;
 	
-	public PruningBasedMSERWithElongation(IMorphologicalTreeFiltering tree, int delta){
+	public PruningBasedMSERWithElongation(MorphologicalTreeFiltering tree, int delta){
 		super(tree, delta);
 		this.delta = delta;
 	}

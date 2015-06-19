@@ -3,7 +3,7 @@ package mmlib4j.representation.tree.attribute;
 import java.util.HashSet;
 
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
@@ -24,13 +24,13 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 	GrayScaleImage img; 
 	AdjacencyRelation adj;
 	boolean isMaxtree;
-	
-	public ComputerPatternEulerAttribute(int numNode, INodeTree root, GrayScaleImage img, AdjacencyRelation adj){
+	public ComputerPatternEulerAttribute(int numNode, NodeLevelSets root, GrayScaleImage img, AdjacencyRelation adj){
 		long ti = System.currentTimeMillis();
 		this.numNode = numNode;
 		this.attr = new PatternEulerAttribute[numNode];
 		this.img = img;
 		this.adj = adj;
+		
 		computerAttribute(root);
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
@@ -50,17 +50,17 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 	}
 	
 	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
-		for(INodeTree node: hashSet){
+		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}
 	} 
 	
-	public void addAttributeInNodes(INodeTree node){
+	public void addAttributeInNodes(NodeLevelSets node){
 		node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, attr[ node.getId() ].getNumberHoles()));
 	}
 	
 	
-	public void preProcessing(INodeTree node) {
+	public void preProcessing(NodeLevelSets node) {
 		attr[node.getId()] = new PatternEulerAttribute();
 		this.isMaxtree = node.isNodeMaxtree();
 		if(isMaxtree)
@@ -74,12 +74,12 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 		
 	}
 	
-	public void mergeChildren(INodeTree node, INodeTree son) {
+	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
 		attr[node.getId()].countPatternChildrenC1 += attr[son.getId()].countPatternC1;
 		attr[node.getId()].countPatternChildrenC2 += attr[son.getId()].countPatternC2;
 	}
 
-	public void posProcessing(INodeTree root) {
+	public void posProcessing(NodeLevelSets root) {
 		//pos-processing root
 		attr[root.getId()].countPatternC1 = attr[root.getId()].countPatternC1 + attr[root.getId()].countPatternChildrenC1 - attr[root.getId()].countPatternC3;
 		attr[root.getId()].countPatternC2 = attr[root.getId()].countPatternC2 + attr[root.getId()].countPatternChildrenC2 - attr[root.getId()].countPatternC4;
@@ -93,7 +93,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 			return 255 - img.getValue(x, y);
 	}
 	
-	private void computerLocalPattern(INodeTree node, int p) {
+	private void computerLocalPattern(NodeLevelSets node, int p) {
 		int px = p % img.getWidth();
 		int py = p / img.getWidth();
 

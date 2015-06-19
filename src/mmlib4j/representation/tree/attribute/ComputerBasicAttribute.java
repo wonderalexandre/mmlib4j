@@ -3,7 +3,7 @@ package mmlib4j.representation.tree.attribute;
 import java.util.HashSet;
 
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
@@ -20,12 +20,13 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	BasicAttribute attr[];
 	int numNode;
 	GrayScaleImage img;
-	
-	public ComputerBasicAttribute(int numNode, INodeTree root, GrayScaleImage img){
+	boolean flagPerimeter[];
+	public ComputerBasicAttribute(int numNode, NodeLevelSets root, GrayScaleImage img){
 		long ti = System.currentTimeMillis();
 		this.numNode = numNode;
 		this.attr = new BasicAttribute[numNode];
 		this.img = img;
+		this.flagPerimeter = new boolean[img.getSize()];
 		computerAttribute(root);
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
@@ -38,18 +39,18 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	}
 	
 	public void addAttributeInNodesCT(HashSet<NodeCT> hashSet){
-		for(INodeTree node: hashSet){
+		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}
 	} 
 	
 	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
-		for(INodeTree node: hashSet){
+		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}
 	} 
 	
-	public void addAttributeInNodes(INodeTree node){
+	public void addAttributeInNodes(NodeLevelSets node){
 		node.addAttribute(Attribute.AREA, attr[ node.getId() ].area);
 		node.addAttribute(Attribute.VOLUME, attr[ node.getId() ].volume);
 		node.addAttribute(Attribute.WIDTH, attr[ node.getId() ].width);
@@ -63,7 +64,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	
 	
 	
-	public void preProcessing(INodeTree node) {
+	public void preProcessing(NodeLevelSets node) {
 		attr[node.getId()] = new BasicAttribute();
 		//area e volume
 		attr[node.getId()].area.value = node.getCanonicalPixels().size();
@@ -86,9 +87,19 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 			for(int q: AdjacencyRelation.getAdjacency4().getAdjacencyPixels(img, p)){
 				if(p != q){
 					if( (node.isNodeMaxtree() && img.getValue(p) > img.getValue(q)) || (!node.isNodeMaxtree() && img.getValue(p) < img.getValue(q)) ){
-						attr[node.getId()].perimeter.value += 1;
+						if(!flagPerimeter[q]){
+							attr[node.getId()].perimeter.value += 1;
+							flagPerimeter[q] = true;
+						}else{
+							flagPerimeter[q] = false;
+						}
 					}else if( (node.isNodeMaxtree() && img.getValue(p) < img.getValue(q)) || (!node.isNodeMaxtree() && img.getValue(p) > img.getValue(q)) ){
-						attr[node.getId()].perimeter.value -= 1;
+						if(!flagPerimeter[q]){
+							attr[node.getId()].perimeter.value -= 1;
+							flagPerimeter[q] = true;
+						}else{
+							flagPerimeter[q] = false;
+						}
 					}
 				}
 			}
@@ -97,7 +108,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	
 	
 	
-	public void mergeChildren(INodeTree node, INodeTree son) {
+	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
 		attr[node.getId()].area.value = attr[node.getId()].area.value + attr[son.getId()].area.value;
 		attr[node.getId()].volume.value = attr[node.getId()].volume.value + attr[son.getId()].volume.value;
 		
@@ -107,8 +118,19 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		if(attr[son.getId()].xmax > attr[node.getId()].xmax){
 			attr[node.getId()].pixelXmax = attr[son.getId()].pixelXmax;
 		}
-		if(attr[son.getId()].ymin < attr[node.getId()].ymin){
-			attr[node.getId()].pixelYmin = attr[son.getId()].pixelYmin;
+		if(attr[son.getId()].ymin <= attr[node.getId()].ymin){
+			if(attr[son.getId()].ymin < attr[node.getId()].ymin)
+				attr[node.getId()].pixelYmin = attr[son.getId()].pixelYmin;
+			else{// if(attr[son.getId()].xmin < attr[node.getId()].xmin)
+				
+				int xNode = attr[node.getId()].pixelYmin % img.getWidth();
+				int xSon = attr[son.getId()].pixelYmin % img.getWidth();
+				if(xSon < xNode){
+					attr[node.getId()].pixelYmin = attr[son.getId()].pixelYmin;	
+				}
+				
+				
+			}
 		}
 		if(attr[son.getId()].xmin < attr[node.getId()].xmin){
 			attr[node.getId()].pixelXmin = attr[son.getId()].pixelXmin;
@@ -126,7 +148,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		attr[node.getId()].perimeter.value = attr[node.getId()].perimeter.value + attr[son.getId()].perimeter.value;
 	}
 
-	public void posProcessing(INodeTree root) {
+	public void posProcessing(NodeLevelSets root) {
 		//pos-processing root
 		attr[root.getId()].width.value = attr[root.getId()].xmax - attr[root.getId()].xmin + 1;  
 		attr[root.getId()].height.value = attr[root.getId()].ymax - attr[root.getId()].ymin + 1;
@@ -139,7 +161,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		root.setPixelWithXmin( attr[ root.getId() ].pixelXmin );
 		root.setPixelWithYmin( attr[ root.getId() ].pixelYmin );
 		
-		attr[root.getId()].rect.value = root.getArea() / attr[root.getId()].width.value * attr[root.getId()].height.value;
+		attr[root.getId()].rect.value = root.getArea() / (attr[root.getId()].width.value * attr[root.getId()].height.value);
 		attr[root.getId()].ratioWH.value =  Math.max(attr[root.getId()].width.value, attr[root.getId()].height.value) / Math.min(attr[root.getId()].width.value, attr[root.getId()].height.value);
 		
 		if(root.isNodeMaxtree()){

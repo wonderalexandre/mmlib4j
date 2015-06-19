@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.RealImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.Utils;
 
 
@@ -23,7 +23,7 @@ public class ComputerDistanceTransform {
 	GrayScaleImage img;
 	ThreadPoolExecutor pool;
 	
-	public ComputerDistanceTransform(int numNode, INodeTree root, GrayScaleImage img){
+	public ComputerDistanceTransform(int numNode, NodeLevelSets root, GrayScaleImage img){
 		long ti = System.currentTimeMillis();
 		imgsDT = new RealImage[256];
 		this.img = img;
@@ -36,11 +36,11 @@ public class ComputerDistanceTransform {
 		}
 	}
 	
-	public float distanceTransform(INodeTree node, int p){
+	public float distanceTransform(NodeLevelSets node, int p){
 		return imgsDT[node.getLevel()].getPixel(p);
 	}
 	
-	public RealImage getDistanceTransform(INodeTree node){
+	public RealImage getDistanceTransform(NodeLevelSets node){
 		return imgsDT[node.getLevel()];
 	}
 	
@@ -48,9 +48,9 @@ public class ComputerDistanceTransform {
 		return imgsDT[level];
 	}
 
-	public void computerDT(INodeTree root){
-		List<INodeTree> children = root.getChildren();
-		for(INodeTree son: children){
+	public void computerDT(NodeLevelSets root){
+		List<NodeLevelSets> children = root.getChildren();
+		for(NodeLevelSets son: children){
 			computerDT(son);
 		}
 		if(imgsDT[root.getLevel()] == null){
@@ -65,7 +65,7 @@ public class ComputerDistanceTransform {
 		boolean isMaxtree;
 		GrayScaleImage img;
 		RealImage imgDT;
-		public ThreadNode(INodeTree node, GrayScaleImage img, RealImage imgDT){
+		public ThreadNode(NodeLevelSets node, GrayScaleImage img, RealImage imgDT){
 			this.level = node.getLevel();
 			this.isMaxtree = node.isNodeMaxtree();
 			this.img = img;

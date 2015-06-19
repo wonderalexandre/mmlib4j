@@ -6,8 +6,8 @@ import java.util.HashSet;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.IMorphologicalTreeFiltering;
-import mmlib4j.representation.tree.INodeTree;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
@@ -24,7 +24,7 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMorphologicalTreeFiltering{
+public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements MorphologicalTreeFiltering{
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img){
 		super(img, -1, -1);
@@ -50,7 +50,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 		new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesToS(getListNodes());
 		new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
 		new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesToS(getListNodes());
-		
 		//new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesToS(getListNodes());
 		for(NodeToS node: getListNodes()){
 			node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, node.getNumHoles()));
@@ -162,7 +161,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements IMor
 	 * @return imagem filtrada
 	 */
 	public GrayScaleImage filtering(double attributeValue, int type, int typePruning){
-		if(typePruning == IMorphologicalTreeFiltering.EXTINCTION_VALUE)
+		if(typePruning == MorphologicalTreeFiltering.EXTINCTION_VALUE)
 			return filteringExtinctionValue(attributeValue, type);
 		else	
 			return filteringByPruning(attributeValue, type);
