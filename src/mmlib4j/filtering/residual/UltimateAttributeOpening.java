@@ -12,6 +12,7 @@ import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
 import mmlib4j.segmentation.Labeling;
+import mmlib4j.utils.Utils;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -29,6 +30,7 @@ public class UltimateAttributeOpening {
 	private int maxCriterion;
 	private GrayScaleImage imgInput;
 	private boolean computerDistribution = false; 
+	boolean[] nodesWithMaxResidues;
 	
 	private ArrayList<NodeCT> nodeDistribution[];
 	
@@ -52,6 +54,9 @@ public class UltimateAttributeOpening {
 	
 	public void enableComputerDistribution(boolean b){
 		computerDistribution = b;
+		if(computerDistribution){
+			nodeDistribution = new ArrayList[maxCriterion+2];
+		}
 	}
 	
 	
@@ -65,8 +70,8 @@ public class UltimateAttributeOpening {
 		NodeCT root = tree.getRoot();
 		maxContrastLUT = new int[tree.getNumNode()];
 		associatedIndexLUT = new int[tree.getNumNode()];
+		nodesWithMaxResidues = new boolean[tree.getNumNode()];
 		
-		nodeDistribution = new ArrayList[maxCriterion+2];
 		maxContrastLUT[root.getId()] = 0;		
 		associatedIndexLUT[root.getId()] = 0;
 
@@ -75,9 +80,10 @@ public class UltimateAttributeOpening {
 				computeUAO(no, false, false, false, null, root);
 			}
 		}
-
-		long tf = System.currentTimeMillis();
-		//System.out.println("Tempo de execucao [Ultimate attribute opening]  "+ ((tf - ti) /1000.0)  + "s");		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [Ultimate attribute opening]  "+ ((tf - ti) /1000.0)  + "s");
+		}
 	}
 
 	
@@ -152,6 +158,7 @@ public class UltimateAttributeOpening {
 				}
 				else{
 					associatedIndex = (int)currentNode.getAttributeValue(typeParam) + 1;
+					nodesWithMaxResidues[currentNode.getId()] = true;
 				}
 				flagPropag = true;
 				
@@ -245,6 +252,10 @@ public class UltimateAttributeOpening {
 		
 		return associateImg;
 	}*/
+	
+	public boolean[] getNodesWithMaximumResidues(){
+		return nodesWithMaxResidues;
+	}
 	
 	
 	public GrayScaleImage getAssociateIndexImage(){

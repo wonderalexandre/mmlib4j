@@ -6,7 +6,6 @@ import java.util.Iterator;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
-import mmlib4j.utils.ImageUtils;
 import mmlib4j.utils.Utils;
 
 
@@ -56,7 +55,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		node.addAttribute(Attribute.MOMENT_CENTRAL_20, attr[ node.getId() ].moment20);
 		node.addAttribute(Attribute.MOMENT_CENTRAL_11, attr[ node.getId() ].moment11);
 		node.addAttribute(Attribute.VARIANCE_LEVEL, attr[ node.getId() ].variance);
-		
+		node.addAttribute(Attribute.LEVEL_MEAN, attr[ node.getId() ].levelMean);
 		node.addAttribute(Attribute.MOMENT_COMPACTNESS, new Attribute(Attribute.MOMENT_COMPACTNESS, attr[ node.getId() ].compactness()));
 		node.addAttribute(Attribute.MOMENT_ECCENTRICITY, new Attribute(Attribute.MOMENT_ECCENTRICITY, attr[ node.getId() ].eccentricity()));
 		node.addAttribute(Attribute.MOMENT_ELONGATION, new Attribute(Attribute.MOMENT_ELONGATION, attr[ node.getId() ].elongation()));
@@ -74,7 +73,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 			int x = pixel % withImg;
 			int y = pixel / withImg;
 			
-			attr[node.getId()].variance.value += Math.pow(node.getLevel() - attr[node.getId()].levelMean, 2);
+			attr[node.getId()].variance.value += Math.pow(node.getLevel() - attr[node.getId()].levelMean.value, 2);
 			attr[node.getId()].moment11.value += Math.pow(x - attr[node.getId()].xCentroid, 1) * Math.pow(y - attr[node.getId()].yCentroid, 1);
 			attr[node.getId()].moment20.value += Math.pow(x - attr[node.getId()].xCentroid, 2) * Math.pow(y - attr[node.getId()].yCentroid, 0);
 			attr[node.getId()].moment02.value += Math.pow(x - attr[node.getId()].xCentroid, 0) * Math.pow(y - attr[node.getId()].yCentroid, 2);
@@ -93,7 +92,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 
 	public void posProcessing(NodeLevelSets node) {
 		//pos-processing root
-		attr[node.getId()].variance.value = attr[node.getId()].variance.value / node.getArea();
+		attr[node.getId()].variance.value = attr[node.getId()].variance.value / (double) node.getArea();
 	}
 	
 	public static CentralMomentsAttribute getInstance(NodeLevelSets node, int widthImg){
@@ -116,12 +115,12 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		Attribute moment02 = new Attribute(Attribute.MOMENT_CENTRAL_02);
 		Attribute moment11 = new Attribute(Attribute.MOMENT_CENTRAL_11);
 		Attribute variance = new Attribute(Attribute.VARIANCE_LEVEL);
+		Attribute levelMean = new Attribute(Attribute.LEVEL_MEAN);
 		
 		double area; 
 		double xCentroid;
 		double yCentroid;
 		int width;
-		double levelMean;
 		
 		
 		public CentralMomentsAttribute(){}
@@ -130,7 +129,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 			this.xCentroid = node.getCentroid() % width;
 			this.yCentroid = node.getCentroid() / width;
 			this.width = width;
-			this.levelMean = node.getAttributeValue(Attribute.VOLUME) / node.getAttributeValue(Attribute.AREA);
+			this.levelMean = new Attribute(Attribute.LEVEL_MEAN,  node.getVolume() / (double) node.getArea());
 
 		}
 				

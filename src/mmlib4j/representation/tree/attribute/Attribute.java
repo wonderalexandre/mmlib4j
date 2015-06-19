@@ -45,6 +45,7 @@ public class Attribute {
 	public static final int RECTANGULARITY = 7;
 	public static final int PERIMETER = 10;
 	public static final int VARIANCE_LEVEL = 11;
+	public static final int LEVEL_MEAN = 12;
 	
 	public static final int PERIMETER_EXTERNAL = 14;
 	public static final int CIRCULARITY = 15;
@@ -97,6 +98,7 @@ public class Attribute {
 			case RECTANGULARITY: return "RECTANGULARITY";
 			case RATIO_WIDTH_HEIGHT: return "RATIO_WIDTH_HEIGHT";
 			case VARIANCE_LEVEL: return "VARIANCE_LEVEL";
+			case LEVEL_MEAN: return "LEVEL_MEAN";
 			case VOLUME: return "VOLUME";
 			case WIDTH: return "WIDTH";
 			default: return "UNDEFINED";
@@ -119,12 +121,32 @@ public class Attribute {
 		return sb.toString();
 	}
 	
-	public static String print(HashMap<Integer, Attribute> hashMap){
+	public static String printHeaderWEKA(HashMap<Integer, Attribute> hashMap, int classes[]){
+		StringBuffer sb = new StringBuffer();
+		sb.append("@relation Features\n");
+		for(Attribute attr: hashMap.values()){
+			sb.append("@attribute "+ attr.getHeader() +" real\n");
+		}
+		if(classes!=null){
+			sb.append("@attribute classe {");
+			for(int i=0; i < classes.length; i++){
+				int c = classes[i];
+				sb.append(c);
+				if(classes.length > 1 && i < classes.length - 1)
+					sb.append(", ");
+			}
+			sb.append("}\n");
+		}
+		sb.append("@data");		
+		return sb.toString();
+	}
+	
+	public static String print(HashMap<Integer, Attribute> hashMap, String token){
 		StringBuffer sb = new StringBuffer();
 		for(Attribute attr: hashMap.values()){
-			sb.append(attr.getValueFormat()+ "\t");
+			sb.append(attr.getValueFormat()+ token);
 		}
-		return sb.toString();
+		return sb.toString();//.substring(0, sb.length()-token.length());
 	}
 	
 

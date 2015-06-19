@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import apple.laf.JRSUIConstants.Widget;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
@@ -56,6 +57,9 @@ public abstract class WindowImages {
         instance.showImpl(img, titles);
     }
     
+    public abstract void close();
+    
+    
     public abstract void showImpl(Image2D[] img, String[] titles);
     	    
 }
@@ -64,6 +68,7 @@ class WindowSwing extends WindowImages{
 
 	private Map<String, BufferedImage> map = new HashMap<String, BufferedImage>();
     private static final String PROJECT_NAME = "MMLib4J";
+    JFrame lastWindow;
     
 	public void showImpl(Image2D[] img, String[] titles) {
         BufferedImage im[] = new BufferedImage[img.length];
@@ -84,6 +89,11 @@ class WindowSwing extends WindowImages{
         
     }    
     
+	public void close(){
+		lastWindow.dispose();
+		lastWindow.setVisible(false);
+		lastWindow.setEnabled(false);
+	}
 	
     public JFrame getJFrame(BufferedImage img[], String title, String titles[], boolean isSalvar){
         final JFrame dialog = new JFrame();
@@ -133,7 +143,7 @@ class WindowSwing extends WindowImages{
             dialog.add(scrollPane);
             dialog.setSize(750, 580);
         }
-
+        lastWindow = dialog;
         return dialog;
     }
 }
