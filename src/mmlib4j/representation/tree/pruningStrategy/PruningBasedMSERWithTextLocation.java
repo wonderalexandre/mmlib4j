@@ -53,46 +53,45 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 	public boolean isNodeTextLocation(NodeLevelSets node){
 		
 		int psiArea = 0;
-		if(50 <= node.getAttributeValue(Attribute.AREA) && node.getAttributeValue(Attribute.AREA) < 100000){
+		if(100 <= node.getAttributeValue(Attribute.AREA) && node.getAttributeValue(Attribute.AREA) < 100000){
 			psiArea = 1;
 		}
-		System.out.println(node.getAttribute(Attribute.AREA));
+		
 		
 		int psiHeight = 0;
-		if(8 <= node.getAttributeValue(Attribute.HEIGHT) && node.getAttributeValue(Attribute.HEIGHT) < 500){
+		if(20 <= node.getAttributeValue(Attribute.HEIGHT) && node.getAttributeValue(Attribute.HEIGHT) < 500){
 			psiHeight = 1;
 		}
-		System.out.println(node.getAttribute(Attribute.HEIGHT));
 		
-		int psiWidth = 0;
-		if(4 <= node.getAttributeValue(Attribute.WIDTH) && node.getAttributeValue(Attribute.WIDTH) < 400){
+		
+		int psiWidth = 5;
+		if(10 <= node.getAttributeValue(Attribute.WIDTH) && node.getAttributeValue(Attribute.WIDTH) < 400){
 			psiWidth = 1;
 		}
-		System.out.println(node.getAttribute(Attribute.WIDTH));
+		
 		
 		int psiHole = 0;
-		if(node.getAttributeValue(Attribute.NUM_HOLES) <= 10){
+		if(node.getAttributeValue(Attribute.NUM_HOLES) <= 3){
 			psiHole = 1;
 		}
-		System.out.println(node.getAttribute(Attribute.NUM_HOLES));
 		
 		int psiRect = 0;
-		if(0.2 <= node.getAttributeValue(Attribute.RECTANGULARITY) && node.getAttributeValue(Attribute.RECTANGULARITY) <= 0.95)
+		if(0.25 <= node.getAttributeValue(Attribute.RECTANGULARITY) && node.getAttributeValue(Attribute.RECTANGULARITY) <= 0.99)
 			psiRect = 1;
-		System.out.println(node.getAttribute(Attribute.RECTANGULARITY));
+		
 		
 		int psiRate = 0;
-		if(node.getAttributeValue(Attribute.RATIO_WIDTH_HEIGHT) <= 8){
+		if(node.getAttributeValue(Attribute.RATIO_WIDTH_HEIGHT) <= 10){
 			psiRate = 1;
 		}
-		System.out.println(node.getAttribute(Attribute.RATIO_WIDTH_HEIGHT));
+		
 		
 		int psiColor = 0;
 		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 40)
 			psiColor = 1;
-		System.out.println(node.getAttribute(Attribute.VARIANCE_LEVEL));
 		
-		return psiArea + psiRect + psiRate + psiColor + psiHeight + psiWidth == 6;//+ psiHole == 7;
+		return psiArea + psiRect + psiRate + psiColor + psiHeight + psiWidth + psiHole == 7;
+		
 	}
 	
 	
@@ -146,3 +145,4 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 	}*/
 	
 }
+

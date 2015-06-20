@@ -221,37 +221,6 @@ public class UltimateAttributeOpening {
 		return transformImg;
 	}
 	
-	/*public GrayScaleImage getAssociateNodeImage(){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(this.imgInput);;
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
-		fifo.enqueue(tree.getRoot());
-		int levelRoot =  -1;
-		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
-			
-			if(levelRoot != -1){
-				levelRoot = no.getLevel();
-			}
-			if(associatedNodeLUT[no.getId()] != null){
-				for(Integer p: no.getPixels()){
-					associateImg.setPixel(p, no.getLevel());
-				}
-			}
-			else{
-				for(Integer p: no.getPixels()){
-					associateImg.setPixel(p, levelRoot);
-				}
-			}
-			
-			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
-					fifo.enqueue(son);	 
-				}
-			}
-		}
-		
-		return associateImg;
-	}*/
 	
 	public boolean[] getNodesWithMaximumResidues(){
 		return nodesWithMaxResidues;

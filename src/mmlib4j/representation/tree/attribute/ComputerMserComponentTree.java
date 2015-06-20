@@ -166,7 +166,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
 				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
 				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation){
+					if(stability[node.getId()].getValue() < maxVariation && node.getArea() >= minArea && node.getArea() <= maxArea){
 						mser[node.getId()] = true;
 						num++;
 					}

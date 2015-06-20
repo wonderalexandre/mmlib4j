@@ -29,6 +29,8 @@ public class UltimateGrainFilter {
 	private int[] associatedNodePos;
 	private int[] residuesNodeNeg;
 	private int[] associatedNodeNeg;
+	boolean[] nodesWithMaxResiduesPos;
+	boolean[] nodesWithMaxResiduesNeg;
 	
 	private int[] residuesNodeType;
 	private int[] associatedNodeType;
@@ -70,6 +72,8 @@ public class UltimateGrainFilter {
 		this.associatedNodePos = new int[tree.getNumNode()];
 		this.residuesNodeNeg = new int[tree.getNumNode()];
 		this.associatedNodeNeg = new int[tree.getNumNode()];
+		nodesWithMaxResiduesPos = new boolean[tree.getNumNode()];
+		nodesWithMaxResiduesNeg = new boolean[tree.getNumNode()];
 		
 		if (root.getChildren() != null) {
 			for(NodeToS no: root.getChildren()){
@@ -128,6 +132,7 @@ public class UltimateGrainFilter {
 				}
 				else{
 					linkedAttributesPos = (int)currentNode.getAttributeValue(typeParam) + 1;
+					nodesWithMaxResiduesPos[currentNode.getId()] = true;
 				}
 				
 			}
@@ -145,6 +150,7 @@ public class UltimateGrainFilter {
 				}
 				else{
 					linkedAttributesNeg = (int)currentNode.getAttributeValue(typeParam) + 1;
+					nodesWithMaxResiduesNeg[currentNode.getId()] = true;
 				}
 				
 			}
@@ -180,21 +186,24 @@ public class UltimateGrainFilter {
 	}
 	
 	
-	
-	
-	private boolean[] getSelected(){
-		boolean selected[] = new boolean[tree.getNumNode()];
-		for(NodeToS node: tree.getListNodes()){
-			if(node.getParent() != null){
-				if ( node.getParent().getAttributeValue(typeParam) != node.getAttributeValue(typeParam)) {
-					selected[node.getParent().getId()] = true;
-				}
-			}
-		}
-		return selected;
+	public boolean[] getNodesMapWithMaximumResiduesPos(){
+		return nodesWithMaxResiduesPos;
 	}
 	
-
+	public boolean[] getNodesMapWithMaximumResiduesNeg(){
+		return nodesWithMaxResiduesNeg;
+	}
+	
+	
+	public boolean[] getNodesMapWithMaximumResidues(){
+		boolean map[] = new boolean[nodesWithMaxResiduesNeg.length];
+		for(int i=0; i < map.length; i++){
+			map[i] = nodesWithMaxResiduesNeg[i] || nodesWithMaxResiduesPos[i];
+		}
+		return map;
+	}
+	
+	
 	public boolean hasNodeSelectedInPrimitive_OLD(NodeToS currentNode){
 		if(selectedForFiltering == null) return true;
 		
@@ -246,14 +255,6 @@ public class UltimateGrainFilter {
 		return false;
 	}
 	
-	/*
-	public boolean isNewPrimitive(NodeToS currentNode){
-		if(currentNode.getParent() == null) return true;
-		return  Math.abs( currentNode.getAttributeValue(typeParam) - currentNode.getParent().getAttributeValue(typeParam) )  > gradualTransitions;
-				//;//&& currentNode.isNodeMaxtree() == currentNode.getParent().isNodeMaxtree();
-	}*/
-	
-
 	public GrayScaleImage getResiduesPos(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);;
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
@@ -300,7 +301,7 @@ public class UltimateGrainFilter {
 		return transformImg;
 	}
 	
-	public GrayScaleImage getResidues(){
+	public GrayScaleImage getResiduesx(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);;
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(root);
@@ -316,6 +317,26 @@ public class UltimateGrainFilter {
 			}
 		}
 		return transformImg;
+	}
+	
+	public GrayScaleImage getResidues(){//getAltitudeResidues( ){
+		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(this.imgInput);
+	
+		boolean map[] = getNodesMapWithMaximumResidues();
+		for(NodeToS node: tree.getListNodes()){
+			if(map[node.getId()]){
+				int altitude = (int) node.getAttributeValue(Attribute.ALTITUDE);
+				for(int p: node.getPixelsOfCC()){
+					/*if(map[tree.getSC(p).getId()]){
+						if( node.getAttributeValue(Attribute.HEIGHT) - tree.getSC(p).getAttributeValue(Attribute.HEIGHT) < 5)
+							map[tree.getSC(p).getId()] = false;	
+					}*/
+					map[tree.getSC(p).getId()] = false;
+					imgA.setPixel(p, altitude);
+				}
+			}
+		}
+		return imgA;
 	}
 	
 	
@@ -394,8 +415,9 @@ public class UltimateGrainFilter {
 		return associateImg;
 	}
 	
+	
 	public GrayScaleImage getResiduesByType( ){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(this.imgInput);;
+		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(this.imgInput);
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -419,54 +441,5 @@ public class UltimateGrainFilter {
 	
 	
 	
-
-	public double funcTextLocation(NodeToS node, int parentLevel){
-		double width = node.getAttributeValue(Attribute.WIDTH);
-		double heigth = node.getAttributeValue(Attribute.HEIGHT);
-		double areaBB = width * heigth;
-		double ratioAreaBB = node.getArea() / areaBB;
-		double ratioWH = Math.max(width, heigth) / Math.min(width, heigth);
-		int numHoles= node.getNumHoles();
-		
-		int psiArea = 0;
-		if(1000 <= node.getArea() && node.getArea() < (this.imgInput.getWidth() * this.imgInput.getHeight())/3){
-			psiArea = 1;
-		}
-		
-		int psiHeight = 0;
-		if(20 <= width && heigth < 300){
-			psiHeight = 1;
-		}
-		
-		int psiWidth = 0;
-		if(10 <= width && heigth < 200){
-			psiWidth = 1;
-		}
-		
-		int psiHole = 0;
-		if(numHoles <= 3){
-			psiHole = 1;
-		}
-		
-		int psiRect = 0;
-		if(0.35 <= ratioAreaBB && ratioAreaBB <= 0.9)
-			psiRect = 1;
-		
-		int psiRate = 0;
-		if(ratioWH <= 4){
-			psiRate = 1;
-		}
-		
-		int psiColor = 0;
-		//if(psiArea == 1 && psiHole == 1 && psiRect == 1 && psiRate == 1)
-		//	System.out.println(node.getHomogeneity() + "   ==>> " + Math.abs(node.getLevel() - parentLevel));
-		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 15)
-			psiColor = 1;
-		
-		
-		
-	//	System.out.printf("%d %d %d %d %d\n", psiArea, psiHole, psiRect, psiRate, psiColor);
-		return psiArea * psiHole * psiRect * psiRate * psiColor * psiHeight * psiWidth;
-	}
 	
 }

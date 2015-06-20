@@ -48,7 +48,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	public void loadAttribute(){
 		long ti = System.currentTimeMillis();
 		new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesToS(getListNodes());
-		new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
+		//new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
 		new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesToS(getListNodes());
 		//new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesToS(getListNodes());
 		for(NodeToS node: getListNodes()){

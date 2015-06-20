@@ -91,13 +91,12 @@ class WindowSwing extends WindowImages{
     
 	public void close(){
 		lastWindow.dispose();
-		lastWindow.setVisible(false);
-		lastWindow.setEnabled(false);
 	}
 	
     public JFrame getJFrame(BufferedImage img[], String title, String titles[], boolean isSalvar){
         final JFrame dialog = new JFrame();
         dialog.setTitle(title);
+        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         dialog.setLayout(new BorderLayout());
         boolean flag = false;
         JPanel panelPrincipal = new JPanel();
