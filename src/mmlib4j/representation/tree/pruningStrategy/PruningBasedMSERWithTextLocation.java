@@ -52,97 +52,22 @@ public class PruningBasedMSERWithTextLocation extends PruningBasedMSER{
 
 	public boolean isNodeTextLocation(NodeLevelSets node){
 		
-		int psiArea = 0;
-		if(100 <= node.getAttributeValue(Attribute.AREA) && node.getAttributeValue(Attribute.AREA) < 100000){
-			psiArea = 1;
-		}
-		
-		
-		int psiHeight = 0;
-		if(20 <= node.getAttributeValue(Attribute.HEIGHT) && node.getAttributeValue(Attribute.HEIGHT) < 500){
-			psiHeight = 1;
-		}
-		
-		
-		int psiWidth = 5;
-		if(10 <= node.getAttributeValue(Attribute.WIDTH) && node.getAttributeValue(Attribute.WIDTH) < 400){
-			psiWidth = 1;
-		}
-		
-		
-		int psiHole = 0;
-		if(node.getAttributeValue(Attribute.NUM_HOLES) <= 3){
-			psiHole = 1;
-		}
-		
-		int psiRect = 0;
-		if(0.25 <= node.getAttributeValue(Attribute.RECTANGULARITY) && node.getAttributeValue(Attribute.RECTANGULARITY) <= 0.99)
-			psiRect = 1;
-		
-		
-		int psiRate = 0;
-		if(node.getAttributeValue(Attribute.RATIO_WIDTH_HEIGHT) <= 10){
-			psiRate = 1;
-		}
-		
-		
-		int psiColor = 0;
-		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 40)
-			psiColor = 1;
-		
-		return psiArea + psiRect + psiRate + psiColor + psiHeight + psiWidth + psiHole == 7;
+		if((100 <= node.getAttributeValue(Attribute.AREA) && node.getAttributeValue(Attribute.AREA) < 500000)
+				&& (20 <= node.getAttributeValue(Attribute.HEIGHT) && node.getAttributeValue(Attribute.HEIGHT) < 400)
+				&& (10 <= node.getAttributeValue(Attribute.WIDTH) && node.getAttributeValue(Attribute.WIDTH) < 400)
+				&& (node.getAttributeValue(Attribute.NUM_HOLES) <= 3)
+				&& (0.25 <= node.getAttributeValue(Attribute.RECTANGULARITY) && node.getAttributeValue(Attribute.RECTANGULARITY) <= 0.95)
+				&& (node.getAttributeValue(Attribute.RATIO_WIDTH_HEIGHT) <= 10)
+				&& (node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 40)
+				//&& (node.getAttributeValue(Attribute.ALTITUDE) < 100) 
+			)
+			return true;
+		else
+			return false;
 		
 	}
 	
 	
-
-/*
-	public boolean isNodeTextLocation(NodeToS node){
-		double widthNode = node.getAttributeValue(Attribute.WIDTH);
-		double heightNode = node.getAttributeValue(Attribute.HEIGHT);
-		double areaBB = widthNode * heightNode;
-		double ratioAreaBB = node.getArea() / areaBB;
-		double ratioWH = Math.max(widthNode, heightNode) / Math.min(widthNode, heightNode);
-		int numHoles= node.getNumHoles();
-		
-		int psiArea = 0;
-		if(50 <= node.getArea() && node.getArea() < 100000){
-			psiArea = 1;
-		}
-		
-		int psiHeight = 0;
-		if(8 <= heightNode && heightNode < 500){
-			psiHeight = 1;
-		}
-		
-		int psiWidth = 0;
-		if(4 <= widthNode && widthNode < 300){
-			psiWidth = 1;
-		}
-		
-		int psiHole = 0;
-		if(numHoles <= 5){
-			psiHole = 1;
-		}
-		
-		int psiRect = 0;
-		if(0.2 <= ratioAreaBB && ratioAreaBB <= 0.99)
-			psiRect = 1;
-		
-		int psiRate = 0;
-		if(ratioWH <= 8){
-			psiRate = 1;
-		}
-		
-		int psiColor = 0;
-		if(node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= 30)
-			psiColor = 1;
-		
-
-		
-		//System.out.printf("%d %d %d %d %d\n", psiHeight, psiWidth, psiRect, psiRate, psiColor);
-		return psiArea + psiRect + psiHole + psiRate + psiColor + psiHeight + psiWidth == 7;
-	}*/
 	
 }
 

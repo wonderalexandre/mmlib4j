@@ -31,6 +31,7 @@ public class UltimateAttributeOpening {
 	private GrayScaleImage imgInput;
 	private boolean computerDistribution = false; 
 	boolean[] nodesWithMaxResidues;
+	private NodeCT[] mapNodes;
 	
 	private ArrayList<NodeCT> nodeDistribution[];
 	
@@ -70,6 +71,7 @@ public class UltimateAttributeOpening {
 		NodeCT root = tree.getRoot();
 		maxContrastLUT = new int[tree.getNumNode()];
 		associatedIndexLUT = new int[tree.getNumNode()];
+		mapNodes = new NodeCT[tree.getNumNode()];
 		nodesWithMaxResidues = new boolean[tree.getNumNode()];
 		
 		maxContrastLUT[root.getId()] = 0;		
@@ -146,26 +148,29 @@ public class UltimateAttributeOpening {
 			
 			int maxContrast;
 			int associatedIndex;
-			
+			NodeCT associatedNode;
 			if (maxContrastLUT[parentNode.getId()] >= contrast) {
 				maxContrast = maxContrastLUT[parentNode.getId()];
 				associatedIndex = associatedIndexLUT[parentNode.getId()];
+				associatedNode = mapNodes[parentNode.getId()];
 			}
 			else{
 				maxContrast = contrast;
 				if(flagResido && qPropag){
 					associatedIndex = associatedIndexLUT[parentNode.getId()];
+					associatedNode = mapNodes[parentNode.getId()];
 				}
 				else{
 					associatedIndex = (int)currentNode.getAttributeValue(typeParam) + 1;
 					nodesWithMaxResidues[currentNode.getId()] = true;
+					associatedNode = currentNode;
 				}
 				flagPropag = true;
 				
 			}
 			maxContrastLUT[currentNode.getId()] = maxContrast;
 			associatedIndexLUT[currentNode.getId()] = associatedIndex;
-			
+			mapNodes[currentNode.getId()] = associatedNode;
 			
 			if(computerDistribution == true && associatedIndex != 0 && isCalculateResidue){
 				if(nodeDistribution[id] == null)
@@ -225,7 +230,24 @@ public class UltimateAttributeOpening {
 	public boolean[] getNodesWithMaximumResidues(){
 		return nodesWithMaxResidues;
 	}
-	
+	public NodeCT[] getNodesMap(){
+		NodeCT map[] = new NodeCT[imgInput.getSize()];
+		
+		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		fifo.enqueue(tree.getRoot());
+		while(!fifo.isEmpty()){
+			NodeCT no = fifo.dequeue();
+			for(Integer p: no.getCanonicalPixels()){
+				map[p] = mapNodes[no.getId()];
+			}
+			if(no.getChildren() != null){
+				for(NodeCT son: no.getChildren()){
+					fifo.enqueue(son);	 
+				}
+			}
+		}
+		return map;
+	}
 	
 	public GrayScaleImage getAssociateIndexImage(){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());

@@ -27,7 +27,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	private int minArea=0;
 	private int maxArea=Integer.MAX_VALUE;
 	private Attribute[] stability;
-	
+	private int attribute = Attribute.AREA;
 	
 	public ComputerMserTreeOfShapes(TreeOfShape tree){
 		this.tree = tree;
@@ -40,6 +40,10 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	
 	public void setMinArea(int a){ 
 		minArea = a;
+	}
+	
+	public void setAttribute(int t){
+		attribute = t;
 	}
 	
 	public void setMaxArea(int a){
@@ -82,7 +86,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 
 	
 	private double getStability(NodeToS node){
-		return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double) node.getArea(); 
+		return (ascendant[node.getId()].getAttributeValue(attribute) - descendants[node.getId()].getAttributeValue(attribute)) / (double) node.getAttributeValue(attribute); 
 	}
 	
 

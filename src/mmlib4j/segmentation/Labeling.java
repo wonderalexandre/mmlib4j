@@ -29,7 +29,7 @@ public class Labeling {
 			while(!fifo.isEmpty()){
 				int pixel = fifo.dequeue();
 				for(Integer q: adj.getAdjacencyPixels(img, pixel)){
-					if(imgOut.getPixel(q) == 0 && img.getPixel(p) == img.getPixel(q) && !img.isPixelBackground(p)){
+					if(imgOut.getPixel(q) == 0 && img.getPixel(p) == img.getPixel(q)){
 						imgOut.setPixel(q, label);
 						fifo.enqueue(q);
 					}

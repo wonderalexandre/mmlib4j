@@ -4,7 +4,9 @@ package mmlib4j.filtering.residual;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
+import mmlib4j.utils.Utils;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -54,8 +56,10 @@ public class UltimateAttributeOpenClose{
 		
 		executeUAO();
 		
-		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao [Ultimate attribute opening/closing]  "+ ((tf - ti) /1000.0)  + "s");
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [Ultimate attribute opening/closing]  "+ ((tf - ti) /1000.0)  + "s");
+		}
 	}
 	
 	
@@ -66,9 +70,10 @@ public class UltimateAttributeOpenClose{
 		process2.setParameter(paramValueMax, typeParam, ps2, selectedShape2);
 		
 		executeUAO();
-		
-		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao [Ultimate attribute opening/closing]  "+ ((tf - ti) /1000.0)  + "s");		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [Ultimate attribute opening/closing]  "+ ((tf - ti) /1000.0)  + "s");
+		}
 	}
 
 	
@@ -80,8 +85,10 @@ public class UltimateAttributeOpenClose{
 		
 		executeUAO();
 		
-		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao [Ultimate attribute opening/closing]  "+ ((tf - ti) /1000.0)  + "s");
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [Ultimate attribute opening/closing]  "+ ((tf - ti) /1000.0)  + "s");
+		}
 			
 	}
 
@@ -140,6 +147,25 @@ public class UltimateAttributeOpenClose{
 		return associateImg;
 	}
 
+	public boolean[] getNodesMapWithMaximumResiduesPositive(){
+		return process1.uao.getNodesWithMaximumResidues();
+	}
+	
+
+	public NodeCT[] getNodesMapPositive(){
+		return process1.uao.getNodesMap();
+	}
+	
+	public NodeCT[] getNodesMapNegative(){
+		return process2.uao.getNodesMap();
+	}
+	
+	
+	public boolean[] getNodesMapWithMaximumResiduesNegative(){
+		return process2.uao.getNodesWithMaximumResidues();
+	}
+	
+	
 	public GrayScaleImage getResiduesPos() {
 		return process2.uao.getResidues();
 	}

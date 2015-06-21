@@ -1,5 +1,7 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
+import javax.smartcardio.ATR;
+
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
@@ -24,7 +26,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	private double maxVariation = Double.MAX_VALUE;
 	private int minArea=0;
 	private int maxArea=Integer.MAX_VALUE;
-	
+	private int attribute;
 	
 	public void setMaxVariation(double d){
 		maxVariation = d;
@@ -36,6 +38,10 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	
 	public void setMaxArea(int a){
 		maxArea = a;
+	}
+	
+	public void setAttribute(int t){
+		attribute = t;
 	}
 	
 	public PruningBasedMSER(MorphologicalTreeFiltering tree, int delta){
@@ -52,6 +58,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
+			mser.setAttribute(attribute);
 			
 			for(int i=1; i < 50; i++){
 				boolean result[] = mser.getMappingNodesByMSER(i);
@@ -73,6 +80,10 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			boolean rankSelected[] = new boolean[tree.getNumNode()];
 			this.num = 0;
 			ComputerMserTreeOfShapes mser = new ComputerMserTreeOfShapes((TreeOfShape) tree);
+			mser.setMaxArea(maxArea);
+			mser.setMinArea(minArea);
+			mser.setMaxVariation(maxVariation);
+			mser.setAttribute(attribute);
 			for(int i=0; i < 50; i++){
 				boolean result[] = mser.getMappingNodesByMSER(i);
 				for(int k=0; k < result.length; k++){
@@ -98,11 +109,8 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
+			mser.setAttribute(attribute);
 			boolean result[] = mser.getMappingNodesByMSER(delta);
-			/*for(NodeCT n: ((ComponentTree) tree).getListNodes()){
-				if(result[n.getId()])
-					System.out.println(Attribute.print(n.getAttributes()));;
-			}*/
 			this.num = mser.getNumMSER();
 			return result;
 		}
@@ -111,6 +119,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
+			mser.setAttribute(attribute);
 			boolean result[] = mser.getMappingNodesByMSER(delta);
 			this.num = mser.getNumMSER();
 			return result;

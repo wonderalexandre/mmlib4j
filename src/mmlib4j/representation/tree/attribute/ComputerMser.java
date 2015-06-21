@@ -17,6 +17,8 @@ public interface ComputerMser {
 	public void setMinArea(int a);
 	
 	public void setMaxArea(int a);
+	
+	public void setAttribute(int t);
 		
 	public boolean[] getMappingNodesByMSER(int delta);
 

@@ -32,6 +32,8 @@ public class ComputerMserComponentTree implements ComputerMser {
 	private int minArea=0;
 	private int maxArea=Integer.MAX_VALUE;
 	
+	private int attribute = Attribute.AREA;
+	
 	public ComputerMserComponentTree(ComponentTree tree){
 		this.tree = tree;
 		
@@ -39,6 +41,10 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	public void setMaxVariation(double d){
 		maxVariation = d;
+	}
+	
+	public void setAttribute(int t){
+		attribute = t;
 	}
 	
 	public void setMinArea(int a){ 
@@ -88,8 +94,8 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	protected double getStability(NodeCT node){
 		if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
-			return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double) node.getArea();
-			//return (ascendant[node.getId()].getHeightNode() - descendants[node.getId()].getHeightNode()) / (double) node.getHeightNode();
+			//return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double) node.getArea();
+			return (ascendant[node.getId()].getAttributeValue(attribute) - descendants[node.getId()].getAttributeValue(attribute)) / (double) node.getAttributeValue(attribute);
 		}
 		else{
 			return Double.MAX_VALUE;
