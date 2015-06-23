@@ -19,10 +19,10 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
 public class PruningBasedMSER implements MappingStrategyOfPruning{
 
 	protected MorphologicalTreeFiltering tree;
-	protected int delta;
 	protected int num;
 	protected Double q[];
-
+	
+	protected int delta;
 	private double maxVariation = Double.MAX_VALUE;
 	private int minArea=0;
 	private int maxArea=Integer.MAX_VALUE;
@@ -42,6 +42,13 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	
 	public void setAttribute(int t){
 		attribute = t;
+	}
+
+	public void setParameters(int minArea, int maxArea, double maxVariation, int attribute){
+		this.minArea = minArea;
+		this.maxArea = maxArea;
+		this.maxVariation = maxVariation;
+		this.attribute = attribute;
 	}
 	
 	public PruningBasedMSER(MorphologicalTreeFiltering tree, int delta){
