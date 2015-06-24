@@ -167,19 +167,19 @@ public class UltimateAttributeOpenClose{
 	
 	
 	public GrayScaleImage getResiduesPos() {
-		return process2.uao.getResidues();
+		return process1.uao.getResidues();
 	}
 	
 
 	public GrayScaleImage getResiduesNeg() {
-		return process1.uao.getResidues();
+		return process2.uao.getResidues();
 	}
 
 	public GrayScaleImage getAssociateIndexImagePos() {
-		return process2.uao.getAssociateIndexImage();
+		return process1.uao.getAssociateIndexImage();
 	}
 	
 	public GrayScaleImage getAssociateIndexImageNeg() {
-		return process1.uao.getAssociateIndexImage();
+		return process2.uao.getAssociateIndexImage();
 	}
 }

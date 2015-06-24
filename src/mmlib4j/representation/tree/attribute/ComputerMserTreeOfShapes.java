@@ -28,6 +28,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	private int maxArea=Integer.MAX_VALUE;
 	private Attribute[] stability;
 	private int attribute = Attribute.AREA;
+	private boolean estimateDelta = false;
 	
 	public ComputerMserTreeOfShapes(TreeOfShape tree){
 		this.tree = tree;
@@ -69,6 +70,8 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	
 	private NodeToS getNodeAscendant(NodeToS node, int h){
 		NodeToS n = node;
+		if(estimateDelta)
+			h =  (int) node.getAttributeValue(Attribute.ALTITUDE);
 		for(int i=0; i < h; i++){
 			if(node.isNodeMaxtree()){
 				if(node.getLevel() >= n.getLevel() + h)
@@ -276,6 +279,10 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 			}
 		}
 		return img;
+	}
+
+	public void setEstimateDelta(boolean b) {
+		estimateDelta = b;
 	}
 
 

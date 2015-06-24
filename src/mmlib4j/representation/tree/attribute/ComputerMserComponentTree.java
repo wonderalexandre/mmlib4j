@@ -32,11 +32,17 @@ public class ComputerMserComponentTree implements ComputerMser {
 	private int minArea=0;
 	private int maxArea=Integer.MAX_VALUE;
 	
+	private boolean estimateDelta = false;
+	
 	private int attribute = Attribute.AREA;
 	
 	public ComputerMserComponentTree(ComponentTree tree){
 		this.tree = tree;
 		
+	}
+	
+	public void setEstimateDelta(boolean b){
+		estimateDelta = b;
 	}
 	
 	public void setMaxVariation(double d){
@@ -57,6 +63,8 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	private NodeCT getNodeAscendant(NodeCT node, int h){
 		NodeCT n = node;
+		if(estimateDelta)
+			h =  (int) node.getAttributeValue(Attribute.ALTITUDE)/2;
 		for(int i=0; i <= h; i++){
 			if(node.isMaxtree()){
 				if(node.getLevel() >= n.getLevel() + h)

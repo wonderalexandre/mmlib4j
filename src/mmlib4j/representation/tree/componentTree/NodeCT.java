@@ -33,6 +33,7 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 	int numDescendent;
 	int numDescendentLeaf;
 	int numSiblings;
+	int numNodeInSameBranch=-1;
 	
 	public boolean flagProcess;
 	public boolean flagPruning = true;
@@ -297,6 +298,29 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 	
 	public int getNumCanonicalPixel(){
 		return pixels.size();
+	}
+	
+	public int getNumNodesInBranch(){
+		if(numNodeInSameBranch != -1)
+			return numNodeInSameBranch;
+		
+		numNodeInSameBranch = 1;
+		
+		//ancestrais
+		NodeCT node = this;
+		while(node != null && node.numSiblings == 0){
+			node = node.parent;
+			numNodeInSameBranch++;
+		}
+		
+		//descendentes
+		node = this;
+		while(node.children.size() == 1){
+			node = node.children.get(0);
+			numNodeInSameBranch++;
+		}
+		
+		return numNodeInSameBranch;
 	}
 
 	public Iterable<NodeCT> getPathToRoot(){

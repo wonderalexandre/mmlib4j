@@ -34,4 +34,5 @@ public interface ComputerMser {
 
 	public ColorImage getPointImageMSER(int delta);
 	
+	public void setEstimateDelta(boolean b);
 }

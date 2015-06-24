@@ -23,6 +23,7 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 	protected int delta;
 	private double maxVariation = Double.MAX_VALUE;
 	private int attribute;
+	private boolean estimateDelta=false;
 	
 	private int tMin=5;
 	private int tMax=Integer.MAX_VALUE;
@@ -34,6 +35,10 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 	public void setParametersTBMR(int tMin, int tMax){
 		this.tMin = tMin;
 		this.tMax = tMax;
+	}
+	
+	public void setEstimateDelta(boolean b){
+		estimateDelta = b;
 	}
 	
 	public void setSelected(String s){
@@ -56,6 +61,7 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 				pruning.setMaxArea(areaMax);
 				pruning.setMinArea(areaMin);
 				pruning.setMaxVariation(maxVariation);
+				pruning.setEstimateDelta(estimateDelta);
 				selectedNodes = pruning.getMappingSelectedNodes();
 				if(Utils.debug)
 					System.out.println("PruningBasedTextLocation - " + selected);
@@ -67,6 +73,7 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 				pruning.setMaxArea(areaMax);
 				pruning.setMinArea(areaMin);
 				pruning.setMaxVariation(maxVariation);
+				pruning.setEstimateDelta(estimateDelta);
 				selectedNodes = pruning.getMappingSelectedNodesRank();
 				if(Utils.debug)
 					System.out.println("PruningBasedTextLocation - " + selected);

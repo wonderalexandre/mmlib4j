@@ -27,6 +27,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	private int minArea=0;
 	private int maxArea=Integer.MAX_VALUE;
 	private int attribute;
+	private boolean estimateDelta = false;
 	
 	public void setMaxVariation(double d){
 		maxVariation = d;
@@ -38,6 +39,10 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	
 	public void setMaxArea(int a){
 		maxArea = a;
+	}
+	
+	public void setEstimateDelta(boolean b){
+		estimateDelta = b;
 	}
 	
 	public void setAttribute(int t){
@@ -66,7 +71,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
 			mser.setAttribute(attribute);
-			
+			mser.setEstimateDelta(estimateDelta);
 			for(int i=1; i < 50; i++){
 				boolean result[] = mser.getMappingNodesByMSER(i);
 				for(int k=0; k < result.length; k++){
@@ -91,6 +96,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
 			mser.setAttribute(attribute);
+			mser.setEstimateDelta(estimateDelta);
 			for(int i=0; i < 50; i++){
 				boolean result[] = mser.getMappingNodesByMSER(i);
 				for(int k=0; k < result.length; k++){
@@ -117,6 +123,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
 			mser.setAttribute(attribute);
+			mser.setEstimateDelta(estimateDelta);
 			boolean result[] = mser.getMappingNodesByMSER(delta);
 			this.num = mser.getNumMSER();
 			return result;
@@ -127,6 +134,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
 			mser.setAttribute(attribute);
+			mser.setEstimateDelta(estimateDelta);
 			boolean result[] = mser.getMappingNodesByMSER(delta);
 			this.num = mser.getNumMSER();
 			return result;
@@ -135,6 +143,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			return null;
 		}
 	}
+	
 	
 	
 	public int getNumOfPruning(){
