@@ -29,6 +29,10 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	private int attribute;
 	private boolean estimateDelta = false;
 	
+	public PruningBasedMSER(){
+		tree.loadAttribute(Attribute.AREA);
+	}
+	
 	public void setMaxVariation(double d){
 		maxVariation = d;
 	}

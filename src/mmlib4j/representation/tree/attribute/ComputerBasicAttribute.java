@@ -165,23 +165,10 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		attr[root.getId()].ratioWH.value =  Math.max(attr[root.getId()].width.value, attr[root.getId()].height.value) / Math.min(attr[root.getId()].width.value, attr[root.getId()].height.value);
 		
 		if(root.isNodeMaxtree()){
-			if(root.isLeaf())
-				if(root.getParent() != null)
-					attr[root.getId()].altitude.value = root.getLevel() - root.getParent().getLevel();
-				else
-					attr[root.getId()].altitude.value = root.getLevel();
-				
-			else
-				attr[root.getId()].altitude.value = attr[root.getId()].highest - root.getLevel() + 1; 
+			attr[root.getId()].altitude.value = attr[root.getId()].highest - root.getLevel() + 1; 
 		}
 		else{
-			if(root.isLeaf())
-				if(root.getParent() != null)
-					attr[root.getId()].altitude.value = root.getParent().getLevel() - root.getLevel();
-				else
-					attr[root.getId()].altitude.value = root.getLevel();
-			else
-				attr[root.getId()].altitude.value = root.getLevel() - attr[root.getId()].lowest + 1;
+			attr[root.getId()].altitude.value = root.getLevel() - attr[root.getId()].lowest + 1;
 		}
 	}
 	

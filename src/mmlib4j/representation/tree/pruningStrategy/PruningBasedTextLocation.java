@@ -30,6 +30,13 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 	
 	public PruningBasedTextLocation(MorphologicalTreeFiltering tree){
 		this.tree = tree;
+		tree.loadAttribute(Attribute.AREA);
+		tree.loadAttribute(Attribute.HEIGHT);
+		tree.loadAttribute(Attribute.WIDTH);
+		tree.loadAttribute(Attribute.NUM_HOLES);
+		tree.loadAttribute(Attribute.RECTANGULARITY);
+		tree.loadAttribute(Attribute.RATIO_WIDTH_HEIGHT);
+		tree.loadAttribute(Attribute.VARIANCE_LEVEL);
 	}
 	
 	public void setParametersTBMR(int tMin, int tMax){

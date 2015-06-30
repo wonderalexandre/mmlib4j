@@ -21,6 +21,7 @@ public class PruningBasedAttribute implements MappingStrategyOfPruning{
 	public PruningBasedAttribute(MorphologicalTreeFiltering tree, int typeParam){
 		this.tree = tree;
 		this.typeParam = typeParam;
+		tree.loadAttribute(typeParam);
 		
 	}
 	

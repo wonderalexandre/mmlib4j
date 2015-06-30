@@ -31,6 +31,8 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 	
 	public PruningBasedCircularity(MorphologicalTreeFiltering tree){
 		this.tree = tree;
+		tree.loadAttribute(Attribute.AREA);
+		tree.loadAttribute(Attribute.CIRCULARITY);
 	}
 	
 	public void setParametersTBMR(int tMin, int tMax){
@@ -46,7 +48,7 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 	
 	public boolean[] getMappingSelectedNodes() {
 		boolean selectedNodes[] = null;
-
+		
 		if(selected.equals("MSER")){
 			if(delta != 0){
 				PruningBasedMSER pruning = new PruningBasedMSER(tree, delta);
@@ -113,8 +115,8 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 
 	public boolean isNodeCircle(NodeLevelSets node){
 		if ( 
-				(areaMin <= node.getArea() && node.getArea() <= 200 )
-				&& (node.getAttributeValue(Attribute.CIRCULARITY) <= circ)
+				(areaMin <= node.getArea() && node.getArea() <= areaMax )
+				&& (node.getAttributeValue(Attribute.CIRCULARITY) >= circ)
 			)
 			return true;
 		else

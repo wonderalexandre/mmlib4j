@@ -6,15 +6,14 @@ import java.util.HashSet;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.MorphologicalTreeFiltering;
-import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
+import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
-import mmlib4j.representation.tree.attribute.ComputerPatternEulerAttribute;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
 import mmlib4j.utils.Utils;
 
@@ -26,9 +25,16 @@ import mmlib4j.utils.Utils;
  */
 public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements MorphologicalTreeFiltering{
 	
+	private boolean hasComputerBasicAttribute = false;
+	private boolean hasComputerAttributeBasedPerimeterExternal = false;
+	private boolean hasComputerCentralMomentAttribute = false;
+	private boolean hasComputerPatternEulerAttribute = false;
+	private boolean hasComputerDistanceTransform = false;
+	private ComputerDistanceTransform dt = null;
+	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img){
 		super(img, -1, -1);
-		loadAttribute();
+		computerBasicAttribute();
 	}
 	
 	protected ConnectedFilteringByTreeOfShape(BuilderTreeOfShapeByUnionFind build){
@@ -37,7 +43,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
 		super(img, xInfinito, yInfinito);
-		loadAttribute();
+		computerBasicAttribute();
 	}
 	
 	public HashSet<NodeToS> getListNodes(){
@@ -45,21 +51,113 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	}
 	
 
-	public void loadAttribute(){
-		long ti = System.currentTimeMillis();
-		new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesToS(getListNodes());
-		//new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
-		new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesToS(getListNodes());
-		//new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesToS(getListNodes());
-		for(NodeToS node: getListNodes()){
-			node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, node.getNumHoles()));
+
+
+	public ComputerDistanceTransform computerDistanceTransform(){
+		if(!hasComputerDistanceTransform){
+			long ti = System.currentTimeMillis();
+			dt = new ComputerDistanceTransform(numNode, getRoot(), imgInput);
+			hasComputerDistanceTransform = true;
+			if(Utils.debug){
+				long tf = System.currentTimeMillis();
+				System.out.println("Tempo de execucao [computer distance transform] "+ ((tf - ti) /1000.0)  + "s");
+			}
 		}
-		long tf = System.currentTimeMillis();
-		if(Utils.debug)
-			System.out.println("Tempo de execucao [computer attributes] "+ ((tf - ti) /1000.0)  + "s");
+		return dt;
 	}
 	
+	public void computerPatternEulerAttribute(){
+		if(!hasComputerPatternEulerAttribute){
+			long ti = System.currentTimeMillis();
+			for(NodeToS node: getListNodes()){
+				node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, node.getNumHoles()));
+			}
+			hasComputerPatternEulerAttribute = true;
+			if(Utils.debug){
+				long tf = System.currentTimeMillis();
+				System.out.println("Tempo de execucao [attribute euler] "+ ((tf - ti) /1000.0)  + "s");
+			}
+		}
+	}
+
+	public void computerCentralMomentAttribute(){
+		if(!hasComputerCentralMomentAttribute){
+			new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesToS(getListNodes());
+			hasComputerCentralMomentAttribute = true;
+		}
+	}
+	
+	public void computerBasicAttribute(){
+		if(!hasComputerBasicAttribute){
+			long ti = System.currentTimeMillis();
+			new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesToS(getListNodes());
+			hasComputerBasicAttribute = true;
+			if(Utils.debug){
+				long tf = System.currentTimeMillis();
+				System.out.println("Tempo de execucao [basic attribute] "+ ((tf - ti) /1000.0)  + "s");
+			}
+		}
+	}
+	
+	public void computerAttributeBasedPerimeterExternal(){
+		if(!hasComputerAttributeBasedPerimeterExternal){
+			long ti = System.currentTimeMillis();
+			new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
+			hasComputerAttributeBasedPerimeterExternal = true;
+			if(Utils.debug){
+				long tf = System.currentTimeMillis();
+				System.out.println("Tempo de execucao [external perimeter] "+ ((tf - ti) /1000.0)  + "s");
+			}
+		}
+	}
+		
+
+	public void loadAttribute(int attr){
+		switch(attr){
+			case Attribute.ALTITUDE:
+			case Attribute.AREA:
+			case Attribute.VOLUME:
+			case Attribute.WIDTH:
+			case Attribute.HEIGHT:
+			case Attribute.PERIMETER:
+			case Attribute.LEVEL:
+			case Attribute.RECTANGULARITY:
+			case Attribute.RATIO_WIDTH_HEIGHT:
+				computerBasicAttribute();
+				break;
+				
+			case Attribute.MOMENT_CENTRAL_02:
+			case Attribute.MOMENT_CENTRAL_20:
+			case Attribute.MOMENT_CENTRAL_11:
+			case Attribute.VARIANCE_LEVEL:
+			case Attribute.LEVEL_MEAN:
+			case Attribute.MOMENT_COMPACTNESS:
+			case Attribute.MOMENT_ECCENTRICITY:
+			case Attribute.MOMENT_ELONGATION:
+			case Attribute.MOMENT_LENGTH_MAJOR_AXES:
+			case Attribute.MOMENT_LENGTH_MINOR_AXES:
+			case Attribute.MOMENT_ORIENTATION:
+			case Attribute.MOMENT_ASPECT_RATIO:
+				computerCentralMomentAttribute();
+				break;
+			
+			case Attribute.PERIMETER_EXTERNAL:
+			case Attribute.CIRCULARITY:
+			case Attribute.COMPACTNESS:
+			case Attribute.ELONGATION:
+				computerAttributeBasedPerimeterExternal();
+				break;
+				
+			case Attribute.NUM_HOLES:
+				computerPatternEulerAttribute();
+				break;
+				
+		}
+	}
+	
+	
 	private double getAttribute(NodeToS node, int type){
+		loadAttribute(type);
 		return node.getAttributeValue(type);
 	}
 	
@@ -171,6 +269,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	ArrayList<ExtinctionValueNode> extincaoPorNode;
 	ComputerExtinctionValueTreeOfShapes extinctionValue;
 	public GrayScaleImage filteringExtinctionValue(double attributeValue, int type){
+		loadAttribute(type);
 		long ti = System.currentTimeMillis();
 		if(extinctionValue == null){
 			extinctionValue = new ComputerExtinctionValueTreeOfShapes(this);

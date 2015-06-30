@@ -27,7 +27,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 		this.inputTree = tree;
 		this.typeParam = typeParam;
 		this.delta = delta;
-		
+		tree.loadAttribute(typeParam);
 	}
 	
 	

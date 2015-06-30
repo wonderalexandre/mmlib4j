@@ -2,6 +2,7 @@ package mmlib4j.representation.tree.componentTree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -11,6 +12,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -93,6 +95,9 @@ public class ComponentTree {
 		c.isExtendedTree = this.isExtendedTree;
 		c.sup = this.sup;
 		c.inf = this.inf;
+		for(NodeCT node: c.getListNodes()){
+			node.attributes =  (HashMap<Integer, Attribute>) this.getSC( node.getCanonicalPixel() ).attributes.clone();
+		}
 		if(this.isExtendedTree){
 			c.extendedTree();
 		}

@@ -24,7 +24,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		this.tree = tree;
 		this.typeParam = typeParam;
 		this.delta = delta;
-		
+		tree.loadAttribute(Attribute.AREA);
 	}
 	
 	
@@ -45,11 +45,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 	}
 		
 	public boolean[] getExtinctionValueNodeToS(int type, int valueMin){
-		if(type == Attribute.ALTITUDE){
-			return getExtinctionToSByAltitude( valueMin );
-		}else{
-			return getExtinctionToSByAttribute(type, valueMin);
-		}
+		return getExtinctionToSByAttribute(type, valueMin);
 	}
 	
 	private boolean[] getExtinctionToSByAttribute(int type, int valueMin){
@@ -89,41 +85,9 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		return selected;
 	}
 	
-	private boolean[] getExtinctionToSByAltitude(int valueMin){
-		boolean selected[] = new boolean[tree.getNumNode()];
-		boolean visitado[] = new boolean[tree.getNumNode()];
-		TreeOfShape tree = (TreeOfShape) this.tree;
-		for(NodeToS folha: tree.getLeaves()){
-			int extinction = (int)tree.getRoot().getAttribute(Attribute.ALTITUDE).getValue();
-			NodeToS pai = folha.getParent();
-			while (pai != null &&  pai.getAttribute(Attribute.ALTITUDE).getValue() <= Math.abs(folha.getLevel() - pai.getLevel())) {
-				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttribute(Attribute.ALTITUDE).getValue() == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
-					break;
-				}
-				visitado[pai.getId()] = true;
-				pai = pai.getParent();
-			}
-			if (pai != null){
-				extinction = Math.abs(folha.getLevel() - pai.getLevel());
-				
-				if(!selected[pai.getId()] && extinction > valueMin){
-					selected[pai.getId()] = true;
-					this.num = this.num + 1;
-				}
-			}
-		}
-		return selected;
-	}
-	
 	
 	private boolean[] getExtinctionValueNodeCT(int type, int valueMin){
-		if(type == Attribute.ALTITUDE){
-			return getExtinctionCTByAltitude(valueMin);
-		}else{
-			return getExtinctionCTByAttribute(type, valueMin);
-		}
-		
-		
+		return getExtinctionCTByAttribute(type, valueMin);
 	}
 
 	private boolean[] getExtinctionCTByAttribute(int type, int valueMin){
@@ -177,31 +141,6 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		return selected;
 	}
 	
-	private boolean[] getExtinctionCTByAltitude(int valueMin){
-		boolean selected[] = new boolean[tree.getNumNode()];
-		ComponentTree tree = (ComponentTree) this.tree;
-		boolean visitado[] = new boolean[tree.getNumNode()];
-		for(NodeCT folha: tree.getLeaves()){
-			int extinction = (int) tree.getRoot().getAttribute(Attribute.ALTITUDE).getValue();
-			NodeCT pai = folha.getParent();
-			while (pai != null &&  pai.getAttribute(Attribute.ALTITUDE).getValue() <= Math.abs(folha.getLevel() - pai.getLevel())) {
-				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttribute(Attribute.ALTITUDE).getValue() == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
-					break;
-				}
-				visitado[pai.getId()] = true;
-				pai = pai.getParent();
-			}
-			if (pai != null){
-				extinction = Math.abs(folha.getLevel() - pai.getLevel());
-				if(!selected[pai.getId()] && extinction > valueMin){
-					selected[pai.getId()] = true;
-					this.num = this.num + 1;
-				}
-				
-			}
-		}
-		return selected;
-	}
 	
 	
 	

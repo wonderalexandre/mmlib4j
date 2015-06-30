@@ -109,6 +109,10 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 		return attributes.get(key).getValue();
 	}
 	
+	public boolean hasAttribute(int key){
+		return attributes.containsKey(key);
+	}
+	
 	public int getNumPixelInFrame(){
 		return countPixelInFrame;
 	}

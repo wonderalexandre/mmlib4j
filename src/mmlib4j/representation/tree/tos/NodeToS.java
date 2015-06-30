@@ -71,6 +71,11 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	public double getAttributeValue(int key){
 		return attributes.get(key).getValue();
 	}
+	
+	public boolean hasAttribute(int key){
+		return attributes.containsKey(key);
+	}
+	
 	public HashMap<Integer, Attribute>  getAttributes(){
 		return attributes;
 	}

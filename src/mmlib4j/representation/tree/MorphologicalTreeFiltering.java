@@ -33,5 +33,7 @@ public interface MorphologicalTreeFiltering {
 	public NodeLevelSets getRoot();
 		
 	public int getNumNode();
+	
+	public void loadAttribute(int attr);
 		
 }

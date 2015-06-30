@@ -11,6 +11,7 @@ import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
+import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.segmentation.Labeling;
 import mmlib4j.utils.Utils;
 
@@ -55,9 +56,7 @@ public class UltimateAttributeOpening {
 	
 	public void enableComputerDistribution(boolean b){
 		computerDistribution = b;
-		if(computerDistribution){
-			nodeDistribution = new ArrayList[maxCriterion+2];
-		}
+		
 	}
 	
 	
@@ -65,7 +64,9 @@ public class UltimateAttributeOpening {
 		long ti = System.currentTimeMillis();
 		this.typeParam = typeParam;
 		this.maxCriterion = paramValueMax;
-		
+		if(computerDistribution){
+			nodeDistribution = new ArrayList[maxCriterion+1];
+		}
 		this.selectedForPruning = ps.getMappingSelectedNodes();
 		this.selectedForFiltering = selectedShape;
 		NodeCT root = tree.getRoot();
@@ -117,6 +118,8 @@ public class UltimateAttributeOpening {
 		return false;
 	}
 	
+
+	
 	private void computeUAO(NodeCT currentNode, boolean qPropag, boolean flagInit, boolean isCalculateResidue, NodeCT firstNodeInNR, NodeCT firstNodeNotInNR){
 		int contrast = 0;
 		boolean flagResido = false;
@@ -129,7 +132,7 @@ public class UltimateAttributeOpening {
 			
 		}
 		
-		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && flagInit){ //currentNode pertence a Nr(lambda)?		
+		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && flagInit){ //currentNode pertence a Nr(i)?		
 			int id = (int)currentNode.getAttributeValue(typeParam);
 			if( selectedForPruning[currentNode.getId()] ){
 				firstNodeInNR = currentNode;
@@ -183,6 +186,7 @@ public class UltimateAttributeOpening {
 			computeUAO(no, flagPropag, flagInit, isCalculateResidue, firstNodeInNR, firstNodeNotInNR);
 		}
 	}
+	
 	
 	public ArrayList<NodeCT>[] getNodeDistribuition(){
 		return nodeDistribution;

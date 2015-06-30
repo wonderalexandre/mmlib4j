@@ -1,6 +1,7 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -28,6 +29,8 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 	
 	public PruningBasedElongation(MorphologicalTreeFiltering tree){
 		this.tree = tree;
+		tree.loadAttribute(Attribute.AREA);
+		tree.loadAttribute(Attribute.MOMENT_ELONGATION);
 	}
 	
 	public void setParametersTBMR(int tMin, int tMax){
@@ -108,7 +111,7 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 	}
 
 
-	public boolean isNodeElongation(NodeCT node){
+	public boolean isNodeElongation(NodeLevelSets node){
 		if(node.getAttributeValue(Attribute.MOMENT_ELONGATION) < elongation && node.getArea() >= areaMin && node.getArea() <= areaMax){
 			return true;
 		}
@@ -118,12 +121,5 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 	
 	
 
-
-	public boolean isNodeElongation(NodeToS node){
-		if(node.getAttributeValue(Attribute.MOMENT_ELONGATION) < 0.15 && node.getArea() > 1000)
-			return true;
-		else
-			return false;
-	}
 	
 }
