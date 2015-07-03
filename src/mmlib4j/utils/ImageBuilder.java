@@ -172,7 +172,105 @@ public class ImageBuilder {
 		return img;
 		
 	}
+	
+	public static void convertColorSpaceRGBtoYIQ(ColorImage img){
+		for(int p=0; p < img.getSize(); p++){
+			int r = img.getRed(p);
+			int g = img.getGreen(p);
+			int b = img.getBlue(p);
+			/*
+			[ Y ]     [ 0.299   0.587   0.114 ] [ R ]
+			[ I ]  =  [ 0.596  -0.275  -0.321 ] [ G ]
+			[ Q ]     [ 0.212  -0.523   0.311 ] [ B ]
+			*/
 
+			int y = (int) Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+			int i = (int) Math.round(0.596 * r + -0.275 * g + -0.321 * b);
+			int q = (int) Math.round(0.212 * r + -0.523 * g + 0.311 * b);
+			img.setPixel(p, new int[]{y,i,q});
+		}
+	}
+
+	public static GrayScaleImage getConvertColorSpaceRGBtoChong(ColorImage img){
+		GrayScaleImage imgG = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+		for(int p=0; p < img.getSize(); p++){
+			int r = img.getRed(p);
+			int g = img.getGreen(p);
+			int b = img.getBlue(p);
+			
+			
+			//b
+			double x = Math.log( (0.947 * r + 0.295 * g + -0.131 * b) );
+			double y = Math.log( (-0.118 * r + 0.993 * g + 0.737 * b) );
+			double z = Math.log( (0.923 * r + -0.465 * g + 0.995 * b) );
+			
+			double xx = 0.271 * x + -0.228 * y + -0.181 * z;
+			double yy = -0.565 * x + -0.772 * y + 0.129 * z;
+			double zz = -0.416 * x + -0.458 * y + -0.458 * z;
+			    
+			
+			
+			int value = (int) Math.sqrt( Math.pow(r-xx, 2));
+			if(value < 0) value = 0;
+			else if(value > 255) value=255;
+			int value1 = value;
+			
+			value = (int) Math.sqrt( Math.pow(g-yy, 2));
+			if(value < 0) value = 0;
+			else if(value > 255) value=255;
+			int value2 = value;
+			
+			value = (int) Math.sqrt( Math.pow(b-zz, 2));
+			if(value < 0) value = 0;
+			else if(value > 255) value=255;
+			int value3 = value;
+			
+			value= (value1 + value2 + value3)/3;
+			if(value < 0) value = 0;
+			else if(value > 255) value=255;
+			imgG.setPixel(p, value );
+		}
+		return imgG;
+	}
+
+	public static void convertColorSpaceRGBtoChong(ColorImage img){
+		for(int p=0; p < img.getSize(); p++){
+			int r = img.getRed(p);
+			int g = img.getGreen(p);
+			int b = img.getBlue(p);
+			
+			//b
+			
+			double x = Math.exp( Math.round(0.947 * r + 0.295 * g + -0.131 * b) );
+			double y = Math.exp( Math.round(-0.118 * r + 0.993 * g + 0.737 * b) );
+			double z = Math.exp( Math.round(0.923 * r + -0.465 * g + 0.995 * b) );
+			
+			double xx = 0.271 * x + -0.228 * y + -0.181 * z;
+			double yy = -0.565 * x + -0.772 * y + 0.129 * z;
+			double zz = -0.416 * x + -0.458 * y + -0.458 * z;
+			
+
+			int value = (int) Math.sqrt( Math.pow(r-xx, 2));
+			if(value < 0) value = 0;
+			else if(value > 255) value=255;
+			int value1 = value;
+			
+			value = (int) Math.sqrt( Math.pow(g-yy, 2));
+			if(value < 0) value = 0;
+			else if(value > 255) value=255;
+			int value2 = value;
+			
+			value = (int) Math.sqrt( Math.pow(b-zz, 2));
+			if(value < 0) value = 0;
+			else if(value > 255) value=255;
+			int value3 = value;
+			
+			img.setPixel(p, new int[]{value1, value2, value3});
+			
+		}
+		
+	}
+	
 	public static GrayScaleImage convertToGrayImage(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -197,6 +295,7 @@ public class ImageBuilder {
 					g = (int) ((rgb & 0x0000FF00) >>> 8); // Green level
 					b = (int) (rgb & 0x000000FF); // Blue level
 
+					
 					img.setPixel(w, h,  (int) Math.round(.299 * r + .587 * g + .114 * b)); // convertendo para niveis de cinza
 					
 				}

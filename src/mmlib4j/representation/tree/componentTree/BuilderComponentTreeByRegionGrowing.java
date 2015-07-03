@@ -29,10 +29,12 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
     static final int INQUEUE = -2;
     int indexOrder;
     
-	int levRoot[] = new int[256];
+	
 	int parent[];
 	int imgR[];
-	Queue<Integer> hQueue[] = new Queue[256]; 
+	
+	Queue<Integer> hQueue[]; 
+	int levRoot[];
 	
 	HashSet<NodeCT> listNode;
     NodeCT root;
@@ -53,6 +55,10 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 		this.parent = new int[img.getSize()];
 		this.imgR = new int[img.getSize()]; 
 		this.indexOrder = img.getSize()-1;
+		int maxValue = (int) Math.pow(2, img.getDepth());
+		this.hQueue = new Queue[maxValue]; 
+		this.levRoot = new int[maxValue];
+		
 		this.build();	
 	}
 	
