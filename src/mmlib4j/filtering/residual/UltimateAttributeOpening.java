@@ -7,6 +7,7 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
@@ -209,7 +210,21 @@ public class UltimateAttributeOpening {
 		}
 	}
 	
-	
+
+	public GrayScaleImage getAttributeResidues(int attr){
+		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(this.imgInput);
+		boolean map[] = getNodesWithMaximumResidues();
+		for(NodeCT node: tree.getListNodes()){
+			if(map[node.getId()]){
+				int value = (int) node.getAttributeValue(attr);
+				for(int p: node.getPixelsOfCC()){
+					map[tree.getSC(p).getId()] = false;
+					imgA.setPixel(p, value);
+				}
+			}
+		}
+		return imgA;
+	}
 	
 	public GrayScaleImage getResidues(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);;

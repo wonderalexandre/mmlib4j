@@ -6,6 +6,7 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -301,7 +302,7 @@ public class UltimateGrainFilter {
 		return transformImg;
 	}
 	
-	public GrayScaleImage getResiduesx(){
+	public GrayScaleImage getResidues(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);;
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(root);
@@ -318,21 +319,15 @@ public class UltimateGrainFilter {
 		}
 		return transformImg;
 	}
-	
-	public GrayScaleImage getResidues(){//getAltitudeResidues( ){
+	public GrayScaleImage getAttributeResidues(int attr){
 		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(this.imgInput);
-	
 		boolean map[] = getNodesMapWithMaximumResidues();
 		for(NodeToS node: tree.getListNodes()){
 			if(map[node.getId()]){
-				int altitude = (int) node.getAttributeValue(Attribute.ALTITUDE);
+				int value = (int) node.getAttributeValue(attr);
 				for(int p: node.getPixelsOfCC()){
-					/*if(map[tree.getSC(p).getId()]){
-						if( node.getAttributeValue(Attribute.HEIGHT) - tree.getSC(p).getAttributeValue(Attribute.HEIGHT) < 5)
-							map[tree.getSC(p).getId()] = false;	
-					}*/
 					map[tree.getSC(p).getId()] = false;
-					imgA.setPixel(p, altitude);
+					imgA.setPixel(p, value);
 				}
 			}
 		}

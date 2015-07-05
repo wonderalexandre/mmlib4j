@@ -182,4 +182,23 @@ public class UltimateAttributeOpenClose{
 	public GrayScaleImage getAssociateIndexImageNeg() {
 		return process2.uao.getAssociateIndexImage();
 	}
+	
+	public GrayScaleImage getAttributeResidues(int attr){
+		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
+		
+		GrayScaleImage res1 = process1.uao.getResidues();
+		GrayScaleImage res2 = process2.uao.getResidues();
+		
+		GrayScaleImage index1 = process1.uao.getAttributeResidues(attr);
+		GrayScaleImage index2 = process2.uao.getAttributeResidues(attr);
+		for(int p=0; p < associateImg.getSize(); p++){
+			if(res1.getPixel(p) > res2.getPixel(p)){
+				associateImg.setPixel(p, index1.getPixel(p));
+			}else{
+				associateImg.setPixel(p, index2.getPixel(p));
+			}
+		}
+		
+		return associateImg;
+	}
 }
