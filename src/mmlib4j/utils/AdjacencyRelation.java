@@ -446,6 +446,27 @@ public class AdjacencyRelation {
 		return(adj);
 	}
 
+	public static AdjacencyRelation getLineRight(int len){
+    	AdjacencyRelation adj = new AdjacencyRelation(len);
+		int i=0;
+		for(int dx=0; dx<len; dx++){
+			adj.px[i] = dx;
+			adj.py[i] = 0;
+			i++;
+		}
+		return(adj);
+    }
+	public static AdjacencyRelation getLineLeft(int len){
+    	AdjacencyRelation adj = new AdjacencyRelation(len);
+		int i=0;
+		for(int dx=0; dx<len; dx++){
+			adj.px[i] = -dx;
+			adj.py[i] = 0;
+			i++;
+		}
+		return(adj);
+    }
+
 	
 	public static SimpleLinkedList<AdjacencyRelation> getFamilyCross(int beginW, int endW, int beginH, int endH, int stepW, int stepH){
 		SimpleLinkedList<AdjacencyRelation> list = new SimpleLinkedList<AdjacencyRelation>();
