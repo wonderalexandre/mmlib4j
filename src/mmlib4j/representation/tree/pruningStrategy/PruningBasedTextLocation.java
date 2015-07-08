@@ -118,18 +118,18 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 		}
 	}
 	
-	int areaMin=100;
+	int areaMin=50;
 	int areaMax=100000;
-	int heightMin = 20;
+	int heightMin = 10;
 	int heightMax = 400;
-	int widthMin = 10;
+	int widthMin = 8;
 	int widthMax = 400;
 	int numHoleMin = 0;
 	int numHoleMax = 20;
 	double rectMin = 0.3;
-	double rectMax = 0.95;
+	double rectMax = 1;
 	double ratioWHMin=0;
-	double ratioWHMax=8;
+	double ratioWHMax=14;
 	
 	double varianceMin=0;
 	double varianceMax=100;

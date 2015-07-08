@@ -4,8 +4,10 @@ package mmlib4j.filtering.residual;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
+import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
+import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
 /**
@@ -16,43 +18,57 @@ import mmlib4j.utils.Utils;
 public class UltimateAttributeOpenClose{
 
 	private GrayScaleImage imgInput;
-	private ProcessUAO process1;
-	private ProcessUAO process2;
+	private ProcessUAO processMaxtree;
+	private ProcessUAO processMintree;
 	
-	private class ProcessUAO implements Runnable{
-		private UltimateAttributeOpening uao;
-		private int paramValueMax;
-		private int typeParam;
-		private MappingStrategyOfPruning ps;
-		private boolean selectedShape[];
+	public UltimateAttributeOpenClose(final GrayScaleImage img){
 		
-		ProcessUAO(ComponentTree tree){
-			uao = new UltimateAttributeOpening(tree);
+		class ProcessCT implements Runnable{
+			ConnectedFilteringByComponentTree tree;
+			boolean isMaxtree;
+			
+			ProcessCT(boolean maxtree){
+				isMaxtree = maxtree;
+			}
+			
+			public void run() {
+				this.tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), isMaxtree);
+			}	
 		}
 		
-		void setParameter(int paramValueMax, int typeParam, MappingStrategyOfPruning ps, boolean selectedShape[]){
-			this.paramValueMax = paramValueMax;
-			this.typeParam = typeParam;
-			this.ps = ps;
-			this.selectedShape = selectedShape;
-		}
-		
-		public void run() {
-			uao.computeUAO(paramValueMax, typeParam, ps, selectedShape);
-		}	
+		final Thread[] threads = new Thread[2]; 
+		ProcessCT processMaxtree = new ProcessCT(true);
+		ProcessCT processMintree = new ProcessCT(false); 
+        threads[0] = new Thread(processMaxtree);
+        threads[1] = new Thread(processMintree);
+        executeThreads(threads);
+        
+        this.processMaxtree = new ProcessUAO(processMaxtree.tree);
+		this.processMintree = new ProcessUAO(processMintree.tree);
+		this.imgInput = img;	
+        
 	}
 	
 	public UltimateAttributeOpenClose(ComponentTree tree1, ComponentTree tree2){
-		this.process1 = new ProcessUAO(tree1);
-		this.process2 = new ProcessUAO(tree2);
+		this.processMaxtree = new ProcessUAO(tree1);
+		this.processMintree = new ProcessUAO(tree2);
 		this.imgInput = tree1.getInputImage();	
 	}
+	
+	public ConnectedFilteringByComponentTree getMaxtree(){
+		return (ConnectedFilteringByComponentTree) processMaxtree.tree;
+	}
+	
+	public ConnectedFilteringByComponentTree getMintree(){
+		return (ConnectedFilteringByComponentTree) processMintree.tree;
+	}
+	
 	
 	public void computeUAO(int paramValueMax, int typeParam, MappingStrategyOfPruning ps1, MappingStrategyOfPruning ps2){
 		long ti = System.currentTimeMillis();
 		
-		process1.setParameter(paramValueMax, typeParam, ps1, null);
-		process2.setParameter(paramValueMax, typeParam, ps2, null);
+		processMaxtree.setParameter(paramValueMax, typeParam, ps1, null);
+		processMintree.setParameter(paramValueMax, typeParam, ps2, null);
 		
 		executeUAO();
 		
@@ -66,8 +82,8 @@ public class UltimateAttributeOpenClose{
 	public void computeUAO(int paramValueMax, int typeParam, MappingStrategyOfPruning ps1, boolean selectedShape1[], MappingStrategyOfPruning ps2, boolean selectedShape2[]){
 		long ti = System.currentTimeMillis();
 		
-		process1.setParameter(paramValueMax, typeParam, ps1, selectedShape1);
-		process2.setParameter(paramValueMax, typeParam, ps2, selectedShape2);
+		processMaxtree.setParameter(paramValueMax, typeParam, ps1, selectedShape1);
+		processMintree.setParameter(paramValueMax, typeParam, ps2, selectedShape2);
 		
 		executeUAO();
 		if(Utils.debug){
@@ -80,8 +96,8 @@ public class UltimateAttributeOpenClose{
 	public void computeUAO(int paramValueMax, int typeParam){
 		long ti = System.currentTimeMillis();
 		
-		process1.setParameter(paramValueMax, typeParam, null, null);
-		process2.setParameter(paramValueMax, typeParam, null, null);
+		processMaxtree.setParameter(paramValueMax, typeParam, null, null);
+		processMintree.setParameter(paramValueMax, typeParam, null, null);
 		
 		executeUAO();
 		
@@ -96,11 +112,14 @@ public class UltimateAttributeOpenClose{
 	private void executeUAO(){
 		//paralelisa
         final Thread[] threads = new Thread[2]; 
-        threads[0] = new Thread(process1);
-        threads[1] = new Thread(process2);
+        threads[0] = new Thread(processMaxtree);
+        threads[1] = new Thread(processMintree);
+        executeThreads(threads);
        
-        
-        for (final Thread thread : threads){
+	}
+	
+	public void executeThreads(final Thread threads[]){
+		for (final Thread thread : threads){
         	try {
         		thread.setPriority(Thread.currentThread().getPriority());
         		thread.start();
@@ -110,13 +129,12 @@ public class UltimateAttributeOpenClose{
 				Thread.currentThread().interrupt();	  
 			}
 		}
-		
 	}
 	
 	public GrayScaleImage getResidues(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);
-		GrayScaleImage res1 = process1.uao.getResidues();
-		GrayScaleImage res2 = process2.uao.getResidues();
+		GrayScaleImage res1 = processMaxtree.uao.getResidues();
+		GrayScaleImage res2 = processMintree.uao.getResidues();
 		for(int p=0; p < transformImg.getSize(); p++){
 			if(res1.getPixel(p) > res2.getPixel(p)){
 				transformImg.setPixel(p, res1.getPixel(p));
@@ -131,11 +149,11 @@ public class UltimateAttributeOpenClose{
 	public GrayScaleImage getAssociateIndexImage(){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
 		
-		GrayScaleImage res1 = process1.uao.getResidues();
-		GrayScaleImage res2 = process2.uao.getResidues();
+		GrayScaleImage res1 = processMaxtree.uao.getResidues();
+		GrayScaleImage res2 = processMintree.uao.getResidues();
 		
-		GrayScaleImage index1 = process1.uao.getAssociateIndexImage();
-		GrayScaleImage index2 = process2.uao.getAssociateIndexImage();
+		GrayScaleImage index1 = processMaxtree.uao.getAssociateIndexImage();
+		GrayScaleImage index2 = processMintree.uao.getAssociateIndexImage();
 		for(int p=0; p < associateImg.getSize(); p++){
 			if(res1.getPixel(p) > res2.getPixel(p)){
 				associateImg.setPixel(p, index1.getPixel(p));
@@ -148,49 +166,49 @@ public class UltimateAttributeOpenClose{
 	}
 
 	public boolean[] getNodesMapWithMaximumResiduesPositive(){
-		return process1.uao.getNodesWithMaximumResidues();
+		return processMaxtree.uao.getNodesWithMaximumResidues();
 	}
 	
 
 	public NodeCT[] getNodesMapPositive(){
-		return process1.uao.getNodesMap();
+		return processMaxtree.uao.getNodesMap();
 	}
 	
 	public NodeCT[] getNodesMapNegative(){
-		return process2.uao.getNodesMap();
+		return processMintree.uao.getNodesMap();
 	}
 	
 	
 	public boolean[] getNodesMapWithMaximumResiduesNegative(){
-		return process2.uao.getNodesWithMaximumResidues();
+		return processMintree.uao.getNodesWithMaximumResidues();
 	}
 	
 	
 	public GrayScaleImage getResiduesPos() {
-		return process1.uao.getResidues();
+		return processMaxtree.uao.getResidues();
 	}
 	
 
 	public GrayScaleImage getResiduesNeg() {
-		return process2.uao.getResidues();
+		return processMintree.uao.getResidues();
 	}
 
 	public GrayScaleImage getAssociateIndexImagePos() {
-		return process1.uao.getAssociateIndexImage();
+		return processMaxtree.uao.getAssociateIndexImage();
 	}
 	
 	public GrayScaleImage getAssociateIndexImageNeg() {
-		return process2.uao.getAssociateIndexImage();
+		return processMintree.uao.getAssociateIndexImage();
 	}
 	
 	public GrayScaleImage getAttributeResidues(int attr){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
 		
-		GrayScaleImage res1 = process1.uao.getResidues();
-		GrayScaleImage res2 = process2.uao.getResidues();
+		GrayScaleImage res1 = processMaxtree.uao.getResidues();
+		GrayScaleImage res2 = processMintree.uao.getResidues();
 		
-		GrayScaleImage index1 = process1.uao.getAttributeResidues(attr);
-		GrayScaleImage index2 = process2.uao.getAttributeResidues(attr);
+		GrayScaleImage index1 = processMaxtree.uao.getAttributeResidues(attr);
+		GrayScaleImage index2 = processMintree.uao.getAttributeResidues(attr);
 		for(int p=0; p < associateImg.getSize(); p++){
 			if(res1.getPixel(p) > res2.getPixel(p)){
 				associateImg.setPixel(p, index1.getPixel(p));
@@ -200,5 +218,34 @@ public class UltimateAttributeOpenClose{
 		}
 		
 		return associateImg;
+	}
+	
+	
+	
+	
+
+	private class ProcessUAO implements Runnable{
+		private UltimateAttributeOpening uao;
+		private int paramValueMax;
+		private int typeParam;
+		private MappingStrategyOfPruning ps;
+		private boolean selectedShape[];
+		ComponentTree tree;
+		
+		ProcessUAO(ComponentTree tree){
+			this.tree = tree;
+			uao = new UltimateAttributeOpening(tree);
+		}
+		
+		void setParameter(int paramValueMax, int typeParam, MappingStrategyOfPruning ps, boolean selectedShape[]){
+			this.paramValueMax = paramValueMax;
+			this.typeParam = typeParam;
+			this.ps = ps;
+			this.selectedShape = selectedShape;
+		}
+		
+		public void run() {
+			uao.computeUAO(paramValueMax, typeParam, ps, selectedShape);
+		}	
 	}
 }

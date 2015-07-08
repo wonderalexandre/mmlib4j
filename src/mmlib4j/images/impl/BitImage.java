@@ -323,4 +323,64 @@ public class BitImage extends AbstractImage2D implements BinaryImage{
     public int getDepth(){
     	return 1;
     }
+    
+
+	public void drawLine(int x1, int y1, int x2, int y2){
+		//algoritmo de bresenham
+		if(Math.abs( x2 - x1 ) > Math.abs( y2 - y1 )){
+			if(x1 > x2) drawLine(x2, y2, x1, y1);
+			int a = x2 - x1;
+			int b = y2 -y1;
+			
+			int inc = 1;
+			if(b<0){
+				inc = -1;
+				b = -b;
+			}
+			int v = 2 * a + b;
+			int neg = 2 * b;
+			int pos = 2 * (b - a);
+			int x = x1;
+			int y = y1;
+			this.setPixel(x, y, true);
+				
+			while (x<= x2){
+				this.setPixel(x, y, true);
+					
+				x= x + 1;
+				if(v <= 0){
+					v = v + neg;
+				}else{
+					y = y + inc;
+					v = v+ pos;
+				}
+			}
+		}else{
+			if(y1 > y2) drawLine(x2, y2, x1, y1);
+			int b = x2 - x1;
+			int a = y2 - y1;
+			int inc = 1;
+			if( b < 0){
+				inc = -1;
+				b = -b;
+			}
+			int v = 2 * b - a;
+			int neg = 2 * b;
+			int pos = 2 * (b - a);
+			int x = x1;
+			int y = y1;
+			this.setPixel(x, y, true);	
+			while(y <= y2){
+				
+				this.setPixel(x, y, true);
+				y = y + 1;
+				if(v <= 0){
+					v = v + neg;
+				}else{
+					x = x + inc;
+					v = v + pos;
+				}
+			}
+		}
+	}
 }
