@@ -130,17 +130,12 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 	double rectMax = 1;
 	double ratioWHMin=0;
 	double ratioWHMax=14;
-	
 	double varianceMin=0;
 	double varianceMax=100;
-	double eccentMin=0.1;
-	double eccentMax=3;
-	double compactMin=0.0025;
-	double compactMax=0.05;
+	
 	
 	public void setParameters(int areaMin, int areaMax, int heightMin, int heightMax, int widthMin, int widthMax,
-			int numHoleMin, int numHoleMax, double rectMin, double rectMax, double ratioWHMin, double ratioWHMax, double varianceMin, double varianceMax,
-			double eccentMin, double eccentMax, double compactMin, double compactMax, String selectedNode){
+			int numHoleMin, int numHoleMax, double rectMin, double rectMax, double ratioWHMin, double ratioWHMax, double varianceMin, double varianceMax, String selectedNode){
 		this.areaMin = areaMin;
 		this.areaMax = areaMax;
 		this.heightMin = heightMin;
@@ -155,8 +150,6 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 		this.ratioWHMax=ratioWHMax;
 		this.varianceMin=varianceMin;
 		this.varianceMax=varianceMax;
-		this.eccentMin = eccentMin;
-		this.eccentMax = eccentMax;
 		this.selected = selectedNode;
 	}
 

@@ -1,5 +1,6 @@
 package mmlib4j.representation.tree.tos;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,6 +8,9 @@ import java.util.LinkedList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.componentTree.ComponentTree;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -22,13 +26,17 @@ public class TreeOfShape{
 	protected int height;
 	protected int numNode; 
 	protected int heightTree;
-	public final static int NUM_ATTRIBUTES = 10;
 	protected AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5);
 	protected GrayScaleImage imgInput;
 	protected NodeToS []map;
 	protected HashSet<NodeToS> listNode;
 	protected LinkedList<NodeToS> listLeaves;
 	protected BuilderTreeOfShape build;
+	
+	protected int sup = 255;
+	protected int inf = 0;
+	protected boolean isExtendedTree;
+	
 	
 	public TreeOfShape(GrayScaleImage img){
 		this(img, -1, -1);
@@ -41,8 +49,9 @@ public class TreeOfShape{
 		this.imgInput = build.getInputImage();
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
+		computerInforTree(this.root, 0);
 		createNodesMap();
-
+		
 	}
 	
 	public TreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
@@ -176,7 +185,9 @@ public class TreeOfShape{
 	public void extendedTree(int inf, int sup){
 		long ti = System.currentTimeMillis();
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
-		
+		this.isExtendedTree = true;
+		this.sup = sup;
+		this.inf = inf;
 		for(NodeToS son: this.root.children){
 			fifo.enqueue(son);
 		}
@@ -294,6 +305,20 @@ public class TreeOfShape{
 	}
 
 
+	public TreeOfShape getClone(){
+		TreeOfShape c = new TreeOfShape(this.build.getClone());
+		c.isExtendedTree = this.isExtendedTree;
+		c.sup = this.sup;
+		c.inf = this.inf;
+		for(int p=0; p < this.map.length; p++){
+			c.map[p].attributes = (HashMap<Integer, Attribute>) this.map[p].attributes.clone();
+			//System.out.println(map[p].attributes);
+		}
+		if(this.isExtendedTree){
+			c.extendedTree();
+		}
+		return c;
+	}
 	
 
 	public GrayScaleImage reconstruction(){

@@ -71,7 +71,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	private NodeToS getNodeAscendant(NodeToS node, int h){
 		NodeToS n = node;
 		if(estimateDelta)
-			h =  (int) node.getAttributeValue(Attribute.ALTITUDE);
+			h =  (int) node.getAttributeValue(Attribute.ALTITUDE)/2;
 		for(int i=0; i < h; i++){
 			if(node.isNodeMaxtree()){
 				if(node.getLevel() >= n.getLevel() + h)
@@ -126,7 +126,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
 				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
 				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation && stability[node.getId()].getValue() > minArea && stability[node.getId()].getValue() <= maxArea){
+					if(stability[node.getId()].getValue() < maxVariation && node.getArea() > minArea && node.getArea() < maxArea){
 						list.add(node);
 						num++;
 					}
@@ -169,7 +169,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
 				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
 				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation && stability[node.getId()].getValue() > minArea && stability[node.getId()].getValue() <= maxArea){
+					if(stability[node.getId()].getValue() < maxVariation && node.getArea() > minArea && node.getArea() < maxArea){
 						mser[node.getId()] = true;
 						num++;
 					}
@@ -218,7 +218,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
 				
 				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation && stability[node.getId()].getValue() > minArea && stability[node.getId()].getValue() <= maxArea){
+					if(stability[node.getId()].getValue() < maxVariation && node.getArea() > minArea && node.getArea() < maxArea){
 						mser[node.getId()] = true;
 					}
 				}

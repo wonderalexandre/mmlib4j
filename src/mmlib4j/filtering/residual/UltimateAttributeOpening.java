@@ -133,7 +133,7 @@ public class UltimateAttributeOpening {
 			
 		}
 		
-		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && flagInit){ //currentNode pertence a Nr(i)?		
+		if(flagInit){ //currentNode pertence a Nr(i)?		
 			int id = (int)currentNode.getAttributeValue(typeParam);
 			if( selectedForPruning[currentNode.getId()] ){
 				firstNodeInNR = currentNode;

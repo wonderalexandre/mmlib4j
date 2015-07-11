@@ -14,6 +14,7 @@ import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 
 
 /**
@@ -296,6 +297,10 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 		
 	}
 	
+
+	public boolean isComparable(NodeToS node){
+		return isDescendant(node) || isAncestral(node);
+	}
 	
 	public boolean isDescendant(NodeToS node){
 		return node.isAncestral(this);
@@ -304,10 +309,10 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	public boolean isAncestral(NodeToS nodeAncestral){
 		NodeToS tmp = this;
 		while(tmp != null){
-			tmp = tmp.parent;
 			if(tmp == nodeAncestral){
 				return true;
 			}
+			tmp = tmp.parent;
 		}
 		return  false;
 	}

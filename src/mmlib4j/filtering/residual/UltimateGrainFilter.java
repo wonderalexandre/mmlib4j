@@ -1,16 +1,20 @@
 package mmlib4j.filtering.residual;
 
 
+import java.util.ArrayList;
+
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
+import mmlib4j.utils.Utils;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -39,6 +43,9 @@ public class UltimateGrainFilter {
 	private int typeParam;
 	private int maxCriterion;
 	
+	private boolean computerDistribution = false; 
+	private ArrayList<NodeToS> nodeDistribution[];
+	private NodeToS[] mapNodes;
 	
 	private int typeResiduo;
 	public final static int RESIDUES_POS_MAX_MAX = 1;
@@ -61,6 +68,10 @@ public class UltimateGrainFilter {
 		this.computeUGF(paramValueMax, typeParam, msp, null);
 	}
 	
+	public void enableComputerDistribution(boolean b){
+		computerDistribution = b;
+	}
+	
 	
 	public void computeUGF(int paramValueMax, int typeParam, MappingStrategyOfPruning msp, boolean selectedShape[]){
 		long ti = System.currentTimeMillis();
@@ -68,7 +79,10 @@ public class UltimateGrainFilter {
 		this.typeParam = typeParam;
 		this.selectedForPruning = msp.getMappingSelectedNodes();
 		this.selectedForFiltering = selectedShape;
-		
+		if(computerDistribution){
+			nodeDistribution = new ArrayList[maxCriterion+1];
+		}
+		mapNodes = new NodeToS[tree.getNumNode()];
 		this.residuesNodePos = new int[tree.getNumNode()];
 		this.associatedNodePos = new int[tree.getNumNode()];
 		this.residuesNodeNeg = new int[tree.getNumNode()];
@@ -78,63 +92,71 @@ public class UltimateGrainFilter {
 		
 		if (root.getChildren() != null) {
 			for(NodeToS no: root.getChildren()){
-				computeUGF(no, root.getLevel(), false, false, false);
+				computeUGF(no, false, false, false, null, root);
 			}
 		}
-
-		long tf = System.currentTimeMillis();
-		//System.out.println("Tempo de execucao [Ultimate leveling]  "+ ((tf - ti) /1000.0)  + "s");		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [Ultimate leveling]  "+ ((tf - ti) /1000.0)  + "s");
+		}
 	}
 	
-	
-	
-	private void computeUGF(NodeToS currentNode, int previous, boolean qPropag, boolean flagInit, boolean isCalculateResidue){
-		int contrastPos = 0;
-		int maxContrastPos;
-		int linkedAttributesPos;
-		int contrastNeg = 0;
-		int maxContrastNeg;
-		int linkedAttributesNeg;
-		int pv = previous;
+
+	private void computeUGF(NodeToS currentNode, boolean qPropag, boolean flagInit, boolean isCalculateResidue, NodeToS firstNodeInNR, NodeToS firstNodeNotInNR){
 		boolean flagResido = false;
 		boolean flagPropag = false;
 		NodeToS parentNode = currentNode.getParent();
 		
-		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && selectedForPruning[parentNode.getId()]){
+		NodeToS associatedNode;
+		int maxContrastPos;
+		int linkedAttributesPos;
+		int maxContrastNeg;
+		int linkedAttributesNeg;
+		int contrastPos = 0;
+		int contrastNeg = 0;
+		
+		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && selectedForPruning[currentNode.getId()]){
 			flagInit = true;
+			//firstNodeNotInNR = parentNode;
+			
 		}
 		
-		
-		if(flagInit){		
-			if( selectedForPruning[parentNode.getId()] ){
-				pv = parentNode.getLevel();
+		if(flagInit){ //currentNode pertence a Nr(i)?		
+			int id = (int)currentNode.getAttributeValue(typeParam);
+			if( selectedForPruning[currentNode.getId()] ){
+				firstNodeInNR = currentNode;
+				firstNodeNotInNR = parentNode;
 				isCalculateResidue = (selectedForFiltering == null? true : hasNodeSelectedInPrimitive(currentNode) );
 			}
 			else{
+				id = (int) firstNodeInNR.getAttributeValue(typeParam);
 				flagResido = true;
-				pv = previous;
 			}
 			
-			if( isCalculateResidue){  //non filter?
-				contrastPos =  Math.max(0, currentNode.getLevel() - pv);
-				contrastNeg =  Math.max(0, pv - currentNode.getLevel());
+			
+			if( isCalculateResidue ){ //non Filter?
+				contrastPos = Math.max(0, currentNode.getLevel() - firstNodeNotInNR.getLevel() );
+				contrastNeg = Math.max(0, firstNodeNotInNR.getLevel() - currentNode.getLevel());
 			}
 			
 			//residuo positivo
 			if (residuesNodePos[parentNode.getId()] >= contrastPos) {
 				maxContrastPos = residuesNodePos[parentNode.getId()];
 				linkedAttributesPos = associatedNodePos[parentNode.getId()];
+				associatedNode = mapNodes[parentNode.getId()];
 			}
 			else{
 				maxContrastPos = contrastPos;
-				flagPropag = true;
 				if(flagResido && qPropag){
 					linkedAttributesPos = associatedNodePos[parentNode.getId()];
+					associatedNode = mapNodes[parentNode.getId()];
 				}
 				else{
 					linkedAttributesPos = (int)currentNode.getAttributeValue(typeParam) + 1;
 					nodesWithMaxResiduesPos[currentNode.getId()] = true;
+					associatedNode = currentNode;
 				}
+				flagPropag = true;
 				
 			}
 			
@@ -142,20 +164,24 @@ public class UltimateGrainFilter {
 			if (residuesNodeNeg[parentNode.getId()] >= contrastNeg) {
 				maxContrastNeg = residuesNodeNeg[parentNode.getId()];
 				linkedAttributesNeg = associatedNodeNeg[parentNode.getId()];
+				associatedNode = mapNodes[parentNode.getId()];
 			}
 			else{
 				maxContrastNeg = contrastNeg;
-				flagPropag = true;
 				if(flagResido && qPropag){
 					linkedAttributesNeg = associatedNodeNeg[parentNode.getId()];
+					associatedNode = mapNodes[parentNode.getId()];
 				}
 				else{
 					linkedAttributesNeg = (int)currentNode.getAttributeValue(typeParam) + 1;
 					nodesWithMaxResiduesNeg[currentNode.getId()] = true;
+					associatedNode = currentNode;
 				}
+				flagPropag = true;
 				
 			}
-		
+			
+			
 			residuesNodePos[currentNode.getId()] = maxContrastPos;
 			associatedNodePos[currentNode.getId()] = linkedAttributesPos;
 			residuesNodeNeg[currentNode.getId()] = maxContrastNeg;
@@ -178,14 +204,19 @@ public class UltimateGrainFilter {
 					associatedNodeType[currentNode.getId()] = linkedAttributesNeg;		
 				}
 			}
+			mapNodes[currentNode.getId()] = associatedNode;
+			
+			if(computerDistribution == true && linkedAttributesPos+linkedAttributesNeg != 0 && isCalculateResidue){
+				if(nodeDistribution[id] == null)
+					nodeDistribution[id] = new ArrayList<NodeToS>();
+				nodeDistribution[id].add(currentNode); //computer granulometries
+			}
 		}
-		
 		
 		for(NodeToS no: currentNode.getChildren()){
-			computeUGF(no, pv, flagPropag, flagInit, isCalculateResidue);
+			computeUGF(no, flagPropag, flagInit, isCalculateResidue, firstNodeInNR, firstNodeNotInNR);
 		}
 	}
-	
 	
 	public boolean[] getNodesMapWithMaximumResiduesPos(){
 		return nodesWithMaxResiduesPos;
@@ -195,6 +226,10 @@ public class UltimateGrainFilter {
 		return nodesWithMaxResiduesNeg;
 	}
 	
+
+	public ArrayList<NodeToS>[] getNodeDistribuition(){
+		return nodeDistribution;
+	}
 	
 	public boolean[] getNodesMapWithMaximumResidues(){
 		boolean map[] = new boolean[nodesWithMaxResiduesNeg.length];

@@ -163,6 +163,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	public void unInterpolateTree( int parent[]  ){
 		long ti = System.currentTimeMillis();
 		this.numNode = 0;
+		this.root = null;
 		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
 		boolean flags[] = new boolean[parent.length];
 		//WindowImages.show(ImageFactory.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight));
@@ -235,9 +236,10 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
         	System.out.println("Tempo de execucao [unInterpolate] "+ ((tf - ti) /1000.0)  + "s");
 		
         nodesMapTmp = null;
-		parent = null;
+		/*parent = null;
 		imgU = null;
 		imgR = null;
+		*/
 		System.gc();
 		
 	}
@@ -431,9 +433,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		//long ti = System.currentTimeMillis();
 		
 		short order[] = new short[2*interpWidth + 2*interpHeight]; 
-		short orderOri[] = new short[2*interpWidth + 2*interpHeight]; 
+		//short orderOri[] = new short[2*interpWidth + 2*interpHeight]; 
 		for(int px=0; px < interpWidth; px++){
-			order[px] = interpolation[px];
+			order[px] = interpolation[px + (0) * interpWidth];
 			order[px + interpWidth] = interpolation[px + (interpHeight-1) * interpWidth];
 		}
 		for(int py=0; py < interpHeight; py++){
@@ -441,16 +443,26 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			order[py + interpHeight + 2 * interpWidth] = interpolation[(interpWidth-1) + py * interpWidth];
 		}
 		
-		System.arraycopy(order, 0, orderOri, 0, order.length);
+		//System.arraycopy(order, 0, orderOri, 0, order.length);
 		
 		Arrays.sort(order);
 		int value = order[order.length/2];
 		
+		for(int px=0; px < interpWidth; px++){
+			if(value == interpolation[px + 0 * interpWidth])
+				return (px + 0 * interpWidth);
+			if(value == interpolation[px + (interpHeight-1) * interpWidth])
+				return (px + (interpHeight-1) * interpWidth);
+		}
+		for(int py=0; py < interpHeight; py++){
+			if(value == interpolation[0 + py * interpWidth])
+				return 0 + py * interpWidth;
+			if(value == interpolation[(interpWidth-1) + py * interpWidth])
+				return (interpWidth-1) + py * interpWidth;
+		}
+		/*
 		for(int p=0; p < order.length; p++){
 			if(value == orderOri[p]){
-				//if(Utils.debug)
-		  		//	System.out.println("Tempo de execucao [getInfinity] "+ ((System.currentTimeMillis() - ti) /1000.0)  + "s");
-				
 				if(p < interpWidth){
 					return p;
 				}else if (p < 2*interpWidth){
@@ -468,7 +480,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 					return (x + y * interpWidth);
 				}
 			}
-		}
+		}*/
 		return 0;
 	}
 	

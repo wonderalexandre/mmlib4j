@@ -1,13 +1,10 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import javax.smartcardio.ATR;
-
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerMserTreeOfShapes;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 
 

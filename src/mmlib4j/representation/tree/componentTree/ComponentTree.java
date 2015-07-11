@@ -40,12 +40,13 @@ public class ComponentTree {
 	public final static int NUM_ATTRIBUTES = 10;
 	public final static int NUM_ATTRIBUTES_NC = 2;
 	
-	protected boolean isExtendedTree;
+	
 	protected ThreadPoolExecutor pool;
 	protected BuilderComponentTree builder;
 	
 	protected int sup = 255;
 	protected int inf = 0;
+	protected boolean isExtendedTree;
 	
 	public ComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		long ti = System.currentTimeMillis();

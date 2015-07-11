@@ -292,10 +292,10 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 	public boolean isAncestral(NodeCT nodeAncestral){
 		NodeCT tmp = this;
 		while(tmp != null){
-			tmp = tmp.parent;
 			if(tmp == nodeAncestral){
 				return true;
 			}
+			tmp = tmp.parent;
 		}
 		return  false;
 	}
