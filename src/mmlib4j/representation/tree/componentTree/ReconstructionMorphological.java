@@ -44,7 +44,6 @@ public class ReconstructionMorphological {
 	
 	public ReconstructionMorphological(GrayScaleImage img, boolean isMaxtree){
 		this(img, AdjacencyRelation.getAdjacency8(), isMaxtree);	
-		
 	}
 	
 	public ReconstructionMorphological(GrayScaleImage img, ComponentTree mintree, ComponentTree maxtree){
@@ -55,17 +54,6 @@ public class ReconstructionMorphological {
 		this.mintree.extendedTree();
 	}
 	
-	/**
-	 * Restricao: imgMarcador <= imgInput 
-	 * @param imgMarcador
-	 * @return
-	 */
-	public GrayScaleImage infReconstruction(GrayScaleImage imgMarcador){
-		reconstructionMorphological(imgMarcador, maxtree);
-		GrayScaleImage imgOut = imgInput.duplicate();
-		reconstructionImageOfSubtree(maxtree.getRoot(), imgOut);
-		return imgOut;
-	}
 	
 	/**
 	 * Restricao: imgMarcador <= imgInput 
@@ -153,80 +141,6 @@ public class ReconstructionMorphological {
 		return imgInput;
 	}
 	
-	public static long timeDilationByReconstruction(GrayScaleImage imgInput, GrayScaleImage imgMarcador){
-		BuilderComponentTreeByUnionFind tree = new BuilderComponentTreeByUnionFind(imgInput, AdjacencyRelation.getAdjacency8(), true);
-		return timeDilationByReconstruction(imgInput.duplicate(), imgMarcador, tree);
-	}
-	
-	public static long timeDilationByReconstruction(GrayScaleImage imgInput, GrayScaleImage imgMarcador, BuilderComponentTreeByUnionFind tree){
-		long ti = System.currentTimeMillis();
-		PriorityQueue<Integer> queue = new PriorityQueue<Integer>(255);
-		
-		for(int p=0; p < imgInput.getSize(); p++){
-			if(imgMarcador.getPixel(p) <= imgInput.getPixel(p)){
-				queue.add(p, imgMarcador.getPixel(p));
-			}
-			tree.nodesMap[p].flagProcess = false;
-			tree.nodesMap[p].flagPruning = true;
-		}
-		int p;
-		while(!queue.isEmpty()){
-			p = queue.removeMax();
-			NodeCT node = tree.nodesMap[p]; 
-			if(!node.flagProcess){
-				node.flagProcess = true;
-				while(node.flagPruning && imgMarcador.getPixel(p) < node.level){
-					node = node.parent;
-				}
-				//Invariante (neste ponto): imgMarcador.getPixel(p) >= node.level ==>ou seja, este node eh preservado na arvore
-				node.flagPruning = false;
-				while(node.parent != null && node.parent.flagPruning){
-					node.parent.flagPruning = false;
-					node = node.parent;
-				}
-			}
-		}
-		
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
-		fifo.enqueue(tree.root);
-		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
-			if(no.flagPruning){ //poda
-				Queue<NodeCT> fifoPruning = new Queue<NodeCT>();
-				fifoPruning.enqueue(no);	
-				int levelPropagation = no.parent == null ? no.level : no.parent.level;
-				while(!fifoPruning.isEmpty()){
-					NodeCT nodePruning = fifoPruning.dequeue();
-					for(NodeCT song: nodePruning.children){ 
-						fifoPruning.enqueue(song);
-					}
-					for(Integer pixel: nodePruning.getCanonicalPixels()){
-						imgInput.setPixel(pixel, levelPropagation);
-					}
-				}
-			}else{
-				for(NodeCT son: no.children){
-					fifo.enqueue(son);	 
-				}
-			}
-		}
-		long tf = System.currentTimeMillis();
-		//if(Utils.debug)
-		//System.out.println("Tempo de execucao [Componente tree - dilation by reconstruction]  "+ ((tf - ti) /1000.0)  + "s");
-		return (tf - ti);
-	}
-	
-	/**
-	 * Restricao: imgMarcador >= imgInput
-	 * @param imgMarcador
-	 * @return
-	 */
-	public GrayScaleImage supReconstruction(GrayScaleImage imgMarcador){
-		reconstructionMorphological(imgMarcador, mintree);
-		GrayScaleImage imgOut = imgInput.duplicate();
-		reconstructionImageOfSubtree(mintree.getRoot(), imgOut);
-		return imgOut;
-	}
 	
 	/**
 	 * Restricao: imgMarcador >= imgInput
