@@ -7,7 +7,6 @@
             <manifest>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="../mmlib4j-imagej/bin"/>
             <fileset dir="../mmlib4j/bin"/>
             <zipfileset excludes="META-INF/*.SF" src="../mmlib4j/libs/jung-api-2.0.1.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="../mmlib4j/libs/collections-generic-4.01.jar"/>
