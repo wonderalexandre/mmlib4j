@@ -76,10 +76,21 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 					pai = aux.getParent();
 				}
 			}
-			extinction =(int) aux.getAttribute(type).getValue();
+			/*extinction =(int) aux.getAttribute(type).getValue();
 			if(!selected[aux.getId()] && extinction > valueMin){
 				selected[aux.getId()] = true;
 				this.num = this.num + 1;
+			}*/
+			
+			if (pai != null){
+				extinction = (int) aux.getAttribute(type).getValue();
+				if(extinction > valueMin){
+					selected[aux.getId()] = true;
+					for(NodeToS filho: pai.getChildren()){
+						selected[filho.getId()] = true;
+						this.num = this.num + 1;
+					}
+				}
 			}
 		}
 		return selected;
@@ -118,25 +129,22 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 					pai = aux.getParent();
 				}
 			}
-			extinction = (int) aux.getAttribute(type).getValue();
+			/*extinction = (int) aux.getAttribute(type).getValue();
 			if(!selected[aux.getId()] && extinction > valueMin){
 				selected[aux.getId()] = true;
 				this.num = this.num + 1;
-			}
-			/*
+			}*/
+			
 			if (pai != null){
-				extinction = aux.getAttribute(type);
-				//if(!selected[pai.getId()] && extinction > valueMin){
+				extinction = (int) aux.getAttribute(type).getValue();
 				if(extinction > valueMin){
 					selected[aux.getId()] = true;
-					//for(NodeCT filho: pai.getChildren()){
-					//	selected[filho.getId()] = true;
-					//	this.num = this.num + 1;
-					//}
-					
-					
+					for(NodeCT filho: pai.getChildren()){
+						selected[filho.getId()] = true;
+						this.num = this.num + 1;
+					}
 				}
-			}*/	
+			}	
 		}
 		return selected;
 	}
