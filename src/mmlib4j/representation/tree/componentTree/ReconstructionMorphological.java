@@ -224,9 +224,9 @@ public class ReconstructionMorphological {
 		
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput);
 		for(int p: imgOut.scanForward()){
-			if(mintree.getSC(p).flagPruning && maxtree.getSC(p).flagPruning){
-				System.out.println("ops...");
-			}
+			//if(mintree.getSC(p).flagPruning && maxtree.getSC(p).flagPruning){
+			//	System.out.println("ops...");
+			//}
 			
 			if(imgMarcador.getPixel(p) < imgInput.getPixel(p)){
 				imgOut.setPixel(p, recO.getPixel(p));
@@ -240,10 +240,6 @@ public class ReconstructionMorphological {
 		}
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao [Componente tree - reconstruction morphological (leveling)]  "+ ((tf - ti) /1000.0)  + "s");
-		
-		//System.out.println("is leveling: "+ ImageAlgebra.isLeveling(imgOut, imgInput, mintree.getAdjacency()));
-		
-		
 		
 		return imgOut;
 	}
