@@ -74,5 +74,6 @@ public interface GrayScaleImage extends Image2D{
     
     public ColorImage labeling(AdjacencyRelation adj);
 	
+    public void drawLine(int x1, int y1, int x2, int y2, int grayLine);
 }
     
