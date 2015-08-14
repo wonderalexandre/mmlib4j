@@ -6,6 +6,8 @@
         <jar destfile="builds/MMLib4J_v1.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Class-Path" value="."/>
+            	<attribute name="target" value="1.6"/>
+            	<attribute name="source" value="1.6"/>
             </manifest>
             <fileset dir="../mmlib4j/bin"/>
             <zipfileset excludes="META-INF/*.SF" src="../mmlib4j/libs/jung-api-2.0.1.jar"/>
