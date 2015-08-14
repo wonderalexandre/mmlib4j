@@ -345,7 +345,8 @@ public class BitImage extends AbstractImage2D implements BinaryImage{
 			this.setPixel(x, y, true);
 				
 			while (x<= x2){
-				this.setPixel(x, y, true);
+				if(isPixelValid(x, y))
+					this.setPixel(x, y, true);
 					
 				x= x + 1;
 				if(v <= 0){
@@ -371,8 +372,8 @@ public class BitImage extends AbstractImage2D implements BinaryImage{
 			int y = y1;
 			this.setPixel(x, y, true);	
 			while(y <= y2){
-				
-				this.setPixel(x, y, true);
+				if(isPixelValid(x, y))
+					this.setPixel(x, y, true);
 				y = y + 1;
 				if(v <= 0){
 					v = v + neg;
