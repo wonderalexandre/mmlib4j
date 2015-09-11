@@ -2,9 +2,9 @@ package mmlib4j.representation.tree.pruningStrategy;
 
 import java.util.LinkedList;
 
+import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;

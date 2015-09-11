@@ -1,7 +1,6 @@
 package mmlib4j.representation.tree;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import mmlib4j.datastruct.SimpleLinkedList;

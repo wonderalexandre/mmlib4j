@@ -2,9 +2,7 @@ package mmlib4j.representation.tree.attribute;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;

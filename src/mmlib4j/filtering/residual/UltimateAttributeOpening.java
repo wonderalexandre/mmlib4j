@@ -7,12 +7,10 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
-import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.segmentation.Labeling;
 import mmlib4j.utils.Utils;
 

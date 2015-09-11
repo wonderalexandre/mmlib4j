@@ -1,8 +1,8 @@
 package mmlib4j.representation.tree.attribute;
 
 import mmlib4j.images.ColorImage;
-import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 
 
 /**

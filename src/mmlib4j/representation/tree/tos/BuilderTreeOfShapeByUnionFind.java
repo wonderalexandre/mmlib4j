@@ -2,17 +2,9 @@ package mmlib4j.representation.tree.tos;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import mmlib4j.datastruct.PriorityQueueToS;
-import mmlib4j.filtering.binary.ContourTracer;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.componentTree.BuilderComponentTreeByUnionFind;
-import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.utils.AdjacencyRelation;
 
 
 /**

@@ -14,7 +14,6 @@ import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 
 
 /**

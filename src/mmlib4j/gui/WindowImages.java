@@ -20,7 +20,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import apple.laf.JRSUIConstants.Widget;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;

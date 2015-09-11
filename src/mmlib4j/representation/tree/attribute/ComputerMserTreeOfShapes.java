@@ -5,8 +5,8 @@ import java.util.LinkedList;
 
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 
