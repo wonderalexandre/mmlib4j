@@ -206,6 +206,8 @@ public class AdjacencyRelationByAmoebas {
 		AdjacencyRelationByAmoebas adjAmoeba = AdjacencyRelationByAmoebas.getCircular(10);
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(10);
 		
+		
+		GrayScaleImage imgOriginal = ImageBuilder.openGrayImage();
 		GrayScaleImage img = ImageBuilder.openGrayImage();
 		GrayScaleImage imgMedia = ImageFactory.createGrayScaleImage(img);
 		GrayScaleImage imgMediaAboema = ImageFactory.createGrayScaleImage(img);
@@ -228,7 +230,18 @@ public class AdjacencyRelationByAmoebas {
 			imgMediaAboema.setPixel(p, soma / cont);
 		}
 		
-		WindowImages.show(new Image2D[]{imgMedia, imgMediaAboema});
+		
+		//mse
+		int somaAmeba = 0;
+		int somaSE = 0;
+		for(int p=0; p < img.getSize(); p++){
+			somaSE += Math.abs(imgOriginal.getPixel(p) - imgMedia.getPixel(p));
+			somaAmeba += Math.abs(imgOriginal.getPixel(p) - imgMediaAboema.getPixel(p));
+		}
+		System.out.println("MSE media (se) - " + (somaSE/(double) img.getSize()));
+		System.out.println("MSE media (adaptativa) - " + somaAmeba/(double) img.getSize());
+		
+		WindowImages.show(new Image2D[]{imgOriginal, imgMedia, imgMediaAboema});
 		
 	}
 	
