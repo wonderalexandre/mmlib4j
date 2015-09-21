@@ -51,7 +51,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 			for(NodeToS node: tree.getListNodes()){
 				if(node.getParent() != null){
 					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
-						selected[node.getParent().getId()] = true;
+						selected[node.getId()] = true;
 						this.num = this.num + 1;
 					}
 				}
