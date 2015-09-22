@@ -246,12 +246,14 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 			};
 			
 			/*
+			 * O codigo acima eh equivalente o codigo abaixo
+			 * 
 			ArrayList<Integer> pixels = new ArrayList<Integer>();
 			int xOld=0, yOld=0;
 			int x=0, y=0;
 			/*
 			 * |xCentroid| +  |cos(angle) -sin(angle)| . |ra x cos(t)| 
-			 * |yCentroid| +  |sin(angle)  cos(angle)|   |rb x sin(t)|
+			 * |yCentroid| +  |sin(angle)  cos(angle)| . |rb x sin(t)|
 			 *
 			for (double t = 0; t < 2.0 * Math.PI; ) {
 				xOld = x;
