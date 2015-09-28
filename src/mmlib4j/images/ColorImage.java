@@ -21,11 +21,12 @@ public interface ColorImage extends Image2D{
     public int getSize();
     
     public void setPixel(int x, int y, int value[]);
-    
     public void setPixel(int x, int y, int rgb);
+    public void setPixel(int x, int y, int r, int g, int b);
+    public void setPixel(int x, int y, int r, int g, int b, int alpha);
     
+    public void setPixel(int i, int r, int g, int b);
     public void setPixel(int i, int value[]);
-
     public void setPixel(int i, int rgb);
     
     public void setPixels(int width, int height, int pixels[]);
@@ -47,6 +48,7 @@ public interface ColorImage extends Image2D{
     public int getRed(int i);
     public int getGreen(int i);
     public int getBlue(int i);
+    public int getAlpha(int i);
     
     public int getRed(int x, int y);
     public int getGreen(int x, int y);

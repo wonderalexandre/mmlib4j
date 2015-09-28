@@ -255,6 +255,11 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
 		return (pixels[i] >> 0) & 0xFF; //blue
 	}
 
+	public int getAlpha(int i) {
+		return (pixels[i] >> 24) & 0xFF; //alpha
+	}
+
+	
 	public int getRed(int x, int y) {
 		return getRed(y * width + x);
 	}
@@ -327,5 +332,30 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
     public int getDepth(){
     	return 32;
     }
+
+	public void setPixel(int x, int y, int r, int g, int b) {
+		setPixel(x, y, 
+					((alpha & 0xFF) << 24) |
+					((r & 0xFF) << 16) |
+					((g & 0xFF) << 8)  |
+					((b & 0xFF) << 0)
+				);
+	}
+
+	public void setPixel(int x, int y, int r, int g, int b, int alpha) {
+		setPixel(x, y, 
+				((alpha & 0xFF) << 24) |
+				((r & 0xFF) << 16) |
+				((g & 0xFF) << 8)  |
+				((b & 0xFF) << 0)
+			);
+	}
+
+	public void setPixel(int i, int r, int g, int b) {
+		pixels[i] = ((alpha & 0xFF) << 24) |
+				((r & 0xFF) << 16) |
+				((g & 0xFF) << 8)  |
+				((b & 0xFF) << 0);
+	}
     
 }
