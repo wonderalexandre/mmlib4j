@@ -1,4 +1,4 @@
-package mmlib4j.utils;
+package mmlib4j.math;
 
 
 /**

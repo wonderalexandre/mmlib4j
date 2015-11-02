@@ -2,8 +2,8 @@ package mmlib4j.filtering;
 import java.util.Arrays;
 
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.math.ArrayUtils;
 import mmlib4j.utils.AdjacencyRelation;
-import mmlib4j.utils.ArrayUtils;
 
 
 /**
