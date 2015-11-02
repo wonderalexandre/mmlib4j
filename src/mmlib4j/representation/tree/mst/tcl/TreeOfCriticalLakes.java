@@ -463,7 +463,7 @@ public class TreeOfCriticalLakes implements IMorphologicalTreeSegmentation{
 	 */
 	public GrayScaleImage segmentation(double attributeValue, int type) {
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeTCL> fifo = new Queue<NodeTCL>();
 		fifo.enqueue(this.root);
 		int label = 0;

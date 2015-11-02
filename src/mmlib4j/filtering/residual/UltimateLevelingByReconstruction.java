@@ -408,7 +408,7 @@ public class UltimateLevelingByReconstruction {
 	
 	
 	public GrayScaleImage getResiduesPos(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
@@ -426,7 +426,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getResiduesNeg(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
@@ -444,7 +444,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		if(maxtree != null && mintree != null){
 			GrayScaleImage pos = getResiduesPos();
 			GrayScaleImage neg = getResiduesNeg();
@@ -476,7 +476,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getAssociateIndexImagePos(){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
@@ -493,7 +493,7 @@ public class UltimateLevelingByReconstruction {
 		return associateImg;
 	}
 	public GrayScaleImage getAssociateIndexImageNeg(){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
@@ -511,7 +511,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getAssociateIndexImage(){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		if(maxtree != null && mintree != null){
 			GrayScaleImage pos = getResiduesPos();
 			GrayScaleImage neg = getResiduesNeg();

@@ -314,7 +314,7 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	
 	
 	public GrayScaleImage createImageSC(int levelNotPixelCanonical){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());;
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());;
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this);
 		while(!fifo.isEmpty()){

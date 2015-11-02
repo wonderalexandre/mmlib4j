@@ -192,7 +192,7 @@ public class ComponentTree {
 	}
 	
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){
@@ -218,7 +218,7 @@ public class ComponentTree {
 	
 	
 	public GrayScaleImage reconstruction(){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){

@@ -192,7 +192,7 @@ public class ImageBuilder {
 	}
 
 	public static GrayScaleImage getConvertColorSpaceRGBtoChong(ColorImage img){
-		GrayScaleImage imgG = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+		GrayScaleImage imgG = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		for(int p=0; p < img.getSize(); p++){
 			int r = img.getRed(p);
 			int g = img.getGreen(p);

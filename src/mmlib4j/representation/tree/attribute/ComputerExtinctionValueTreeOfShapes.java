@@ -73,7 +73,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	}
 	
 	public GrayScaleImage segmentationByKmax(int kmax, int type){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight()); 
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage().getDepth(), tree.getInputImage().getWidth(), tree.getInputImage().getHeight()); 
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		ArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
@@ -122,7 +122,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	}
 
 	public GrayScaleImage segmentationByAttribute(int attValue1, int attValue2, int type){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight());; 
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage().getDepth(), tree.getInputImage().getWidth(), tree.getInputImage().getHeight());; 
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		ArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);

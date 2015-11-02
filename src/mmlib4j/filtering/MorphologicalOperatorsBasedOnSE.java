@@ -17,51 +17,70 @@ public class MorphologicalOperatorsBasedOnSE {
 
 	static mmlib4j.filtering.RankFilters filter = new mmlib4j.filtering.RankFilters();
 	
-	public static GrayScaleImage closing(GrayScaleImage img, AdjacencyRelation adjEE){
+	
+	public static void closing(GrayScaleImage img, AdjacencyRelation adjEE, GrayScaleImage imgOut){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = img.duplicate();
-		filter.rankProcess(imgOut, adjEE, RankFilters.MAX);
-		filter.rankProcess(imgOut, adjEE, RankFilters.MIN);
+		filter.rankProcess(img, adjEE, RankFilters.MAX, imgOut);
+		filter.rankProcess(imgOut.duplicate(), adjEE, RankFilters.MIN, imgOut);
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
-		System.out.println("Tempo de execucao [closing]  "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [closing]  "+ ((tf - ti) /1000.0)  + "s");
+		
+	}
+	
+	public static GrayScaleImage closing(GrayScaleImage img, AdjacencyRelation adjEE){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		closing(img, adjEE, imgOut);
 		return imgOut;
 	}
 
-	public static GrayScaleImage opening(GrayScaleImage img, AdjacencyRelation adjEE){
+	public static void opening(GrayScaleImage img, AdjacencyRelation adjEE, GrayScaleImage imgOut){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = img.duplicate();
-		filter.rankProcess(imgOut, adjEE, RankFilters.MIN);
-		filter.rankProcess(imgOut, adjEE, RankFilters.MAX);
+		filter.rankProcess(img, adjEE, RankFilters.MIN, imgOut);
+		filter.rankProcess(imgOut.duplicate(), adjEE, RankFilters.MAX, imgOut);
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
-		System.out.println("Tempo de execucao [opening]  "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [opening]  "+ ((tf - ti) /1000.0)  + "s");
+		
+	}
+	public static GrayScaleImage opening(GrayScaleImage img, AdjacencyRelation adjEE){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		opening(img, adjEE, imgOut);
 		return imgOut;
 	} 
 
 	
-	public static GrayScaleImage dilation(GrayScaleImage img, AdjacencyRelation adjEE){
+	public static void dilation(GrayScaleImage img, AdjacencyRelation adjEE, GrayScaleImage imgOut){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = filter.rank(img, adjEE, RankFilters.MAX);
+		filter.rankProcess(img, adjEE, RankFilters.MAX, imgOut);
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
 		System.out.println("Tempo de execucao [dilation]  "+ ((tf - ti) /1000.0)  + "s");
-		return imgOut;
 	}
 	
+	public static GrayScaleImage dilation(GrayScaleImage img, AdjacencyRelation adjEE){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		dilation(img, adjEE, imgOut);
+		return imgOut;
+		
+	}
 	
-	public static GrayScaleImage erosion(GrayScaleImage img, AdjacencyRelation adjEE){
+	public static void erosion(GrayScaleImage img, AdjacencyRelation adjEE, GrayScaleImage imgOut){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = filter.rank(img, adjEE, RankFilters.MIN);
+		filter.rankProcess(img, adjEE, RankFilters.MIN, imgOut);
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
 		System.out.println("Tempo de execucao [erosion]  "+ ((tf - ti) /1000.0)  + "s");
+	}
+	
+	public static GrayScaleImage erosion(GrayScaleImage img, AdjacencyRelation adjEE){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		erosion(img, adjEE, imgOut);
 		return imgOut;
 	}
-
-	public static GrayScaleImage gradient(GrayScaleImage img, AdjacencyRelation adjB){
+	
+	public static void gradient(GrayScaleImage img, AdjacencyRelation adjB, GrayScaleImage imgOut){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut =ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		GrayScaleImage dilatacao = dilation(img, adjB);
 		GrayScaleImage erode = erosion(img, adjB);
 		for(int p=0; p < img.getSize(); p++){
@@ -69,26 +88,38 @@ public class MorphologicalOperatorsBasedOnSE {
 		}
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
-		System.out.println("Tempo de execucao [gradient]  "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [gradient]  "+ ((tf - ti) /1000.0)  + "s");
+		
+		
+	}
+
+	public static GrayScaleImage gradient(GrayScaleImage img, AdjacencyRelation adjB){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		gradient(img, adjB, imgOut);
 		return imgOut;
 		
 	}
-	public static GrayScaleImage gradientInternal(GrayScaleImage img, AdjacencyRelation adjB){
+	
+
+	public static void gradientInternal(GrayScaleImage img, AdjacencyRelation adjB, GrayScaleImage imgOut){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		GrayScaleImage erode = erosion(img, adjB);
 		for(int p=0; p < img.getSize(); p++){
 			imgOut.setPixel(p, img.getPixel(p) - erode.getPixel(p));
 		}
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
-		System.out.println("Tempo de execucao [gradient internal]  "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [gradient internal]  "+ ((tf - ti) /1000.0)  + "s");
+	}
+	
+	public static GrayScaleImage gradientInternal(GrayScaleImage img, AdjacencyRelation adjB){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		gradientInternal(img, adjB, imgOut);
 		return imgOut;
 	}
 	
-	public static GrayScaleImage gradientExternal(GrayScaleImage img, AdjacencyRelation adjB){
+	public static void gradientExternal(GrayScaleImage img, AdjacencyRelation adjB, GrayScaleImage imgOut){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		GrayScaleImage erode = erosion(img, adjB);
 		for(int p=0; p < img.getSize(); p++){
 			imgOut.setPixel(p, img.getPixel(p) - erode.getPixel(p));
@@ -96,34 +127,15 @@ public class MorphologicalOperatorsBasedOnSE {
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
 		System.out.println("Tempo de execucao [gradient external]  "+ ((tf - ti) /1000.0)  + "s");
-		return imgOut;
 	}
+
 	
-/*	public static GrayScaleImage toggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgD = dilation(img, adj); 
-		GrayScaleImage imgE = erosion(img, adj);
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);
-		int contrast1 = 15;
-		int percentage = 80;
-		int UNKNOWN_VALUE = 128;
-		int HIGH_VALUE = 255;
-		int LOW_VALUE = 0;
-		for(int i=0; i < img.getSize(); i++){
-			if ( (imgD.getPixel(i) - imgE.getPixel(i)) < contrast1 ) {
-              	imgOut.setPixel(i, UNKNOWN_VALUE);
-            }
-            else {
-                if ( (imgD.getPixel(i) - img.getPixel(i)) < percentage * (img.getPixel(i) - imgE.getPixel(i))/100.0 ) {
-                	imgOut.setPixel(i, HIGH_VALUE);
-                }    
-                else {
-                	imgOut.setPixel(i, LOW_VALUE);
-                }
-            }
-		}
+	public static GrayScaleImage gradientExternal(GrayScaleImage img, AdjacencyRelation adjB){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		gradientExternal(img, adjB, imgOut);
 		return imgOut;
 	}
-*/	
+
 	  
     /**
      * Aplicando o filtro alternado sequencial - 
@@ -132,27 +144,37 @@ public class MorphologicalOperatorsBasedOnSE {
      * @param se - Um conjunto de elemento estruturante
      * @return IGrayScaleImage
      */
-    public static GrayScaleImage asfCloseOpen(GrayScaleImage img, SimpleLinkedList<AdjacencyRelation> ses){
+    public static void asfCloseOpen(GrayScaleImage img, SimpleLinkedList<AdjacencyRelation> ses, GrayScaleImage imgOut){
     	long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = img.duplicate();
+    	GrayScaleImage imgTmp = img.duplicate();
+    	GrayScaleImage imgTmp2 = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         for(AdjacencyRelation se: ses){
         
         	//closing
-        	filter.rankProcess(imgOut, se, RankFilters.MAX);
-    		filter.rankProcess(imgOut, se, RankFilters.MIN);
-    		
-    		//opening
-    		filter.rankProcess(imgOut, se, RankFilters.MIN);
-    		filter.rankProcess(imgOut, se, RankFilters.MAX);
+        	closing(imgTmp, se, imgTmp2);
+        	opening(imgTmp2, se, imgOut);
+        	
+        	imgTmp = imgOut;
     		
         }
         long tf = System.currentTimeMillis();
         if(Utils.debug)
 		System.out.println("Tempo de execucao [asfCloseOpen]  "+ ((tf - ti) /1000.0)  + "s");
+    }
+    
+    /**
+     * Aplicando o filtro alternado sequencial - 
+     * Definicao: ASFoc, B(n) = (((((S . B) o B) . 2B) o 2B) ... . nB) o nB
+     * @param img - Image de entrada
+     * @param se - Um conjunto de elemento estruturante
+     * @return IGrayScaleImage
+     */
+    public static GrayScaleImage asfCloseOpen(GrayScaleImage img, SimpleLinkedList<AdjacencyRelation> ses){
+    	GrayScaleImage imgOut = img.duplicate();
+    	asfCloseOpen(img, ses, imgOut);
 		return imgOut;
 		
     }
-    
     
     /**
      * Aplicando o filtro alternado sequencial - 
@@ -161,22 +183,27 @@ public class MorphologicalOperatorsBasedOnSE {
      * @param se - Um conjunto de elemento estruturante
      * @return IGrayScaleImage
      */
-    public static GrayScaleImage asfOpenClose(GrayScaleImage img, SimpleLinkedList<AdjacencyRelation> ses){
+    public static void asfOpenClose(GrayScaleImage img, SimpleLinkedList<AdjacencyRelation> ses, GrayScaleImage imgOut){
     	long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = img.duplicate();
-		for(AdjacencyRelation se: ses){
-        	
-        	//opening
-    		filter.rankProcess(imgOut, se, RankFilters.MIN);
-    		filter.rankProcess(imgOut, se, RankFilters.MAX);
-    		
+    	GrayScaleImage imgTmp = img.duplicate();
+    	GrayScaleImage imgTmp2 = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        for(AdjacencyRelation se: ses){
+        
         	//closing
-        	filter.rankProcess(imgOut, se, RankFilters.MAX);
-    		filter.rankProcess(imgOut, se, RankFilters.MIN);
+        	opening(imgTmp, se, imgTmp2);
+        	closing(imgTmp2, se, imgOut);
+        	
+        	imgTmp = imgOut;
+    		
         }
         long tf = System.currentTimeMillis();
         if(Utils.debug)
 		System.out.println("Tempo de execucao [asfCloseOpen]  "+ ((tf - ti) /1000.0)  + "s");
+    }
+    
+    public static GrayScaleImage asfOpenClose(GrayScaleImage img, SimpleLinkedList<AdjacencyRelation> ses){
+    	GrayScaleImage imgOut = img.duplicate();
+    	asfOpenClose(img, ses, imgOut);
 		return imgOut;
     }
     
@@ -189,39 +216,58 @@ public class MorphologicalOperatorsBasedOnSE {
      * @param se
      * @return
      */
-    public static GrayScaleImage openingTopHat(GrayScaleImage img, AdjacencyRelation se){
-        return ImageAlgebra.subtraction(img, MorphologicalOperatorsBasedOnSE.opening(img, se));
+    public static void openingTopHat(GrayScaleImage img, AdjacencyRelation se, GrayScaleImage imgOut){
+    	long ti = System.currentTimeMillis();
+    	opening(img, se, imgOut);
+    	ImageAlgebra.subtraction(img, imgOut, imgOut);
+    	if(Utils.debug){
+    		long tf = System.currentTimeMillis();
+    		System.out.println("Tempo de execucao [openingTopHat]  "+ ((tf - ti) /1000.0)  + "s");
+    	}
     }
     
-    public static GrayScaleImage selfTopHat(GrayScaleImage img, AdjacencyRelation se){
-        GrayScaleImage wth = MorphologicalOperatorsBasedOnSE.openingTopHat(img, se);
-        GrayScaleImage bth = MorphologicalOperatorsBasedOnSE.closingTopHat(img, se);
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
-        for(int i=0; i < img.getWidth(); i++)
-            for(int j=0; j < img.getHeight(); j++)
-                imgOut.setPixel(i, j,wth.getPixel(i, j) + bth.getPixel(i, j));
+    public static GrayScaleImage openingTopHat(GrayScaleImage img, AdjacencyRelation se){
+    	GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	openingTopHat(img, se, imgOut);
+    	return imgOut;
+    }
+    
+    public static void selfTopHat(GrayScaleImage img, AdjacencyRelation se, GrayScaleImage imgOut){
+        openingTopHat(img, se, imgOut);
+        GrayScaleImage bth = closingTopHat(img, se);
+        GrayScaleImage wth = imgOut;
+        for(int p=0; p < img.getSize(); p++)
+        	imgOut.setPixel(p, wth.getPixel(p) + bth.getPixel(p));
         
+        
+    }
+
+    public static GrayScaleImage selfTopHat(GrayScaleImage img, AdjacencyRelation se){
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        selfTopHat(img, se, imgOut);
         return imgOut;
     }
     
+    public static void realceTopHat(GrayScaleImage img, AdjacencyRelation se, GrayScaleImage imgOut){
+    	int pixel;
+        MorphologicalOperatorsBasedOnSE.openingTopHat(img, se, imgOut);
+        GrayScaleImage bth = MorphologicalOperatorsBasedOnSE.closingTopHat(img, se);
+        GrayScaleImage wth = imgOut;
+        for(int p=0; p < img.getSize(); p++){
+        	pixel = img.getPixel(p) + wth.getPixel(p) - bth.getPixel(p);
+        	if(pixel > 255)
+        		imgOut.setPixel(p, 255);
+        	else if(pixel < 0)
+        		imgOut.setPixel(p, 0);
+        	else
+        		imgOut.setPixel(p, pixel);
+        }
+    }
     
     public static GrayScaleImage realceTopHat(GrayScaleImage img, AdjacencyRelation se){
-        int pixel;
-        GrayScaleImage wth = MorphologicalOperatorsBasedOnSE.openingTopHat(img, se);
-        GrayScaleImage bth = MorphologicalOperatorsBasedOnSE.closingTopHat(img, se);
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
-        for(int i=0; i < img.getWidth(); i++)
-            for(int j=0; j < img.getHeight(); j++){
-                pixel = img.getPixel(i, j) + wth.getPixel(i, j) - bth.getPixel(i, j);
-                if(pixel > 255)
-                	imgOut.setPixel(i, j, 255);
-                else if(pixel < 0)
-                	imgOut.setPixel(i, j, 0);
-                else
-                	imgOut.setPixel(i, j, pixel);
-            }
-        
-        return imgOut;//ImageUtils.normalizedPixels(imgOut);
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        realceTopHat(img, se, imgOut);
+        return imgOut;
     }
     
     
@@ -233,10 +279,21 @@ public class MorphologicalOperatorsBasedOnSE {
      * @param se
      * @return
      */
-    public static GrayScaleImage closingTopHat(GrayScaleImage img, AdjacencyRelation se){
-        return ImageAlgebra.subtraction(MorphologicalOperatorsBasedOnSE.closing(img, se), img);
+    public static void closingTopHat(GrayScaleImage img, AdjacencyRelation se, GrayScaleImage imgOut){
+    	long ti = System.currentTimeMillis();
+    	closing(img, se, imgOut);
+    	ImageAlgebra.subtraction(imgOut, img, imgOut);
+    	if(Utils.debug){
+    		long tf = System.currentTimeMillis();
+    		System.out.println("Tempo de execucao [openingTopHat]  "+ ((tf - ti) /1000.0)  + "s");
+    	}
     }
     
+    public static GrayScaleImage closingTopHat(GrayScaleImage img, AdjacencyRelation se){
+    	GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	closingTopHat(img, se, imgOut);
+        return imgOut;
+    }    
     
     /**
      * Implementacao direta de ultimate opening
@@ -244,9 +301,7 @@ public class MorphologicalOperatorsBasedOnSE {
      * @param step - passo de incremento do elemento estruturante
      * @param maxCriterion - tamanho maximo de aberturas
      */
-    public static GrayScaleImage[] ultimateOpening(GrayScaleImage img, int maxCriterion){
-        GrayScaleImage imgR = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
-        GrayScaleImage imgQ = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+    public static void ultimateOpening(GrayScaleImage img, int maxCriterion, GrayScaleImage imgOutR, GrayScaleImage imgOutIndex){
         
         GrayScaleImage imgPreviousOpen = img.duplicate();
         GrayScaleImage imgCurrentOpen = null;
@@ -258,15 +313,22 @@ public class MorphologicalOperatorsBasedOnSE {
         	imgCurrentOpen = opening(img, AdjacencyRelation.getCircular(size));
             imgCurrentRes = ImageAlgebra.subtraction(imgPreviousOpen, imgCurrentOpen);
             for(int i=0; i < img.getSize(); i++){
-                if(imgCurrentRes.getPixel(i) > 0 && imgCurrentRes.getPixel(i) >= imgR.getPixel(i)){
-                    imgR.setPixel(i,imgCurrentRes.getPixel(i));
-                    imgQ.setPixel(i, size);
+                if(imgCurrentRes.getPixel(i) > 0 && imgCurrentRes.getPixel(i) >= imgOutR.getPixel(i)){
+                	imgOutR.setPixel(i,imgCurrentRes.getPixel(i));
+                	imgOutIndex.setPixel(i, size);
                 }
             }
             size += step;
             imgPreviousOpen = imgCurrentOpen;
         }
-        return new GrayScaleImage[]{imgR, imgQ};
+        
+    }
+    
+    public static GrayScaleImage[] ultimateOpening(GrayScaleImage img, int maxCriterion){
+        GrayScaleImage imgOutR = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
+        GrayScaleImage imgOutIndex = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, img.getWidth(), img.getHeight());
+        ultimateOpening(img, maxCriterion, imgOutR, imgOutIndex);
+        return new GrayScaleImage[]{imgOutR, imgOutIndex};
     }
     
     /**
@@ -275,9 +337,7 @@ public class MorphologicalOperatorsBasedOnSE {
      * @param step - passo de incremento do elemento estruturante
      * @param maxCriterion - tamanho maximo de aberturas
      */
-    public static GrayScaleImage[] ultimateClosing(GrayScaleImage img, int maxCriterion){
-        GrayScaleImage imgR = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
-        GrayScaleImage imgQ =ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+    public static void ultimateClosing(GrayScaleImage img, int maxCriterion, GrayScaleImage imgR, GrayScaleImage imgQ){
         GrayScaleImage imgPreviousOpen = img.duplicate();
         GrayScaleImage imgCurrentOpen = null;
         GrayScaleImage imgCurrentRes = null;
@@ -296,10 +356,14 @@ public class MorphologicalOperatorsBasedOnSE {
             size += step;
             imgPreviousOpen = imgCurrentOpen;
         }
-        
-        return new GrayScaleImage[]{imgR, imgQ};
     }
   
+    public static GrayScaleImage[] ultimateClosing(GrayScaleImage img, int maxCriterion){
+        GrayScaleImage imgR = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgQ =ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        ultimateClosing(img, maxCriterion, imgR, imgQ);
+        return new GrayScaleImage[]{imgR, imgQ};
+    }
     
     public static void main(String args[]){
     	GrayScaleImage img = ImageBuilder.openGrayImage(ImageBuilder.windowOpenFile());

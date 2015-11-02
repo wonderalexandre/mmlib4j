@@ -211,7 +211,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		if(extinctionValue.getType() != type)
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(type);
 		
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());;
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){
@@ -317,7 +317,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){

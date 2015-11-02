@@ -402,7 +402,7 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 
 
 	public GrayScaleImage createImageSC(int levelNotSC){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());;
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());;
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(this);
 		while(!fifo.isEmpty()){

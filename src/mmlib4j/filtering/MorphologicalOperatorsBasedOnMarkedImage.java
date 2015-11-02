@@ -188,7 +188,7 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
      */
     public static GrayScaleImage closingOfHoles(GrayScaleImage imgInput, int back){
         //criando o marcador
-        GrayScaleImage imgMarker = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+        GrayScaleImage imgMarker = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
         imgMarker.initImage(back);     
         int fore = (back == 255? 0: 255);
         //marcando as bordas com 1-pixel de espessura
@@ -208,7 +208,7 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
     	double raio = 1;
     	AdjacencyRelation adj;
     	AdjacencyRelation adj8 = AdjacencyRelation.getCircular(1.5);
-    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
     	GrayScaleImage imgErosion = img.duplicate();
     	for(int i=0; i < 110; i++){
     		adj = AdjacencyRelation.getCircular(raio);
@@ -232,7 +232,7 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
     	double raio = 1;
     	AdjacencyRelation adj;
     	AdjacencyRelation adj8 = AdjacencyRelation.getCircular(4);
-    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
     	GrayScaleImage imgErosion = img.duplicate();
     	for(int i=0; i < 100; i++){
     		adj = AdjacencyRelation.getCircular(raio);

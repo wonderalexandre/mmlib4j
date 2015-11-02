@@ -352,7 +352,7 @@ public class Resampling {
      * @return imgem de saida
      */
     public static GrayScaleImage rotation(GrayScaleImage img, float graus){
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         //imgOut.initImage(255);
         
         double radian = 2.0 * Math.PI * graus / 360.0;

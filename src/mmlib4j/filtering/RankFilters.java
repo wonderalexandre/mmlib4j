@@ -23,9 +23,9 @@ public class RankFilters  {
 	private boolean copyingToCache;		// whether a thread is currently copying data to the cache
 
 	public GrayScaleImage rank(GrayScaleImage img, AdjacencyRelation adj, int filterType) {
-		GrayScaleImage ip = img.duplicate();
-		rankProcess(ip, adj, filterType);
-		return ip;
+		GrayScaleImage ipOut = img.duplicate();
+		rankProcess(img, adj, filterType, ipOut);
+		return ipOut;
 	}
 	
 
@@ -37,7 +37,7 @@ public class RankFilters  {
 	 * @param whichOutliers BRIGHT_OUTLIERS or DARK_OUTLIERS for 'outliers' filter
 	 * @param threshold Threshold for 'outliers' filter
 	 */
-	public void rankProcess(final GrayScaleImage ip, AdjacencyRelation adj, final int filterType) {
+	public void rankProcess(final GrayScaleImage ip, AdjacencyRelation adj, final int filterType, final GrayScaleImage ipOut) {
 		final int[] lineRadii = makeLineRadii(adj);
 		
 		
@@ -62,7 +62,7 @@ public class RankFilters  {
 			final Thread thread = new Thread(
 					new Runnable() {
 						final public void run() {
-							doFiltering(ip, lineRadii, cache, cacheWidth, cacheHeight,filterType, yForThread, ti);
+							doFiltering(ip, ipOut, lineRadii, cache, cacheWidth, cacheHeight,filterType, yForThread, ti);
 						}
 					},
 			"RankFilters-"+t);
@@ -71,7 +71,7 @@ public class RankFilters  {
 			threads[ti-1] = thread;
 		}
 
-		doFiltering(ip, lineRadii, cache, cacheWidth, cacheHeight, filterType, yForThread, 0);
+		doFiltering(ip, ipOut, lineRadii, cache, cacheWidth, cacheHeight, filterType, yForThread, 0);
 		for (final Thread thread : threads){
 			try {
 				if (thread != null) 
@@ -107,7 +107,7 @@ public class RankFilters  {
 	// For outliers, calculate the median only if the pixel deviates by more than the threshold
 	// from any pixel in the area. Therfore min or max is calculated; this is a much faster
 	// operation than the median.
-	private void doFiltering(GrayScaleImage ip, int[] lineRadii, float[] cache, int cacheWidth, int cacheHeight, int filterType,  int [] yForThread, int threadNumber) {
+	private void doFiltering(GrayScaleImage ip, GrayScaleImage ipOut, int[] lineRadii, float[] cache, int cacheWidth, int cacheHeight, int filterType,  int [] yForThread, int threadNumber) {
 		
 		int width = ip.getWidth();
 		int height = ip.getHeight();
@@ -223,7 +223,7 @@ public class RankFilters  {
 					sums, medianBuf1, medianBuf2, sign, maxValue, filterType,
 					smallKernel, sumFilter, minOrMax);
 			
-			writeLineToPixels(values, ip, y*width, ip.getWidth());	// W R I T E
+			writeLineToPixels(values, ipOut, y*width, ip.getWidth());	// W R I T E
 			
 		} 
 	}
@@ -351,9 +351,9 @@ public class RankFilters  {
 	/** Write a line to pixels arrax, converting from float (not for float data!)
 	 *	No checking for overflow/underflow
 	 */
-	private static void writeLineToPixels(float[] values, GrayScaleImage img, int pixelP, int length) {
+	private static void writeLineToPixels(float[] values, GrayScaleImage ipOut, int pixelP, int length) {
 		for (int i=0, p=pixelP; i<length; i++,p++)
-			img.setPixel(p, (int) (values[i] + 0.5f));
+			ipOut.setPixel(p, (int) (values[i] + 0.5f));
 		
 	}
 

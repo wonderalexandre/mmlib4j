@@ -30,11 +30,11 @@ public class ImageFactory {
 		}
 		return  null;
 	}
-	
+	/*
 	public static GrayScaleImage createGrayScaleImage(int width, int height) {
 		return createGrayScaleImage(DEPTH_8BITS, width, height);
 	}
-	
+	*/
 	
 	public static BinaryImage createBinaryImage(int width, int height){
 		return new BitImage(width, height);

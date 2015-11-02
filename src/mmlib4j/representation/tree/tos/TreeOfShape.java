@@ -319,7 +319,7 @@ public class TreeOfShape{
 	
 
 	public GrayScaleImage reconstruction(){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){

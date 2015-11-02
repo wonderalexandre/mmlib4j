@@ -193,8 +193,8 @@ public class ReconstructionMorphological {
 
 	public GrayScaleImage selfReconstruction(final GrayScaleImage imgMarcador){
 		long ti = System.currentTimeMillis();
-		final GrayScaleImage recO = ImageFactory.createGrayScaleImage(0, 0);
-		final GrayScaleImage recC = ImageFactory.createGrayScaleImage(0, 0);
+		final GrayScaleImage recO = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, 0, 0);
+		final GrayScaleImage recC = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, 0, 0);
 
 		//paralelisa
         final Thread[] threads = new Thread[2]; 
@@ -222,7 +222,7 @@ public class ReconstructionMorphological {
 		}
 		
 		
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		for(int p: imgOut.scanForward()){
 			//if(mintree.getSC(p).flagPruning && maxtree.getSC(p).flagPruning){
 			//	System.out.println("ops...");
