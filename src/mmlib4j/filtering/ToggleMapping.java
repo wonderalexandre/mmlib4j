@@ -20,24 +20,10 @@ public class ToggleMapping {
 	public  static int UNKNOWN_VALUE = 128;
 	
 	
-	public static void main(String args[]){
-		GrayScaleImage img = ImageBuilder.openGrayImage();
-		
-		//doubleToggleMapping(img, AdjacencyRelation.getCircular(2.5));
-		
-		GrayScaleImage imgToggle = ToggleMapping.toggleMapping(img, AdjacencyRelation.getCircular(4));
-		GrayScaleImage imgToggleLabeling = Labeling.labeling(imgToggle, AdjacencyRelation.getCircular(1.5));
-		WindowImages.show(imgToggle, "toggle");
-		WindowImages.show(imgToggleLabeling.randomColor(), "toggle (labeling)");
-		
-	}
-
-	public static GrayScaleImage toggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgD = MorphologicalOperatorsBasedOnSE.dilation(img, adj);//new ComponentTree(img, adj, false).filtering(40, IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT, IMorphologicalTreeFiltering.PRUNING, IMorphologicalTreeFiltering.RULE_DIRECT); 
+	public static void toggleMapping (GrayScaleImage img, AdjacencyRelation adj, int contrast1, int percentage, GrayScaleImage imgOut){
+		MorphologicalOperatorsBasedOnSE.dilation(img, adj, imgOut);//new ComponentTree(img, adj, false).filtering(40, IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT, IMorphologicalTreeFiltering.PRUNING, IMorphologicalTreeFiltering.RULE_DIRECT); 
 		GrayScaleImage imgE = MorphologicalOperatorsBasedOnSE.erosion(img, adj);//new ComponentTree(img, adj, true).filtering(40, IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT, IMorphologicalTreeFiltering.PRUNING, IMorphologicalTreeFiltering.RULE_DIRECT);
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-		int contrast1 = 15;
-		int percentage = 80;
+		GrayScaleImage imgD = imgOut;
 		for(int i=0; i < img.getSize(); i++){
 			if ( (imgD.getPixel(i) - imgE.getPixel(i)) < contrast1 ) {
               	imgOut.setPixel(i, UNKNOWN_VALUE);
@@ -51,14 +37,20 @@ public class ToggleMapping {
                 }
             }
 		}
+	}	
+	
+	
+	public static GrayScaleImage toggleMapping (GrayScaleImage img, AdjacencyRelation adj){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		toggleMapping(img, adj, 15, 80, imgOut);
 		return imgOut;
 	}	
 	
 	
-	public static GrayScaleImage toggleMappingResidue (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgD = MorphologicalOperatorsBasedOnSE.dilation(img, adj); 
+	public static void toggleMappingResidue (GrayScaleImage img, AdjacencyRelation adj, GrayScaleImage imgOut){
+		MorphologicalOperatorsBasedOnSE.dilation(img, adj, imgOut); 
 		GrayScaleImage imgE = MorphologicalOperatorsBasedOnSE.erosion(img, adj);
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgD = imgOut;
 		for(int i=0; i < img.getSize(); i++){
 			if ( (imgD.getPixel(i) - img.getPixel(i)) < (img.getPixel(i) - imgE.getPixel(i)) ) {
 				imgOut.setPixel(i, imgD.getPixel(i) - img.getPixel(i));
@@ -67,13 +59,17 @@ public class ToggleMapping {
 				imgOut.setPixel(i, img.getPixel(i) - imgE.getPixel(i));
 			}
 		}
+		
+	}
+	
+	public static GrayScaleImage toggleMappingResidue (GrayScaleImage img, AdjacencyRelation adj){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		toggleMappingResidue(img, adj, imgOut);
 		return imgOut;
 	}
+	
 
-	public static GrayScaleImage toggleMapping (GrayScaleImage img, GrayScaleImage extensive, GrayScaleImage antiExtensive){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-		int contrast1 = 15;
-		int percentage = 80;
+	public static void toggleMapping (GrayScaleImage img, GrayScaleImage extensive, GrayScaleImage antiExtensive, int contrast1, int percentage, GrayScaleImage imgOut){
 		for(int i=0; i < img.getSize(); i++){
 			if ( (extensive.getPixel(i) - antiExtensive.getPixel(i)) < contrast1 ) {
               	imgOut.setPixel(i, UNKNOWN_VALUE);
@@ -87,19 +83,22 @@ public class ToggleMapping {
                 }
             }
 		}
-		return imgOut;
 	}	
 
-	
-	public static void doubleToggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgD = MorphologicalOperatorsBasedOnSE.dilation(img, adj);
-		GrayScaleImage imgE = MorphologicalOperatorsBasedOnSE.erosion(img, adj);
-		GrayScaleImage imgOut1 = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-		GrayScaleImage imgOut2 = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-		
-		int contrast1 = 50;
-		int contrast2 = 16;	
+	public static GrayScaleImage toggleMapping (GrayScaleImage img, GrayScaleImage extensive, GrayScaleImage antiExtensive){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		int contrast1 = 15;
 		int percentage = 80;
+		toggleMapping(img, extensive, antiExtensive, contrast1, percentage, imgOut);
+		return imgOut;
+	}
+	
+	public static void doubleToggleMapping (GrayScaleImage img, AdjacencyRelation adj, int contrast1, int contrast2, int percentage, GrayScaleImage imgOut1, GrayScaleImage imgOut2){
+		MorphologicalOperatorsBasedOnSE.dilation(img, adj, imgOut1);
+		MorphologicalOperatorsBasedOnSE.erosion(img, adj, imgOut2);
+		
+		GrayScaleImage imgD = imgOut1;
+		GrayScaleImage imgE =imgOut2;
 		
 		for(int i=0; i < img.getSize(); i++){
 			if ( (imgD.getPixel(i) - imgE.getPixel(i)) < contrast1) {
@@ -127,12 +126,42 @@ public class ToggleMapping {
                 }
 			}
 		}
+		
+	}
+	
+	public static GrayScaleImage[] doubleToggleMapping (GrayScaleImage img, AdjacencyRelation adj){
+		GrayScaleImage imgOut1 = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut2 = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		
+		int contrast1 = 50;
+		int contrast2 = 16;	
+		int percentage = 80;
+		
+		doubleToggleMapping(img, adj, contrast1, contrast2, percentage, imgOut1, imgOut2);
+		
+		/*
 		WindowImages.show(imgOut1, "toggle1");
 		WindowImages.show(Labeling.labeling(imgOut1, adj).randomColor(), "toggle (labeling1)");
 		
 		WindowImages.show(imgOut2, "toggle2");
 		WindowImages.show(Labeling.labeling(imgOut2, adj).randomColor(), "toggle (labeling2)");
+		*/
+		return new GrayScaleImage[]{imgOut1, imgOut2};
+		
 	}
-	    
+	
+
+	public static void main(String args[]){
+		GrayScaleImage img = ImageBuilder.openGrayImage();
+		
+		//doubleToggleMapping(img, AdjacencyRelation.getCircular(2.5));
+		
+		GrayScaleImage imgToggle = ToggleMapping.toggleMapping(img, AdjacencyRelation.getCircular(4));
+		GrayScaleImage imgToggleLabeling = Labeling.labeling(imgToggle, AdjacencyRelation.getCircular(1.5));
+		WindowImages.show(imgToggle, "toggle");
+		WindowImages.show(imgToggleLabeling.randomColor(), "toggle (labeling)");
+		
+	}
+
 
 } 
