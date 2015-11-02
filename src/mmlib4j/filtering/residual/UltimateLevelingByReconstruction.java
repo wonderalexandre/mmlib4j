@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import mmlib4j.datastruct.PriorityQueue;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.filtering.LinearFilters;
-import mmlib4j.filtering.MorphologicalOperators;
+import mmlib4j.filtering.MorphologicalOperatorsBasedOnSE;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -83,13 +83,13 @@ public class UltimateLevelingByReconstruction {
 			img = imgMarcador;
 			//WindowImages.show(img);
 			if(type == OPENING)
-				imgMarcador = MorphologicalOperators.opening(img, AdjacencyRelation.getCircular(raio));
+				imgMarcador = MorphologicalOperatorsBasedOnSE.opening(img, AdjacencyRelation.getCircular(raio));
 			else if(type == DILATION)
-				imgMarcador = MorphologicalOperators.dilation(img, AdjacencyRelation.getAdjacency8());
+				imgMarcador = MorphologicalOperatorsBasedOnSE.dilation(img, AdjacencyRelation.getAdjacency8());
 			else if(type == EROSION)
-				imgMarcador = MorphologicalOperators.erosion(img, AdjacencyRelation.getAdjacency8());
+				imgMarcador = MorphologicalOperatorsBasedOnSE.erosion(img, AdjacencyRelation.getAdjacency8());
 			else if(type == CLOSING)
-				imgMarcador = MorphologicalOperators.closing(img, AdjacencyRelation.getCircular(raio));
+				imgMarcador = MorphologicalOperatorsBasedOnSE.closing(img, AdjacencyRelation.getCircular(raio));
 			else if(type == MEDIAN){
 				imgMarcador = LinearFilters.median(img, AdjacencyRelation.getAdjacency8());
 				if(tree.isMaxtree()){
@@ -408,7 +408,7 @@ public class UltimateLevelingByReconstruction {
 	
 	
 	public GrayScaleImage getResiduesPos(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
@@ -426,7 +426,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getResiduesNeg(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
@@ -444,7 +444,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		if(maxtree != null && mintree != null){
 			GrayScaleImage pos = getResiduesPos();
 			GrayScaleImage neg = getResiduesNeg();

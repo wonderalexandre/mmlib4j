@@ -149,7 +149,6 @@ public class TreeOfShape{
 			node.sumX += son.sumX;
 			node.sumY += son.sumY;
 			node.area += son.area;
-			node.volume += son.volume;
 		}
 		
 	}
@@ -320,7 +319,7 @@ public class TreeOfShape{
 	
 
 	public GrayScaleImage reconstruction(){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput);
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){

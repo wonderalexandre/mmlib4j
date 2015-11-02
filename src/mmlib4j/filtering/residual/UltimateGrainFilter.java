@@ -289,7 +289,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getResiduesPos(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);;
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -312,7 +312,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getResiduesNeg(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);;
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -335,7 +335,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);;
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -352,7 +352,7 @@ public class UltimateGrainFilter {
 		return transformImg;
 	}
 	public GrayScaleImage getAttributeResidues(int attr){
-		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(this.imgInput);
+		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		boolean map[] = getNodesMapWithMaximumResidues();
 		for(NodeToS node: tree.getListNodes()){
 			if(map[node.getId()]){
@@ -444,7 +444,7 @@ public class UltimateGrainFilter {
 	
 	
 	public GrayScaleImage getResiduesByType( ){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(this.imgInput);
+		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){

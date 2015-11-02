@@ -13,7 +13,7 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class MorphologicalOperators {
+public class MorphologicalOperatorsBasedOnSE {
 
 	static mmlib4j.filtering.RankFilters filter = new mmlib4j.filtering.RankFilters();
 	
@@ -61,7 +61,7 @@ public class MorphologicalOperators {
 
 	public static GrayScaleImage gradient(GrayScaleImage img, AdjacencyRelation adjB){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut =ImageFactory.createGrayScaleImage(img);
+		GrayScaleImage imgOut =ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		GrayScaleImage dilatacao = dilation(img, adjB);
 		GrayScaleImage erode = erosion(img, adjB);
 		for(int p=0; p < img.getSize(); p++){
@@ -75,7 +75,7 @@ public class MorphologicalOperators {
 	}
 	public static GrayScaleImage gradientInternal(GrayScaleImage img, AdjacencyRelation adjB){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		GrayScaleImage erode = erosion(img, adjB);
 		for(int p=0; p < img.getSize(); p++){
 			imgOut.setPixel(p, img.getPixel(p) - erode.getPixel(p));
@@ -88,7 +88,7 @@ public class MorphologicalOperators {
 	
 	public static GrayScaleImage gradientExternal(GrayScaleImage img, AdjacencyRelation adjB){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		GrayScaleImage erode = erosion(img, adjB);
 		for(int p=0; p < img.getSize(); p++){
 			imgOut.setPixel(p, img.getPixel(p) - erode.getPixel(p));
@@ -190,13 +190,13 @@ public class MorphologicalOperators {
      * @return
      */
     public static GrayScaleImage openingTopHat(GrayScaleImage img, AdjacencyRelation se){
-        return ImageAlgebra.subtraction(img, MorphologicalOperators.opening(img, se));
+        return ImageAlgebra.subtraction(img, MorphologicalOperatorsBasedOnSE.opening(img, se));
     }
     
     public static GrayScaleImage selfTopHat(GrayScaleImage img, AdjacencyRelation se){
-        GrayScaleImage wth = MorphologicalOperators.openingTopHat(img, se);
-        GrayScaleImage bth = MorphologicalOperators.closingTopHat(img, se);
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);
+        GrayScaleImage wth = MorphologicalOperatorsBasedOnSE.openingTopHat(img, se);
+        GrayScaleImage bth = MorphologicalOperatorsBasedOnSE.closingTopHat(img, se);
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
         for(int i=0; i < img.getWidth(); i++)
             for(int j=0; j < img.getHeight(); j++)
                 imgOut.setPixel(i, j,wth.getPixel(i, j) + bth.getPixel(i, j));
@@ -207,9 +207,9 @@ public class MorphologicalOperators {
     
     public static GrayScaleImage realceTopHat(GrayScaleImage img, AdjacencyRelation se){
         int pixel;
-        GrayScaleImage wth = MorphologicalOperators.openingTopHat(img, se);
-        GrayScaleImage bth = MorphologicalOperators.closingTopHat(img, se);
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);
+        GrayScaleImage wth = MorphologicalOperatorsBasedOnSE.openingTopHat(img, se);
+        GrayScaleImage bth = MorphologicalOperatorsBasedOnSE.closingTopHat(img, se);
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
         for(int i=0; i < img.getWidth(); i++)
             for(int j=0; j < img.getHeight(); j++){
                 pixel = img.getPixel(i, j) + wth.getPixel(i, j) - bth.getPixel(i, j);
@@ -234,7 +234,7 @@ public class MorphologicalOperators {
      * @return
      */
     public static GrayScaleImage closingTopHat(GrayScaleImage img, AdjacencyRelation se){
-        return ImageAlgebra.subtraction(MorphologicalOperators.closing(img, se), img);
+        return ImageAlgebra.subtraction(MorphologicalOperatorsBasedOnSE.closing(img, se), img);
     }
     
     
@@ -245,8 +245,8 @@ public class MorphologicalOperators {
      * @param maxCriterion - tamanho maximo de aberturas
      */
     public static GrayScaleImage[] ultimateOpening(GrayScaleImage img, int maxCriterion){
-        GrayScaleImage imgR = ImageFactory.createGrayScaleImage(img);
-        GrayScaleImage imgQ = ImageFactory.createGrayScaleImage(img);
+        GrayScaleImage imgR = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+        GrayScaleImage imgQ = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
         
         GrayScaleImage imgPreviousOpen = img.duplicate();
         GrayScaleImage imgCurrentOpen = null;
@@ -276,8 +276,8 @@ public class MorphologicalOperators {
      * @param maxCriterion - tamanho maximo de aberturas
      */
     public static GrayScaleImage[] ultimateClosing(GrayScaleImage img, int maxCriterion){
-        GrayScaleImage imgR = ImageFactory.createGrayScaleImage(img);
-        GrayScaleImage imgQ =ImageFactory.createGrayScaleImage(img);
+        GrayScaleImage imgR = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+        GrayScaleImage imgQ =ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
         GrayScaleImage imgPreviousOpen = img.duplicate();
         GrayScaleImage imgCurrentOpen = null;
         GrayScaleImage imgCurrentRes = null;

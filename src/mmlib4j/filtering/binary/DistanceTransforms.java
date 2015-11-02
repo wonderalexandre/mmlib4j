@@ -12,7 +12,7 @@ import mmlib4j.images.impl.ImageFactory;
 public class DistanceTransforms {
   
 	public RealImage euclideanDistance(BinaryImage img){
-		return ImageFactory.createFloatImage(euclideanDistanceMap(img), img.getWidth(), img.getHeight());
+		return ImageFactory.createReferenceFloatImage(euclideanDistanceMap(img), img.getWidth(), img.getHeight());
 	}
 	
 	public float[] euclideanDistanceMap(BinaryImage img){
@@ -40,20 +40,20 @@ public class DistanceTransforms {
 	}
 	
 	public GrayScaleImage chessbordDistance(BinaryImage img){
-		return ImageFactory.createGrayScaleImage(32, chessbordDistanceMap(img), img.getWidth(), img.getHeight());
+		return ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, chessbordDistanceMap(img), img.getWidth(), img.getHeight());
 	}
 	
 	
 	public GrayScaleImage cityBlockDistance(BinaryImage img){
-		return ImageFactory.createGrayScaleImage(32, cityBlockDistanceMap(img), img.getWidth(), img.getHeight());
+		return ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, cityBlockDistanceMap(img), img.getWidth(), img.getHeight());
 	}
 	
 	public GrayScaleImage euclideanDistanceDiscrete(BinaryImage img){
-		return ImageFactory.createGrayScaleImage(32, euclideanDistanceMapDiscrete(img), img.getWidth(), img.getHeight());
+		return ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, euclideanDistanceMapDiscrete(img), img.getWidth(), img.getHeight());
 	}
 	
 	public GrayScaleImage dtChamfer(BinaryImage img, int k1, int k2){
-		return ImageFactory.createGrayScaleImage(32, distanceTransform(img, k1, k2), img.getWidth(), img.getHeight());
+		return ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, distanceTransform(img, k1, k2), img.getWidth(), img.getHeight());
 	}
 	
 	public int[] distanceTransform(BinaryImage img, int k1, int k2){

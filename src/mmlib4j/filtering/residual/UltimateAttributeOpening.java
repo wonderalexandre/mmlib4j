@@ -210,7 +210,7 @@ public class UltimateAttributeOpening {
 	
 
 	public GrayScaleImage getAttributeResidues(int attr){
-		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(this.imgInput);
+		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		boolean map[] = getNodesWithMaximumResidues();
 		for(NodeCT node: tree.getListNodes()){
 			if(map[node.getId()]){
@@ -225,7 +225,7 @@ public class UltimateAttributeOpening {
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);;
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){

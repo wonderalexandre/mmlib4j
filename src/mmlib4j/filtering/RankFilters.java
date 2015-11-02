@@ -454,6 +454,44 @@ public class RankFilters  {
 	}
 
 
+
+	protected int[] makeLineRadii(AdjacencyRelation adj){
+		int vetX[] = adj.getVectorX();
+		int vetY[] = adj.getVectorY();
+		int numPontos = vetX.length;
+		
+		int x2 = ArrayUtils.maxValue(vetX);
+		int y1 = ArrayUtils.minValue(vetY);
+		int y2 = ArrayUtils.maxValue(vetY);
+		
+		int kernel[] = new int[((y2 - y1 + 1)*2) +2 ];
+		int minX, maxX;
+		int k=0;
+		for(int y=y1; y<= y2; y++){
+			minX = maxX = Integer.MAX_VALUE;
+			for(int i=0; i<vetY.length; i++){
+				if(vetY[i] == y){
+					if(minX == Integer.MAX_VALUE){
+						minX = maxX = vetX[i];
+					}
+					if(minX > vetX[i]){
+						minX = vetX[i];
+					}
+					if(maxX < vetX[i]){
+						maxX = vetX[i];
+					}
+				}
+			}
+			kernel[k++] = minX;
+			kernel[k++] = maxX;
+		}
+			
+		kernel[kernel.length-1] = x2;
+		kernel[kernel.length-2] = numPontos; 
+		return kernel;
+	}
+	
+
 	/** Create a circular kernel (structuring element) of a given radius.
 	 *	@param radius:
 	 *	Radius = 0.5 includes the 4 neighbors of the pixel in the center,
@@ -496,42 +534,6 @@ public class RankFilters  {
 		kernel[kernel.length-2] = nPoints;
 		kernel[kernel.length-1] = kRadius;
 		//for (int i=0; i<kHeight;i++)IJ.log(i+": "+kernel[2*i]+"-"+kernel[2*i+1]);
-		return kernel;
-	}
-
-	protected int[] makeLineRadii(AdjacencyRelation adj){
-		int vetX[] = adj.getVectorX();
-		int vetY[] = adj.getVectorY();
-		int numPontos = vetX.length;
-		
-		int x2 = ArrayUtils.maxValue(vetX);
-		int y1 = ArrayUtils.minValue(vetY);
-		int y2 = ArrayUtils.maxValue(vetY);
-		
-		int kernel[] = new int[((y2 - y1 + 1)*2) +2 ];
-		int minX, maxX;
-		int k=0;
-		for(int y=y1; y<= y2; y++){
-			minX = maxX = Integer.MAX_VALUE;
-			for(int i=0; i<vetY.length; i++){
-				if(vetY[i] == y){
-					if(minX == Integer.MAX_VALUE){
-						minX = maxX = vetX[i];
-					}
-					if(minX > vetX[i]){
-						minX = vetX[i];
-					}
-					if(maxX < vetX[i]){
-						maxX = vetX[i];
-					}
-				}
-			}
-			kernel[k++] = minX;
-			kernel[k++] = maxX;
-		}
-			
-		kernel[kernel.length-1] = x2;
-		kernel[kernel.length-2] = numPontos; 
 		return kernel;
 	}
 	

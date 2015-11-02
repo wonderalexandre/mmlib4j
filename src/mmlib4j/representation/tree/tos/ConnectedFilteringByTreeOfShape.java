@@ -162,7 +162,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	}
 	
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(getInputImage());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){
@@ -210,7 +210,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	 */
 	public GrayScaleImage filteringByPruning(double attributeValue, int type){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput);;
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
@@ -278,7 +278,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		if(extinctionValue.getType() != type)
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(attributeValue, type);
 		
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput);;
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());;
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){

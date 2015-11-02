@@ -47,7 +47,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	private ColorImage reconstruction(ArrayList<ExtinctionValueNode> extincaoPorNode, int attributeValue1, int attributeValue2){
 		//reconstrucao
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(4); 
-		ColorImage imgOut = ImageFactory.createColorImage(tree.getInputImage());
+		ColorImage imgOut = ImageFactory.createCopyColorImage(tree.getInputImage());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
@@ -73,7 +73,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	}
 	
 	public GrayScaleImage segmentationByKmax(int kmax, int type){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage()); 
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight()); 
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		ArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
@@ -122,7 +122,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	}
 
 	public GrayScaleImage segmentationByAttribute(int attValue1, int attValue2, int type){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage());; 
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight());; 
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		ArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
@@ -185,7 +185,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	private ColorImage reconstructionKmax(ArrayList<ExtinctionValueNode> extincaoPorNode, int kmax){
 		//reconstrucao
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(4); 
-		ColorImage imgOut = ImageFactory.createColorImage(tree.getInputImage());;
+		ColorImage imgOut = ImageFactory.createCopyColorImage(tree.getInputImage());;
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(tree.getRoot());
 		if(kmax > extincaoPorNode.size()) kmax = extincaoPorNode.size();

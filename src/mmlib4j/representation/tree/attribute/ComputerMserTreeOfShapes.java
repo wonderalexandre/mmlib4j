@@ -262,7 +262,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	*/
 	
 	public ColorImage getImageMSER(int delta){
-		ColorImage img = ImageFactory.createColorImage(tree.getInputImage());
+		ColorImage img = ImageFactory.createCopyColorImage(tree.getInputImage());
 		for(NodeToS node: getNodesByMSER(delta)){
 			for(int p: node.getPixelsOfCC()){
 				img.setPixel(p, Color.RED.getRGB());
@@ -272,7 +272,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	}
 
 	public ColorImage getPointImageMSER(int delta){
-		ColorImage img = ImageFactory.createColorImage(tree.getInputImage());
+		ColorImage img = ImageFactory.createCopyColorImage(tree.getInputImage());
 		for(NodeToS node: getNodesByMSER(delta)){
 			for(int p: node.getCanonicalPixels()){
 				img.setPixel(p, Color.RED.getRGB());

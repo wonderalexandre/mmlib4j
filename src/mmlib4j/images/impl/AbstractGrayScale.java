@@ -161,11 +161,8 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     }
     
     public GrayScaleImage getInvert(){
-    	GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(this);
-    	int maxValue = (int) Math.pow(2, getDepth()) - 1;
-    	for(int p=0; p < getSize(); p++){
-    		imgOut.setPixel(p, maxValue - this.getPixel(p));
-    	}
+    	GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(this.getWidth(), this.getHeight());
+    	imgOut.invert();
     	return  imgOut;
     }
 

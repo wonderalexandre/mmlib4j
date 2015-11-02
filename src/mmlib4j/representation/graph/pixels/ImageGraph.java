@@ -27,10 +27,6 @@ public class ImageGraph implements Graph<Integer> {
 		this.weiht = weight;
 	}
 	
-	public GrayScaleImage createImageDomian(){
-		return ImageFactory.createGrayScaleImage(img);
-	}
-	
 	public Integer[] getVerteces(){
 		Integer vertexes[] = new Integer[img.getSize()];
 		for(int i=0; i < img.getSize(); i++)
@@ -62,6 +58,9 @@ public class ImageGraph implements Graph<Integer> {
 		return img.getSize();
 	}
 	
+	public GrayScaleImage getInputImage(){
+		return img;
+	}
 	
 	public Iterable<Integer> getAdjacencyVertex(int p){
 		return adj.getAdjacencyPixels(img, p);

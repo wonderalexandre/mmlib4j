@@ -2,7 +2,7 @@ package mmlib4j.representation.tree.componentTree;
 
 import mmlib4j.datastruct.PriorityQueue;
 import mmlib4j.datastruct.Queue;
-import mmlib4j.filtering.MorphologicalOperators;
+import mmlib4j.filtering.MorphologicalOperatorsBasedOnSE;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
@@ -222,7 +222,7 @@ public class ReconstructionMorphological {
 		}
 		
 		
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput);
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		for(int p: imgOut.scanForward()){
 			//if(mintree.getSC(p).flagPruning && maxtree.getSC(p).flagPruning){
 			//	System.out.println("ops...");
@@ -313,7 +313,7 @@ public class ReconstructionMorphological {
 		
 		for(int raio=1; raio <= raioMax; raio += step){
 			
-			imgMarcador = MorphologicalOperators.opening(imgMarcador, AdjacencyRelation.getCircular(raio));
+			imgMarcador = MorphologicalOperatorsBasedOnSE.opening(imgMarcador, AdjacencyRelation.getCircular(raio));
 			
 			for(int p=0; p < imgInput.getSize(); p++){
 				if(tree.isMaxtree){

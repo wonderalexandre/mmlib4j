@@ -33,9 +33,9 @@ public class ToggleMapping {
 	}
 
 	public static GrayScaleImage toggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgD = MorphologicalOperators.dilation(img, adj);//new ComponentTree(img, adj, false).filtering(40, IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT, IMorphologicalTreeFiltering.PRUNING, IMorphologicalTreeFiltering.RULE_DIRECT); 
-		GrayScaleImage imgE = MorphologicalOperators.erosion(img, adj);//new ComponentTree(img, adj, true).filtering(40, IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT, IMorphologicalTreeFiltering.PRUNING, IMorphologicalTreeFiltering.RULE_DIRECT);
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);
+		GrayScaleImage imgD = MorphologicalOperatorsBasedOnSE.dilation(img, adj);//new ComponentTree(img, adj, false).filtering(40, IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT, IMorphologicalTreeFiltering.PRUNING, IMorphologicalTreeFiltering.RULE_DIRECT); 
+		GrayScaleImage imgE = MorphologicalOperatorsBasedOnSE.erosion(img, adj);//new ComponentTree(img, adj, true).filtering(40, IMorphologicalTreeFiltering.ATTRIBUTE_HEIGHT, IMorphologicalTreeFiltering.PRUNING, IMorphologicalTreeFiltering.RULE_DIRECT);
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		int contrast1 = 15;
 		int percentage = 80;
 		for(int i=0; i < img.getSize(); i++){
@@ -56,9 +56,9 @@ public class ToggleMapping {
 	
 	
 	public static GrayScaleImage toggleMappingResidue (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgD = MorphologicalOperators.dilation(img, adj); 
-		GrayScaleImage imgE = MorphologicalOperators.erosion(img, adj);
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);
+		GrayScaleImage imgD = MorphologicalOperatorsBasedOnSE.dilation(img, adj); 
+		GrayScaleImage imgE = MorphologicalOperatorsBasedOnSE.erosion(img, adj);
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		for(int i=0; i < img.getSize(); i++){
 			if ( (imgD.getPixel(i) - img.getPixel(i)) < (img.getPixel(i) - imgE.getPixel(i)) ) {
 				imgOut.setPixel(i, imgD.getPixel(i) - img.getPixel(i));
@@ -71,7 +71,7 @@ public class ToggleMapping {
 	}
 
 	public static GrayScaleImage toggleMapping (GrayScaleImage img, GrayScaleImage extensive, GrayScaleImage antiExtensive){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		int contrast1 = 15;
 		int percentage = 80;
 		for(int i=0; i < img.getSize(); i++){
@@ -92,10 +92,10 @@ public class ToggleMapping {
 
 	
 	public static void doubleToggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgD = MorphologicalOperators.dilation(img, adj);
-		GrayScaleImage imgE = MorphologicalOperators.erosion(img, adj);
-		GrayScaleImage imgOut1 = ImageFactory.createGrayScaleImage(img);
-		GrayScaleImage imgOut2 = ImageFactory.createGrayScaleImage(img);
+		GrayScaleImage imgD = MorphologicalOperatorsBasedOnSE.dilation(img, adj);
+		GrayScaleImage imgE = MorphologicalOperatorsBasedOnSE.erosion(img, adj);
+		GrayScaleImage imgOut1 = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut2 = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		
 		int contrast1 = 50;
 		int contrast2 = 16;	

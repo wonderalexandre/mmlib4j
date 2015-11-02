@@ -3,7 +3,7 @@ package mmlib4j.representation.graph.rag;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import mmlib4j.filtering.MorphologicalOperators;
+import mmlib4j.filtering.MorphologicalOperatorsBasedOnSE;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
@@ -46,7 +46,7 @@ public class RegionAdjcencyGraph implements Graph<Integer>{
 	
 	public static RegionAdjcencyGraph getRAGByBasinsWatershed(GrayScaleImage imgIn, boolean flag){
 		AdjacencyRelation adj8 = AdjacencyRelation.getCircular(1.5);
-		GrayScaleImage img = MorphologicalOperators.gradient(imgIn, adj8);
+		GrayScaleImage img = MorphologicalOperatorsBasedOnSE.gradient(imgIn, adj8);
 		GrayScaleImage imgMinima = RegionalMinimaByIFT.extractionOfRegionalMinima(img);
 		GrayScaleImage labels = WatershedByIFT.watershedByMarker(img, imgMinima);
 		//IGrayScaleImage labels = IFT.watershedByHBacia(adj8, img, 1);
@@ -93,6 +93,10 @@ public class RegionAdjcencyGraph implements Graph<Integer>{
 		rag.createRAG(imgRepresentanteLabel, flag);
 		//rag.print();
 		return rag;
+	}
+	
+	public GrayScaleImage getInputImage(){
+		return img;
 	}
 	
 	public int getNumVerteces(){

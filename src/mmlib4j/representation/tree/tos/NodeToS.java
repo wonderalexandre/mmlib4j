@@ -39,10 +39,6 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
 	
 	
-	public boolean flagPruning;
-	public boolean flagProcess;
-	
-	
 	//basic attribute node
 	int xmin;
 	int ymin;
@@ -318,7 +314,7 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	
 	
 	public GrayScaleImage createImageSC(int levelNotPixelCanonical){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img);;
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());;
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this);
 		while(!fifo.isEmpty()){

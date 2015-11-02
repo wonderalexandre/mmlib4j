@@ -2,7 +2,7 @@ package mmlib4j.segmentation;
 
 import java.util.Arrays;
 
-import mmlib4j.filtering.MorphologicalOperators;
+import mmlib4j.filtering.MorphologicalOperatorsBasedOnSE;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
@@ -73,8 +73,8 @@ public class ThresholdLocal {
     public BinaryImage otsuLocal(int limiar){
         BinaryImage imgOut = new BitImage(img.getWidth(), img.getHeight());
         AdjacencyRelation adj = AdjacencyRelation.getCircular(2);
-        GrayScaleImage imgDilate = MorphologicalOperators.dilation(img, adj);
-        GrayScaleImage imgErode = MorphologicalOperators.erosion(img, adj);
+        GrayScaleImage imgDilate = MorphologicalOperatorsBasedOnSE.dilation(img, adj);
+        GrayScaleImage imgErode = MorphologicalOperatorsBasedOnSE.erosion(img, adj);
         BinaryImage imgOtsu = ThresholdGlobal.otsu(img);
         
         boolean level; 

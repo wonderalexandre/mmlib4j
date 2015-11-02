@@ -17,6 +17,9 @@ public class ImageFactory {
 	public static final int DEPTH_16BITS = 16;
 	public static final int DEPTH_8BITS = 8;
 	
+	//////////////////////////////////////////////////////////
+	//                   create news images
+	////////////////////////////////////////////////////////
 	public static GrayScaleImage createGrayScaleImage(int depth, int width, int height){
 		if(depth == DEPTH_8BITS)
 			return new ByteImage(width, height);
@@ -29,10 +32,61 @@ public class ImageFactory {
 	}
 	
 	public static GrayScaleImage createGrayScaleImage(int width, int height) {
-		return createGrayScaleImage(8, width, height);
+		return createGrayScaleImage(DEPTH_8BITS, width, height);
 	}
 	
-	public static GrayScaleImage createGrayScaleImage(int depth, Object pixels, int width, int height) {
+	
+	public static BinaryImage createBinaryImage(int width, int height){
+		return new BitImage(width, height);
+	}
+	
+
+	public static ColorImage createColorImage(int width, int height){
+		return new RGBImage(width, height);
+	}
+	
+
+	public static RealImage createFloatImage(int width, int height){
+		return new FloatImage(width, height);
+	}
+	
+	
+	//////////////////////////////////////////////////////////
+	//      create copy for the object pixels[] ///
+	/////////////////////////////////////////////////////////	
+	public static ColorImage createCopyColorImage(GrayScaleImage img){
+		return new RGBImage(img);
+	}
+	
+	public static ColorImage createCopyColorImage(BinaryImage img){
+		return new RGBImage(img);
+	}
+	
+	
+	public static GrayScaleImage createCopyGrayScaleImage(GrayScaleImage img) {
+		return img.duplicate();
+	}
+	
+	public static BinaryImage createCopyBinaryImage(BinaryImage img) {
+		return img.duplicate();
+	}
+	
+	//////////////////////////////////////////////////////////
+	//      create new references for the object pixels[] ///
+	/////////////////////////////////////////////////////////
+	public static ColorImage createReferenceColorImage(int pixels[], int width, int height){
+		return new RGBImage(pixels, width, height);
+	}
+	
+	public static RealImage createReferenceFloatImage(float pixels[], int width, int height){
+		return new FloatImage(pixels, width, height);
+	}
+
+	public static BinaryImage createReferenceBinaryImage(boolean pixels[], int width, int height){
+		return new BitImage(pixels, width, height);
+	}
+
+	public static GrayScaleImage createReferenceGrayScaleImage(int depth, Object pixels, int width, int height) {
 		if(depth == DEPTH_8BITS)
 			return new ByteImage((byte[])pixels, width, height);
 		if(depth == DEPTH_16BITS)
@@ -43,49 +97,6 @@ public class ImageFactory {
 		return  null;
 	}
 	
-	public static GrayScaleImage createGrayScaleImage(GrayScaleImage img) {
-		if(img.getDepth() == DEPTH_8BITS)
-			return new ByteImage(img.getWidth(), img.getHeight());
-		else if(img.getDepth() == DEPTH_16BITS)
-			return new ShortImage(img.getWidth(), img.getHeight());
-		else if(img.getDepth() == DEPTH_32BITS){
-			return new IntegerImage(img.getWidth(), img.getHeight());
-		}
-		return  null;
-	}
-	
-	public static BinaryImage createBinaryImage(int width, int height){
-		return new BitImage(width, height);
-	}
-	
-
-	public static BinaryImage createBinaryImage(boolean pixels[], int width, int height){
-		return new BitImage(pixels, width, height);
-	}
-	
-	public static ColorImage createColorImage(int width, int height){
-		return new RGBImage(width, height);
-	}
-	
-	public static ColorImage createColorImage(int pixels[], int width, int height){
-		return new RGBImage(pixels, width, height);
-	}
-	
-	public static ColorImage createColorImage(GrayScaleImage img){
-		return new RGBImage(img);
-	}
-	
-	public static ColorImage createColorImage(BinaryImage img){
-		return new RGBImage(img);
-	}
-	
-	public static RealImage createFloatImage(int width, int height){
-		return new FloatImage(width, height);
-	}
-	
-	public static RealImage createFloatImage(float pixels[], int width, int height){
-		return new FloatImage(pixels, width, height);
-	}
 	
 	
 }

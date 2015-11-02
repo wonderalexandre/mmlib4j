@@ -18,7 +18,7 @@ public class ImageAlgebra {
      * @return
      */
     public static GrayScaleImage minimum(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgM = ImageFactory.createGrayScaleImage(imgA);
+        GrayScaleImage imgM = ImageFactory.createGrayScaleImage(imgA.getWidth(), imgA.getHeight());
         for(int w=0; w < imgA.getWidth(); w++){
             for(int h=0; h < imgA.getHeight(); h++){
                 if(imgA.getPixel(w,h) < imgB.getPixel(w,h))
@@ -37,7 +37,7 @@ public class ImageAlgebra {
      * @return
      */
     public static GrayScaleImage maximum(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgM = ImageFactory.createGrayScaleImage(imgA);
+        GrayScaleImage imgM = ImageFactory.createGrayScaleImage(imgA.getWidth(), imgA.getHeight());
         for(int w=0; w < imgA.getWidth(); w++){
             for(int h=0; h < imgA.getHeight(); h++){
                 if(imgA.getPixel(w,h) > imgB.getPixel(w,h))
@@ -56,7 +56,7 @@ public class ImageAlgebra {
      * @return IGrayScaleImage com a diferenca entre a imagem A e a imagem B
      */
     public static GrayScaleImage subtraction(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA);
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA.getWidth(), imgA.getHeight());
         int tmp = 0;
         for(int i=0; i < imgA.getSize(); i++){
         	tmp = (imgA.getPixel(i) - imgB.getPixel(i)) < 0? 0:  (imgA.getPixel(i) - imgB.getPixel(i));
@@ -67,7 +67,7 @@ public class ImageAlgebra {
   
     
     public static GrayScaleImage subtractionAbs(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA);
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA.getWidth(), imgA.getHeight());
         int tmp = 0;
         for(int x = 0 ; x < imgA.getWidth() ; x++){
             for(int y = 0 ; y < imgA.getHeight(); y++){
@@ -80,7 +80,7 @@ public class ImageAlgebra {
    
 
     public static GrayScaleImage multiply(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA);
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA.getWidth(), imgA.getHeight());
         int tmp = 0;
         for(int x = 0 ; x < imgA.getWidth() ; x++){
             for(int y = 0 ; y < imgA.getHeight(); y++){
@@ -93,10 +93,11 @@ public class ImageAlgebra {
     
 
     public static GrayScaleImage add(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA);
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA.getWidth(), imgA.getHeight());
         int tmp = 0;
+        int max = (int) Math.pow(2, imgA.getDepth()) - 1;
         for(int i=0; i < imgA.getSize(); i++){
-        	tmp = (imgA.getPixel(i) + imgB.getPixel(i)) > 255? 255:  (imgA.getPixel(i) + imgB.getPixel(i));
+        	tmp = (imgA.getPixel(i) + imgB.getPixel(i)) > max? max:  (imgA.getPixel(i) + imgB.getPixel(i));
         	imgOut.setPixel(i, tmp);
         }
         

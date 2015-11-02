@@ -132,7 +132,7 @@ public class UltimateAttributeOpenClose{
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(this.imgInput);
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
 		GrayScaleImage res1 = processMaxtree.uao.getResidues();
 		GrayScaleImage res2 = processMintree.uao.getResidues();
 		for(int p=0; p < transformImg.getSize(); p++){

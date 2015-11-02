@@ -380,7 +380,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		}
 		
 		
-		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageFactory.createGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
+		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
 		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageBuilder.openGrayImage(), AdjacencyRelation.getCircular(1.5), false);
 		NodeCT root = builder.getRoot();
 		

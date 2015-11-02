@@ -16,7 +16,7 @@ import mmlib4j.utils.ImageBuilder;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class MorphologicalReconstruction {
+public class MorphologicalOperatorsBasedOnMarkedImage {
 
 	private static AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5);
 	
@@ -30,7 +30,7 @@ public class MorphologicalReconstruction {
 	 * Restricao
 	 * imgG < imgMarked and Dominio(imgG) = Dominio(imgMarked) 
 	 */
-	public static GrayScaleImage dilationByReconstruction(GrayScaleImage imgG, GrayScaleImage imgMarked){
+	public static GrayScaleImage dilationByReconstructionLucVicent(GrayScaleImage imgG, GrayScaleImage imgMarked){
 		long ti = System.currentTimeMillis();
 		GrayScaleImage imgF = imgMarked.duplicate();
 		int max = 0;
@@ -96,7 +96,7 @@ public class MorphologicalReconstruction {
 	 * Restricao
 	 * imgG < imgMarked and Dominio(imgG) = Dominio(imgMarked) 
 	 */
-	public static GrayScaleImage selfReconstruction(GrayScaleImage imgInput, GrayScaleImage imgMarked){
+	public static GrayScaleImage selfReconstructionLucVicent(GrayScaleImage imgInput, GrayScaleImage imgMarked){
 		long ti = System.currentTimeMillis();
 		GrayScaleImage imgM = imgMarked.duplicate();
 		int max;
@@ -188,7 +188,7 @@ public class MorphologicalReconstruction {
      */
     public static GrayScaleImage closingOfHoles(GrayScaleImage imgInput, int back){
         //criando o marcador
-        GrayScaleImage imgMarker = ImageFactory.createGrayScaleImage(imgInput);
+        GrayScaleImage imgMarker = ImageFactory.createGrayScaleImage(imgInput.getWidth(), imgInput.getHeight());
         imgMarker.initImage(back);     
         int fore = (back == 255? 0: 255);
         //marcando as bordas com 1-pixel de espessura
@@ -200,7 +200,7 @@ public class MorphologicalReconstruction {
             imgMarker.setPixel(0, j, fore);
             imgMarker.setPixel(imgMarker.getWidth()-1, j, fore);
         }
-        return dilationByReconstruction(imgInput, imgMarker);
+        return dilationByReconstructionLucVicent(imgInput, imgMarker);
     }
     
     
@@ -208,11 +208,11 @@ public class MorphologicalReconstruction {
     	double raio = 1;
     	AdjacencyRelation adj;
     	AdjacencyRelation adj8 = AdjacencyRelation.getCircular(1.5);
-    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img);
+    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
     	GrayScaleImage imgErosion = img.duplicate();
     	for(int i=0; i < 110; i++){
     		adj = AdjacencyRelation.getCircular(raio);
-    		GrayScaleImage imgRecOpen = MorphologicalOperators.opening(imgErosion, adj8);
+    		GrayScaleImage imgRecOpen = MorphologicalOperatorsBasedOnSE.opening(imgErosion, adj8);
     		for(int p=0; p < img.getSize(); p++){
     			uniao.setPixel(p, Math.max(uniao.getPixel(p), imgErosion.getPixel(p) - imgRecOpen.getPixel(p)));
     		}
@@ -222,7 +222,7 @@ public class MorphologicalReconstruction {
     			ImageBuilder.saveImage(imgRecOpen, new File("/users/wonderalexandre/Desktop/abertura_"+i+".png"));
     		}
     		//WindowImages.show(new IImage[]{uniao, imgErosion, imgRecOpen}, new String[]{"uniao_" + raio, "erosao_"+ raio, "abertura_"+raio});
-    		imgErosion = MorphologicalOperators.erosion(img, adj);
+    		imgErosion = MorphologicalOperatorsBasedOnSE.erosion(img, adj);
     		raio += 0.5;
     	}
     	return uniao;
@@ -232,7 +232,7 @@ public class MorphologicalReconstruction {
     	double raio = 1;
     	AdjacencyRelation adj;
     	AdjacencyRelation adj8 = AdjacencyRelation.getCircular(4);
-    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img);
+    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
     	GrayScaleImage imgErosion = img.duplicate();
     	for(int i=0; i < 100; i++){
     		adj = AdjacencyRelation.getCircular(raio);
@@ -248,7 +248,7 @@ public class MorphologicalReconstruction {
     		}
     		//WindowImages.show(new IImage[]{uniao, imgErosion, imgRecOpen}, new String[]{"uniao_" + raio, "erosao_"+ raio, "abertura_"+raio});
     		raio += 0.5;
-    		imgErosion = MorphologicalOperators.erosion(img, adj);
+    		imgErosion = MorphologicalOperatorsBasedOnSE.erosion(img, adj);
     		
     	}
     	return uniao;
@@ -333,12 +333,12 @@ public class MorphologicalReconstruction {
     
     public static void main(String args[]){
     	GrayScaleImage img = ImageBuilder.openGrayImage(ImageBuilder.windowOpenFile());
-    	GrayScaleImage imgM = MorphologicalOperators.opening(img, AdjacencyRelation.getCircular(5));
+    	GrayScaleImage imgM = MorphologicalOperatorsBasedOnSE.opening(img, AdjacencyRelation.getCircular(5));
     	
     	
     	
-    	GrayScaleImage imgOut = MorphologicalReconstruction.dilationByReconstructionIFT(img, imgM);
-    	GrayScaleImage imgOut2 = dilationByReconstruction(img, imgM);
+    	GrayScaleImage imgOut = MorphologicalOperatorsBasedOnMarkedImage.dilationByReconstructionIFT(img, imgM);
+    	GrayScaleImage imgOut2 = dilationByReconstructionLucVicent(img, imgM);
     	
     	System.out.println(imgOut2.equals(imgOut));
     	WindowImages.show(new Image2D[]{img, imgM, imgOut, imgOut2});

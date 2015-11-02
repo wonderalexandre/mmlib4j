@@ -41,7 +41,6 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 	boolean isNodeMaxtree;
 	NodeCT parent;
 	List<NodeCT> children = new ArrayList<NodeCT>();
-	SimpleLinkedList<NodeCT> adjcencyNodes = new SimpleLinkedList<NodeCT>();
 	SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
 	
 	//basic attribute node
@@ -58,8 +57,9 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 	int area;
 	int volume;
 	HashMap<Integer, Attribute> attributes = new HashMap<Integer, Attribute>();
+	
 	Contour contourE = null;
-
+	SimpleLinkedList<NodeCT> adjcencyNodes = null;
 	
 	public NodeCT(boolean isMaxtree, int numCreate, GrayScaleImage img, int canonicalPixel){
 		this.isNodeMaxtree = isMaxtree;
@@ -402,7 +402,7 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 
 
 	public GrayScaleImage createImageSC(int levelNotSC){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(this.img);;
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());;
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(this);
 		while(!fifo.isEmpty()){

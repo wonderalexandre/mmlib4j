@@ -209,8 +209,8 @@ public class AdjacencyRelationByAmoebas {
 		
 		GrayScaleImage imgOriginal = ImageBuilder.openGrayImage();
 		GrayScaleImage img = ImageBuilder.openGrayImage();
-		GrayScaleImage imgMedia = ImageFactory.createGrayScaleImage(img);
-		GrayScaleImage imgMediaAboema = ImageFactory.createGrayScaleImage(img);
+		GrayScaleImage imgMedia = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
+		GrayScaleImage imgMediaAboema = ImageFactory.createGrayScaleImage(img.getWidth(), img.getHeight());
 		
 		for(int p=0; p < img.getSize(); p++){
 			int cont = 0;

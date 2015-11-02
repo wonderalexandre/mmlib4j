@@ -732,7 +732,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			}
 			System.out.println();
 		}
-		GrayScaleImage img = ImageFactory.createGrayScaleImage(32, pixels5, width, height);
+		GrayScaleImage img = ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height);
 		
 		BuilderTreeOfShapeByUnionFindParallel builder = new BuilderTreeOfShapeByUnionFindParallel(ImageBuilder.openGrayImage());
 		if(true) return;

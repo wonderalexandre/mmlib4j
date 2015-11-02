@@ -2,6 +2,8 @@ package mmlib4j.representation.graph;
 
 import java.util.List;
 
+import mmlib4j.images.GrayScaleImage;
+
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -17,4 +19,6 @@ public interface Graph<T> {
 	public T[] getVerteces();
 	
 	public int getCustVertex(int p);
+	
+	public GrayScaleImage getInputImage();
 }
