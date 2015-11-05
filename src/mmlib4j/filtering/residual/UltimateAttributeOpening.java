@@ -225,7 +225,7 @@ public class UltimateAttributeOpening {
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
@@ -267,7 +267,7 @@ public class UltimateAttributeOpening {
 	}
 	
 	public GrayScaleImage getAssociateIndexImage(){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
