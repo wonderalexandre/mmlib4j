@@ -354,7 +354,7 @@ public class MorphologicalTreeByKruskal {
 			return qBt.size-1;
 		}
 	}
-	
+
 
 	
 	public Edge<Integer>[] getEdgeMST(){
@@ -398,83 +398,6 @@ public class MorphologicalTreeByKruskal {
       printTree(qBT.size-1, 1);
       System.out.println("\n");
   }
-
-/*
-	public void draw(){
-		UndirectedSparseGraph<Integer,Edge<Integer>> tree = new UndirectedSparseGraph<Integer,Edge<Integer>>();
-		 //Forest<Integer,Edge<Integer>> tree = new DelegateTree<Integer,Edge<Integer>>();
-		 for(Edge<Integer> edge: mst){
-			 tree.addEdge(edge, edge.getVertex1(), edge.getVertex2());
-		 }
-		 
-		 KKLayout<Integer,Edge<Integer> > graphLayout = new KKLayout<Integer,Edge<Integer>>(tree);
-		 //TreeLayout<Integer,Edge<Integer>> graphLayout = new TreeLayout<Integer,Edge<Integer>>(tree);
-		 final VisualizationViewer<Integer,Edge<Integer>> vv =  new VisualizationViewer<Integer,Edge<Integer>>(graphLayout);
-		 
-		 vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
-		 vv.getRenderContext().setVertexLabelTransformer(new Transformer<Integer,String>() {
-			    public String transform(Integer v) {
-			        return  String.valueOf(graph.getCustVertex(v));
-			    }
-		 });
-		 vv.getRenderContext().setEdgeLabelTransformer(new Transformer<Edge<Integer>, String>() {
-			 public String transform(Edge<Integer> e) {
-				return String.valueOf(e.getWeight());
-			 }
-		});
-		 vv.getRenderContext().setEdgeDrawPaintTransformer(new Transformer<Edge<Integer>, Paint>() {
-			public Paint transform(Edge<Integer> arg0) {
-				return Color.GREEN;
-			}			 
-		});
-		vv.getRenderContext().setVertexShapeTransformer(new Transformer<Integer, Shape>() {
-			public Shape transform(Integer arg0) {
-				return new Ellipse2D.Double(-7,-7,15,15);
-			}
-		});
-		 
-		 // vv.getRenderContext().setVertexFillPaintTransformer(new NodeShape());
-		 // add a listener for ToolTips
-		 vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
-
-		 
-		 
-		 final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
-		 graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
-		 vv.setGraphMouse(graphMouse);
-		 	
-		 
-		 final ScalingControl scaler = new CrossoverScalingControl();
-
-		 JButton plus = new JButton("+");
-		 plus.addActionListener(new ActionListener() {
-			 public void actionPerformed(ActionEvent e) {
-				 scaler.scale(vv, 1.1f, vv.getCenter());
-			 }
-		 });
-		 JButton minus = new JButton("-");
-		 minus.addActionListener(new ActionListener() {
-			 public void actionPerformed(ActionEvent e) {
-				 scaler.scale(vv, 1/1.1f, vv.getCenter());
-			 }
-		 });
-	        	           
-		 
-		 
-		 JPanel scaleGrid = new JPanel(new GridLayout(1,0));
-		 scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
-		 scaleGrid.add(plus);
-		 scaleGrid.add(minus);
-	        
-		 final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
-	     JFrame frame = new JFrame("Arvore geradora minima (Kruskal)");   
-	     frame.setSize(500, 500);
-	     frame.setLayout(new BorderLayout());
-	     frame.add(panel, BorderLayout.CENTER);
-		 frame.add(scaleGrid, BorderLayout.SOUTH); 
-		 frame.setVisible(true);
-	}
-  */
 	
 	public static void main(String[] args) {
 		long ti = System.currentTimeMillis();
