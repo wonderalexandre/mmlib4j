@@ -26,7 +26,7 @@ public interface GrayScaleImage extends Image2D{
     
     public void setPixel(int i, int level);
     
-    public void setPadding(int value);
+   // public void setPadding(int value);
     
     public void setPixels(int width, int height, Object pixels);
    

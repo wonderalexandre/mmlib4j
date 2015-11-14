@@ -13,7 +13,7 @@ public abstract class AbstractImage2D implements Image2D{
 
 	protected int width; //largura da imagem
 	protected int height; //altura da imagem
-    
+    protected PixelIndexer pixelIndexer;
 
     public boolean isPixelValid(int x, int y){
         return (x >= 0 && x < this.getWidth() && y >= 0 && y < this.getHeight());
@@ -23,7 +23,14 @@ public abstract class AbstractImage2D implements Image2D{
     	return isPixelValid(p % this.getWidth(), p / this.getWidth());
     }
     
+    public PixelIndexer getPixelIndexer(){
+    	return pixelIndexer;
+    }
     
+    public void setPixelIndexer(PixelIndexer indexer){
+    	pixelIndexer = indexer;
+    }
+        
     /**
      * Retorna o tamanho da imagem
      * @return
@@ -53,6 +60,13 @@ public abstract class AbstractImage2D implements Image2D{
     	
     }
     
+    public int getIndex(int p){
+    	return pixelIndexer.getIndex(p);
+    }
+    
+    public int getIndex(int x, int y){
+    	return pixelIndexer.getIndex(x, y);
+    }
 
     public Iterable<Integer> scanForward(){
     	final int size = getSize();

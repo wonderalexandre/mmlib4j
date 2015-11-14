@@ -21,12 +21,14 @@ public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
         this.width = width;
         this.height = height;
         this.pixels = new byte[width * height];
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
 
 	ByteImage(byte pixels[], int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
     
 
@@ -95,6 +97,7 @@ public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
     	this.width = width;
         this.height = height;
         this.pixels = (byte[]) pixels;
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
     
     
@@ -107,6 +110,7 @@ public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
     	this.width = width;
         this.height = height;
         this.pixels = new byte[width * height];
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
         initImage(255);
         
         for (int i = 0, x = Math.abs(oldWidth - width)/2; i < oldWidth; i++, x++){

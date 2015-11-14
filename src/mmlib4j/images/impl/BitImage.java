@@ -27,12 +27,14 @@ public class BitImage extends AbstractImage2D implements BinaryImage{
         this.width = width;
         this.height = height;
         pixels = new boolean[width * height];
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
 
     public BitImage(boolean pixels[], int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
     
     /**
@@ -133,6 +135,15 @@ public class BitImage extends AbstractImage2D implements BinaryImage{
         return result;
     }
    
+
+	public boolean getValue(int x, int y) {
+		return getPixel(getPixelIndexer().getIndex(x, y));
+	}
+	
+	public boolean getValue(int p) {
+		return getPixel(getPixelIndexer().getIndex(p));
+		
+	}
     
     /**
      * Modifica o valor do pixel (x, y) = value
@@ -160,6 +171,7 @@ public class BitImage extends AbstractImage2D implements BinaryImage{
         this.width = width;
         this.height = height;
         this.pixels = pixels;
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
        
     }
     

@@ -1,5 +1,6 @@
 package mmlib4j.images;
 
+import mmlib4j.images.impl.PixelIndexer;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -26,5 +27,12 @@ public interface Image2D {
     
     public int getDepth();
    
+    public PixelIndexer getPixelIndexer();
+    
+    public void setPixelIndexer(PixelIndexer indexer);
+    
+    public int getIndex(int p);
+    
+    public int getIndex(int x, int y);
 }
 

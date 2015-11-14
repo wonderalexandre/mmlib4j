@@ -25,12 +25,14 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
         this.width = width;
         this.height = height;
         this.pixels = new int[width * height];
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
 
 	IntegerImage(int pixels[], int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
 	
     
@@ -72,7 +74,16 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
     	this.width = width;
         this.height = height;
         this.pixels = (int[]) pixels;
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
+    
+    public int getValue(int x, int y) {
+		return getPixel(getPixelIndexer().getIndex(x, y));
+	}
+	
+	public int getValue(int p) {
+		return getPixel(getPixelIndexer().getIndex(p));
+	}
     
 
     public void setPixel(int i, byte level){
@@ -98,7 +109,7 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
         this.height = height;
         this.pixels = new int[width * height];
         initImage(255);
-        
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
         for (int i = 0, x = Math.abs(oldWidth - width)/2; i < oldWidth; i++, x++){
             for (int j = 0, y = Math.abs(oldHeight - height)/2; j < oldHeight; j++, y++){
                 setPixel(x, y, pixels[j * oldWidth + i]);
@@ -117,7 +128,7 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
     }
     
     public int getDepth(){
-    	return 32;
+    	return ImageFactory.DEPTH_32BITS;
     }
 
     public ColorImage labeling(AdjacencyRelation adj){

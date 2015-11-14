@@ -28,12 +28,14 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
         this.width = width;
         this.height = height;
         this.pixels = new int[width * height];
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
 
     RGBImage(int pixels[], int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
     
     /**
@@ -44,6 +46,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
         this.width = img.getWidth();
         this.height = img.getHeight();
         this.pixels = new int[width * height];
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
         for (int i = 0; i < getSize(); i++){
             	pixels[i] = ((alpha & 0xFF) << 24) |
             				((img.getPixel(i) & 0xFF) << 16) |
@@ -61,6 +64,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
         this.width = img.getWidth();
         this.height = img.getHeight();
         this.pixels = new int[width * height];
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
         for (int i = 0; i < getSize(); i++){
         	pixels[i] = ((alpha & 0xFF) << 24) |
         				((img.getPixel(i)?1:0 & 0xFF) << 16) |
@@ -148,6 +152,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
     	this.width = width;
     	this.height = height;
         this.pixels = pixels;
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
     }
     public void setPixel(int x, int y, int[] value) {
     	setPixel(y * width + x, value);
@@ -242,7 +247,35 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
         }
     }
 
+    
+    public int getValue(int x, int y) {
+		return getPixel(getPixelIndexer().getIndex(x, y));
+	}
+	public int getValue(int p) {
+		return getPixel(getPixelIndexer().getIndex(p));
+	}
 
+	public int getValueRed(int x, int y) {
+		return getRed(getPixelIndexer().getIndex(x, y));
+	}
+	public int getValueRed(int p) {
+		return getRed(getPixelIndexer().getIndex(p));
+	}
+	
+	public int getValueGreen(int x, int y) {
+		return getGreen(getPixelIndexer().getIndex(x, y));
+	}
+	public int getValueGreen(int p) {
+		return getGreen(getPixelIndexer().getIndex(p));
+	}
+	
+	public int getValueBlue(int x, int y) {
+		return getBlue(getPixelIndexer().getIndex(x, y));
+	}
+	public int getValueBlue(int p) {
+		return getBlue(getPixelIndexer().getIndex(p));
+	}
+	
 	public int getRed(int i) {
 		return (pixels[i] >> 16) & 0xFF; //red
 	}
@@ -330,7 +363,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
     }
     
     public int getDepth(){
-    	return 32;
+    	return ImageFactory.DEPTH_32BITS;
     }
 
 	public void setPixel(int x, int y, int r, int g, int b) {

@@ -16,7 +16,7 @@ import mmlib4j.utils.ImageUtils;
 public abstract class AbstractGrayScale extends AbstractImage2D implements GrayScaleImage{
 
 	private Statistics stats = null;
-    protected int padding = Integer.MIN_VALUE; 
+    //protected int padding = Integer.MIN_VALUE; 
     
     public void paintBoundBox(int x1, int y1, int x2, int y2, int color){
         int w = x2 - x1;
@@ -61,14 +61,26 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     	}
     }
  
-	public int getValue(int x, int y) {
+    /*
+	public int getValuePixel(int x, int y) {
 		return isPixelValid(x, y) ? getPixel(x, y): padding;
 	}
 	
-	public int getValue(int i) {
+	public int getValuePixel(int i) {
 		return isPixelValid(i) ? getPixel(i): padding;
 		
 	}
+	*/
+    
+	public int getValue(int x, int y) {
+		return getPixel(getPixelIndexer().getIndex(x, y));
+	}
+	
+	public int getValue(int p) {
+		return getPixel(getPixelIndexer().getIndex(p));
+		
+	}
+
 
  
     /**
@@ -104,10 +116,10 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
         return numPixel;
         
     }
-    
+    /*
     public void setPadding(int value){
     	this.padding = value;
-    }
+    }*/
     
     /**
      * Verifica se duas imagens sao iguais

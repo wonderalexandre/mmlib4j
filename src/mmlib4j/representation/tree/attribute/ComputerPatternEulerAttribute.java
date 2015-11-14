@@ -3,6 +3,7 @@ package mmlib4j.representation.tree.attribute;
 import java.util.HashSet;
 
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.images.impl.PixelIndexer;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -24,12 +25,15 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 	GrayScaleImage img; 
 	AdjacencyRelation adj;
 	boolean isMaxtree;
+	private int index;
+	
 	public ComputerPatternEulerAttribute(int numNode, NodeLevelSets root, GrayScaleImage img, AdjacencyRelation adj){
 		long ti = System.currentTimeMillis();
 		this.numNode = numNode;
 		this.attr = new PatternEulerAttribute[numNode];
 		this.img = img;
 		this.adj = adj;
+		img.setPixelIndexer( PixelIndexer.getDefaultValueIndexer(img.getWidth(), img.getHeight()) );
 		
 		computerAttribute(root);
 		if(Utils.debug){
@@ -63,10 +67,6 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 	public void preProcessing(NodeLevelSets node) {
 		attr[node.getId()] = new PatternEulerAttribute();
 		this.isMaxtree = node.isNodeMaxtree();
-		if(isMaxtree)
-			img.setPadding(Integer.MIN_VALUE);
-		else
-			img.setPadding(Integer.MAX_VALUE);
 		
 		for(int p: node.getCanonicalPixels()){
 			computerLocalPattern(node, p);
@@ -87,10 +87,17 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 	
 
 	private int getValue(int x, int y){
+		index = img.getIndex(x, y);
 		if(isMaxtree)
-			return img.getValue(x, y);
+			if(index == -1)
+				return -1;
+			else
+				return img.getPixel(x, y);
 		else
-			return 255 - img.getValue(x, y);
+			if(index == -1)
+				return 256;
+			else
+				return 255 - img.getPixel(x, y);
 	}
 	
 	private void computerLocalPattern(NodeLevelSets node, int p) {

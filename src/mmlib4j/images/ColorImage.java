@@ -13,7 +13,6 @@ public interface ColorImage extends Image2D{
     public ColorImage duplicate();
     
     public int getPixel(int x, int y);
-    
     public int getPixel(int i);
     
     public int[] getPixels();
@@ -66,6 +65,15 @@ public interface ColorImage extends Image2D{
     public void setGray(int i, int value);
     public int getGray(int i);
     public int getGray(int x, int y);
+    
+    public int getValue(int x, int y);
+    public int getValue(int i);
+    public int getValueRed(int x, int y);
+    public int getValueRed(int i);
+    public int getValueGreen(int x, int y);
+    public int getValueGreen(int i);
+    public int getValueBlue(int x, int y);
+    public int getValueBlue(int i);
     
 }
     
