@@ -259,7 +259,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	 * @return imagem filtrada
 	 */
 	public GrayScaleImage filtering(double attributeValue, int type, int typePruning){
-		if(typePruning == MorphologicalTreeFiltering.EXTINCTION_VALUE)
+		if(typePruning == MorphologicalTreeFiltering.PRUNING_EXTINCTION_VALUE)
 			return filteringExtinctionValue(attributeValue, type);
 		else	
 			return filteringByPruning(attributeValue, type);

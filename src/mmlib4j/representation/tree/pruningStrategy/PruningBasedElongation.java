@@ -80,7 +80,7 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 		if(tree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) this.tree;
 			for(NodeCT node: tree.getNodesMap()){
-				if( (selectedNodes == null && isNodeElongation(node) ) ||(selectedNodes != null && selectedNodes[node.getId()] && isNodeElongation(node)) ){
+				if( (selectedNodes == null && isNodeElongation(node) ) || (selectedNodes != null && selectedNodes[node.getId()] && isNodeElongation(node)) ){
 					mserElongation[node.getId()] = true;
 				}
 			}
@@ -89,7 +89,7 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 		else if(tree instanceof TreeOfShape){
 			TreeOfShape tree = (TreeOfShape) this.tree;
 			for(NodeToS node: tree.getNodesMap()){
-				if( (selectedNodes == null && isNodeElongation(node) ) ||(selectedNodes != null && selectedNodes[node.getId()] && isNodeElongation(node)) ){
+				if( (selectedNodes == null && isNodeElongation(node) ) || (selectedNodes != null && selectedNodes[node.getId()] && isNodeElongation(node)) ){
 					mserElongation[node.getId()] = true;
 				}
 			}

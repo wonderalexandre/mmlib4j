@@ -1,4 +1,4 @@
-package mmlib4j.filtering.residual;
+package mmlib4j.filtering.residual.ultimateLevelings;
 
 import java.util.ArrayList;
 

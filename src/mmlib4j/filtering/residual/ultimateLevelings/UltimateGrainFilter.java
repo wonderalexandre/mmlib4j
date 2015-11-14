@@ -1,4 +1,4 @@
-package mmlib4j.filtering.residual;
+package mmlib4j.filtering.residual.ultimateLevelings;
 
 
 import java.util.ArrayList;
@@ -58,11 +58,11 @@ public class UltimateGrainFilter {
 	}
 	
 	public void computeUAO(int paramValueMax, int typeParam){
-		this.computeUGF(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam));	
+		this.computeUGF(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam).getMappingSelectedNodes());	
 	}
 	
-	public void computeUGF(int paramValueMax, int typeParam, MappingStrategyOfPruning msp){
-		this.computeUGF(paramValueMax, typeParam, msp, null);
+	public void computeUGF(int paramValueMax, int typeParam, boolean mapNodePruning[]){
+		this.computeUGF(paramValueMax, typeParam, mapNodePruning, null);
 	}
 	
 	public void enableComputerDistribution(boolean b){
@@ -70,11 +70,11 @@ public class UltimateGrainFilter {
 	}
 	
 	
-	public void computeUGF(int paramValueMax, int typeParam, MappingStrategyOfPruning msp, boolean selectedShape[]){
+	public void computeUGF(int paramValueMax, int typeParam, boolean mapNodePruning[], boolean selectedShape[]){
 		long ti = System.currentTimeMillis();
 		this.maxCriterion = paramValueMax;
 		this.typeParam = typeParam;
-		this.selectedForPruning = msp.getMappingSelectedNodes();
+		this.selectedForPruning = mapNodePruning;
 		this.selectedForFiltering = selectedShape;
 		if(computerDistribution){
 			nodeDistribution = new ArrayList[maxCriterion+1];
@@ -236,7 +236,7 @@ public class UltimateGrainFilter {
 		return map;
 	}
 	
-	
+	/*
 	public boolean hasNodeSelectedInPrimitive_OLD(NodeToS currentNode){
 		if(selectedForFiltering == null) return true;
 		
@@ -266,7 +266,7 @@ public class UltimateGrainFilter {
 		}
 		return false;
 	}
-	
+	*/
 	public boolean hasNodeSelectedInPrimitive(NodeToS currentNode){
 		if(selectedForFiltering == null) return true;
 		

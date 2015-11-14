@@ -1,4 +1,4 @@
-package mmlib4j.filtering.residual;
+package mmlib4j.filtering.residual.ultimateLevelings;
 
 
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
 import mmlib4j.segmentation.Labeling;
 import mmlib4j.utils.Utils;
@@ -48,8 +47,8 @@ public class UltimateAttributeOpening {
 		this.imgInput = tree.getInputImage();
 	}
 	
-	public void computeUAO(int paramValueMax, int typeParam, MappingStrategyOfPruning ps){
-		this.computeUAO(paramValueMax, typeParam, ps, null);
+	public void computeUAO(int paramValueMax, int typeParam, boolean mapNodePruning[]){
+		this.computeUAO(paramValueMax, typeParam, mapNodePruning, null);
 		
 	}
 	
@@ -59,14 +58,14 @@ public class UltimateAttributeOpening {
 	}
 	
 	
-	public void computeUAO(int paramValueMax, int typeParam, MappingStrategyOfPruning ps, boolean selectedShape[]){
+	public void computeUAO(int paramValueMax, int typeParam, boolean mapNodePruning[], boolean selectedShape[]){
 		long ti = System.currentTimeMillis();
 		this.typeParam = typeParam;
 		this.maxCriterion = paramValueMax;
 		if(computerDistribution){
 			nodeDistribution = new ArrayList[maxCriterion+1];
 		}
-		this.selectedForPruning = ps.getMappingSelectedNodes();
+		this.selectedForPruning = mapNodePruning;
 		this.selectedForFiltering = selectedShape;
 		NodeCT root = tree.getRoot();
 		maxContrastLUT = new int[tree.getNumNode()];
@@ -90,10 +89,7 @@ public class UltimateAttributeOpening {
 
 	
 	public void computeUAO(int paramValueMax, int typeParam){
-		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam));	
-	}
-	public void computeUAO(int paramValueMax, int typeParam, boolean selectedShape[]){
-		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam), selectedShape);	
+		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam).getMappingSelectedNodes());	
 	}
 	
 	public boolean hasNodeSelectedInPrimitive(NodeCT currentNode){

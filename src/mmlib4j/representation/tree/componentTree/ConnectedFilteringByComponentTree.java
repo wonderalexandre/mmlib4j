@@ -190,7 +190,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * @return imagem filtrada
 	 */
 	public GrayScaleImage filtering(double attributeValue, int type, int typePruning, int typeRec){
-		if(typePruning == MorphologicalTreeFiltering.EXTINCTION_VALUE)
+		if(typePruning == MorphologicalTreeFiltering.PRUNING_EXTINCTION_VALUE)
 			return filteringByExtinctionValue(attributeValue, type);
 		else if(typePruning == MorphologicalTreeFiltering.PRUNING)
 			return filteringByPruning(attributeValue, type);

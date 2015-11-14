@@ -1,4 +1,4 @@
-package mmlib4j.filtering.residual;
+package mmlib4j.filtering.residual.ultimateLevelings;
 
 
 import mmlib4j.images.GrayScaleImage;
@@ -64,7 +64,7 @@ public class UltimateAttributeOpenClose{
 	}
 	
 	
-	public void computeUAO(int paramValueMax, int typeParam, MappingStrategyOfPruning ps1, MappingStrategyOfPruning ps2){
+	public void computeUAO(int paramValueMax, int typeParam, boolean ps1[], boolean ps2[]){
 		long ti = System.currentTimeMillis();
 		
 		processMaxtree.setParameter(paramValueMax, typeParam, ps1, null);
@@ -79,7 +79,7 @@ public class UltimateAttributeOpenClose{
 	}
 	
 	
-	public void computeUAO(int paramValueMax, int typeParam, MappingStrategyOfPruning ps1, boolean selectedShape1[], MappingStrategyOfPruning ps2, boolean selectedShape2[]){
+	public void computeUAO(int paramValueMax, int typeParam, boolean ps1[], boolean selectedShape1[], boolean ps2[], boolean selectedShape2[]){
 		long ti = System.currentTimeMillis();
 		
 		processMaxtree.setParameter(paramValueMax, typeParam, ps1, selectedShape1);
@@ -228,7 +228,7 @@ public class UltimateAttributeOpenClose{
 		private UltimateAttributeOpening uao;
 		private int paramValueMax;
 		private int typeParam;
-		private MappingStrategyOfPruning ps;
+		private boolean selectedForPruning[];
 		private boolean selectedShape[];
 		ComponentTree tree;
 		
@@ -237,15 +237,15 @@ public class UltimateAttributeOpenClose{
 			uao = new UltimateAttributeOpening(tree);
 		}
 		
-		void setParameter(int paramValueMax, int typeParam, MappingStrategyOfPruning ps, boolean selectedShape[]){
+		void setParameter(int paramValueMax, int typeParam, boolean mapNodePruning[], boolean selectedShape[]){
 			this.paramValueMax = paramValueMax;
 			this.typeParam = typeParam;
-			this.ps = ps;
+			this.selectedForPruning = mapNodePruning;
 			this.selectedShape = selectedShape;
 		}
 		
 		public void run() {
-			uao.computeUAO(paramValueMax, typeParam, ps, selectedShape);
+			uao.computeUAO(paramValueMax, typeParam, selectedForPruning, selectedShape);
 		}	
 	}
 }
