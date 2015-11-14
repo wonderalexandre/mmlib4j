@@ -54,7 +54,7 @@ public class ComputerDistanceTransform {
 			computerDT(son);
 		}
 		if(imgsDT[root.getLevel()] == null){
-			imgsDT[root.getLevel()] = ImageFactory.createFloatImage(img.getWidth(), img.getHeight());
+			imgsDT[root.getLevel()] = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 			pool.execute(new ThreadNode(root, img, imgsDT[root.getLevel()]));
 		}
 	}

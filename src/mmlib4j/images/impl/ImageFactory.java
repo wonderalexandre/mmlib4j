@@ -46,7 +46,7 @@ public class ImageFactory {
 	}
 	
 
-	public static RealImage createFloatImage(int width, int height){
+	public static RealImage createRealImage(int width, int height){
 		return new FloatImage(width, height);
 	}
 	
@@ -62,12 +62,20 @@ public class ImageFactory {
 		return new RGBImage(img);
 	}
 	
+	public static ColorImage createCopyColorImage(ColorImage img){
+		return img.duplicate();
+	}
 	
 	public static GrayScaleImage createCopyGrayScaleImage(GrayScaleImage img) {
 		return img.duplicate();
 	}
 	
 	public static BinaryImage createCopyBinaryImage(BinaryImage img) {
+		return img.duplicate();
+	}
+
+	
+	public static RealImage createCopyRealImage(RealImage img) {
 		return img.duplicate();
 	}
 	
@@ -78,7 +86,7 @@ public class ImageFactory {
 		return new RGBImage(pixels, width, height);
 	}
 	
-	public static RealImage createReferenceFloatImage(float pixels[], int width, int height){
+	public static RealImage createReferenceRealImage(float pixels[], int width, int height){
 		return new FloatImage(pixels, width, height);
 	}
 

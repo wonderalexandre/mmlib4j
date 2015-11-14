@@ -12,7 +12,7 @@ import mmlib4j.images.impl.ImageFactory;
 public class DistanceTransforms {
   
 	public RealImage euclideanDistance(BinaryImage img){
-		return ImageFactory.createReferenceFloatImage(euclideanDistanceMap(img), img.getWidth(), img.getHeight());
+		return ImageFactory.createReferenceRealImage(euclideanDistanceMap(img), img.getWidth(), img.getHeight());
 	}
 	
 	public float[] euclideanDistanceMap(BinaryImage img){
