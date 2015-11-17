@@ -27,28 +27,48 @@ public class MatlabAdapter {
 	 *            image
 	 * @return an N x M array representing the input image
 	 */
-	private static Object toMatlab(Image2D image) {
+	public static Object toMatlab(Image2D image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
 
 		if(image instanceof GrayScaleImage){
 			GrayScaleImage img = (GrayScaleImage) image;
-			int[][] mat = new int[height][width];
-			for(int x=0; x < img.getWidth(); x++){
-				for(int y=0; y < img.getHeight(); y++){
-					mat[y][x] = img.getPixel(x, y);
+			if(img.getDepth() == ImageFactory.DEPTH_8BITS){
+				byte[][] mat = new byte[height][width];
+				for(int x=0; x < img.getWidth(); x++){
+					for(int y=0; y < img.getHeight(); y++){
+						mat[y][x] = (byte) (img.getPixel(x, y) & 0xFF);
+					}
 				}
+				return mat;
+			}else if(img.getDepth() == ImageFactory.DEPTH_16BITS){
+				short[][] mat = new short[height][width];
+				for(int x=0; x < img.getWidth(); x++){
+					for(int y=0; y < img.getHeight(); y++){
+						mat[y][x] = (short) img.getPixel(x, y);
+					}
+				}
+				return mat;
 			}
-			return mat;
+			else{
+				int[][] mat = new int[height][width];
+				for(int x=0; x < img.getWidth(); x++){
+					for(int y=0; y < img.getHeight(); y++){
+						mat[y][x] = (int) img.getPixel(x, y);
+					}
+				}
+				return mat;
+			}
+			
 		}
 		else if(image instanceof ColorImage){
 			ColorImage img = (ColorImage) image;
-			int[][][] mat = new int[height][width][3];
+			byte[][][] mat = new byte[height][width][3];
 			for(int x=0; x < img.getWidth(); x++){
 				for(int y=0; y < img.getHeight(); y++){
-					mat[y][x][0] = img.getRed(x, y);
-					mat[y][x][1] = img.getGreen(x, y);
-					mat[y][x][2] = img.getBlue(x, y);
+					mat[y][x][0] = (byte) (img.getRed(x, y) & 0xFF); 
+					mat[y][x][1] = (byte) (img.getGreen(x, y) & 0xFF);
+					mat[y][x][2] = (byte) (img.getBlue(x, y) & 0xFF);
 				}
 			}
 			return mat;
@@ -124,15 +144,40 @@ public class MatlabAdapter {
 	}
 
 	public static ColorImage tColorImage(Object object) {
-		int pixels[][][] = (int[][][]) object;
-		ColorImage img = ImageFactory.createColorImage(pixels[0].length, pixels.length);
-		for(int x = 0; x < img.getWidth(); x++){
-			for(int y = 0; y < img.getHeight(); y++){
-				img.setRed(x,  y, pixels[y][x][0]);
-				img.setGreen(x,  y, pixels[y][x][1]);
-				img.setBlue(x,  y, pixels[y][x][2]);
+		ColorImage img = null;
+		if(object instanceof int[][][]){
+			int pixels[][][] = (int[][][]) object;
+			img = ImageFactory.createColorImage(pixels[0].length, pixels.length);
+			for(int x = 0; x < img.getWidth(); x++){
+				for(int y = 0; y < img.getHeight(); y++){
+					img.setRed(x,  y, pixels[y][x][0] );
+					img.setGreen(x,  y, pixels[y][x][1]);
+					img.setBlue(x,  y, pixels[y][x][2]);
+				}
 			}
 		}
+		else if(object instanceof short[][][]){
+			short pixels[][][] = (short[][][]) object;
+			img = ImageFactory.createColorImage(pixels[0].length, pixels.length);
+			for(int x = 0; x < img.getWidth(); x++){
+				for(int y = 0; y < img.getHeight(); y++){
+					img.setRed(x,  y, pixels[y][x][0]);
+					img.setGreen(x,  y, pixels[y][x][1]);
+					img.setBlue(x,  y, pixels[y][x][2]);
+				}
+			}
+		}
+		else if(object instanceof int[][][]){
+			byte pixels[][][] = (byte[][][]) object;
+			img = ImageFactory.createColorImage(pixels[0].length, pixels.length);
+			for(int x = 0; x < img.getWidth(); x++){
+				for(int y = 0; y < img.getHeight(); y++){
+					img.setRed(x,  y, pixels[y][x][0] & 0xFF);
+					img.setGreen(x,  y, pixels[y][x][1] & 0xFF);
+					img.setBlue(x,  y, pixels[y][x][2] & 0xFF);
+				}
+			}
+		}	
 		return img;
 	}
 
