@@ -23,7 +23,7 @@ public abstract class PixelIndexer {
 	 * @param height
 	 * @return
 	 */
-	public static PixelIndexer getNearestBorderIndexer(int width, int height){
+	public static PixelIndexer getNearestBorderIndexer(final int width, final int height){
 		return new PixelIndexer(){
 			public int getIndex(int x, int y) {
 				if (x < 0)
@@ -51,7 +51,7 @@ public abstract class PixelIndexer {
 	 * @param padding
 	 * @return
 	 */
-	public static PixelIndexer getDefaultValueIndexer(int width, int height){
+	public static PixelIndexer getDefaultValueIndexer(final int width, final int height){
 		if(Utils.debug) System.out.println("PixelIndexer.getDefaultValueIndexer");
 		return new PixelIndexer(){
 			public int getIndex(int x, int y) {
@@ -73,7 +73,7 @@ public abstract class PixelIndexer {
 	 * @param height
 	 * @return
 	 */
-	public static PixelIndexer getMirrorImageIndexer(int width, int height){
+	public static PixelIndexer getMirrorImageIndexer(final int width, final int height){
 		return new PixelIndexer(){
 			public int getIndex(int x, int y) {
 				// this is a fast modulo operation for positive divisors only
@@ -96,7 +96,7 @@ public abstract class PixelIndexer {
 	 * @param height
 	 * @return
 	 */
-	public static PixelIndexer getExceptionIndexer(int width, int height){
+	public static PixelIndexer getExceptionIndexer(final int width, final int height){
 		return new PixelIndexer(){
 			public int getIndex(int x, int y) {
 				if (x < 0 || x >= width || y < 0 || y >= height) {
