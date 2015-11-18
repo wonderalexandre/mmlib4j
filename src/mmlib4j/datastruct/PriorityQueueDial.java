@@ -3,7 +3,7 @@ package mmlib4j.datastruct;
 import java.util.ArrayList;
 
 import mmlib4j.images.GrayScaleImage;
-
+ 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
