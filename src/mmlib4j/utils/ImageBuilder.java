@@ -61,8 +61,8 @@ public class ImageBuilder {
 		else if (image instanceof RealImage){
 			bi = new BufferedImage(image.getWidth(), image.getHeight(),	BufferedImage.TYPE_INT_RGB);
 			RealImage img = (RealImage) image;
-			double max = img.getPixelMax();
-			double min = img.getPixelMin();
+			double max = img.getPixelValueMax();
+			double min = img.getPixelValueMin();
 			int value;
 			for (int w = 0; w < img.getWidth(); w++) {
 				for (int h = 0; h < img.getHeight(); h++) {

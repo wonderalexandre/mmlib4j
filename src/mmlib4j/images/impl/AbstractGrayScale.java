@@ -232,7 +232,7 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     /**
      * Pega o valor da media dos pixels da imagem
      */
-    public int meanValue() {
+    public float meanValue() {
     	if(stats == null)
             loadStatistics();
         return stats.mean;
@@ -344,7 +344,8 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     	int max;
     	int pixelMin;
     	int pixelMax;
-    	int mean;
+    	float mean;
+    	float sd;
         
     	Statistics(){
         	max = Integer.MIN_VALUE;
@@ -361,7 +362,8 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
             		pixelMax = i;
             	}
             }
-            mean = sum / (getWidth() * getHeight());
+            mean = sum / (float) (getWidth() * getHeight());
+            
         }
     }
 }

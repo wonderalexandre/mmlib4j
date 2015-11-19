@@ -17,7 +17,6 @@ import mmlib4j.images.GrayScaleImage;
 public class ShortImage extends AbstractGrayScale implements GrayScaleImage{
     
 	private short pixels[]; //matriz de pixel da imagem
-	private Statistics stats = null;
 	
 	ShortImage(int width, int height) {
         this.width = width;
@@ -42,11 +41,6 @@ public class ShortImage extends AbstractGrayScale implements GrayScaleImage{
 		return (short) (b & 0xFFFF);
 	}
 	
-    
-    
-    public void loadStatistics(){
-    	stats = new Statistics();
-    }
     
     
     /**
@@ -121,56 +115,6 @@ public class ShortImage extends AbstractGrayScale implements GrayScaleImage{
     }
     
 
-    /**
-     * Pega o valor do maior pixel da imagem
-     */
-    public int maxValue() {
-        if(stats == null)
-            loadStatistics();
-        return stats.max;
-    }
-    
-
-    /**
-     * Pega o valor da media dos pixels da imagem
-     */
-    public int meanValue() {
-    	if(stats == null)
-            loadStatistics();
-        return stats.mean;
-    }
-    
-    
-    
-    
-
-    /**
-     * Pega o valor menor pixel da imagem
-     */
-    public int minValue() {
-    	if(stats == null)
-            loadStatistics();
-        return stats.min;
-    }
-    
-    /**
-     * Pega o maior pixel da imagem
-     */
-    public int maxPixel() {
-    	if(stats == null)
-            loadStatistics();
-        return stats.pixelMax;
-    }
-
-    /**
-     * Pega o menor pixel da imagem
-     */
-    public int minPixel() {
-    	if(stats == null)
-            loadStatistics();
-        return stats.pixelMin;
-    }
-    
 
     public void setPixel(int i, byte level){
         pixels[i] = level;

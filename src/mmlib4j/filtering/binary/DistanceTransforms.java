@@ -135,7 +135,7 @@ public class DistanceTransforms {
 		//foreground pixels (>0) -> 0, background -> infinity
 		for(int p: ip.scanForward()){
 			if (ip.isPixelForeground(p)) // this is a foreground pixel
-				dpix[p] = Float.POSITIVE_INFINITY; // zero distance to foregorund
+				dpix[p] = Float.MAX_VALUE; // zero distance to foregorund
 			else
 				dpix[p] = 0;
 		}
@@ -153,10 +153,10 @@ public class DistanceTransforms {
 				int i = v * w + u;
 				if (dpix[i]>0) { //not a foreground pixel
 					//compute distances via neighboring pixels
-					d1 = Float.POSITIVE_INFINITY;
-					d2 = Float.POSITIVE_INFINITY;
-					d3 = Float.POSITIVE_INFINITY;
-					d4 = Float.POSITIVE_INFINITY;
+					d1 = Float.MAX_VALUE;
+					d2 = Float.MAX_VALUE;
+					d3 = Float.MAX_VALUE;
+					d4 = Float.MAX_VALUE;
 					
 					if (u>0) 			d1 = k1 + dpix[v*w+u-1];
 					if (u>0 && v>0) 	d2 = k2 + dpix[(v-1)*w+u-1];
@@ -180,10 +180,10 @@ public class DistanceTransforms {
 				if (dpix[i] > 0) { //not a foreground pixel
 					
 					//compute distances via neighboring pixels
-					d1 = Float.POSITIVE_INFINITY;
-					d2 = Float.POSITIVE_INFINITY;
-					d3 = Float.POSITIVE_INFINITY;
-					d4 = Float.POSITIVE_INFINITY;
+					d1 = Float.MAX_VALUE;
+					d2 = Float.MAX_VALUE;
+					d3 = Float.MAX_VALUE;
+					d4 = Float.MAX_VALUE;
 					
 					if (u<w-1) 			d1 = k1 + dpix[v*w+u+1];
 					if (u<w-1 && v<h-1)	d2 = k2 + dpix[(v+1)*w+u+1];
@@ -236,11 +236,11 @@ public class DistanceTransforms {
     	
     	System.out.println();
     	System.out.println();
-    	int map[] = new DistanceTransforms().chessbordDistanceMap(img);
+    	float map[] = new DistanceTransforms().euclideanDistanceMap(img);
     	
     	for(int h=0; h < img.getHeight(); h++){
     		for(int w=0; w < img.getWidth(); w++){
-    			System.out.printf("%2d  ", map[img.convertToIndex(w, h)]);
+    			System.out.printf("%.1f  ", map[img.convertToIndex(w, h)]);
     		}
     		System.out.println();
     	}
