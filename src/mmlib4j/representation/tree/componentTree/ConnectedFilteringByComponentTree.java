@@ -87,7 +87,9 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.NUM_HOLES:
 				computerPatternEulerAttribute();
 				break;
-				
+			case Attribute.PERIMETERS_QUAD:
+				computerPatternEulerAttribute();
+				break;				
 		}
 	}
 	

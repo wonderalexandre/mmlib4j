@@ -68,6 +68,7 @@ public class Attribute {
 	
 	//pattern euler
 	public static final int NUM_HOLES = 30;
+	public static final int PERIMETERS_QUAD = 31;
 	
 	//mser
 	public static final int MSER = 40;
@@ -101,6 +102,7 @@ public class Attribute {
 			case LEVEL_MEAN: return "LEVEL_MEAN";
 			case VOLUME: return "VOLUME";
 			case WIDTH: return "WIDTH";
+			case PERIMETERS_QUAD: return "PERIMETERS_QUAD";
 			default: return "UNDEFINED";
 		}
 	}
