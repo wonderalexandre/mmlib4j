@@ -11,6 +11,7 @@ import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
+import mmlib4j.representation.tree.attribute.ComputerAttributeBasedQuadBits;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
@@ -85,10 +86,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				break;
 				
 			case Attribute.NUM_HOLES:
-				computerPatternEulerAttribute();
-				break;
 			case Attribute.PERIMETERS_QUAD:
-				computerPatternEulerAttribute();
+				computerAttributeBasedQuadBits();
 				break;				
 		}
 	}
@@ -110,6 +109,18 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		if(!hasComputerPatternEulerAttribute){
 			long ti = System.currentTimeMillis();
 			new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
+			hasComputerPatternEulerAttribute = true;
+			if(Utils.debug){
+				long tf = System.currentTimeMillis();
+				System.out.println("Tempo de execucao [attribute euler] "+ ((tf - ti) /1000.0)  + "s");
+			}
+		}
+	}
+	
+	public void computerAttributeBasedQuadBits(){
+		if(!hasComputerPatternEulerAttribute){
+			long ti = System.currentTimeMillis();
+			new ComputerAttributeBasedQuadBits(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
 			hasComputerPatternEulerAttribute = true;
 			if(Utils.debug){
 				long tf = System.currentTimeMillis();

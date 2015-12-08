@@ -66,9 +66,10 @@ public class Attribute {
 	public static final int MOMENT_ASPECT_RATIO = 29;
 	
 	
-	//pattern euler
+	//attribute based on quad bits
 	public static final int NUM_HOLES = 30;
 	public static final int PERIMETERS_QUAD = 31;
+	
 	
 	//mser
 	public static final int MSER = 40;
