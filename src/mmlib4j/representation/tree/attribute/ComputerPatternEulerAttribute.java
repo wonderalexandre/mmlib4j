@@ -171,7 +171,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 		GrayScalePattern Q1P4 = new GrayScalePattern();
 		
 		Q1P1.appendQuad(new LowerQuadBit(0, -1)).appendQuad(new LowerQuadBit(1, -1)).appendQuad(new LowerQuadBit(1, 0));
-		Q1P2.appendQuad(new LowerQuadBit(-1, 0)).appendQuad(new LowerQuadBit(-1, 1)).appendQuad(new LowerQuadBit(0, 1));
+		Q1P2.appendQuad(new LowerQuadBit(-1, 0)).appendQuad(new LowerQuadBit(-1, -1)).appendQuad(new LowerQuadBit(0, -1));
 		Q1P3.appendQuad(new LowerQuadBit(0, 1)).appendQuad(new LowerQuadBit(-1, 1)).appendQuad(new LowerQuadBit(-1, 0));
 		Q1P4.appendQuad(new LowerQuadBit(1, 0)).appendQuad(new LowerQuadBit(1, 1)).appendQuad(new LowerQuadBit(0, 1));
 		
@@ -214,7 +214,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 		QDP1.appendQuad(new LowerQuadBit(1, 0)).appendQuad(new GreaterOrEqualQuadBit(1, 1)).appendQuad(new LowerQuadBit(0, 1));
 		QDP2.appendQuad(new LowerQuadBit(0, -1)).appendQuad(new GreaterOrEqualQuadBit(1, -1)).appendQuad(new LowerQuadBit(1, 0));
 		QDP3.appendQuad(new LowerQuadBit(-1, 0)).appendQuad(new GreaterQuadBit(-1, -1)).appendQuad(new LowerQuadBit(0, -1));
-		QDP4.appendQuad(new LowerQuadBit(0, -1)).appendQuad(new GreaterQuadBit(-1, 1)).appendQuad(new LowerQuadBit(-1, 0));
+		QDP4.appendQuad(new LowerQuadBit(0, 1)).appendQuad(new GreaterQuadBit(-1, 1)).appendQuad(new LowerQuadBit(-1, 0));
 		
 		QD = new GrayScalePatternGroup();
 		QD.appendPattern(QDP1).appendPattern(QDP2).appendPattern(QDP3).appendPattern(QDP4);		
@@ -272,7 +272,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 		GrayScalePattern Q1TP11 = new GrayScalePattern();
 		GrayScalePattern Q1TP12 = new GrayScalePattern();
 		
-		Q1TP1.appendQuad(new LowerQuadBit(0, -1)).appendQuad(new GreaterQuadBit(-1, 1)).appendQuad(new LowerQuadBit(-1, 0));
+		Q1TP1.appendQuad(new LowerQuadBit(0, 1)).appendQuad(new GreaterQuadBit(-1, 1)).appendQuad(new LowerQuadBit(-1, 0));
 		Q1TP2.appendQuad(new LowerQuadBit(1, 0)).appendQuad(new GreaterQuadBit(1, 1)).appendQuad(new LowerQuadBit(0, 1));
 		Q1TP3.appendQuad(new LowerQuadBit(0, -1)).appendQuad(new GreaterQuadBit(1, -1)).appendQuad(new LowerQuadBit(1, 0));
 		Q1TP4.appendQuad(new LowerQuadBit(-1, 0)).appendQuad(new GreaterQuadBit(-1, -1)).appendQuad(new LowerQuadBit(0, -1));
@@ -341,7 +341,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 		
 		Q3TP1.appendQuad(new GreaterQuadBit(0, -1)).appendQuad(new GreaterQuadBit(1, -1)).appendQuad(new GreaterQuadBit(1, 0));
 		Q3TP2.appendQuad(new GreaterQuadBit(-1, 0)).appendQuad(new GreaterQuadBit(-1, -1)).appendQuad(new GreaterQuadBit(0, -1));
-		Q3TP3.appendQuad(new GreaterQuadBit(0, -1)).appendQuad(new GreaterQuadBit(-1, 1)).appendQuad(new GreaterQuadBit(-1, 0));
+		Q3TP3.appendQuad(new GreaterQuadBit(0, 1)).appendQuad(new GreaterQuadBit(-1, 1)).appendQuad(new GreaterQuadBit(-1, 0));
 		Q3TP4.appendQuad(new GreaterQuadBit(1, 0)).appendQuad(new GreaterQuadBit(1, 1)).appendQuad(new GreaterQuadBit(0, 1));
 		
 		Q3T = new GrayScalePatternGroup();
@@ -373,6 +373,8 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 		for(int p: node.getCanonicalPixels()){
 			computerLocalPattern(node, p);
 		}		
+		
+		System.out.println(attr[node.getId()].printPattern());
 	}
 	
 	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
