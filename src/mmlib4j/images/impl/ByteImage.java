@@ -15,20 +15,19 @@ import mmlib4j.images.GrayScaleImage;
 public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
     
 	private byte pixels[]; //matriz de pixel da imagem
-	private Statistics stats = null;
 	
 	ByteImage(int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = new byte[width * height];
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
 
 	ByteImage(byte pixels[], int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
     
 
@@ -41,10 +40,6 @@ public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
 	}
 	
     
-    
-    public void loadStatistics(){
-    	stats = new Statistics();
-    }
     
 	
     
@@ -97,7 +92,7 @@ public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
     	this.width = width;
         this.height = height;
         this.pixels = (byte[]) pixels;
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
     
     
@@ -110,7 +105,7 @@ public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
     	this.width = width;
         this.height = height;
         this.pixels = new byte[width * height];
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
         initImage(255);
         
         for (int i = 0, x = Math.abs(oldWidth - width)/2; i < oldWidth; i++, x++){

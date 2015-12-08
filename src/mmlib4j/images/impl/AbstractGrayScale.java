@@ -15,7 +15,7 @@ import mmlib4j.utils.ImageUtils;
  */
 public abstract class AbstractGrayScale extends AbstractImage2D implements GrayScaleImage{
 
-	private Statistics stats = null;
+	protected Statistics stats = null;
     //protected int padding = Integer.MIN_VALUE; 
     
     public void paintBoundBox(int x1, int y1, int x2, int y2, int color){
@@ -73,11 +73,11 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
 	*/
     
 	public int getValue(int x, int y) {
-		return getPixel(getPixelIndexer().getIndex(x, y));
+		return getPixel( getPixelIndexer().getIndex(x, y) );
 	}
 	
 	public int getValue(int p) {
-		return getPixel(getPixelIndexer().getIndex(p));
+		return getPixel( getPixelIndexer().getIndex(p) );
 		
 	}
 
@@ -259,7 +259,7 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
      * Pega o maior pixel da imagem
      */
     public int maxPixel() {
-    	if(stats == null)
+    	if(this.stats == null)
             loadStatistics();
         return stats.pixelMax;
     }
@@ -335,7 +335,7 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
 	}
     
     public void loadStatistics(){
-    	stats = new Statistics();
+    	this.stats = new Statistics();
     }
     
     

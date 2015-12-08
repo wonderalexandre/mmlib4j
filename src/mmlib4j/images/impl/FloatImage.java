@@ -25,7 +25,7 @@ public class FloatImage extends AbstractImage2D implements RealImage {
         this.width = width;
         this.height = height;
         this.pixels = new float[width * height];
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
      
     /**
@@ -119,7 +119,7 @@ public class FloatImage extends AbstractImage2D implements RealImage {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
     
 
