@@ -381,7 +381,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 			computerLocalPattern(node, p);
 		}		
 		
-		System.out.println(attr[node.getId()].printPattern());
+		//System.out.println(attr[node.getId()].printPattern());
 	}
 	
 	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
