@@ -62,7 +62,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 	} 
 	
 	public void addAttributeInNodes(NodeLevelSets node){
-		node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, attr[ node.getId() ].getNumberHoles()));
+		node.addAttribute(Attribute.BIT_QUADS_NUMBER_HOLES, new Attribute(Attribute.BIT_QUADS_NUMBER_HOLES, attr[ node.getId() ].getNumberHoles()));
 	}
 	
 	

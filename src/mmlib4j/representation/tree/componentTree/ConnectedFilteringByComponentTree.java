@@ -10,15 +10,14 @@ import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerAttributeBasedBitQuads;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
-import mmlib4j.representation.tree.attribute.ComputerAttributeBasedQuadBits;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
-import mmlib4j.representation.tree.attribute.ComputerPatternEulerAttribute;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
@@ -35,7 +34,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	private boolean hasComputerBasicAttribute = false;
 	private boolean hasComputerAttributeBasedPerimeterExternal = false;
 	private boolean hasComputerCentralMomentAttribute = false;
-	private boolean hasComputerPatternEulerAttribute = false;
+	private boolean hasComputerAttributeBasedBitQuads = false;
 	private boolean hasComputerDistanceTransform = false;
 	private ComputerDistanceTransform dt = null;
 	
@@ -85,47 +84,46 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				computerAttributeBasedPerimeterExternal();
 				break;
 				
-			case Attribute.NUM_HOLES:
-			case Attribute.PERIMETERS_QUAD:
-				computerAttributeBasedQuadBits();
+			//case Attribute.NUM_HOLES:
+			case Attribute.BIT_QUADS_PERIMETER:
+			case Attribute.BIT_QUADS_NUMBER_EULER:
+			case Attribute.BIT_QUADS_NUMBER_HOLES:
+			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
+			case Attribute.BIT_QUADS_CIRCULARITY:
+			case Attribute.BIT_QUADS_AREA_AVERAGE:
+			case Attribute.BIT_QUADS_PERIMETER_AVERAGE:
+			case Attribute.BIT_QUADS_LENGTH_AVERAGE:
+			case Attribute.BIT_QUADS_WIDTH_AVERAGE:
+				computerAttributeBasedBitQuads();
 				break;				
 		}
 	}
 	
 	public ComputerDistanceTransform computerDistanceTransform(){
 		if(!hasComputerDistanceTransform){
-			long ti = System.currentTimeMillis();
 			dt = new ComputerDistanceTransform(numNode, getRoot(), imgInput);
 			hasComputerDistanceTransform = true;
-			if(Utils.debug){
-				long tf = System.currentTimeMillis();
-				System.out.println("Tempo de execucao [computer distance transform] "+ ((tf - ti) /1000.0)  + "s");
-			}
 		}
 		return dt;
 	}
 	
+	/*
 	public void computerPatternEulerAttribute(){
-		if(!hasComputerPatternEulerAttribute){
+		if(!hasComputerAttributeBasedBitQuads){
 			long ti = System.currentTimeMillis();
 			new ComputerPatternEulerAttribute(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
-			hasComputerPatternEulerAttribute = true;
+			hasComputerAttributeBasedBitQuads = true;
 			if(Utils.debug){
 				long tf = System.currentTimeMillis();
 				System.out.println("Tempo de execucao [attribute euler] "+ ((tf - ti) /1000.0)  + "s");
 			}
 		}
-	}
+	}*/
 	
-	public void computerAttributeBasedQuadBits(){
-		if(!hasComputerPatternEulerAttribute){
-			long ti = System.currentTimeMillis();
-			new ComputerAttributeBasedQuadBits(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
-			hasComputerPatternEulerAttribute = true;
-			if(Utils.debug){
-				long tf = System.currentTimeMillis();
-				System.out.println("Tempo de execucao [attribute euler] "+ ((tf - ti) /1000.0)  + "s");
-			}
+	public void computerAttributeBasedBitQuads(){
+		if(!hasComputerAttributeBasedBitQuads){
+			new ComputerAttributeBasedBitQuads(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
+			hasComputerAttributeBasedBitQuads = true;
 		}
 	}
 
@@ -138,25 +136,15 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	public void computerBasicAttribute(){
 		if(!hasComputerBasicAttribute){
-			long ti = System.currentTimeMillis();
 			new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesCT(getListNodes());
 			hasComputerBasicAttribute = true;
-			if(Utils.debug){
-				long tf = System.currentTimeMillis();
-				System.out.println("Tempo de execucao [basic attribute] "+ ((tf - ti) /1000.0)  + "s");
-			}
 		}
 	}
 	
 	public void computerAttributeBasedPerimeterExternal(){
 		if(!hasComputerAttributeBasedPerimeterExternal){
-			long ti = System.currentTimeMillis();
 			new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesCT(getListNodes());
 			hasComputerAttributeBasedPerimeterExternal = true;
-			if(Utils.debug){
-				long tf = System.currentTimeMillis();
-				System.out.println("Tempo de execucao [external perimeter] "+ ((tf - ti) /1000.0)  + "s");
-			}
 		}
 	}
 		

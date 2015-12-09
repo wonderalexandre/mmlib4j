@@ -8,7 +8,6 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.PixelIndexer;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -21,7 +20,7 @@ import mmlib4j.utils.Utils;
  * Implementation of paper:
  * 
  */
-public class ComputerAttributeBasedQuadBits extends AttributeComputedIncrementally {
+public class ComputerAttributeBasedBitQuads extends AttributeComputedIncrementally {
 	
 	private abstract class GrayScaleQuadBit	{
 		public int xPosition;
@@ -80,7 +79,7 @@ public class ComputerAttributeBasedQuadBits extends AttributeComputedIncremental
 		private List<GrayScaleQuadBit> quads;
 		
 		public GrayScalePattern(){
-			quads = new ArrayList<ComputerAttributeBasedQuadBits.GrayScaleQuadBit>();
+			quads = new ArrayList<ComputerAttributeBasedBitQuads.GrayScaleQuadBit>();
 		}
 		
 		public GrayScalePattern appendQuad(GrayScaleQuadBit quad) {
@@ -101,7 +100,7 @@ public class ComputerAttributeBasedQuadBits extends AttributeComputedIncremental
 		private List<GrayScalePattern> patterns;
 		
 		public GrayScalePatternGroup() {
-			patterns = new ArrayList<ComputerAttributeBasedQuadBits.GrayScalePattern>();
+			patterns = new ArrayList<ComputerAttributeBasedBitQuads.GrayScalePattern>();
 		}
 		
 		public GrayScalePatternGroup appendPattern(GrayScalePattern pattern) {
@@ -120,10 +119,11 @@ public class ComputerAttributeBasedQuadBits extends AttributeComputedIncremental
 	}
 	
 	
-	private AttributeBasedQuadBits attr[];
+	private AttributeBasedBitQuads attr[];
 	private GrayScaleImage img; 
 	private boolean isMaxtree;
 	private int index;
+	AdjacencyRelation adj;
 	
 	private GrayScalePatternGroup Q1;
 	private GrayScalePatternGroup Q2;
@@ -135,16 +135,17 @@ public class ComputerAttributeBasedQuadBits extends AttributeComputedIncremental
 	private GrayScalePatternGroup QDT;
 	private GrayScalePatternGroup Q3T;
 	
-	public ComputerAttributeBasedQuadBits(int numNode, NodeLevelSets root, GrayScaleImage img, AdjacencyRelation adj){
+	public ComputerAttributeBasedBitQuads(int numNode, NodeLevelSets root, GrayScaleImage img, AdjacencyRelation adj){
 		long ti = System.currentTimeMillis();
-		this.attr = new AttributeBasedQuadBits[numNode];
+		this.attr = new AttributeBasedBitQuads[numNode];
 		this.img = img;
+		this.adj = adj;
 		img.setPixelIndexer( PixelIndexer.getDefaultValueIndexer(img.getWidth(), img.getHeight()) );
 		initializePatterns();
 		computerAttribute(root);
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
-			System.out.println("Tempo de execucao [extraction of attribute - euler number]  "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [extraction of attributes - bit-quads] "+ ((tf - ti) /1000.0)  + "s");
 		}		
 	}
 
@@ -350,20 +351,30 @@ public class ComputerAttributeBasedQuadBits extends AttributeComputedIncremental
 		}
 	}
 	
+	/*
+	TODO: 
 	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}
 	} 
+	*/
 	
 	public void addAttributeInNodes(NodeLevelSets node){
-		node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, attr[ node.getId() ].getNumberHoles()));
-		node.addAttribute(Attribute.PERIMETERS_QUAD, new Attribute(Attribute.PERIMETERS_QUAD, attr[ node.getId() ].getPerimeter()));
+		node.addAttribute(Attribute.BIT_QUADS_PERIMETER, new Attribute(Attribute.BIT_QUADS_PERIMETER, attr[ node.getId() ].getPerimeter()));
+		node.addAttribute(Attribute.BIT_QUADS_NUMBER_EULER, new Attribute(Attribute.BIT_QUADS_NUMBER_EULER, attr[ node.getId() ].getNumberEuler()));
+		node.addAttribute(Attribute.BIT_QUADS_NUMBER_HOLES, new Attribute(Attribute.BIT_QUADS_NUMBER_HOLES, attr[ node.getId() ].getNumberHoles()));
+		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, new Attribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, attr[ node.getId() ].getPerimeterContinuous()));
+		node.addAttribute(Attribute.BIT_QUADS_CIRCULARITY, new Attribute(Attribute.BIT_QUADS_CIRCULARITY, attr[ node.getId() ].getCircularity(node.getArea())));
+		node.addAttribute(Attribute.BIT_QUADS_AREA_AVERAGE, new Attribute(Attribute.BIT_QUADS_AREA_AVERAGE, attr[ node.getId() ].getAreaAverage(node.getArea())));
+		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_AVERAGE, new Attribute(Attribute.BIT_QUADS_PERIMETER_AVERAGE, attr[ node.getId() ].getPerimeterAverage()));
+		node.addAttribute(Attribute.BIT_QUADS_LENGTH_AVERAGE, new Attribute(Attribute.BIT_QUADS_LENGTH_AVERAGE, attr[ node.getId() ].getLengthAverage()));
+		node.addAttribute(Attribute.BIT_QUADS_WIDTH_AVERAGE, new Attribute(Attribute.BIT_QUADS_WIDTH_AVERAGE, attr[ node.getId() ].getWidthAverage(node.getArea())));
 	}
 	
 	
 	public void preProcessing(NodeLevelSets node) {
-		attr[node.getId()] = new AttributeBasedQuadBits();
+		attr[node.getId()] = new AttributeBasedBitQuads();
 		this.isMaxtree = node.isNodeMaxtree();
 		
 		for(int p: node.getCanonicalPixels()){
@@ -418,7 +429,7 @@ public class ComputerAttributeBasedQuadBits extends AttributeComputedIncremental
 	}
 	
 	
-	 public class AttributeBasedQuadBits {
+	 public class AttributeBasedBitQuads {
 	
 		public int countPatternCD = 0;
 		public int countPatternC3 = 0;
@@ -435,13 +446,60 @@ public class ComputerAttributeBasedQuadBits extends AttributeComputedIncremental
 		int countPatternChildrenCD = 0;
 		int countPatternChildrenC3 = 0;
 		
+		int area;
+		
+		public int getNumberEuler(){
+			if(adj == AdjacencyRelation.getAdjacency8())
+				return (countPatternC1 - countPatternC3 - (2 * countPatternCD)) / 4;
+			else
+				return (countPatternC1 - countPatternC3 + (2 * countPatternCD)) / 4;
+		}
 		
 		public int getNumberHoles() {
-				return 1 - (countPatternC1 - countPatternC3 - (2 * countPatternCD)) / 4;
+				return 1 - getNumberEuler();
 		}
-	
+		
 		public int getPerimeter() {
 			return countPatternC1 + countPatternC2 + countPatternC3 + (2*countPatternCD);
+		}
+		
+		
+		/*
+		public int getArea(){
+			return (countPatternC1 + 2*countPatternC2 + 3*countPatternC3 + 4*countPatternC4 + 2*countPatternCD) / 4;
+		}*/
+		
+		//area de objetos continuos => Duda
+		/*
+		public double getArea2(){
+			return (1.0/4.0*countPatternC1 + 1.0/2.0*countPatternC2 + 7.0/8.0*countPatternC3 + countPatternC4 + 3.0/4.0*countPatternCD);
+		}*/
+		
+		
+		//perimetro de objetos continuos => Duda
+		public double getPerimeterContinuous(){
+			return countPatternC2 + ( (1.0/Math.sqrt(2)) * (countPatternC1 + countPatternC3 + 2*countPatternCD) );
+		}
+		
+		public double getCircularity(int area){
+			return (4.0 * Math.PI * area) / Math.pow(getPerimeter(), 2);
+		}
+		
+		
+		public double getAreaAverage(int area){
+			return (area  / (double) getNumberEuler());
+		}
+		
+		public double getPerimeterAverage(){
+			return (getPerimeter()  / (double) getNumberEuler());
+		}
+		
+		public double getLengthAverage(){
+			return (getPerimeterAverage()  / 2.0);
+		}
+		
+		public double getWidthAverage(int area){
+			return (2* getAreaAverage(area)  / getPerimeterAverage());
 		}
 		
 		public String printPattern() {

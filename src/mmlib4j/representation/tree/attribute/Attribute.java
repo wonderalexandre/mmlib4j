@@ -66,10 +66,18 @@ public class Attribute {
 	public static final int MOMENT_ASPECT_RATIO = 29;
 	
 	
-	//attribute based on quad bits
-	public static final int NUM_HOLES = 30;
-	public static final int PERIMETERS_QUAD = 31;
+	//attribute based on bit quads
+	//public static final int NUM_HOLES = 30;
 	
+	public static final int BIT_QUADS_PERIMETER = 31;
+	public static final int BIT_QUADS_NUMBER_EULER = 32;
+	public static final int BIT_QUADS_NUMBER_HOLES = 33;
+	public static final int BIT_QUADS_PERIMETER_CONTINUOUS = 34;
+	public static final int BIT_QUADS_CIRCULARITY = 35;
+	public static final int BIT_QUADS_AREA_AVERAGE = 36;
+	public static final int BIT_QUADS_PERIMETER_AVERAGE = 37;
+	public static final int BIT_QUADS_LENGTH_AVERAGE = 38;
+	public static final int BIT_QUADS_WIDTH_AVERAGE = 39;
 	
 	//mser
 	public static final int MSER = 40;
@@ -94,7 +102,7 @@ public class Attribute {
 			case MOMENT_LENGTH_MINOR_AXES: return "MOMENT_LENGTH_MINOR_AXES";
 			case MOMENT_ORIENTATION: return "MOMENT_ORIENTATION";
 			case MSER: return "MSER";
-			case NUM_HOLES: return "NUM_HOLES";
+			//case NUM_HOLES: return "NUM_HOLES";
 			case PERIMETER: return "PERIMETER";
 			case PERIMETER_EXTERNAL: return "PERIMETER_EXTERNAL";
 			case RECTANGULARITY: return "RECTANGULARITY";
@@ -103,7 +111,16 @@ public class Attribute {
 			case LEVEL_MEAN: return "LEVEL_MEAN";
 			case VOLUME: return "VOLUME";
 			case WIDTH: return "WIDTH";
-			case PERIMETERS_QUAD: return "PERIMETERS_QUAD";
+			
+			case BIT_QUADS_PERIMETER: return "PERIMETERS_QUAD";
+			case BIT_QUADS_NUMBER_EULER: return "BIT_QUADS_NUMBER_EULER";
+			case BIT_QUADS_NUMBER_HOLES: return "BIT_QUADS_NUMBER_HOLES";
+			case BIT_QUADS_PERIMETER_CONTINUOUS: return "BIT_QUADS_PERIMETER_CONTINUOUS";
+			case BIT_QUADS_CIRCULARITY: return "BIT_QUADS_CIRCULARITY";
+			case BIT_QUADS_AREA_AVERAGE: return "BIT_QUADS_AREA_AVERAGE";
+			case BIT_QUADS_LENGTH_AVERAGE: return "BIT_QUADS_LENGTH_AVERAGE";
+			case BIT_QUADS_WIDTH_AVERAGE: return "BIT_QUADS_WIDTH_AVERAGE";
+						
 			default: return "UNDEFINED";
 		}
 	}
