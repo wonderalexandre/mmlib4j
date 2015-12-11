@@ -78,6 +78,9 @@ public class Attribute {
 	public static final int BIT_QUADS_PERIMETER_AVERAGE = 37;
 	public static final int BIT_QUADS_LENGTH_AVERAGE = 38;
 	public static final int BIT_QUADS_WIDTH_AVERAGE = 39;
+	public static final int BIT_QUADS_AREA = 50;
+	public static final int BIT_QUADS_AREA_DUDA = 51;
+	
 	
 	//mser
 	public static final int MSER = 40;
@@ -120,7 +123,9 @@ public class Attribute {
 			case BIT_QUADS_AREA_AVERAGE: return "BIT_QUADS_AREA_AVERAGE";
 			case BIT_QUADS_LENGTH_AVERAGE: return "BIT_QUADS_LENGTH_AVERAGE";
 			case BIT_QUADS_WIDTH_AVERAGE: return "BIT_QUADS_WIDTH_AVERAGE";
-						
+			case BIT_QUADS_AREA: return "BIT_QUADS_AREA";
+			case BIT_QUADS_AREA_DUDA: return "BIT_QUADS_AREA_DUDA";
+			
 			default: return "UNDEFINED";
 		}
 	}
