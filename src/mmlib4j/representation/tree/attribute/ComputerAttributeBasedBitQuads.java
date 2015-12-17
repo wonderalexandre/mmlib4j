@@ -3,9 +3,6 @@ package mmlib4j.representation.tree.attribute;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import javax.smartcardio.ATR;
-
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.PixelIndexer;
 import mmlib4j.representation.tree.NodeLevelSets;
