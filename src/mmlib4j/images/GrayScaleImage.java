@@ -42,7 +42,7 @@ public interface GrayScaleImage extends Image2D{
     
     public int minValue();
     
-    public int meanValue();
+    public float meanValue();
     
     public int maxPixel();
     

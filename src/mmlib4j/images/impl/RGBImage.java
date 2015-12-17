@@ -28,14 +28,14 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
         this.width = width;
         this.height = height;
         this.pixels = new int[width * height];
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
 
     RGBImage(int pixels[], int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
     
     /**
@@ -46,7 +46,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
         this.width = img.getWidth();
         this.height = img.getHeight();
         this.pixels = new int[width * height];
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
         for (int i = 0; i < getSize(); i++){
             	pixels[i] = ((alpha & 0xFF) << 24) |
             				((img.getPixel(i) & 0xFF) << 16) |
@@ -64,7 +64,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
         this.width = img.getWidth();
         this.height = img.getHeight();
         this.pixels = new int[width * height];
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
         for (int i = 0; i < getSize(); i++){
         	pixels[i] = ((alpha & 0xFF) << 24) |
         				((img.getPixel(i)?1:0 & 0xFF) << 16) |
@@ -152,7 +152,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
     	this.width = width;
     	this.height = height;
         this.pixels = pixels;
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
     public void setPixel(int x, int y, int[] value) {
     	setPixel(y * width + x, value);

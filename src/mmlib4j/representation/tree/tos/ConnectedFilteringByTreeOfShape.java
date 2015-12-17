@@ -28,7 +28,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	private boolean hasComputerBasicAttribute = false;
 	private boolean hasComputerAttributeBasedPerimeterExternal = false;
 	private boolean hasComputerCentralMomentAttribute = false;
-	private boolean hasComputerPatternEulerAttribute = false;
 	private boolean hasComputerDistanceTransform = false;
 	private ComputerDistanceTransform dt = null;
 	
@@ -50,36 +49,15 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		return listNode; 
 	}
 	
-
-
-
 	public ComputerDistanceTransform computerDistanceTransform(){
 		if(!hasComputerDistanceTransform){
-			long ti = System.currentTimeMillis();
 			dt = new ComputerDistanceTransform(numNode, getRoot(), imgInput);
 			hasComputerDistanceTransform = true;
-			if(Utils.debug){
-				long tf = System.currentTimeMillis();
-				System.out.println("Tempo de execucao [computer distance transform] "+ ((tf - ti) /1000.0)  + "s");
-			}
 		}
 		return dt;
 	}
 	
-	public void computerPatternEulerAttribute(){
-		if(!hasComputerPatternEulerAttribute){
-			long ti = System.currentTimeMillis();
-			for(NodeToS node: getListNodes()){
-				node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, node.getNumHoles()));
-			}
-			hasComputerPatternEulerAttribute = true;
-			if(Utils.debug){
-				long tf = System.currentTimeMillis();
-				System.out.println("Tempo de execucao [attribute euler] "+ ((tf - ti) /1000.0)  + "s");
-			}
-		}
-	}
-
+	
 	public void computerCentralMomentAttribute(){
 		if(!hasComputerCentralMomentAttribute){
 			new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesToS(getListNodes());
@@ -89,25 +67,15 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	
 	public void computerBasicAttribute(){
 		if(!hasComputerBasicAttribute){
-			long ti = System.currentTimeMillis();
 			new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesToS(getListNodes());
 			hasComputerBasicAttribute = true;
-			if(Utils.debug){
-				long tf = System.currentTimeMillis();
-				System.out.println("Tempo de execucao [basic attribute] "+ ((tf - ti) /1000.0)  + "s");
-			}
 		}
 	}
 	
 	public void computerAttributeBasedPerimeterExternal(){
 		if(!hasComputerAttributeBasedPerimeterExternal){
-			long ti = System.currentTimeMillis();
 			new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
 			hasComputerAttributeBasedPerimeterExternal = true;
-			if(Utils.debug){
-				long tf = System.currentTimeMillis();
-				System.out.println("Tempo de execucao [external perimeter] "+ ((tf - ti) /1000.0)  + "s");
-			}
 		}
 	}
 		
@@ -148,9 +116,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 				computerAttributeBasedPerimeterExternal();
 				break;
 				
-			case Attribute.NUM_HOLES:
-				computerPatternEulerAttribute();
-				break;
 				
 		}
 	}

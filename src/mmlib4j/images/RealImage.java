@@ -20,9 +20,9 @@ public interface RealImage extends Image2D{
     
     public void setPixels(int width, int height, float pixels[]);
     
-    public float getPixelMax();
+    public float getPixelValueMax();
     
-    public float getPixelMin();
+    public float getPixelValueMin();
 
     public void setPixel(int i, float level);
     

@@ -17,10 +17,12 @@ import mmlib4j.utils.Utils;
  *
  * Implementation of paper:
  * Juan Climent, Luiz S. Oliveira, A new algorithm for number of holes attribute filtering of grey-level images, Pattern Recognition Letters, 2014.
+ * 
+ * @deprecated use the ComputerAttributeBasedQuadBits class. 
  */
 public class ComputerPatternEulerAttribute extends AttributeComputedIncrementally{
 
-	PatternEulerAttribute attr[];
+	PatternEulerAttribute attr[]; 
 	int numNode;
 	GrayScaleImage img; 
 	AdjacencyRelation adj;
@@ -60,7 +62,7 @@ public class ComputerPatternEulerAttribute extends AttributeComputedIncrementall
 	} 
 	
 	public void addAttributeInNodes(NodeLevelSets node){
-		node.addAttribute(Attribute.NUM_HOLES, new Attribute(Attribute.NUM_HOLES, attr[ node.getId() ].getNumberHoles()));
+		node.addAttribute(Attribute.BIT_QUADS_NUMBER_HOLES, new Attribute(Attribute.BIT_QUADS_NUMBER_HOLES, attr[ node.getId() ].getNumberHoles()));
 	}
 	
 	

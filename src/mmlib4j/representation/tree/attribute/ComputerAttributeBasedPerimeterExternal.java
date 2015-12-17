@@ -35,7 +35,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 		//while(pool.getActiveCount() != 0);
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
-			System.out.println("Tempo de execucao [extraction of attribute - based on perimeter]  "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [extraction of attribute - based on perimeter external]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 	}
 	

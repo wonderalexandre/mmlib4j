@@ -25,14 +25,14 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
         this.width = width;
         this.height = height;
         this.pixels = new int[width * height];
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
 
 	IntegerImage(int pixels[], int width, int height) {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
 	
     
@@ -74,7 +74,7 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
     	this.width = width;
         this.height = height;
         this.pixels = (int[]) pixels;
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
     
     public int getValue(int x, int y) {
@@ -109,7 +109,7 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
         this.height = height;
         this.pixels = new int[width * height];
         initImage(255);
-        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getWidth()) );
+        setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
         for (int i = 0, x = Math.abs(oldWidth - width)/2; i < oldWidth; i++, x++){
             for (int j = 0, y = Math.abs(oldHeight - height)/2; j < oldHeight; j++, y++){
                 setPixel(x, y, pixels[j * oldWidth + i]);

@@ -28,7 +28,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		computerAttribute(root);
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
-			System.out.println("Tempo de execucao [extraction of attribute - moments]  "+ ((tf - ti) /1000.0)  + "s");
+			System.out.println("Tempo de execucao [extraction of attributes - moments]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 	}
 
