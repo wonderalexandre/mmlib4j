@@ -100,7 +100,7 @@ public abstract class PixelIndexer {
 		return new PixelIndexer(){
 			public int getIndex(int x, int y) {
 				if (x < 0 || x >= width || y < 0 || y >= height) {
-					throw new ArrayIndexOutOfBoundsException();
+					throw new ArrayIndexOutOfBoundsException("erro:" + x + ", " + y);
 				}
 				else 
 					return width * y + x;
