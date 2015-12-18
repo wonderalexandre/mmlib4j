@@ -125,12 +125,14 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 	AdjacencyRelation adj;
 	
 	private GrayScalePatternGroup Q1;
+	private GrayScalePatternGroup Q1C4;
 	private GrayScalePatternGroup Q2;
 	private GrayScalePatternGroup QD;
 	private GrayScalePatternGroup Q3;
 	private GrayScalePatternGroup Q4;
 	
 	private GrayScalePatternGroup Q1T;
+	private GrayScalePatternGroup Q1C4T;
 	private GrayScalePatternGroup Q2T;
 	private GrayScalePatternGroup QDT;
 	private GrayScalePatternGroup Q3T;
@@ -175,6 +177,21 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		
 		Q1 = new GrayScalePatternGroup();
 		Q1.appendPattern(Q1P1).appendPattern(Q1P2).appendPattern(Q1P3).appendPattern(Q1P4);
+	}
+	
+	private void createQ1C4Patterns() {
+		GrayScalePattern Q1C4P1 = new GrayScalePattern();
+		GrayScalePattern Q1C4P2 = new GrayScalePattern();
+		GrayScalePattern Q1C4P3 = new GrayScalePattern();
+		GrayScalePattern Q1C4P4 = new GrayScalePattern();
+		
+		Q1C4P1.appendQuad(new LowerQuadBit(0, -1)).appendQuad(new LowerQuadBit(1, 0));
+		Q1C4P2.appendQuad(new LowerQuadBit(-1, 0)).appendQuad(new LowerQuadBit(0, -1));
+		Q1C4P3.appendQuad(new LowerQuadBit(0, 1)).appendQuad(new LowerQuadBit(-1, 0));
+		Q1C4P4.appendQuad(new LowerQuadBit(1, 0)).appendQuad(new LowerQuadBit(0, 1));
+		
+		Q1C4 = new GrayScalePatternGroup();
+		Q1C4.appendPattern(Q1C4P1).appendPattern(Q1C4P2).appendPattern(Q1C4P3).appendPattern(Q1C4P4);
 	}
 	
 	private void createQ2Patterns() {
@@ -267,6 +284,31 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		
 		Q4 = new GrayScalePatternGroup();
 		Q4.appendPattern(Q4P1).appendPattern(Q4P2).appendPattern(Q4P3).appendPattern(Q4P4);
+	}
+	
+	private void createQ1C4TPatterns() {
+		GrayScalePattern Q1C4TP1 = new GrayScalePattern();
+		GrayScalePattern Q1C4TP2 = new GrayScalePattern();
+		GrayScalePattern Q1C4TP3 = new GrayScalePattern();
+		GrayScalePattern Q1C4TP4 = new GrayScalePattern();
+		GrayScalePattern Q1C4TP5 = new GrayScalePattern();
+		GrayScalePattern Q1C4TP6 = new GrayScalePattern();
+		GrayScalePattern Q1C4TP7 = new GrayScalePattern();
+		GrayScalePattern Q1C4TP8 = new GrayScalePattern();
+		
+		Q1C4TP1.appendQuad(new LowerQuadBit(1, 1)).appendQuad(new GreaterQuadBit(0, 1));
+		Q1C4TP2.appendQuad(new GreaterQuadBit(0, 1)).appendQuad(new GreaterQuadBit(-1, 1));
+		Q1C4TP3.appendQuad(new LowerQuadBit(-1, -1)).appendQuad(new GreaterQuadBit(0, -1));
+		Q1C4TP4.appendQuad(new GreaterQuadBit(0, -1)).appendQuad(new LowerQuadBit(1, -1));
+		
+		Q1C4TP5.appendQuad(new GreaterQuadBit(-1, 0)).appendQuad(new LowerOrEqualQuadBit(-1, -1));
+		Q1C4TP6.appendQuad(new LowerOrEqualQuadBit(1, -1)).appendQuad(new GreaterQuadBit(1, 0));
+		Q1C4TP7.appendQuad(new GreaterQuadBit(1, 0)).appendQuad(new LowerOrEqualQuadBit(1, 1));
+		Q1C4TP8.appendQuad(new LowerOrEqualQuadBit(-1, 1)).appendQuad(new GreaterQuadBit(-1, 0));
+		
+		Q1C4T = new GrayScalePatternGroup();
+		Q1C4T.appendPattern(Q1C4TP1).appendPattern(Q1C4TP2).appendPattern(Q1C4TP3).appendPattern(Q1C4TP4)
+			 .appendPattern(Q1C4TP5).appendPattern(Q1C4TP6).appendPattern(Q1C4TP7).appendPattern(Q1C4TP8);
 	}
 	
 	private void createQ1TPatterns(){
@@ -403,20 +445,32 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 	}
 	
 	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
-		attr[node.getId()].countPatternChildrenC1 += attr[son.getId()].countPatternC1;
+		
+		if (adj == AdjacencyRelation.getAdjacency4())
+			attr[node.getId()].countPatternChildrenC1C4 += attr[son.getId()].countPatternC1C4;
+		else {
+			attr[node.getId()].countPatternChildrenC1 += attr[son.getId()].countPatternC1;
+			attr[node.getId()].countPatternChildrenCD += attr[son.getId()].countPatternCD;
+		}
+
 		attr[node.getId()].countPatternChildrenC2 += attr[son.getId()].countPatternC2;
-		attr[node.getId()].countPatternChildrenCD += attr[son.getId()].countPatternCD;
 		attr[node.getId()].countPatternChildrenC3 += attr[son.getId()].countPatternC3;
 		attr[node.getId()].countPatternChildrenC4 += attr[son.getId()].countPatternC4;
 	}
 
 	public void posProcessing(NodeLevelSets root) {
 		//pos-processing root
-		attr[root.getId()].countPatternC1 = attr[root.getId()].countPatternC1 + attr[root.getId()].countPatternChildrenC1 - attr[root.getId()].countPatternCT1;
+		if (adj == AdjacencyRelation.getAdjacency4()) 
+			attr[root.getId()].countPatternC1C4 = attr[root.getId()].countPatternC1C4 + attr[root.getId()].countPatternChildrenC1C4 - attr[root.getId()].countPatternCT1C4;
+		else {
+			attr[root.getId()].countPatternC1 = attr[root.getId()].countPatternC1 + attr[root.getId()].countPatternChildrenC1 - attr[root.getId()].countPatternCT1;
+			attr[root.getId()].countPatternCD = attr[root.getId()].countPatternCD + attr[root.getId()].countPatternChildrenCD - attr[root.getId()].countPatternCTD;
+		}
+		
 		attr[root.getId()].countPatternC2 = attr[root.getId()].countPatternC2 + attr[root.getId()].countPatternChildrenC2 - attr[root.getId()].countPatternCT2;
 		attr[root.getId()].countPatternC3 = attr[root.getId()].countPatternC3 + attr[root.getId()].countPatternChildrenC3 - attr[root.getId()].countPatternCT3;
 		attr[root.getId()].countPatternC4 = attr[root.getId()].countPatternC4 + attr[root.getId()].countPatternChildrenC4;
-		attr[root.getId()].countPatternCD = attr[root.getId()].countPatternCD + attr[root.getId()].countPatternChildrenCD - attr[root.getId()].countPatternCTD;
+		
 	}
 	
 	private int getValue(int x, int y){
@@ -437,19 +491,24 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		int px = p % img.getWidth();
 		int py = p / img.getWidth();
 		
-		attr[node.getId()].countPatternC1 += Q1.count(px, py, img);
-		attr[node.getId()].countPatternC2 += Q2.count(px, py, img);
-		attr[node.getId()].countPatternCD += QD.count(px, py, img);
-		attr[node.getId()].countPatternC3 += Q3.count(px, py, img);
+		if (adj == AdjacencyRelation.getAdjacency4())
+		{
+			attr[node.getId()].countPatternC1C4 += Q1C4.count(px, py, img);
+			attr[node.getId()].countPatternCT1C4 += Q1C4T.count(px, py, img);
+		}
+		else // 8-connectivity
+		{
+			attr[node.getId()].countPatternC1 += Q1.count(px, py, img);
+			attr[node.getId()].countPatternCD += QD.count(px, py, img);
+			attr[node.getId()].countPatternCTD += QDT.count(px, py, img);
+			attr[node.getId()].countPatternCT1 += Q1T.count(px, py, img);
+		}
 		
-		if (Q4.count(px, py, img) > 1)
-			System.out.println(Q4.count(px, py, img));
-		
+		attr[node.getId()].countPatternC2 += Q2.count(px, py, img);		
+		attr[node.getId()].countPatternC3 += Q3.count(px, py, img);		
 		attr[node.getId()].countPatternC4 += Q4.count(px, py, img);
-		
-		attr[node.getId()].countPatternCT1 += Q1T.count(px, py, img);
-		attr[node.getId()].countPatternCT2 += Q2T.count(px, py, img);
-		attr[node.getId()].countPatternCTD += QDT.count(px, py, img);
+				
+		attr[node.getId()].countPatternCT2 += Q2T.count(px, py, img);		
 		attr[node.getId()].countPatternCT3 += Q3T.count(px, py, img);
 	}
 	
@@ -460,14 +519,18 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		public int countPatternC4 = 0;
 		public int countPatternC3 = 0;
 		public int countPatternC2 = 0;
+		public int countPatternC1C4 = 0;
 		public int countPatternC1 = 0;
 		
 		public int countPatternCTD = 0;
 		public int countPatternCT3 = 0;
 		public int countPatternCT2 = 0;
-		public int countPatternCT1 = 0;		
+		public int countPatternCT1C4 = 0;
+		public int countPatternCT1 = 0;
+		
 		
 		int countPatternChildrenC1 = 0;
+		int countPatternChildrenC1C4 = 0;
 		int countPatternChildrenC2 = 0;
 		int countPatternChildrenCD = 0;
 		int countPatternChildrenC3 = 0;
@@ -476,10 +539,19 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		int area;
 		
 		public int getNumberEuler(){
-			if(adj == AdjacencyRelation.getAdjacency8())
-				return (countPatternC1 - countPatternC3 - (2 * countPatternCD)) / 4;
+			
+			System.out.println("Q1  ---> " + countPatternC1);
+			System.out.println("Q3  ---> " + countPatternC3);
+			System.out.println("QD  ---> " + countPatternCD);
+			System.out.println("Euler -> " + ((countPatternC1 - countPatternC3 - (2 * countPatternCD)) / 4));
+			
+			if(adj == AdjacencyRelation.getAdjacency4())
+				return (countPatternC1C4 - countPatternC3) / 4;
 			else
-				return (countPatternC1 - countPatternC3 + (2 * countPatternCD)) / 4;
+				return (countPatternC1 - countPatternC3 - (2 * countPatternCD)) / 4;
+				
+			
+			
 		}
 		
 		public int getNumberHoles() {
@@ -529,10 +601,12 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		
 		public String printPattern() {
 			String s = "Q1: " + countPatternC1;
+			s += "\tQ1C4: " + countPatternC1C4;
 			s += "\tQ2: " + countPatternC2;
 			s += "\tQ3: " + countPatternC3;
 			s += "\tQD: " + countPatternCD;
 			s += "\tQ4: " + countPatternC4;
+			s += "\tQT1C4: " + countPatternCT1C4;
 			s += "\tQT1: " + countPatternCT1;
 			s += "\tQT2: " + countPatternCT2;
 			s += "\tQT3: " + countPatternCT3;
