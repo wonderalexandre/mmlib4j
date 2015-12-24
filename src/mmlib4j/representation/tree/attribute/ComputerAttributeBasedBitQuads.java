@@ -152,15 +152,22 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 	}
 
 	private void initializePatterns() {
-		createQ1Patterns();
+		if (adj == AdjacencyRelation.getAdjacency4()) {
+			createQ1C4Patterns();
+			createQ1C4TPatterns();
+		}
+		else {
+			createQ1Patterns();
+			createQDPatterns();
+			createQ1TPatterns();
+			createQDTPattern();
+		}
+			
 		createQ2Patterns();
 		createQ3Patterns();
 		createQ4Patterns();
-		createQDPatterns();
 		
-		createQ1TPatterns();
-		createQ2TPattern();
-		createQDTPattern();
+		createQ2TPattern();		
 		createQ3TPattern();
 	}
 	
