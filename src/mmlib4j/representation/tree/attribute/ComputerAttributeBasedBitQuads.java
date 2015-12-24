@@ -381,8 +381,8 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		
 		QDTP1.appendQuad(new GreaterQuadBit(0, -1)).appendQuad(new LowerQuadBit(1, -1)).appendQuad(new GreaterQuadBit(1, 0));
 		QDTP2.appendQuad(new GreaterQuadBit(1, 0)).appendQuad(new LowerQuadBit(1, 1)).appendQuad(new GreaterQuadBit(0, 1));
-		QDTP3.appendQuad(new GreaterQuadBit(0, 1)).appendQuad(new LowerQuadBit(-1, 1)).appendQuad(new GreaterQuadBit(-1, 0));
-		QDTP4.appendQuad(new GreaterQuadBit(-1, 0)).appendQuad(new LowerQuadBit(-1, -1)).appendQuad(new GreaterQuadBit(0, -1));
+		QDTP3.appendQuad(new GreaterQuadBit(0, 1)).appendQuad(new LowerOrEqualQuadBit(-1, 1)).appendQuad(new GreaterQuadBit(-1, 0));
+		QDTP4.appendQuad(new GreaterQuadBit(-1, 0)).appendQuad(new LowerOrEqualQuadBit(-1, -1)).appendQuad(new GreaterQuadBit(0, -1));
 		
 		QDT = new GrayScalePatternGroup();
 		QDT.appendPattern(QDTP1).appendPattern(QDTP2).appendPattern(QDTP3).appendPattern(QDTP4);
