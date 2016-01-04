@@ -152,15 +152,22 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 	}
 
 	private void initializePatterns() {
-		createQ1Patterns();
+		if (adj == AdjacencyRelation.getAdjacency4()) {
+			createQ1C4Patterns();
+			createQ1C4TPatterns();
+		}
+		else {
+			createQ1Patterns();
+			createQDPatterns();
+			createQ1TPatterns();
+			createQDTPattern();
+		}
+			
 		createQ2Patterns();
 		createQ3Patterns();
 		createQ4Patterns();
-		createQDPatterns();
 		
-		createQ1TPatterns();
-		createQ2TPattern();
-		createQDTPattern();
+		createQ2TPattern();		
 		createQ3TPattern();
 	}
 	
@@ -381,8 +388,8 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		
 		QDTP1.appendQuad(new GreaterQuadBit(0, -1)).appendQuad(new LowerQuadBit(1, -1)).appendQuad(new GreaterQuadBit(1, 0));
 		QDTP2.appendQuad(new GreaterQuadBit(1, 0)).appendQuad(new LowerQuadBit(1, 1)).appendQuad(new GreaterQuadBit(0, 1));
-		QDTP3.appendQuad(new GreaterQuadBit(0, 1)).appendQuad(new LowerQuadBit(-1, 1)).appendQuad(new GreaterQuadBit(-1, 0));
-		QDTP4.appendQuad(new GreaterQuadBit(-1, 0)).appendQuad(new LowerQuadBit(-1, -1)).appendQuad(new GreaterQuadBit(0, -1));
+		QDTP3.appendQuad(new GreaterQuadBit(0, 1)).appendQuad(new LowerOrEqualQuadBit(-1, 1)).appendQuad(new GreaterQuadBit(-1, 0));
+		QDTP4.appendQuad(new GreaterQuadBit(-1, 0)).appendQuad(new LowerOrEqualQuadBit(-1, -1)).appendQuad(new GreaterQuadBit(0, -1));
 		
 		QDT = new GrayScalePatternGroup();
 		QDT.appendPattern(QDTP1).appendPattern(QDTP2).appendPattern(QDTP3).appendPattern(QDTP4);
