@@ -56,7 +56,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		node.addAttribute(Attribute.WIDTH, attr[ node.getId() ].width);
 		node.addAttribute(Attribute.HEIGHT, attr[ node.getId() ].height);
 		node.addAttribute(Attribute.ALTITUDE, attr[ node.getId() ].altitude);
-		node.addAttribute(Attribute.PERIMETER, attr[ node.getId() ].perimeter);
+		//node.addAttribute(Attribute.PERIMETER, attr[ node.getId() ].perimeter);
 		node.addAttribute(Attribute.LEVEL, new Attribute(Attribute.LEVEL, node.getLevel()));
 		node.addAttribute(Attribute.RECTANGULARITY, attr[ node.getId() ].rect);
 		node.addAttribute(Attribute.RATIO_WIDTH_HEIGHT, attr[ node.getId() ].ratioWH);
@@ -81,7 +81,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		attr[node.getId()].pixelXmin = node.getPixelWithXmin();
 		attr[node.getId()].pixelYmin = node.getPixelWithYmin();
 		
-		attr[node.getId()].perimeter.value = node.getNumPixelInFrame();
+		/*attr[node.getId()].perimeter.value = node.getNumPixelInFrame();
 		
 		for(int p: node.getCanonicalPixels()){
 			for(int q: AdjacencyRelation.getAdjacency4().getAdjacencyPixels(img, p)){
@@ -103,7 +103,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 					}
 				}
 			}
-		}
+		}*/
 	}
 	
 	
@@ -145,7 +145,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		attr[node.getId()].highest = Math.max(attr[node.getId()].highest, attr[son.getId()].highest);
 		attr[node.getId()].lowest = Math.min(attr[node.getId()].lowest, attr[son.getId()].lowest);
 		
-		attr[node.getId()].perimeter.value = attr[node.getId()].perimeter.value + attr[son.getId()].perimeter.value;
+		//attr[node.getId()].perimeter.value = attr[node.getId()].perimeter.value + attr[son.getId()].perimeter.value;
 	}
 
 	public void posProcessing(NodeLevelSets root) {
@@ -185,7 +185,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		Attribute altitude = new Attribute(Attribute.ALTITUDE);
 		Attribute width = new Attribute(Attribute.WIDTH);
 		Attribute height = new Attribute(Attribute.HEIGHT);
-		Attribute perimeter = new Attribute(Attribute.PERIMETER);
+		//Attribute perimeter = new Attribute(Attribute.PERIMETER);
 		int xmax;
 		int ymax;
 		int xmin;
