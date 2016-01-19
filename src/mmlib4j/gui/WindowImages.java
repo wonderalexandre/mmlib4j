@@ -48,7 +48,7 @@ public abstract class WindowImages {
     	instance.showImpl(img,titles);
     }
     
-    public static void show(Image2D img[]){
+    public static void show(Image2D... img){
          String titles[] = new String[img.length];
         for(int i=0; i < img.length; i++){
             titles[i] = String.valueOf(i);
