@@ -15,9 +15,6 @@ public class AdjacencyRelation {
 	int px[];
 	int py[];
 	
-	int origemX = Integer.MIN_VALUE;
-	int origemY = Integer.MIN_VALUE;
-	
 	protected static AdjacencyRelation adj4 = null;
 	protected static AdjacencyRelation adj8 = null;
 	
@@ -38,13 +35,11 @@ public class AdjacencyRelation {
 	}
 
 	public static void main(String args[]){
-		AdjacencyRelation adj = AdjacencyRelation.getCircular(2).leftSide();
-		
-		
+		AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5).diagonalUpperRightSide();
 		
 		adj.print();
 		
-		AdjacencyRelation.getBox(3, 3).rightSide().print();
+		
 		
 	}
 	
@@ -56,25 +51,6 @@ public class AdjacencyRelation {
 		return py[index];
 	}
 	
-	public int getIndexOrigemX(){
-		if(origemX == Integer.MIN_VALUE){
-			for(int p: px){
-				if(p ==0)
-					origemX = p;
-			}
-		}
-		return origemX;
-	}
-	
-	public int getIndexOrigemY(){
-		if(origemY == Integer.MIN_VALUE){
-			for(int p: py){
-				if(p ==0)
-					origemY = p;
-			}
-		}
-		return origemY;
-	}
 	
 	public void print(){
 		String si;
@@ -129,7 +105,7 @@ public class AdjacencyRelation {
 	}
 	
 	
-	public int[][] getEE(){
+	public int[][] getStructuringElement(){
 		String si;
 		String sj;
 		
@@ -325,6 +301,26 @@ public class AdjacencyRelation {
 	}
 	
 
+	
+	
+	public AdjacencyRelation diagonalUpperRightSide(){
+		int cont=0;
+		for (int i=0; i < this.px.length; i++){
+			if(this.px[i] >= 0 && this.py[i] >= 0){
+				cont++;
+			}
+		}
+		AdjacencyRelation adj = new AdjacencyRelation(cont);
+		int index=0;
+		for (int i=0; i < this.px.length; i++){
+			if(this.px[i] >= 0 && this.py[i] >= 0){
+				adj.px[index] = this.px[i];
+				adj.py[index] = this.py[i];
+				index++;
+			}
+		}
+		return adj;
+	}
 
 	public AdjacencyRelation rightSide(){
 		int cont=0;
@@ -344,6 +340,27 @@ public class AdjacencyRelation {
 		}
 		return adj;
 	}
+	
+	public AdjacencyRelation diagonalUpperLeftSide(){
+		int cont=0;
+		for (int i=0; i < this.px.length; i++){
+			if(this.px[i] <= 0 && this.py[i] <= 0){
+				cont++;
+			}
+		}
+		AdjacencyRelation adj = new AdjacencyRelation(cont);
+		int index=0;
+		for (int i=0; i < this.px.length; i++){
+			if(this.px[i] <= 0 && this.py[i] <= 0){
+				adj.px[index] = this.px[i];
+				adj.py[index] = this.py[i];
+				index++;
+			}
+		}
+		return adj;
+	}
+	
+	
 	
 
 	public AdjacencyRelation leftSide(){
@@ -750,4 +767,5 @@ public class AdjacencyRelation {
 		this.px[i] = px;
 		this.py[i] = py;
 	}
+	
 }
