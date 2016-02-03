@@ -3,6 +3,7 @@ package mmlib4j.utils;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.images.BinaryImage;
 import mmlib4j.images.Image2D;
 
 
@@ -15,8 +16,6 @@ public class AdjacencyRelation {
 	int px[];
 	int py[];
 	
-	int origemX = Integer.MIN_VALUE;
-	int origemY = Integer.MIN_VALUE;
 	
 	protected static AdjacencyRelation adj4 = null;
 	protected static AdjacencyRelation adj8 = null;
@@ -56,25 +55,56 @@ public class AdjacencyRelation {
 		return py[index];
 	}
 	
-	public int getIndexOrigemX(){
-		if(origemX == Integer.MIN_VALUE){
-			for(int p: px){
-				if(p ==0)
-					origemX = p;
-			}
+	/**
+	 * Return the adjacency relation constructed from a binary image
+	 * @param img
+	 * @param xOrigem
+	 * @param yOrigem
+	 * @return
+	 */
+	public static AdjacencyRelation getAdjacencyRelationFromSE(BinaryImage img, int xOrigem, int yOrigem){
+		AdjacencyRelation adj = new AdjacencyRelation( img.getArea() );
+		int cont = 0;
+		for(int x=0; x < img.getWidth(); x++){
+            for(int y=0; y < img.getHeight(); y++){
+            	adj.set(xOrigem - x, yOrigem - y, cont++);
+            }
 		}
-		return origemX;
+		return adj;
 	}
 	
-	public int getIndexOrigemY(){
-		if(origemY == Integer.MIN_VALUE){
-			for(int p: py){
-				if(p ==0)
-					origemY = p;
-			}
+	/**
+	 * Return the adjacency relation constructed from a binary image (the origem is the centroid of binary image)
+	 * @param img
+	 * @return
+	 */
+	public static AdjacencyRelation getAdjacencyRelationFromSE(BinaryImage img){
+		 int area =0;
+		 int xCentroid = 0;
+		 int yCentroid = 0;
+		 for(int x=0; x < img.getWidth(); x++){
+	            for(int y=0; y < img.getHeight(); y++){
+	            	if(img.getPixel(x, y)){
+	            		area++;
+	            		xCentroid += x;
+	            		yCentroid += y;
+	            	}
+	            }
+		 }	
+		xCentroid = xCentroid / area;
+		yCentroid = yCentroid / area;
+		
+		AdjacencyRelation adj = new AdjacencyRelation( area );
+		
+		int cont = 0;
+		for(int x=0; x < img.getWidth(); x++){
+            for(int y=0; y < img.getHeight(); y++){
+            	adj.set(xCentroid - x, yCentroid - y, cont++);
+            }
 		}
-		return origemY;
+		return adj;
 	}
+	
 	
 	public void print(){
 		String si;
@@ -129,7 +159,7 @@ public class AdjacencyRelation {
 	}
 	
 	
-	public int[][] getEE(){
+	public int[][] getSE(){
 		String si;
 		String sj;
 		

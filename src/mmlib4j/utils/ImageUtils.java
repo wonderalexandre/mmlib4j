@@ -76,7 +76,7 @@ public class ImageUtils {
         GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         
         double maxIn = img.maxValue();
-        double ratio = depth / 256.0;
+        double ratio = depth / Math.pow(2, img.getDepth());
         for(int x = 0 ; x < img.getSize() ; x++){
         	imgOut.setPixel(x, (int)(ratio * img.getPixel(x)));
         }

@@ -391,6 +391,9 @@ public class ComponentTree {
 			node.numDescendent += son.numDescendent;
 			node.numDescendentLeaf += son.numDescendentLeaf;
 			node.area += son.area;
+			node.sumX += son.sumX;
+			node.sumY += son.sumY;
+			
 		}
 	}
 	
