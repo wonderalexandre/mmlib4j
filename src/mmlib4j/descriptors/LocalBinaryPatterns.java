@@ -4,6 +4,7 @@ import mmlib4j.filtering.Histogram;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.PixelIndexer;
 import mmlib4j.utils.ImageBuilder;
 
 public class LocalBinaryPatterns {
@@ -37,7 +38,7 @@ public class LocalBinaryPatterns {
 		for(int i=0; i < adjX.length; i++){
 			 qx = px + adjX[i];
 			 qy = py + adjY[i];
-			 if(img.getPixel(qx, qy) - img.getPixel(px, py) >= threshold){
+			 if(img.getValue(qx, qy) - img.getValue(px, py) >= threshold){
 				 code += Math.pow(2, i);
 			 }
 		}
@@ -53,27 +54,58 @@ public class LocalBinaryPatterns {
 	}
 	
 	public int getLBPUniform(GrayScaleImage img, int px, int py){
-		return lutLBPUniform[getLBP(img, px, py)] == 58? 200: lutLBPUniform[getLBP(img, px, py)];
+		return lutLBPUniform[getLBP(img, px, py)];
+	}
+	/**
+	 * computer LBP uniform for all pixels of input image. Output with values between 0 and 58
+	 * @param img
+	 * @return
+	 */
+	public GrayScaleImage computerLBPUniform(GrayScaleImage img){
+		PixelIndexer nearest = PixelIndexer.getNearestBorderIndexer(img.getWidth(), img.getHeight());
+		PixelIndexer pindex = img.getPixelIndexer();
+		
+		img.setPixelIndexer( nearest );
+		GrayScaleImage imgLBPUniform = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
+		for(int x=0; x < img.getWidth(); x++){
+			for(int y=0; y < img.getHeight(); y++){
+				imgLBPUniform.setPixel(x, y, getLBPUniform(img, x, y));
+			}
+		}
+		img.setPixelIndexer( pindex );
+		
+		return imgLBPUniform;
 	}
 	
-	
-	
+	/**
+	 * computer LBP for all pixels of input image. Output with values between 0 and 58
+	 * @param img
+	 * @return
+	 */
+	public GrayScaleImage computerLBP(GrayScaleImage img){
+		PixelIndexer nearest = PixelIndexer.getNearestBorderIndexer(img.getWidth(), img.getHeight());
+		PixelIndexer pindex = img.getPixelIndexer();
+		
+		img.setPixelIndexer( nearest );
+		GrayScaleImage imgLBPUniform = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
+		for(int x=0; x < img.getWidth(); x++){
+			for(int y=0; y < img.getHeight(); y++){
+				imgLBPUniform.setPixel(x, y, getLBP(img, x, y));
+			}
+		}
+		img.setPixelIndexer( pindex );
+		
+		return imgLBPUniform;
+	}
 	
 	public static void main(String args[]){
 		GrayScaleImage img = ImageBuilder.openGrayImage();
-		GrayScaleImage imgLBP = ImageFactory.createGrayScaleImage(8, img.getWidth(), img.getHeight());
-		GrayScaleImage imgLBPUniform = ImageFactory.createGrayScaleImage(8, img.getWidth(), img.getHeight());
-		
 		LocalBinaryPatterns lbp = new LocalBinaryPatterns();
 		
-		for(int x=1; x < img.getWidth()-1; x++){
-			for(int y=1; y < img.getHeight()-1; y++){
-				imgLBP.setPixel(x, y, lbp.getLBP(img, x, y));
-				imgLBPUniform.setPixel(x, y, lbp.getLBPUniform(img, x, y));
-			}
-		}
+		GrayScaleImage imgLBP = lbp.computerLBP(img);
+		GrayScaleImage imgLBPUniform = lbp.computerLBPUniform(img);
 		
-		WindowImages.show(img, imgLBP, new Histogram(imgLBPUniform).equalisation());
+		WindowImages.show(img, imgLBP, new Histogram(imgLBPUniform).getGraphic(), new Histogram(imgLBPUniform).equalisation(), new Histogram(imgLBP).getGraphic());
 		
 	}
 	
