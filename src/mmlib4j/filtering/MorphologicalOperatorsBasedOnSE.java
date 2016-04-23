@@ -1,6 +1,7 @@
 package mmlib4j.filtering;
 
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
