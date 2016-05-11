@@ -4,224 +4,161 @@ import mmlib4j.filtering.Histogram;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.images.impl.PixelIndexer;
 import mmlib4j.utils.ImageBuilder;
 
 public class LocalBinaryPatterns {
+	private byte[] mapping;
+	private double[] adjX;
+	private double[] adjY;
+	
+	private double radius;
+	private int numBits;
 
-	int	adjX[];
-	int adjY[];
-	private static int lutLBPUniform[] = {0, 1, 2, 3, 4, 58 , 5, 6, 7, 58 , 58 , 58 , 8, 58 , 9, 10, 11, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 12, 58 , 58 , 58 , 13, 58 , 14, 15, 16, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 17, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 18, 58 , 58 , 58 , 19, 58 , 20, 21, 22, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 23, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 24, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 25, 58 , 58 , 58 , 26, 58 , 27, 28, 29, 30, 58 , 31, 58 , 58 , 58 , 32, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 33, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 34, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 35, 36, 37, 58 , 38, 58 , 58 , 58 , 39, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 40, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 58 , 41, 42, 43, 58 , 44, 58 , 58 , 58 , 45, 58 , 58 , 58 , 58 , 58 , 58 , 58 , 46, 47, 48, 58 , 49, 58 , 58 , 58 , 50, 51, 52, 58 , 53, 54, 55, 56, 57};
-	
-	
-	public LocalBinaryPatterns(){
-		adjX = new int[8];
-		adjY = new int[8];
-		
-		adjX[0] = -1; adjY[0] = 0;
-		
-		adjX[1] = -1; adjY[1] = +1;
-		adjX[2] = 0; adjY[2] = +1;
-		adjX[3] = +1; adjY[3] = +1;
-		
-		adjX[4] = +1; adjY[4] = 0;
-		
-		adjX[5] = +1; adjY[5] = -1;
-		adjX[6] = 0; adjY[6] = -1;
-		adjX[7] = -1; adjY[7] = -1;
-		
+	public LocalBinaryPatterns() {
+		this(8,1.5);
 	}
 	
-	public int getLBP(GrayScaleImage img, int px, int py, int threshold){
-		int qx, qy;
+	public LocalBinaryPatterns(int numBits, double radius) {
+		this(numBits, radius, 1);
+	}
+	
+	public LocalBinaryPatterns(int numBits, double radius, int type) {
+		this.numBits = numBits;
+		this.radius = radius;
+		
+		buildLookupTable(type);
+		buildAdjacency();
+
+	}
+	
+	private void buildAdjacency() {
+		double angleIncrement = Math.PI * 2.0 / (double) numBits;
+		adjX = new double[numBits];
+		adjY = new double[numBits];
+		for (int n = 0; n < numBits; ++n) {
+			adjX[n] = (radius) * Math.cos(((double) n) * angleIncrement);
+			adjY[n] = (radius) * Math.sin(((double) n) * angleIncrement);
+		}
+	}
+	
+	public GrayScaleImage computerLBP(GrayScaleImage img) {
+		return computerLBP(img, 3);
+	}
+	
+	public GrayScaleImage computerLBP(GrayScaleImage img, int threshold) {
+		GrayScaleImage imgLBP = ImageFactory.createGrayScaleImage(8, img.getWidth(), img.getHeight());
+		/* Calculate the lbp */
+		for (int x = (int) (0 + radius); x < img.getWidth() - radius; ++x) {
+			for (int y = (int)(0 + radius); y < img.getHeight() - radius; ++y) {
+				imgLBP.setPixel(x, y, getLBPCode(img, x, y, threshold) );
+			}
+		}
+
+		return imgLBP;
+	}
+	
+
+	/**
+	 * code LBP
+	 * @param img
+	 * @param px
+	 * @param py
+	 * @param threshold
+	 * @return
+	 */
+	public int getLBPCode(GrayScaleImage img, int px, int py, int threshold){
 		int code = 0;
 		for(int i=0; i < adjX.length; i++){
-			 qx = px + adjX[i];
-			 qy = py + adjY[i];
-			 if(img.getValue(qx, qy) - img.getValue(px, py) >= threshold){
-				 code += Math.pow(2, i);
+			//eh mesmo que: code += Math.pow(2, i);
+			if(img.getInterpolatedPixel(px + adjX[i], py + adjY[i]) - img.getValue(px, py) >= threshold){
+				 code = code | (1 << i);
+			 }else{
+				 code = code & ~(1 << i);
 			 }
 		}
-		return code;
+		if(mapping == null)
+			return code;
+		else
+			return mapping[code];
 	}
-	
-	public int getLBP(GrayScaleImage img, int px, int py){
-		return getLBP(img, px, py, 0);
-	}
-	
-	public int getLBPUniform(GrayScaleImage img, int px, int py, int threshold){
-		return lutLBPUniform[getLBP(img, py, py, threshold)];
-	}
-	
-	public int getLBPUniform(GrayScaleImage img, int px, int py){
-		return lutLBPUniform[getLBP(img, px, py)];
-	}
-	/**
-	 * computer LBP uniform for all pixels of input image. Output with values between 0 and 58
-	 * @param img
-	 * @return
-	 */
-	public GrayScaleImage computerLBPUniform(GrayScaleImage img){
-		PixelIndexer nearest = PixelIndexer.getNearestBorderIndexer(img.getWidth(), img.getHeight());
-		PixelIndexer pindex = img.getPixelIndexer();
-		
-		img.setPixelIndexer( nearest );
-		GrayScaleImage imgLBPUniform = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
-		for(int x=0; x < img.getWidth(); x++){
-			for(int y=0; y < img.getHeight(); y++){
-				imgLBPUniform.setPixel(x, y, getLBPUniform(img, x, y));
-			}
-		}
-		img.setPixelIndexer( pindex );
-		
-		return imgLBPUniform;
-	}
+
 	
 	/**
-	 * computer LBP for all pixels of input image. Output with values between 0 and 58
-	 * @param img
+	 * 
+	 * @param numBits
+	 * @param type
+	 *  1 => look-up table to rotation invariant uniform patterns: riu2 in getmapping.m
+	 *  2 => look-up table to uniform patterns: u2 in getmapping.m 
 	 * @return
 	 */
-	public GrayScaleImage computerLBP(GrayScaleImage img){
-		PixelIndexer nearest = PixelIndexer.getNearestBorderIndexer(img.getWidth(), img.getHeight());
-		PixelIndexer pindex = img.getPixelIndexer();
+	/*  */
+	private void buildLookupTable(int type) {
+		int bitMaskLength = (int) (Math.pow(2.0, (double) numBits));
+		int j, numt;
+		int sampleBitMask = 0;
 		
-		img.setPixelIndexer( nearest );
-		GrayScaleImage imgLBPUniform = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
-		for(int x=0; x < img.getWidth(); x++){
-			for(int y=0; y < img.getHeight(); y++){
-				imgLBPUniform.setPixel(x, y, getLBP(img, x, y));
+		if(type==1){
+			mapping = new byte[bitMaskLength];
+			for (int i = 0; i < numBits; ++i) {
+				sampleBitMask |= 1 << i;
+			}		
+			for (int i = 0; i < bitMaskLength; ++i) {
+				
+				j = ((i << 1) & sampleBitMask); // j = bitset(bitshift(i,1,samples),1,bitget(i,samples));
+												// %rotate left
+				j = (i >> (numBits - 1)) > 0 ? j | 1 : j & ~1; // Set first bit to one or zero
+				
+				numt = 0;
+				for (int k = 0; k < numBits; ++k) {
+					numt += (((i ^ j) >> k) & 1);
+				}
+	
+				if (numt <= 2) {
+					for (int k = 0; k < numBits; ++k)
+						mapping[i] += (i >> k) & 1;
+				} else {
+					mapping[i] = (byte) (numBits + 1);
+				}
+			}
+		
+		}
+		else if(type==2){
+			mapping = new byte[bitMaskLength];
+			int max = numBits*(numBits-1) + 3;
+			int index = 0;
+			for (int i = 0; i < numBits; ++i) {
+				sampleBitMask |= 1 << i;
+			}
+			for (int i = 0; i < bitMaskLength; ++i) {
+				// %rotate left
+				j = ((i << 1) & sampleBitMask); // j = bitset(bitshift(i,1,samples),1,bitget(i,samples));
+				j = (i >> (numBits - 1)) > 0 ? j | 1 : j & ~1; // Set first bit to one or zero
+				numt = 0;
+				
+				for (int k = 0; k < numBits; ++k) {
+					numt += (((i ^ j) >> k) & 1);
+				}
+
+				if (numt <= 2) {
+					mapping[i] = (byte) index;
+					index += 1;
+				} else {
+					mapping[i] = (byte) max;
+				}
 			}
 		}
-		img.setPixelIndexer( pindex );
-		
-		return imgLBPUniform;
 	}
 	
-	public static void main(String args[]){
+	public static void main(String[] ar) {
+
 		GrayScaleImage img = ImageBuilder.openGrayImage();
-		LocalBinaryPatterns lbp = new LocalBinaryPatterns();
+		LocalBinaryPatterns lbp = new LocalBinaryPatterns(8,1.5);
 		
-		GrayScaleImage imgLBP = lbp.computerLBP(img);
-		GrayScaleImage imgLBPUniform = lbp.computerLBPUniform(img);
+		GrayScaleImage imgLBP = lbp.computerLBP(img, 3);
 		
-		WindowImages.show(img, imgLBP, new Histogram(imgLBPUniform).getGraphic(), new Histogram(imgLBPUniform).equalisation(), new Histogram(imgLBP).getGraphic());
 		
+		WindowImages.show(imgLBP, new Histogram(imgLBP).equalisation());
+			
 	}
-	
-	/*
-	private static int binaryNumber(String s){
-		int code = 0;
-		for(int i=0; i < s.length(); i++){
-			if(s.charAt(i)=='1')
-				code += Math.pow(2, i);
-		}
-		if(hist[code] == 1)
-			System.out.println(s);
-		hist[code]++;
-		return code;
-		
-	}
-	
-	static int hist[] = new int[256];
-	 
 
-
-	public static void main(String args[]){
-	
-		System.out.println("U=0");
-		System.out.println(binaryNumber("00000000"));
-		System.out.println(binaryNumber("11111111"));
-		
-		System.out.println("\nU=2");
-		System.out.println(binaryNumber("01111111")); //8
-		System.out.println(binaryNumber("10111111"));
-		System.out.println(binaryNumber("11011111"));
-		System.out.println(binaryNumber("11101111"));
-		System.out.println(binaryNumber("11110111"));
-		System.out.println(binaryNumber("11111011"));
-		System.out.println(binaryNumber("11111101"));
-		System.out.println(binaryNumber("11111110"));
-		
-		System.out.println(binaryNumber("00111111")); //7
-		System.out.println(binaryNumber("10011111"));
-		System.out.println(binaryNumber("11001111"));
-		System.out.println(binaryNumber("11100111"));
-		System.out.println(binaryNumber("11110011"));
-		System.out.println(binaryNumber("11111001"));
-		System.out.println(binaryNumber("11111100")); 
-		
-		System.out.println(binaryNumber("01111110"));
-		
-		System.out.println(binaryNumber("00011111")); //6
-		System.out.println(binaryNumber("10001111"));
-		System.out.println(binaryNumber("11000111"));
-		System.out.println(binaryNumber("11100011"));
-		System.out.println(binaryNumber("11110001"));
-		System.out.println(binaryNumber("11111000"));
-		
-		System.out.println(binaryNumber("01111100")); //2
-		System.out.println(binaryNumber("00111110"));
-		
-		System.out.println(binaryNumber("00001111")); //5
-		System.out.println(binaryNumber("10000111"));
-		System.out.println(binaryNumber("11000011"));
-		System.out.println(binaryNumber("11100001"));
-		System.out.println(binaryNumber("11110000"));
-		
-		System.out.println(binaryNumber("01111000")); //4
-		System.out.println(binaryNumber("00111100"));
-		System.out.println(binaryNumber("00011110"));
-		//System.out.println(binaryNumber("00001111"));
-		
-		System.out.println(binaryNumber("00000111")); //4
-		System.out.println(binaryNumber("10000011"));
-		System.out.println(binaryNumber("11000001"));
-		System.out.println(binaryNumber("11100000"));
-		
-		
-		System.out.println(binaryNumber("01110000")); //5
-		System.out.println(binaryNumber("00111000"));
-		System.out.println(binaryNumber("00011100"));
-		System.out.println(binaryNumber("00001110"));
-		//System.out.println(binaryNumber("00000111"));
-		
-		System.out.println(binaryNumber("00000011")); //3
-		System.out.println(binaryNumber("10000001"));
-		//System.out.println(binaryNumber("11000000"));
-		
-		
-		System.out.println(binaryNumber("11000000")); //6
-		System.out.println(binaryNumber("01100000"));
-		System.out.println(binaryNumber("00110000"));
-		System.out.println(binaryNumber("00011000"));
-		System.out.println(binaryNumber("00001100"));
-		System.out.println(binaryNumber("00000110"));
-		 
-		
-		System.out.println(binaryNumber("10000000")); //8
-		System.out.println(binaryNumber("01000000"));
-		System.out.println(binaryNumber("00100000"));
-		System.out.println(binaryNumber("00010000"));
-		System.out.println(binaryNumber("00001000"));
-		System.out.println(binaryNumber("00000100"));
-		System.out.println(binaryNumber("00000010"));
-		System.out.println(binaryNumber("00000001"));
-		
-		
-		
-		System.out.println("histograma");
-		System.out.print("\n int LUT[] = {");
-		int cont=0;
-		for(int i=0; i < 256; i++){
-			if(hist[i] == 1){
-				System.out.print(cont++ + ", ");
-			}else
-				System.out.print("58 , ");
-		}
-		System.out.println("\ncont:"+ cont);
-		
-	}
-	*/
-	
 }
