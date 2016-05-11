@@ -53,8 +53,8 @@ public class ComponentTree {
 		this.imgInput = img;
 		this.isMaxtree = isMaxtree;
 		this.adj = adj;
-		//this.builder = new BuilderComponentTreeByUnionFind(img, adj, isMaxtree);
-		this.builder = new BuilderComponentTreeByRegionGrowing(img, adj, isMaxtree);
+		this.builder = new BuilderComponentTreeByUnionFind(img, adj, isMaxtree);
+		//this.builder = new BuilderComponentTreeByRegionGrowing(img, adj, isMaxtree);
 		this.root = builder.getRoot();
 		this.numNode = builder.getNunNode();
 		this.map = builder.getMap();

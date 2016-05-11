@@ -55,7 +55,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 		this.parent = new int[img.getSize()];
 		this.imgR = new int[img.getSize()]; 
 		this.indexOrder = img.getSize()-1;
-		int maxValue = (int) Math.pow(2, img.getDepth());
+		int maxValue = (int) img.maxValue()+2; //Math.pow(2, img.getDepth());
 		this.hQueue = new Queue[maxValue]; 
 		this.levRoot = new int[maxValue];
 		
