@@ -286,8 +286,8 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
 		double yFraction = y - ybase;
 		int offset = ybase * width + xbase;
 		int lowerLeft = getPixel(offset);// pixels[offset]&255;
-		//if ((xbase>=(width-1))||(ybase>=(height-1)))
-		//	return lowerLeft;
+		if ((xbase>=(width-1))||(ybase>=(height-1)))
+			return lowerLeft;
 		
 		int lowerRight = getPixel(offset + 1);// pixels[offset + 1]&255;
 		int upperRight = getPixel(offset + width + 1); //pixels[offset + width + 1]&255;
