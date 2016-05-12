@@ -173,7 +173,7 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     }
     
     public GrayScaleImage getInvert(){
-    	GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(this.getDepth(), this.getWidth(), this.getHeight());
+    	GrayScaleImage imgOut = this.duplicate();
     	imgOut.invert();
     	return  imgOut;
     }
@@ -273,6 +273,30 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
         return stats.pixelMin;
     }
     
+    /**
+     * Devolve o valor do pixel (x, y) interpolado
+     * @param x
+     * @param y
+     * @return
+     */
+	public double getInterpolatedPixel(double x, double y) {
+		int xbase = (int)x;
+		int ybase = (int)y;
+		double xFraction = x - xbase;
+		double yFraction = y - ybase;
+		int offset = ybase * width + xbase;
+		int lowerLeft = getPixel(offset);// pixels[offset]&255;
+		if ((xbase>=(width-1))||(ybase>=(height-1)))
+			return lowerLeft;
+		
+		int lowerRight = getPixel(offset + 1);// pixels[offset + 1]&255;
+		int upperRight = getPixel(offset + width + 1); //pixels[offset + width + 1]&255;
+		int upperLeft = getPixel(offset + width); // pixels[offset + width]&255;
+		
+		double upperAverage = upperLeft + xFraction * (upperRight - upperLeft);
+		double lowerAverage = lowerLeft + xFraction * (lowerRight - lowerLeft);
+		return lowerAverage + yFraction * (upperAverage - lowerAverage);
+	}
 
 	public void drawLine(int x1, int y1, int x2, int y2, int grayLine){
 		//algoritmo de bresenham

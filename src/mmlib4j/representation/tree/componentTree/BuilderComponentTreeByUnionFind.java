@@ -281,7 +281,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	 */
 	public void sort(){
 		PriorityQueueDial fifo = null;
-		int maxValue = (int) Math.pow(2, img.getDepth());
+		int maxValue = img.maxValue()+1;//(int) Math.pow(2, img.getDepth());
 		if(!isMaxtree)
 			fifo = new PriorityQueueDial(img, maxValue, PriorityQueueDial.LIFO, true);
 		else

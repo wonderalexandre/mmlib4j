@@ -336,6 +336,28 @@ public class TreeOfShape{
 		return imgOut;
 	}
 	
+
+	public GrayScaleImage reconstructionByDepth(){
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		fifo.enqueue(this.root);
+		while(!fifo.isEmpty()){
+			NodeToS no = fifo.dequeue();
+			for(int p: no.getCanonicalPixels()){
+				imgOut.setPixel(p, no.heightNode);
+			}
+			
+			for(NodeToS son: no.children){
+				fifo.enqueue(son);	 
+			}
+			
+		}
+		return imgOut;
+	}
+	
+	
+	
+	
 	public static void prunning(TreeOfShape tree, NodeToS node){
 		if(node != tree.root){
 			NodeToS parent = node.parent;

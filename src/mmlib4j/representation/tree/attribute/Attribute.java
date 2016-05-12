@@ -43,7 +43,7 @@ public class Attribute {
 	public static final int LEVEL = 5;
 	public static final int RATIO_WIDTH_HEIGHT = 6;
 	public static final int RECTANGULARITY = 7;
-	public static final int PERIMETER = 10;
+	//public static final int PERIMETER = 10;
 	public static final int VARIANCE_LEVEL = 11;
 	public static final int LEVEL_MEAN = 12;
 	
@@ -106,7 +106,7 @@ public class Attribute {
 			case MOMENT_ORIENTATION: return "MOMENT_ORIENTATION";
 			case MSER: return "MSER";
 			//case NUM_HOLES: return "NUM_HOLES";
-			case PERIMETER: return "PERIMETER";
+			//case PERIMETER: return "PERIMETER";
 			case PERIMETER_EXTERNAL: return "PERIMETER_EXTERNAL";
 			case RECTANGULARITY: return "RECTANGULARITY";
 			case RATIO_WIDTH_HEIGHT: return "RATIO_WIDTH_HEIGHT";

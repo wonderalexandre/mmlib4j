@@ -1,6 +1,7 @@
 package mmlib4j.filtering;
 
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
@@ -289,11 +290,32 @@ public class MorphologicalOperatorsBasedOnSE {
     	}
     }
     
+    public static void closingTopHat(GrayScaleImage img, AdjacencyRelation ses[], GrayScaleImage imgOut){
+    	long ti = System.currentTimeMillis();
+    	GrayScaleImage imgOutTmp = imgOut.duplicate();
+    	for(int i=0; i < ses.length; i++){
+    		closingTopHat(img, ses[i], imgOutTmp);
+    		for(int p=0; p < img.getSize(); p++){
+    			imgOut.setPixel(p, Math.max(imgOut.getPixel(p), imgOutTmp.getPixel(p)));
+    		}
+    	}
+    	if(Utils.debug){
+    		long tf = System.currentTimeMillis();
+    		System.out.println("Tempo de execucao [openingTopHat]  "+ ((tf - ti) /1000.0)  + "s");
+    	}
+    }
+    
     public static GrayScaleImage closingTopHat(GrayScaleImage img, AdjacencyRelation se){
     	GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
     	closingTopHat(img, se, imgOut);
         return imgOut;
-    }    
+    }
+    
+    public static GrayScaleImage closingTopHat(GrayScaleImage img, AdjacencyRelation ses[]){
+    	GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	closingTopHat(img, ses, imgOut);
+        return imgOut;
+    }
     
     /**
      * Implementacao direta de ultimate opening

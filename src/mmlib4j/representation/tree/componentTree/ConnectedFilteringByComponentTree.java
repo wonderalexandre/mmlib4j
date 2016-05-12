@@ -55,7 +55,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.VOLUME:
 			case Attribute.WIDTH:
 			case Attribute.HEIGHT:
-			case Attribute.PERIMETER:
+			//case Attribute.PERIMETER:
 			case Attribute.LEVEL:
 			case Attribute.RECTANGULARITY:
 			case Attribute.RATIO_WIDTH_HEIGHT:

@@ -242,7 +242,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
         for(int i=x; i < img.getWidth(); i++){
             for(int j=y; j < img.getHeight(); j++){
                 if(this.isPixelValid(i, j))
-                    setPixel(i, j, img.getPixel(i, j));
+                    setGray(i, j, img.getPixel(i, j));
             }
         }
     }
