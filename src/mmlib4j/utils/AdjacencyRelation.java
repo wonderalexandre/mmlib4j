@@ -299,9 +299,7 @@ public class AdjacencyRelation {
 		}
 		return adj;
 	}
-	
 
-	
 	
 	public AdjacencyRelation diagonalUpperRightSide(){
 		int cont=0;
