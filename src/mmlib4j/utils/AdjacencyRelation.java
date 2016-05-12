@@ -300,7 +300,10 @@ public class AdjacencyRelation {
 		return adj;
 	}
 	
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 	
 	
 	public AdjacencyRelation diagonalUpperRightSide(){
