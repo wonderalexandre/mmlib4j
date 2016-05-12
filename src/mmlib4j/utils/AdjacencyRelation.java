@@ -299,12 +299,16 @@ public class AdjacencyRelation {
 		}
 		return adj;
 	}
+<<<<<<< HEAD
 	
 <<<<<<< Updated upstream
 
 =======
 >>>>>>> Stashed changes
 	
+=======
+
+>>>>>>> descriptors
 	
 	public AdjacencyRelation diagonalUpperRightSide(){
 		int cont=0;
