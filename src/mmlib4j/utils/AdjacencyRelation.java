@@ -3,7 +3,6 @@ package mmlib4j.utils;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.SimpleLinkedList;
-import mmlib4j.images.BinaryImage;
 import mmlib4j.images.Image2D;
 
 
@@ -15,7 +14,6 @@ import mmlib4j.images.Image2D;
 public class AdjacencyRelation {
 	int px[];
 	int py[];
-	
 	
 	protected static AdjacencyRelation adj4 = null;
 	protected static AdjacencyRelation adj8 = null;
@@ -36,36 +34,12 @@ public class AdjacencyRelation {
 		this.py = py;
 	}
 
-	public AdjacencyRelation getRotation(double angle){
-		int adjX[] = new int[px.length];
-		int adjY[] = new int[py.length];
-		double theta = Math.toRadians(angle);
-		for(int i=0; i < adjX.length; i++){
-			adjX[i] = (int) (Math.cos(theta) * px[i] - Math.sin(theta) * py[i]);
-			adjY[i] = (int) (Math.sin(theta) * px[i] + Math.cos(theta) * py[i]);
-		}
-		return new AdjacencyRelation(adjX, adjY);
-	}
-	
-	public static AdjacencyRelation[] getLineRadial(int lineSize, int stepAngle){
-		AdjacencyRelation adjs[] = new AdjacencyRelation[(int)Math.ceil(180.0/stepAngle)]; 
-		adjs[0] = AdjacencyRelation.getHorizontal(lineSize);
-		for(int angle=stepAngle, i=1; angle < 180; angle += stepAngle, i++){
-			adjs[i] = adjs[0].getRotation(angle);
-		}
-		return adjs;
-	}
-	
-	
 	public static void main(String args[]){
-		//AdjacencyRelation adj = AdjacencyRelation.getCircular(2).leftSide();
-		//adj.print();
-		//AdjacencyRelation.getBox(3, 3).rightSide().print();
+		AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5).diagonalUpperRightSide();
 		
-		AdjacencyRelation adj[] = AdjacencyRelation.getLineRadial(6, 15);
-		for(AdjacencyRelation a: adj){
-			a.print();
-		}
+		adj.print();
+		
+		
 		
 	}
 	
@@ -75,56 +49,6 @@ public class AdjacencyRelation {
 
 	public int getY(int index){
 		return py[index];
-	}
-	
-	/**
-	 * Return the adjacency relation constructed from a binary image
-	 * @param img
-	 * @param xOrigem
-	 * @param yOrigem
-	 * @return
-	 */
-	public static AdjacencyRelation getAdjacencyRelationFromSE(BinaryImage img, int xOrigem, int yOrigem){
-		AdjacencyRelation adj = new AdjacencyRelation( img.getArea() );
-		int cont = 0;
-		for(int x=0; x < img.getWidth(); x++){
-            for(int y=0; y < img.getHeight(); y++){
-            	adj.set(xOrigem - x, yOrigem - y, cont++);
-            }
-		}
-		return adj;
-	}
-	
-	/**
-	 * Return the adjacency relation constructed from a binary image (the origem is the centroid of binary image)
-	 * @param img
-	 * @return
-	 */
-	public static AdjacencyRelation getAdjacencyRelationFromSE(BinaryImage img){
-		 int area =0;
-		 int xCentroid = 0;
-		 int yCentroid = 0;
-		 for(int x=0; x < img.getWidth(); x++){
-	            for(int y=0; y < img.getHeight(); y++){
-	            	if(img.getPixel(x, y)){
-	            		area++;
-	            		xCentroid += x;
-	            		yCentroid += y;
-	            	}
-	            }
-		 }	
-		xCentroid = xCentroid / area;
-		yCentroid = yCentroid / area;
-		
-		AdjacencyRelation adj = new AdjacencyRelation( area );
-		
-		int cont = 0;
-		for(int x=0; x < img.getWidth(); x++){
-            for(int y=0; y < img.getHeight(); y++){
-            	adj.set(xCentroid - x, yCentroid - y, cont++);
-            }
-		}
-		return adj;
 	}
 	
 	
@@ -138,7 +62,6 @@ public class AdjacencyRelation {
 			System.out.print("(" + si + ", " + sj + ") ");
 		
 		}
-		
 		System.out.println("\n\nVisualizacao em 2D");
 		int minX = Integer.MAX_VALUE;
 		int maxX = Integer.MIN_VALUE;
@@ -182,7 +105,7 @@ public class AdjacencyRelation {
 	}
 	
 	
-	public int[][] getSE(){
+	public int[][] getStructuringElement(){
 		String si;
 		String sj;
 		
@@ -378,6 +301,26 @@ public class AdjacencyRelation {
 	}
 	
 
+	
+	
+	public AdjacencyRelation diagonalUpperRightSide(){
+		int cont=0;
+		for (int i=0; i < this.px.length; i++){
+			if(this.px[i] >= 0 && this.py[i] >= 0){
+				cont++;
+			}
+		}
+		AdjacencyRelation adj = new AdjacencyRelation(cont);
+		int index=0;
+		for (int i=0; i < this.px.length; i++){
+			if(this.px[i] >= 0 && this.py[i] >= 0){
+				adj.px[index] = this.px[i];
+				adj.py[index] = this.py[i];
+				index++;
+			}
+		}
+		return adj;
+	}
 
 	public AdjacencyRelation rightSide(){
 		int cont=0;
@@ -397,6 +340,27 @@ public class AdjacencyRelation {
 		}
 		return adj;
 	}
+	
+	public AdjacencyRelation diagonalUpperLeftSide(){
+		int cont=0;
+		for (int i=0; i < this.px.length; i++){
+			if(this.px[i] <= 0 && this.py[i] <= 0){
+				cont++;
+			}
+		}
+		AdjacencyRelation adj = new AdjacencyRelation(cont);
+		int index=0;
+		for (int i=0; i < this.px.length; i++){
+			if(this.px[i] <= 0 && this.py[i] <= 0){
+				adj.px[index] = this.px[i];
+				adj.py[index] = this.py[i];
+				index++;
+			}
+		}
+		return adj;
+	}
+	
+	
 	
 
 	public AdjacencyRelation leftSide(){
@@ -803,4 +767,5 @@ public class AdjacencyRelation {
 		this.px[i] = px;
 		this.py[i] = py;
 	}
+	
 }
