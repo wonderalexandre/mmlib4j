@@ -87,7 +87,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			case Attribute.VOLUME:
 			case Attribute.WIDTH:
 			case Attribute.HEIGHT:
-			//case Attribute.PERIMETER:
+			case Attribute.PERIMETER:
 			case Attribute.LEVEL:
 			case Attribute.RECTANGULARITY:
 			case Attribute.RATIO_WIDTH_HEIGHT:

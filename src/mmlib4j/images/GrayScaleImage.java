@@ -16,8 +16,6 @@ public interface GrayScaleImage extends Image2D{
     
     public int getPixel(int x, int y);
     
-    public double getInterpolatedPixel(double x, double y) ;
-    
     public int getPixel(int i);
     
     public int getValue(int x, int y);

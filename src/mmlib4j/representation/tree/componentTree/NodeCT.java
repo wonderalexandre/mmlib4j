@@ -23,7 +23,7 @@ import mmlib4j.representation.tree.attribute.Attribute;
  *
  */
 public class NodeCT implements NodeLevelSets, Cloneable{
-	public int level;
+	int level;
 	int heightNode;
 	GrayScaleImage img;
 	int canonicalPixel;

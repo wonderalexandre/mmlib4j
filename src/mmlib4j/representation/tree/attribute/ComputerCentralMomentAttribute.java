@@ -176,8 +176,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		 * Defined by Xu et al, Two Applications of Shape-Based Morphology: Blood Vessels Segmentation and a Generalization of Constrained Connectivity, ISMM, 2013
 		 */
 		public double elongation(){
-			//return area / (Math.PI * Math.pow(getLengthMajorAxes()*2, 2));
-			return ( Math.PI * getLengthMajorAxes() ) / ( 4 * area ); 
+			return area / (Math.PI * Math.pow(getLengthMajorAxes(), 2));
 		}
 		
 

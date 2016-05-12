@@ -24,7 +24,6 @@ public abstract class PixelIndexer {
 	 * @return
 	 */
 	public static PixelIndexer getNearestBorderIndexer(final int width, final int height){
-		if(Utils.debug) System.out.println("PixelIndexer.getNearestBorderIndexer");
 		return new PixelIndexer(){
 			public int getIndex(int x, int y) {
 				if (x < 0)
@@ -75,7 +74,6 @@ public abstract class PixelIndexer {
 	 * @return
 	 */
 	public static PixelIndexer getMirrorImageIndexer(final int width, final int height){
-		if(Utils.debug) System.out.println("PixelIndexer.getMirrorImageIndexer");
 		return new PixelIndexer(){
 			public int getIndex(int x, int y) {
 				// this is a fast modulo operation for positive divisors only
@@ -99,7 +97,6 @@ public abstract class PixelIndexer {
 	 * @return
 	 */
 	public static PixelIndexer getExceptionIndexer(final int width, final int height){
-		if(Utils.debug) System.out.println("PixelIndexer.getExceptionIndexer");
 		return new PixelIndexer(){
 			public int getIndex(int x, int y) {
 				if (x < 0 || x >= width || y < 0 || y >= height) {
