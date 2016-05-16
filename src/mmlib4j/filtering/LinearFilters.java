@@ -16,9 +16,16 @@ public class LinearFilters {
 		return filter.rank(img, adj, RankFilters.MEDIAN);
 	}
 	
+	public static GrayScaleImage median(GrayScaleImage img, AdjacencyRelation adj, GrayScaleImage imgOut){
+		return filter.rank(img, adj, RankFilters.MEDIAN, imgOut);
+	}
+	
 	public static GrayScaleImage mean(GrayScaleImage img, AdjacencyRelation adj){
 		return filter.rank(img, adj, RankFilters.MEAN);
 	}
 	
+	public static GrayScaleImage mean(GrayScaleImage img, AdjacencyRelation adj, GrayScaleImage imgOut){
+		return filter.rank(img, adj, RankFilters.MEAN, imgOut);
+	}
 	
 }

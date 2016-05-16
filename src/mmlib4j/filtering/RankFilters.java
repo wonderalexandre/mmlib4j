@@ -28,6 +28,11 @@ public class RankFilters  {
 		return ipOut;
 	}
 	
+	public GrayScaleImage rank(GrayScaleImage img, AdjacencyRelation adj, int filterType, GrayScaleImage imgOut) {
+		rankProcess(img, adj, filterType, imgOut);
+		return imgOut;
+	}
+	
 
 	/** Filters an image by any method except 'despecle' (for 'despeckle', use 'median' and radius=1)
 	 * @param ip The image subject to filtering
