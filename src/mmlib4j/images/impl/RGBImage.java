@@ -3,6 +3,7 @@ package mmlib4j.images.impl;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.images.Image2D;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -199,7 +200,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
                 r = this.getRed(w, h);
                 g = this.getGreen(w, h);
                 b = this.getBlue(w, h);
-                image.setPixel(w, h, (int) Math.round(.299*r + .587*g + .114*b)); //convertendo para niveis de cinza
+                image.setPixel(w, h,(r+g+b)/3); //convertendo para niveis de cinza
             }
         } 
         return image;
@@ -390,5 +391,20 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
 				((g & 0xFF) << 8)  |
 				((b & 0xFF) << 0);
 	}
+	
+    public int getChannelSize(){
+    	return 3;
+    }
+    
+    public Image2D getChannel(int index){
+    	if(index == 0)
+    		return getRed();
+    	else if(index == 1)
+    		return getGreen();
+    	else if(index == 2)
+    		return getBlue();
+    	else
+    		throw new ArrayIndexOutOfBoundsException();
+    }
     
 }

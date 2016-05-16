@@ -105,5 +105,13 @@ public abstract class AbstractImage2D implements Image2D{
 			}
 		};
     }
+    
+    public int getChannelSize(){
+    	return 1;
+    }
+    
+    public Image2D getChannel(int index){
+    	return this;
+    }
 	
 }

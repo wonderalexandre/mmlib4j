@@ -34,5 +34,9 @@ public interface Image2D {
     public int getIndex(int p);
     
     public int getIndex(int x, int y);
+    
+    public int getChannelSize();
+    
+    public Image2D getChannel(int index);
 }
 
