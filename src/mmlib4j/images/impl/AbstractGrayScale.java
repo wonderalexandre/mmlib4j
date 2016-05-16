@@ -238,6 +238,18 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
         return stats.mean;
     }
     
+    public float standerDeviationValue() {
+    	if(stats == null)
+            loadStatistics();
+    	if(stats.sd == Float.NaN){
+    		for(int p=0; p < getSize(); p++){
+    			stats.sd += Math.pow(getPixel(p) - stats.mean, 2);
+    		}
+    		stats.sd = (float) Math.sqrt( stats.sd / getSize() );
+    	}
+        return stats.mean;
+    }
+    
     
     
     
@@ -369,7 +381,7 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     	int pixelMin;
     	int pixelMax;
     	float mean;
-    	float sd;
+    	float sd=Float.NaN;
         
     	Statistics(){
         	max = Integer.MIN_VALUE;
