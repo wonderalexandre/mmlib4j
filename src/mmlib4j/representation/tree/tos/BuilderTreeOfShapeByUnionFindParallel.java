@@ -148,6 +148,10 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		return root;
 	}
 	
+	public short[] getImageU() {
+		return null;//this.imgU;
+	}
+	
 	public int getNumNode(){
 		return numNode;
 	}

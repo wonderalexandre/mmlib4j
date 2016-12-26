@@ -26,7 +26,8 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	GrayScaleImage img;
 	int canonicalPixel;
 	int id;
-	int heightNode;
+	//int heightNode;
+	int depthNode;
 	int numDescendent;
 	int numDescendentLeaf;
 	int numSiblings;
@@ -56,6 +57,9 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	HashMap<Integer, Attribute> attributes = new HashMap<Integer, Attribute>();
 	Contour contourE = null;
 	
+	public int getDepth() {
+		return depthNode;
+	}
 
 	public void addAttribute(int key, Attribute attr){
 		attributes.put(key, attr);

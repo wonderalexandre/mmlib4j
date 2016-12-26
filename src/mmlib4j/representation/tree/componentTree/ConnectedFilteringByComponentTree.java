@@ -1,7 +1,9 @@
 package mmlib4j.representation.tree.componentTree;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
@@ -122,7 +124,10 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	public void computerAttributeBasedBitQuads(){
 		if(!hasComputerAttributeBasedBitQuads){
-			new ComputerAttributeBasedBitQuads(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
+			//new ComputerAttributeBasedBitQuads(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
+			//hasComputerAttributeBasedBitQuads = true;
+			
+			new mmlib4j.representation.tree.attribute.quadbit.ComputerAttributeBasedBitQuads(this, adj);
 			hasComputerAttributeBasedBitQuads = true;
 		}
 	}
@@ -451,6 +456,5 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 		
 		return prunedTree;
-	}
-	
+	}	
 }

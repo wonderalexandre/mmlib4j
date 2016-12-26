@@ -69,6 +69,10 @@ public class TreeOfShape{
 		}
 	}
 	
+	public BuilderTreeOfShape getBuilder() {
+		return build;
+	}
+	
 	public GrayScaleImage getInputImage(){
 		return imgInput;
 	}
@@ -115,11 +119,11 @@ public class TreeOfShape{
 	}
 	
 
-	public void computerInforTree(NodeToS node, int height){
+	public void computerInforTree(NodeToS node, int depth){
 		
-		node.heightNode = height;
-		if(height > heightTree)
-			heightTree = height;
+		node.depthNode = depth;
+		if(depth > heightTree)
+			heightTree = depth;
 		
 		if(node != root){
 			node.numSiblings = node.parent.children.size();
@@ -139,7 +143,7 @@ public class TreeOfShape{
 		}
 		
 		for(NodeToS son: node.children){
-			computerInforTree(son, height + 1);
+			computerInforTree(son, depth + 1);
 			
 			if(node.isNodeMaxtree != son.isNodeMaxtree)
 				node.countHoles++;
@@ -345,7 +349,7 @@ public class TreeOfShape{
 		while(!fifo.isEmpty()){
 			NodeToS no = fifo.dequeue();
 			for(int p: no.getCanonicalPixels()){
-				imgOut.setPixel(p, no.heightNode);
+				imgOut.setPixel(p, no.depthNode);
 			}
 			
 			for(NodeToS son: no.children){

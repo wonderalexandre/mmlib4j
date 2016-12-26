@@ -15,6 +15,8 @@ import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
+import mmlib4j.representation.tree.attribute.quadbit.ComputerAttributeBasedBitQuads;
+import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
 
@@ -29,6 +31,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	private boolean hasComputerAttributeBasedPerimeterExternal = false;
 	private boolean hasComputerCentralMomentAttribute = false;
 	private boolean hasComputerDistanceTransform = false;
+	private boolean hasComputerBasedBitQuads = false;
 	private ComputerDistanceTransform dt = null;
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img){
@@ -79,8 +82,14 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			hasComputerAttributeBasedPerimeterExternal = true;
 		}
 	}
-		
-
+	
+	public void computerAttributeBasedBitQuads() {
+		if (!hasComputerBasedBitQuads) {
+			new ComputerAttributeBasedBitQuads(this, AdjacencyRelation.getAdjacency8());
+			hasComputerBasedBitQuads = true;
+		}
+	}
+	
 	public void loadAttribute(int attr){
 		switch(attr){
 			case Attribute.ALTITUDE:
@@ -117,7 +126,17 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 				computerAttributeBasedPerimeterExternal();
 				break;
 				
-				
+			case Attribute.BIT_QUADS_PERIMETER:
+			case Attribute.BIT_QUADS_NUMBER_EULER:
+			case Attribute.BIT_QUADS_NUMBER_HOLES:
+			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
+			case Attribute.BIT_QUADS_CIRCULARITY:
+			case Attribute.BIT_QUADS_AREA_AVERAGE:
+			case Attribute.BIT_QUADS_PERIMETER_AVERAGE:
+			case Attribute.BIT_QUADS_LENGTH_AVERAGE:
+			case Attribute.BIT_QUADS_WIDTH_AVERAGE:
+				computerAttributeBasedBitQuads();
+				break;
 		}
 	}
 	

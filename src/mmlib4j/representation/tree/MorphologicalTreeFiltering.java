@@ -1,5 +1,8 @@
 package mmlib4j.representation.tree;
 
+import java.util.HashSet;
+import java.util.List;
+
 import mmlib4j.images.GrayScaleImage;
 
 
@@ -30,7 +33,7 @@ public interface MorphologicalTreeFiltering {
 	public NodeLevelSets getRoot();
 		
 	public int getNumNode();
-	
+		
 	public void loadAttribute(int attr);
 		
 }

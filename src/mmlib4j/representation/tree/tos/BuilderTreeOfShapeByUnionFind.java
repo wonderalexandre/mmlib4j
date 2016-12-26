@@ -8,6 +8,7 @@ import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.ShortImage;
 
 
 /**
@@ -29,12 +30,13 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	private int imgWidth;
 	private int imgHeight;
 	private int imgR[];
-	private byte imgU[];
+	private short imgU[];
 	private int parent[];
 	private int numNode; 
 	private boolean isLog = true;
 	private int xInfinito;
 	private int yInfinito;
+	private int infinityValue;
 	
 	GrayScaleImage img;
 	private NodeToS root;
@@ -61,9 +63,6 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		return b;
 	}
 	
-	
-	
-	
 	public BuilderTreeOfShapeByUnionFind(GrayScaleImage img, boolean isInter){
 		this(img, -1, -1, isInter);
 	}
@@ -74,6 +73,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		this.img = img;
 		this.xInfinito = xInfinito;
 		this.yInfinito = yInfinito;
+		this.infinityValue = -1;   /*  interpolateImage é reponsavel por calcular o valor infinito (neste caso a mediana) */
 		
 		sort( interpolateImage( ) );
 		this.parent = createTreeByUnionFind();
@@ -98,6 +98,10 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		return root;
 	}
 	
+	public short[] getImageU() {
+		return this.imgU;
+	}
+	
 	public int getNumNode(){
 		return numNode;
 	}
@@ -107,7 +111,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	}
 	
 	public GrayScaleImage getImageInterpolated(){
-		return ImageFactory.createReferenceGrayScaleImage(8, imgU, interpWidth, interpHeight);
+		return ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_16BITS, imgU, interpWidth, interpHeight);
 	}
 	
 	/**
@@ -285,7 +289,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
  	 * Ordencao decrescente dos pixels: imgR[0], imgR[1], ..., imgR[lenght-1]
 	 * @param interpolation => pixels da imagem interpolada
 	 */
-	public void sort(byte interpolation[][]){
+	public void sort(short interpolation[][]){
 		long ti = System.currentTimeMillis();
   		//Algoritmo de ordenacao do paper
 		int size = interpWidth * interpHeight;
@@ -293,17 +297,18 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		int i = 0;
 		boolean dejavu[] = new boolean[size]; //dejavu eh inicializado com false
 		this.imgR = new int[size];
-		this.imgU = new byte[size];
+		this.imgU = new short[size];
 		int pInfinito = 0;//getInfinity(interpolation); 
 		//System.out.println("pInfinito (" + xInfinito + ", " + yInfinito + ")");
-		queue.initial(pInfinito, ByteImage.toInt(interpolation[pInfinito][0]));
+		//queue.initial(pInfinito, ByteImage.toInt(interpolation[pInfinito][0]));
+		queue.initial(pInfinito, this.infinityValue);
 		dejavu[pInfinito] = true;
 		while(!queue.isEmpty()){
 			int h = queue.priorityPop();
-			imgU[h] = ByteImage.toByte( queue.getCurrentPriority() ); //l = prioridade corrente da queue
+			imgU[h] = ShortImage.toShort( queue.getCurrentPriority() ); //l = prioridade corrente da queue
 			imgR[i] = h;
 			for(Integer n: getAdjPixels(h, dejavu)){
-				queue.priorityPush(n, ByteImage.toInt(interpolation[n][0]), ByteImage.toInt(interpolation[n][1]));
+				queue.priorityPush(n, ShortImage.toInt(interpolation[n][0]), ShortImage.toInt(interpolation[n][1]));
 				dejavu[n] = true;
 			}
 			i++;
@@ -407,12 +412,12 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	 * @param matrix => pixels da imagem 
 	 * @return pixels interpolados.
 	 */
-	public byte[][] interpolateImage( ) {
+	public short[][] interpolateImage( ) {
 		long ti = System.currentTimeMillis();
 		
         this.interpWidth = (imgWidth*2+1);
         this.interpHeight = (imgHeight*2+1);
-        byte interpolation[][] = new byte[interpWidth * interpHeight][2];
+        short interpolation[][] = new short[interpWidth * interpHeight][2];
 		
 		// Pixels array
 		short [] pixels = new short [ img.getSize() ];
@@ -427,12 +432,12 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			pT = (2*y + 1) * interpWidth + (2*x + 1);
 			
 			// Get coords to set grid pixel value
-			interpolation[pT][0] = interpolation[pT][1] = ByteImage.toByte( img.getPixel( p ) );
+			interpolation[pT][0] = interpolation[pT][1] = ShortImage.toShort( img.getPixel( p ) );
 		}
 		Arrays.sort( pixels );		
 		
 		// Calculated based on Thierry examples
-		int median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;
+		int median = this.infinityValue = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;
 
 		int min, max;
 		int adjX[] =  null;
@@ -458,18 +463,18 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				continue;
 			}
 			
-			min = Integer.MAX_VALUE;
-			max = Integer.MIN_VALUE;
+			min = 255;
+			max = 0;
 			for(int i=0; i < adjX.length; i++){
 				qY = (y + adjY[i]);
 				qX = (x + adjX[i]);
 				if(qY >= 0 && qX >= 0 && qY < interpHeight && qX < interpWidth){
 					qT = qY * interpWidth + qX;
-					if(ByteImage.toInt(interpolation[qT][1]) > max){
-						max = ByteImage.toInt( interpolation[qT][1] );
+					if(ShortImage.toInt(interpolation[qT][1]) > max){
+						max = ShortImage.toInt( interpolation[qT][1] );
 					}
-					if(ByteImage.toInt(interpolation[qT][0]) < min){
-						min = ByteImage.toInt( interpolation[qT][1] );
+					if(ShortImage.toInt(interpolation[qT][0]) < min){
+						min = ShortImage.toInt( interpolation[qT][0] );
 					}
 				}
 				else{
@@ -481,8 +486,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 					}
 				}
 			}
-			interpolation[pT][0] = ByteImage.toByte(min);
-			interpolation[pT][1] = ByteImage.toByte(max);
+			interpolation[pT][0] = ShortImage.toShort(min);
+			interpolation[pT][1] = ShortImage.toShort(max);
 		}
         
         long tf = System.currentTimeMillis();
@@ -498,6 +503,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	        }
 	        */
         }
+        
         return interpolation;
 	}
 
