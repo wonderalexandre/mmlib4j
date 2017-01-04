@@ -16,6 +16,7 @@ import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.quadbit.ComputerAttributeBasedBitQuads;
+import mmlib4j.representation.tree.attribute.quadbit.ComputerAttributeBasedBitQuadsToS;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -85,7 +86,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	
 	public void computerAttributeBasedBitQuads() {
 		if (!hasComputerBasedBitQuads) {
-			new ComputerAttributeBasedBitQuads(this, AdjacencyRelation.getAdjacency8());
+			new ComputerAttributeBasedBitQuadsToS(this);
 			hasComputerBasedBitQuads = true;
 		}
 	}

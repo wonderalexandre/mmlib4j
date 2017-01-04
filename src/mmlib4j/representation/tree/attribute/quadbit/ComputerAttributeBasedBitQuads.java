@@ -12,36 +12,34 @@ import mmlib4j.representation.tree.attribute.AttributeComputedIncrementally;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
 
-public class ComputerAttributeBasedBitQuads extends AttributeComputedIncrementally {
-	private MorphologicalTreeFiltering tree;
-	private AdjacencyRelation adj;
-	private BitQuadsCounting countings[];
-	private QuadBitFactory qFactory;
+public abstract class ComputerAttributeBasedBitQuads extends AttributeComputedIncrementally {	
+	protected BitQuadsCounting countings[];
+	protected QuadBitFactory qFactory;
 	
-	private PatternSet Q1;
-	private PatternSet Q2;
-	private PatternSet Q3;
-	private PatternSet QD;
-	private PatternSet Q4;
+	protected PatternSet Q1;
+	protected PatternSet Q2;
+	protected PatternSet Q3;
+	protected PatternSet QD;
+	protected PatternSet Q4;
 	
-	private PatternSet Q1T;
-	private PatternSet Q2T;
-	private PatternSet Q3T;
-	private PatternSet QDT;
+	protected PatternSet Q1T;
+	protected PatternSet Q2T;
+	protected PatternSet Q3T;
+	protected PatternSet QDT;
 	
-	public ComputerAttributeBasedBitQuads(MorphologicalTreeFiltering tree, AdjacencyRelation adj) {
-		this.countings = new BitQuadsCounting[tree.getNumNode()];
-		this.tree = tree;
-		this.qFactory = ServiceLocatorQuadBits.getSingleton().findQuadBitFactory(tree);
-		tree.getInputImage().setPixelIndexer(PixelIndexer.getDefaultValueIndexer(tree.getInputImage().getWidth(), 
-				tree.getInputImage().getHeight()));
-		this.adj = adj;
-		createPatternSets();
-		computerAttribute(tree.getRoot());		
-		System.out.println("My Code");
+	protected PatternSet Q1C4;
+	protected PatternSet Q1TC4;
+	
+	public ComputerAttributeBasedBitQuads(int numNode) {
+		this.countings = new BitQuadsCounting[numNode];		
+		//this.qFactory = ServiceLocatorQuadBits.getSingleton().findQuadBitFactory(tree);
+		//tree.getInputImage().setPixelIndexer(PixelIndexer.getDefaultValueIndexer(tree.getInputImage().getWidth(), 
+		//		tree.getInputImage().getHeight()));		
+		//createPatternSets();
+		//computerAttribute(tree.getRoot());		
 	}
 	
-	private void createPatternSets() {
+	protected void createPatternSets() {
 		createPatternSetQ1();
 		createPatternSetQ2();
 		createPatternSetQD();
@@ -54,7 +52,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		createPatternSetQ3T();
 	}
 	
-	private void createPatternSetQ1() {
+	protected void createPatternSetQ1() {
 		Q1 = new PatternSet();
 		Pattern Q1P1 = new Pattern(), Q1P2 = new Pattern(),	Q1P3 = new Pattern(), Q1P4 = new Pattern();
 		
@@ -70,7 +68,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		Q1.appendPattern(Q1P1).appendPattern(Q1P2).appendPattern(Q1P3).appendPattern(Q1P4);
 	}
 	
-	private void createPatternSetQ2() {
+	protected void createPatternSetQ2() {
 		Q2 = new PatternSet();
 		Pattern Q2P1 = new Pattern(), Q2P2 = new Pattern(), Q2P3 = new Pattern(), Q2P4 = new Pattern(),
 				Q2P5 = new Pattern(), Q2P6 = new Pattern(), Q2P7 = new Pattern(), Q2P8 = new Pattern();
@@ -97,7 +95,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 			.appendPattern(Q2P7).appendPattern(Q2P8);
 	}
 	
-	private void createPatternSetQD() {
+	protected void createPatternSetQD() {
 		QD = new PatternSet();
 		Pattern QDP1 = new Pattern(), QDP2 = new Pattern(), QDP3 = new Pattern(),QDP4 = new Pattern();
 		
@@ -113,7 +111,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		QD.appendPattern(QDP1).appendPattern(QDP2).appendPattern(QDP3).appendPattern(QDP4);
 	}
 	
-	private void createPatternSetQ3() {
+	protected void createPatternSetQ3() {
 		Q3 = new PatternSet();
 		Pattern Q3P1 = new Pattern(), Q3P2 = new Pattern(), Q3P3 = new Pattern(), Q3P4 = new Pattern(), Q3P5 = new Pattern(),
 				Q3P6 = new Pattern(), Q3P7 = new Pattern(), Q3P8 = new Pattern(), Q3P9 = new Pattern(), Q3P10 = new Pattern(),
@@ -150,7 +148,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 			.appendPattern(Q3P7).appendPattern(Q3P8).appendPattern(Q3P9).appendPattern(Q3P10).appendPattern(Q3P11).appendPattern(Q3P12);
 	}
 	
-	private void createPatternSetQ4() {
+	protected void createPatternSetQ4() {
 		Q4 = new PatternSet();
 		Pattern Q4P1 = new Pattern(), Q4P2 = new Pattern(), Q4P3 = new Pattern(), Q4P4 = new Pattern();
 		
@@ -166,7 +164,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		Q4.appendPattern(Q4P1).appendPattern(Q4P2).appendPattern(Q4P3).appendPattern(Q4P4);
 	}
 	
-	private void createPatternSetQ1T() {
+	protected void createPatternSetQ1T() {
 		Q1T = new PatternSet();
 		Pattern Q1TP1 = new Pattern(), Q1TP2 = new Pattern(), Q1TP3 = new Pattern(), Q1TP4 = new Pattern(), Q1TP5 = new Pattern(),
 				Q1TP6 = new Pattern(), Q1TP7 = new Pattern(), Q1TP8 = new Pattern(), Q1TP9 = new Pattern(), Q1TP10 = new Pattern(),
@@ -203,7 +201,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 			.appendPattern(Q1TP7).appendPattern(Q1TP8).appendPattern(Q1TP9).appendPattern(Q1TP10).appendPattern(Q1TP11).appendPattern(Q1TP12);
 	}
 	
-	private void createPatternSetQ2T() {
+	protected void createPatternSetQ2T() {
 		Q2T = new PatternSet();
 		Pattern Q2TP1 = new Pattern(), Q2TP2 = new Pattern(), Q2TP3 = new Pattern(), Q2TP4 = new Pattern(), Q2TP5 = new Pattern(),
 				Q2TP6 = new Pattern(), Q2TP7 = new Pattern(), Q2TP8 = new Pattern();
@@ -230,7 +228,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 			.appendPattern(Q2TP7).appendPattern(Q2TP8);
 	}
 	
-	private void createPatternSetQDT() {
+	protected void createPatternSetQDT() {
 		QDT = new PatternSet();
 		Pattern QDTP1 = new Pattern(), QDTP2 = new Pattern(), QDTP3 = new Pattern(), QDTP4 = new Pattern();
 		
@@ -246,7 +244,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		QDT.appendPattern(QDTP1).appendPattern(QDTP2).appendPattern(QDTP3).appendPattern(QDTP4);
 	}
 	
-	private void createPatternSetQ3T() {
+	protected void createPatternSetQ3T() {
 		Q3T = new PatternSet();
 		Pattern Q3TP1 = new Pattern(), Q3TP2 = new Pattern(), Q3TP3 = new Pattern(), Q3TP4 = new Pattern();
 		
@@ -260,63 +258,40 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 			.appendQuadBit(qFactory.createProperSubsetQuadBit(0, 1));
 		
 		Q3T.appendPattern(Q3TP1).appendPattern(Q3TP2).appendPattern(Q3TP3).appendPattern(Q3TP4);
+	}	
+	
+	protected void createPatternSetQ1C4() {
+		Q1C4 = new PatternSet();
+		Pattern Q1C4P1 = new Pattern(), Q1C4P2 = new Pattern(), Q1C4P3 = new Pattern(), Q1C4P4 = new Pattern();
+		
+		Q1C4P1.appendQuadBit(qFactory.createNotSubsetQuadBit(0, -1)).appendQuadBit(qFactory.createNotSubsetQuadBit(1, 0));
+		Q1C4P2.appendQuadBit(qFactory.createNotSubsetQuadBit(-1, 0)).appendQuadBit(qFactory.createNotSubsetQuadBit(0, -1));
+		Q1C4P3.appendQuadBit(qFactory.createNotSubsetQuadBit(-1, 0)).appendQuadBit(qFactory.createNotSubsetQuadBit(0, 1));
+		Q1C4P4.appendQuadBit(qFactory.createNotSubsetQuadBit(0, 1)).appendQuadBit(qFactory.createNotSubsetQuadBit(1, 0));
+		
+		Q1C4.appendPattern(Q1C4P1).appendPattern(Q1C4P2).appendPattern(Q1C4P3).appendPattern(Q1C4P4);
 	}
 	
-	@Override
-	public void preProcessing(NodeLevelSets node) {
-		countings[node.getId()] = new BitQuadsCounting();
-		for (int p: node.getCanonicalPixels())
-			computeLocalPattern(node, p);		
-	}
+	protected void createPatternSetQ1TC4() {
+		Q1TC4 = new PatternSet();
+		Pattern Q1TC4P1 = new Pattern(), Q1TC4P2 = new Pattern(), Q1TC4P3 = new Pattern(), Q1TC4P4 = new Pattern(), 
+				Q1TC4P5 = new Pattern(), Q1TC4P6 = new Pattern(), Q1TC4P7 = new Pattern(), Q1TC4P8 = new Pattern();
+		
+		Q1TC4P1.appendQuadBit(qFactory.createProperSubsetQuadBit(0, 1)).appendQuadBit(qFactory.createNotSubsetQuadBit(1, 1));
+		Q1TC4P2.appendQuadBit(qFactory.createProperSubsetQuadBit(0, 1)).appendQuadBit(qFactory.createNotSubsetQuadBit(-1, 1));
+		Q1TC4P3.appendQuadBit(qFactory.createNotSubsetQuadBit(-1, -1)).appendQuadBit(qFactory.createProperSubsetQuadBit(0, -1));
+		Q1TC4P4.appendQuadBit(qFactory.createProperSubsetQuadBit(0, -1)).appendQuadBit(qFactory.createNotSubsetQuadBit(1, -1));
+		
+		Q1TC4P5.appendQuadBit(qFactory.createNotProperSubsetQuadBit(-1, -1)).appendQuadBit(qFactory.createProperSubsetQuadBit(-1, 0));
+		Q1TC4P6.appendQuadBit(qFactory.createProperSubsetQuadBit(1, 0)).appendQuadBit(qFactory.createNotProperSubsetQuadBit(1, -1));
+		Q1TC4P7.appendQuadBit(qFactory.createProperSubsetQuadBit(1, 0)).appendQuadBit(qFactory.createNotProperSubsetQuadBit(1, 1));
+		Q1TC4P8.appendQuadBit(qFactory.createProperSubsetQuadBit(-1, 0)).appendQuadBit(qFactory.createNotProperSubsetQuadBit(-1, 1));
+		
+		Q1TC4.appendPattern(Q1TC4P1).appendPattern(Q1TC4P2).appendPattern(Q1TC4P3).appendPattern(Q1TC4P4).appendPattern(Q1TC4P5)
+			.appendPattern(Q1TC4P6).appendPattern(Q1TC4P7).appendPattern(Q1TC4P8);
+	}	
 	
-	private void computeLocalPattern(NodeLevelSets node, int p) {
-		int px = p % tree.getInputImage().getWidth();
-		int py = p / tree.getInputImage().getWidth();
-		
-		countings[node.getId()].nQ1 += Q1.count(px, py);
-		countings[node.getId()].nQ2 += Q2.count(px, py);
-		countings[node.getId()].nQD += QD.count(px, py);
-		countings[node.getId()].nQ3 += Q3.count(px, py);
-		countings[node.getId()].nQ4 += Q4.count(px, py);
-		
-		countings[node.getId()].nQ1T += Q1T.count(px, py);
-		countings[node.getId()].nQ2T += Q2T.count(px, py);
-		countings[node.getId()].nQDT += QDT.count(px, py);
-		countings[node.getId()].nQ3T += Q3T.count(px, py);
-	}
-
-	@Override
-	public void mergeChildren(NodeLevelSets parent, NodeLevelSets son) {		
-		countings[parent.getId()].childrenNQ1 += countings[son.getId()].nQ1;
-		countings[parent.getId()].childrenNQ2 += countings[son.getId()].nQ2;
-		countings[parent.getId()].childrenNQ3 += countings[son.getId()].nQ3;
-		countings[parent.getId()].childrenNQ4 += countings[son.getId()].nQ4;
-		countings[parent.getId()].childrenNQD += countings[son.getId()].nQD;
-	}
-
-	@Override
-	public void posProcessing(NodeLevelSets parent) {
-		
-		
-		System.out.println(parent.getId() + "  ->  " + parent.getArea());
-		countings[parent.getId()].printValues();
-		System.out.println();
-		
-		countings[parent.getId()].nQ1 = countings[parent.getId()].nQ1 + countings[parent.getId()].childrenNQ1 - countings[parent.getId()].nQ1T;
-		countings[parent.getId()].nQ2 = countings[parent.getId()].nQ2 + countings[parent.getId()].childrenNQ2 - countings[parent.getId()].nQ2T;
-		countings[parent.getId()].nQD = countings[parent.getId()].nQD + countings[parent.getId()].childrenNQD - countings[parent.getId()].nQDT;
-		countings[parent.getId()].nQ3 = countings[parent.getId()].nQ3 + countings[parent.getId()].childrenNQ3 - countings[parent.getId()].nQ3T;
-		countings[parent.getId()].nQ4 = countings[parent.getId()].nQ4 + countings[parent.getId()].childrenNQ4;
-		
-		addAttributeInNodes(parent);		
-	}
-	
-	public void addAttributeInNodesCT(HashSet<NodeLevelSets> list) {
-		for (NodeLevelSets node : list)
-			addAttributeInNodes(node);
-	}
-	
-	public void addAttributeInNodes(NodeLevelSets node) {
+	public void addAttributeInNodes(NodeLevelSets node, AdjacencyRelation adj) {
 		node.addAttribute(Attribute.BIT_QUADS_PERIMETER, new Attribute(Attribute.BIT_QUADS_PERIMETER, countings[node.getId()].getPerimeter()));
 		node.addAttribute(Attribute.BIT_QUADS_NUMBER_EULER, new Attribute(Attribute.BIT_QUADS_NUMBER_EULER, countings[node.getId()].getNumberEuler(adj)));
 		node.addAttribute(Attribute.BIT_QUADS_NUMBER_HOLES, new Attribute(Attribute.BIT_QUADS_NUMBER_HOLES, countings[node.getId()].getNumberOfHoles(adj)));
@@ -410,8 +385,7 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 	{			
 		public Pattern()
 		{
-			quadbits = new QuadBitTreeBased[MAX_INDEX];
-			currentIndex = 0;
+			quadbits = new ArrayList<QuadBitTreeBased>();		
 		}
 		
 		public boolean match(int px, int py)
@@ -425,13 +399,11 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 		}
 		
 		public Pattern appendQuadBit(QuadBitTreeBased quad) {			
-			quadbits[currentIndex++] = quad;
+			quadbits.add(quad);
 			return this;
 		}
 		
-		private QuadBitTreeBased[] quadbits;
-		private int currentIndex;
-		private final int MAX_INDEX = 3;
+		private List<QuadBitTreeBased> quadbits;	
 	}	
 	
 	class PatternSet

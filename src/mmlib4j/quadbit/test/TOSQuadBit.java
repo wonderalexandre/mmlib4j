@@ -22,7 +22,7 @@ public class TOSQuadBit {
 		
 		GrayScaleImage img = ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels, width, height);*/		
 		
-		GrayScaleImage img = ImageBuilder.openGrayImage(new File("/home/dennis/Documents/master/dissertation/ismm/code/images/d2.png"));
+		GrayScaleImage img = ImageBuilder.openGrayImage(new File("/home/dennis/Documents/master/dissertation/ismm/code/images/d1.png"));
 		ConnectedFilteringByTreeOfShape tos = new ConnectedFilteringByTreeOfShape(img);
 		tos.computerAttributeBasedBitQuads();		
 		

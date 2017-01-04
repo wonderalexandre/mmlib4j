@@ -21,6 +21,7 @@ import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTre
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
+import mmlib4j.representation.tree.attribute.quadbit.ComputerAttributeBasedBitQuadsComponentTree;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -127,7 +128,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			//new ComputerAttributeBasedBitQuads(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
 			//hasComputerAttributeBasedBitQuads = true;
 			
-			new mmlib4j.representation.tree.attribute.quadbit.ComputerAttributeBasedBitQuads(this, adj);
+			new ComputerAttributeBasedBitQuadsComponentTree(this);
 			hasComputerAttributeBasedBitQuads = true;
 		}
 	}

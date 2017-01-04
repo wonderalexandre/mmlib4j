@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.utils.AdjacencyRelation;
 
 
 /**
@@ -34,6 +35,5 @@ public interface MorphologicalTreeFiltering {
 		
 	public int getNumNode();
 		
-	public void loadAttribute(int attr);
-		
+	public void loadAttribute(int attr);		
 }
