@@ -2,6 +2,9 @@ package mmlib4j.representation.tree.attribute.quadbit.tos;
 
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.attribute.quadbit.NotProperSubsetQuadBit;
+import mmlib4j.representation.tree.attribute.quadbit.tos.ancestorship.Ancestorship;
+import mmlib4j.representation.tree.attribute.quadbit.tos.ancestorship.Ancestorship4Connected;
+import mmlib4j.representation.tree.attribute.quadbit.tos.ancestorship.AncestorshipDiagonal;
 import mmlib4j.representation.tree.tos.BuilderTreeOfShape;
 import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
 import mmlib4j.representation.tree.tos.TreeOfShape;
@@ -13,6 +16,7 @@ public class NotProperSubsetQuadBitTreeOfShapes extends NotProperSubsetQuadBit {
 	private GrayScaleImage image;
 	private short[] imageU;
 	private AdjacencyRelation adj4;
+	private Ancestorship ancesorshipVerificator;
 	
 	public NotProperSubsetQuadBitTreeOfShapes(ConnectedFilteringByTreeOfShape tos, int px, int py) {
 		super(px, py);
@@ -21,6 +25,15 @@ public class NotProperSubsetQuadBitTreeOfShapes extends NotProperSubsetQuadBit {
 		this.image = tos.getInputImage();
 		this.imageU = this.tosBuilder.getImageU();
 		this.adj4 = AdjacencyRelation.getAdjacency8();
+		
+		if (isConnectedByDiagonal(px, py))
+			this.ancesorshipVerificator = new AncestorshipDiagonal(image, tos, px, 0, 0, py);
+		else
+			this.ancesorshipVerificator = new Ancestorship4Connected(image, tos);
+	}
+	
+	private boolean isConnectedByDiagonal(int dx, int dy) {
+		return Math.abs(dx) == Math.abs(dy); 
 	}
 	
 	@Override
@@ -43,14 +56,22 @@ public class NotProperSubsetQuadBitTreeOfShapes extends NotProperSubsetQuadBit {
 		int[] dx = adj4.getVectorX();
 		int[] dy = adj4.getVectorY();
 		
-		for (int i = 0; i < dx.length; i++) {
-			int ux = uqx + dx[i];
-			int uy = uqy + dy[i];
-			
+		//for (int i = 0; i < dx.length; i++) {
+			//int ux = uqx + dx[i];
+			//int uy = uqy + dy[i];
+			int ux = (upx + uqx) / 2;
+			int uy = (upy + uqy) / 2;
+		
 			// There is ancestor relationship between SC(p,T) and SC(q,T)
-			if (imageU[uy * Uwidth + ux] == image.getValue(px, py)
+			//if (imageU[uy * Uwidth + ux] == image.getValue(px, py)
+				//	&& tos.getSC(py * image.getWidth() + px).getDepth() < tos.getSC(qy * image.getWidth() + qx).getDepth()) {
+			//	return false;
+			
+			if (ancesorshipVerificator.isThereAncestorRelation(px, py, qx, qy)
 					&& tos.getSC(py * image.getWidth() + px).getDepth() < tos.getSC(qy * image.getWidth() + qx).getDepth()) {
 				return false;
+			
+			
 				// SC(q,T) \subset SC(p,T)
 				
 				/*System.out.println(imageU[uy * Uwidth + ux] + " = " + image.getValue(qx, qy)
@@ -59,7 +80,7 @@ public class NotProperSubsetQuadBitTreeOfShapes extends NotProperSubsetQuadBit {
 				
 				
 					
-			}
+			//}
 		}
 			
 		/*System.out.println(

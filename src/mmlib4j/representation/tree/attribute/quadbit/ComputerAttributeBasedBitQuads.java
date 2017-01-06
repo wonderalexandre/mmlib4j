@@ -418,7 +418,7 @@ public abstract class ComputerAttributeBasedBitQuads extends AttributeComputedIn
 			
 			for (Pattern p: patterns) {				
 				if (p.match(px, py))
-					counting++;				
+					counting++;
 			}
 			
 			return counting;

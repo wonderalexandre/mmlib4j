@@ -44,11 +44,12 @@ public class PriorityQueueToS  {
 	 */
 	public void priorityPush(int element, int lower, int upper){
 		int priority;
-		if(lower > currentPriority){
-			priority = lower; 
-		} else if(upper < currentPriority){
+		if(upper < currentPriority){
 			priority = upper;
-		}else{
+		}else if(lower > currentPriority){
+			priority = lower; 
+		}
+		else{
 			priority = currentPriority;
 		}
 		numElements++;

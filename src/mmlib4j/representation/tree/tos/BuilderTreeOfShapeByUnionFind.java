@@ -25,6 +25,9 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	private final static int NIL = -1;
 	private final static int px[] = new int[]{1, 0,-1, 0};
   	private final static int py[] = new int[]{0, 1, 0,-1};
+	//private final static int px[] = new int[]{1, 0,-1, 0, 1, -1, 1, -1};
+  	//private final static int py[] = new int[]{0, 1, 0,-1, 1,  1, -1, -1};
+	
 	private int interpWidth;
 	private int interpHeight;
 	private int imgWidth;
