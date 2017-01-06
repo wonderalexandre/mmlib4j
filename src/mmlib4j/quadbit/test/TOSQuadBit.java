@@ -13,29 +13,26 @@ import mmlib4j.utils.ImageBuilder;
 
 public class TOSQuadBit {
 	public static void main(String[] args) throws Exception {
-		/*int width = 4;
-		int height = 3;
-		int[] pixels = { 
-				0, 0, 3, 2,
-				0, 1, 1, 2,
-				0, 0, 2, 2};
+		if (args.length < 1) {
+			System.err.println("Command line parameter error, You must enter with a image path file as the command line parameter.");
+			System.exit(1);
+		}
 		
-		GrayScaleImage img = ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels, width, height);*/		
+		System.out.println("Program running for image in: " + args[0]);
 		
-		GrayScaleImage img = ImageBuilder.openGrayImage(
-				new File("/home/dennis/Documents/master/dissertation/ismm/code/images/dataset/piscine.png"));
+		
+		GrayScaleImage img = ImageBuilder.openGrayImage(new File(args[0]));
 		ConnectedFilteringByTreeOfShape tos = new ConnectedFilteringByTreeOfShape(img);
 		tos.computerAttributeBasedBitQuads();		
 		
 		for (NodeToS node: tos.getListNodes()) {
-			//System.out.println("naive area = " + node.getArea() + " ---> alg. area = " + node.getAttributeValue(Attribute.BIT_QUADS_AREA));			
 			if (node.getArea() != (int)node.getAttributeValue(Attribute.BIT_QUADS_AREA)) {
 				System.out.println("Fail");
 				System.exit(1);
 			}
 			
 		}
-		
+		System.out.println("==================================================");
 		System.out.println("Success");
 	}
 }
