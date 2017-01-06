@@ -66,6 +66,24 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		return b;
 	}
 	
+	public BuilderTreeOfShape getInterpolatedBuilder() {
+		BuilderTreeOfShapeByUnionFind b = new BuilderTreeOfShapeByUnionFind();
+		b.interpWidth = this.interpWidth;
+		b.interpHeight = this.interpHeight;
+		b.imgWidth = this.imgWidth;
+		b.imgHeight = this.imgHeight;
+		b.parent = this.parent;
+		b.isLog = this.isLog;
+		b.xInfinito = this.xInfinito;
+		b.yInfinito = this.yInfinito;
+		b.img = this.img;	
+		b.imgR = this.imgR;
+		b.imgU = this.imgU;
+		
+		b.createTree( b.parent );
+		return b; 
+	}
+	
 	public BuilderTreeOfShapeByUnionFind(GrayScaleImage img, boolean isInter){
 		this(img, -1, -1, isInter);
 	}

@@ -12,7 +12,7 @@ import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.ImageBuilder;
 
 public class TOSQuadBit {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		/*int width = 4;
 		int height = 3;
 		int[] pixels = { 
@@ -22,13 +22,20 @@ public class TOSQuadBit {
 		
 		GrayScaleImage img = ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels, width, height);*/		
 		
-		GrayScaleImage img = ImageBuilder.openGrayImage(new File("/home/dennis/Documents/master/dissertation/ismm/code/images/article-2.png"));
+		GrayScaleImage img = ImageBuilder.openGrayImage(
+				new File("/home/dennis/Documents/master/dissertation/ismm/code/images/dataset/piscine.png"));
 		ConnectedFilteringByTreeOfShape tos = new ConnectedFilteringByTreeOfShape(img);
 		tos.computerAttributeBasedBitQuads();		
 		
 		for (NodeToS node: tos.getListNodes()) {
-			System.out.println(node.getAttributeValue(Attribute.BIT_QUADS_AREA));			
-			System.out.println("Area = " + node.getArea());
+			//System.out.println("naive area = " + node.getArea() + " ---> alg. area = " + node.getAttributeValue(Attribute.BIT_QUADS_AREA));			
+			if (node.getArea() != (int)node.getAttributeValue(Attribute.BIT_QUADS_AREA)) {
+				System.out.println("Fail");
+				System.exit(1);
+			}
+			
 		}
+		
+		System.out.println("Success");
 	}
 }

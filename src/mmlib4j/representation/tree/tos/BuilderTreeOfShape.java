@@ -15,5 +15,5 @@ public interface BuilderTreeOfShape {
 	public BuilderTreeOfShape getClone();
 	public GrayScaleImage getInputImage();
 	public short[] getImageU();
-	
+	public BuilderTreeOfShape getInterpolatedBuilder();
 }

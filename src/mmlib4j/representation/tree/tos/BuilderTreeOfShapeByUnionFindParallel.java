@@ -59,6 +59,11 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		return b;
 	}
 	
+	@Override
+	public BuilderTreeOfShape getInterpolatedBuilder() {
+		return null; 
+	}
+	
 	//2-face m=[0 ate  3]
 	//1-face m=[4 ate 11]
 	//0-face m=[12 ate 15]
@@ -792,5 +797,6 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	}
 
 
+	
 	
 }

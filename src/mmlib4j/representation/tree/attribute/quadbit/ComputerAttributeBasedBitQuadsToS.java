@@ -91,9 +91,9 @@ public class ComputerAttributeBasedBitQuadsToS extends ComputerAttributeBasedBit
 		countings[parentToS.getId()].nQ3 += countings[parentToS.getId()].childrenNQ3 - countings[parentToS.getId()].nQ3T;
 		countings[parentToS.getId()].nQ4 += countings[parentToS.getId()].childrenNQ4;
 		
-		System.out.println(is8Connected(parentToS));
-		countings[parentToS.getId()].printValues();
-		System.out.println();
+		//System.out.println(is8Connected(parentToS));
+		//countings[parentToS.getId()].printValues();
+		//System.out.println();
 		
 		//if (is8Connected(parentToS))
 			//addAttributeInNodes(parentToS, AdjacencyRelation.getAdjacency8());

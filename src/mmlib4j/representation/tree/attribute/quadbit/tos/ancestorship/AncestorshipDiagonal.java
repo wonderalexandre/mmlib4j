@@ -49,8 +49,7 @@ public class AncestorshipDiagonal implements Ancestorship{
 				return false;
 			
 			/*It got case Two*/
-			TreeOfShape etos = tos.getClone();
-			etos.extendedTree();
+			TreeOfShape etos = tos.getInterpolatedTree();
 			
 			if (etos.getSC(ut1y * Uwidth + ut1x).getDepth() < etos.getSC(ut2y * Uwidth + ut2x).getDepth())
 				return false;
@@ -61,8 +60,7 @@ public class AncestorshipDiagonal implements Ancestorship{
 				return true;
 			
 			/* It got case One*/
-			TreeOfShape etos = tos.getClone();
-			etos.extendedTree();
+			TreeOfShape etos = tos.getInterpolatedTree();
 			
 			if (etos.getSC(ut2y * Uwidth + ut2x).getDepth() >= etos.getSC(ut1y * Uwidth + ut1x).getDepth())
 				return true;

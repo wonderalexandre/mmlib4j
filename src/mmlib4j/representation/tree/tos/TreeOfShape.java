@@ -35,6 +35,8 @@ public class TreeOfShape{
 	protected int inf = 0;
 	protected boolean isExtendedTree;
 	
+	protected TreeOfShape interpolatedTree; 
+	
 	
 	public TreeOfShape(GrayScaleImage img){
 		this(img, -1, -1);
@@ -49,7 +51,7 @@ public class TreeOfShape{
 		this.numNode = build.getNumNode();
 		computerInforTree(this.root, 0);
 		createNodesMap();
-		
+		interpolatedTree = null;
 	}
 	
 	public TreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
@@ -67,6 +69,7 @@ public class TreeOfShape{
 			long tf = System.currentTimeMillis();
 			System.out.println("Tempo de execucao [create tree of shape] "+ ((tf - ti) /1000.0)  + "s");
 		}
+		interpolatedTree = null;
 	}
 	
 	public BuilderTreeOfShape getBuilder() {
@@ -322,6 +325,24 @@ public class TreeOfShape{
 		return c;
 	}
 	
+	public TreeOfShape getInterpolatedTree() {
+		if (interpolatedTree == null) {
+			interpolatedTree = new TreeOfShape(this.build.getInterpolatedBuilder());
+			interpolatedTree.isExtendedTree = this.isExtendedTree;
+			interpolatedTree.sup = this.sup;
+			interpolatedTree.inf = this.inf;
+			
+			for (int p = 0; p < this.map.length; p++) {
+				interpolatedTree.map[p].attributes = (HashMap<Integer, Attribute>)this.map[p].attributes.clone();
+			}
+			
+			if (this.isExtendedTree) {
+				interpolatedTree.extendedTree();
+			}
+		}
+		
+		return interpolatedTree;
+	}
 
 	public GrayScaleImage reconstruction(){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
