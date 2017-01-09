@@ -26,6 +26,7 @@ public class TOSQuadBit {
 		tos.computerAttributeBasedBitQuads();		
 		
 		for (NodeToS node: tos.getListNodes()) {
+			System.out.println((int)node.getAttributeValue(Attribute.BIT_QUADS_AREA));
 			if (node.getArea() != (int)node.getAttributeValue(Attribute.BIT_QUADS_AREA)) {
 				System.out.println("Fail");
 				System.exit(1);

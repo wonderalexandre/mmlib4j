@@ -331,7 +331,9 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 			}
 			
 			for(Integer p: no.pixels){
-				if(img.getPixel(p) == level)
+				//if(img.getPixel(p) == level)
+					//imgOut.setPixel(p, 255);
+				if (no.getId() == this.getId())
 					imgOut.setPixel(p, 255);
 				else
 					imgOut.setPixel(p, levelNotPixelCanonical);
