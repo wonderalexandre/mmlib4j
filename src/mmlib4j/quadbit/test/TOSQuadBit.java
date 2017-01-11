@@ -20,13 +20,12 @@ public class TOSQuadBit {
 		
 		System.out.println("Program running for image in: " + args[0]);
 		
-		
 		GrayScaleImage img = ImageBuilder.openGrayImage(new File(args[0]));
 		ConnectedFilteringByTreeOfShape tos = new ConnectedFilteringByTreeOfShape(img);
 		tos.computerAttributeBasedBitQuads();		
 		
 		for (NodeToS node: tos.getListNodes()) {
-			System.out.println((int)node.getAttributeValue(Attribute.BIT_QUADS_AREA));
+			//System.out.println(node.getAttributeValue(Attribute.BIT_QUADS_AREA) + " (" + node.getArea() + ")");
 			if (node.getArea() != (int)node.getAttributeValue(Attribute.BIT_QUADS_AREA)) {
 				System.out.println("Fail");
 				System.exit(1);

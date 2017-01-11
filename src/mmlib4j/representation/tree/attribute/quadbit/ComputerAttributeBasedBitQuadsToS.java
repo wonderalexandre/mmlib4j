@@ -23,7 +23,7 @@ public class ComputerAttributeBasedBitQuadsToS extends ComputerAttributeBasedBit
 	}
 
 	protected void createPatternsSets() {
-		//createPatternSetQ1();
+		createPatternSetQ1();
 		createPatternSetQ2();
 		createPatternSetQD();
 		createPatternSetQ3();
@@ -31,7 +31,7 @@ public class ComputerAttributeBasedBitQuadsToS extends ComputerAttributeBasedBit
 		
 		createPatternSetQ1T();
 		createPatternSetQ2T();
-		//createPatternSetQDT();
+		createPatternSetQDT();
 		createPatternSetQ3T();
 		
 		createPatternSetQ1C4();
@@ -71,7 +71,7 @@ public class ComputerAttributeBasedBitQuadsToS extends ComputerAttributeBasedBit
 		
 		countings[parentToS.getId()].childrenNQ1 += countings[childToS.getId()].nQ1;
 		countings[parentToS.getId()].childrenNQ2 += countings[childToS.getId()].nQ2;
-		//countings[parentToS.getId()].childrenNQD += countings[childToS.getId()].nQD;
+		countings[parentToS.getId()].childrenNQD += countings[childToS.getId()].nQD;
 		countings[parentToS.getId()].childrenNQ3 += countings[childToS.getId()].nQ3;
 		countings[parentToS.getId()].childrenNQ4 += countings[childToS.getId()].nQ4;
 	}
@@ -80,24 +80,21 @@ public class ComputerAttributeBasedBitQuadsToS extends ComputerAttributeBasedBit
 	public void posProcessing(NodeLevelSets parent) {
 		NodeToS parentToS = (NodeToS)parent;
 		
-		//if (is8Connected(parentToS)) {
-			//countings[parentToS.getId()].nQ1 += countings[parentToS.getId()].childrenNQ1 - countings[parentToS.getId()].nQ1T 
-				//	- 2*countings[parentToS.getId()].nQDT;
-		//}
+		/*System.out.println(is8Connected(parentToS));
+		countings[parentToS.getId()].printValues();
+		System.out.println();*/
 		
 		countings[parentToS.getId()].nQ1 += countings[parentToS.getId()].childrenNQ1 - countings[parentToS.getId()].nQ1T;		
-		countings[parentToS.getId()].nQD += countings[parentToS.getId()].childrenNQD - countings[parentToS.getId()].nQDT;
+		//countings[parentToS.getId()].nQD += countings[parentToS.getId()].childrenNQD - countings[parentToS.getId()].nQDT;
 		countings[parentToS.getId()].nQ2 += countings[parentToS.getId()].childrenNQ2 - countings[parentToS.getId()].nQ2T;
 		countings[parentToS.getId()].nQ3 += countings[parentToS.getId()].childrenNQ3 - countings[parentToS.getId()].nQ3T;
 		countings[parentToS.getId()].nQ4 += countings[parentToS.getId()].childrenNQ4;
-		
-		//System.out.println(is8Connected(parentToS));
-		//countings[parentToS.getId()].printValues();
-		//System.out.println();
-		
+				
 		//if (is8Connected(parentToS))
 			//addAttributeInNodes(parentToS, AdjacencyRelation.getAdjacency8());
 		//else 
-			addAttributeInNodes(parentToS, AdjacencyRelation.getAdjacency4());
+			//addAttributeInNodes(parentToS, AdjacencyRelation.getAdjacency4());
+		
+		addAttributeInNodes(parentToS, AdjacencyRelation.getAdjacency8());
 	}
 }
