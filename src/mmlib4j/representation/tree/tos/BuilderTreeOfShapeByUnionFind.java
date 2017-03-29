@@ -66,6 +66,10 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	int sumGray [];
 	int contourLength [];
 	
+	/**/
+	
+	ArrayList<Integer> shapes;
+	
 	protected BuilderTreeOfShapeByUnionFind(){ }
 	
 	public BuilderTreeOfShapeByUnionFind getClone(){
@@ -105,9 +109,9 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		else
 			createTree( parent );
 		
-		//computeAttribute();
-		
 		posProcessing();
+		
+		computeAttribute();
 	
 		this.img = getImageInterpolated();
 		this.imgWidth = img.getWidth();
@@ -148,7 +152,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		this.numNode = 0;
 		
-		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
+		NodeToS nodesMapTmp[] = new NodeToS[ parent.length ];
 		
 		for (int i = 0; i < imgR.length; i++) {
 			int p = imgR[i];
@@ -201,6 +205,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
 		//WindowImages.show(ImageFactory.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight)); 
 		for (int i = 0; i < imgR.length; i++) {
+			
 			int p = imgR[i];
 			int pai = parent[p];
 			int x = p % interpWidth;
@@ -238,8 +243,6 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				
 			}
 		}
-		
-		System.out.println( "Nodes : " + nodesMapTmp[0].area );
 		
 		nodesMapTmp = null;
 		//parent = null;
@@ -333,13 +336,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 			zPar[ p ] = p;
 			
+			
 			if( isNotBoundarie( p ) ) {
 			
 				area[ p ] = 1;
+				
+				sumGray[ p ] = imgU[ p ];
 			
 			}
-			
-			//sumGray[ p ] = imgU[ p ];
 			
 			
 			for ( Integer n : getAdjPixels( p, zPar ) ) {
@@ -354,11 +358,11 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 					
 					area[ p ] = area[ p ] + area[ r ];				
 					
-					//sumGray[ p ] = sumGray[ p ] + sumGray[ r ];
+					sumGray[ p ] = sumGray[ p ] + sumGray[ r ];
 					
 					contourLength[ p ] = contourLength[ p ] + contourLength[ r ];		
 					
-					//sumGrad[ p ] = sumGrad[ p ] + sumGrad[ r ];			
+					sumGrad[ p ] = sumGrad[ p ] + sumGrad[ r ];			
 							
 				}
 			}
@@ -373,7 +377,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 					
 					contourLength[ p ] = contourLength[ p ] + 1;
 						
-					//sumGrad[ p ] = sumGrad[ p ] + imgGrad.getPixel( e ); 
+					sumGrad[ p ] = sumGrad[ p ] + imgGrad.getPixel( e ); 
 					
 					appear[ e ] = p;
 						
@@ -383,7 +387,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 					
 					contourLength[ p ] = contourLength[ p ] - 1;
 						
-					//sumGrad[ p ] = sumGrad[ p ] - imgGrad.getPixel( e );
+					sumGrad[ p ] = sumGrad[ p ] - imgGrad.getPixel( e );
 					
 					vanish[ e ] = p;
 						
@@ -428,19 +432,33 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 	}
 	
+	/* compute shapes ( canonical pixels ) */
+	
 	public void posProcessing() {
+		
+		shapes = new ArrayList<>();
 		
 		for( int i = 0 ; i < imgR.length ; i++ ) {
 			
 			int p = imgR[ i ];
 			
-			if( imgU[ p ] == imgU[ parent[ p ] ] ) {
+			if( p == parent[ p ] || imgU[ p ] != imgU[ parent[ p ] ] ) {
+				
+				shapes.add( p );		
+				
+			}
+			
+			/*if( imgU[ p ] == imgU[ parent[ p ] ] ) {
 				
 				area[ p ] = area[ parent[ p ] ];
 				
 				contourLength[ p ] = contourLength[ parent[ p ] ];
 				
-			}
+				sumGrad[ p ] = sumGrad[ parent[ p ] ];
+				
+				sumGray[ p ] = sumGray[ parent[ p ] ];
+				
+			}*/
 			
 		}
 		
@@ -468,15 +486,9 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		int A[] = new int[ imgR.length ];
 		
-		for( int t = 0 ; t < imgR.length ; t++ ) {
+		for( int i = 0 ; i < shapes.size() ; i++ ) {
 			
-			//if( isNotBoundarie( t ) ) {
-			
-				if( t%11==0 ) System.out.println();
-			
-				System.out.print( contourLength[ t ] + " " );
-			
-			//}
+			int t = shapes.get( i );
 			
 			areaR[ t ] = area[ t ];
 			
@@ -484,7 +496,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 			if( t != parent[ t ] ) {
 				
-				if( Ch[ parent[ t ] ] == null ){
+				if( Ch[ parent[ t ] ] == null ) {
 					
 					Ch[ parent[ t ] ] = new ArrayList<>();
 					
@@ -496,7 +508,9 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 		}
 		
-		for( int t = 0 ; t < imgR.length ; t++ ) {
+		for( int i = 0 ; i < shapes.size() ; i++ ) {
+			
+			int t = shapes.get( i );
 			
 			if( t != parent[ t ] ) {
 				
@@ -508,21 +522,55 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 		}
 		
-		for( int t = 0 ; t < imgR.length ; t++ ) {
+		for( int i = 0 ; i < shapes.size() ; i++ ) {
+			
+			int t = shapes.get( i );
 		
 			aDel[ t ] = sumGrad[ t ] / contourLength[ t ];
 					
 			int tp = parent[ t ];
 			
-			A[ t ] = ( ( pow2( sumGrayR[ t ] ) / areaR[ t ] ) + ( pow2( sumGrayR[ tp ] ) / areaR[ tp ] ) - ( pow2( sumGrayR[ t ] + sumGrayR[ tp ] ) / areaR[ t ] + areaR[ tp ]  ) ) / contourLength[ t ];
+			A[ t ] = ( int ) ( ( pow2( sumGrayR[ t ] ) / areaR[ t ] ) + ( pow2( sumGrayR[ tp ] ) / areaR[ tp ] ) - ( pow2( sumGrayR[ t ] + sumGrayR[ tp ] ) / ( areaR[ t ] + areaR[ tp ] )  ) ) / contourLength[ t ];
 			
 		}
+		
+		for( int i = 0 ; i < shapes.size() ; i++ ) {
+			
+			int t = shapes.get( i );
+			
+			System.out.println( A[ t ] );
+			
+		}
+		
+		/*System.out.println("A");
+		
+		for( int y = 0 ;  y < interpHeight ;  y++ ) {
+			
+			for( int x = 0 ; x < interpWidth ; x++ ) {
+				
+				int p = areaR[ x + y * interpWidth ];
+				
+				if( x%2==1 && y%2==1 ) {
+					
+					System.out.printf( "(%d,%d) ", x + y * interpWidth, p );
+				
+				}else{
+					
+					System.out.printf( "[%d,%d] ", x + y * interpWidth, p );
+					
+				}
+				
+			}
+			
+			System.out.println();
+			
+		}*/
 		
 		return A;
 		
 	}
 	
-	int pow2( int a ) {
+	double pow2( int a ) {
 		
 		return a*a;
 		
@@ -886,16 +934,23 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		int example[] = new int[] {
 				
-			/*5,5,5,5,
+			5,5,5,5,5,5,
+			5,4,4,4,4,5,
+			5,4,2,2,4,5,
+			5,4,2,2,4,5,
+			5,4,4,4,4,5,
+			5,5,5,5,5,5
+				
+			/*5,5,5,5,			
 			5,2,2,5,
 			5,2,2,5,
 			5,5,5,5*/
 			
-			1,1,1,1,1,1,
+			/*1,1,1,1,1,1,
 			1,0,0,3,3,1,
 			1,0,1,1,3,1,
 			1,0,0,3,3,1,
-			1,1,1,1,1,1
+			1,1,1,1,1,1*/
 			
 			/*5,5,5,
 			5,2,5,
@@ -905,11 +960,11 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		int width = 6;
 		
-		int height = 5;
+		int height = 6;
 		
-		BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, example, width, height), true);
+		BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, example, width, height), false);
 		
-		System.out.println("imgR");
+		/*System.out.println("imgR");
 		
 		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
 			
@@ -963,7 +1018,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 			for( int x = 0 ; x < build.interpWidth ; x++ ) {
 				
-				int p = build.area[ x + y * build.interpWidth ];
+				int p = build.contourLength[ x + y * build.interpWidth ];
 				
 				if( x%2==1 && y%2==1 ) {
 					
@@ -979,7 +1034,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 			System.out.println();
 			
-		}
+		}*/
 		
 		/*GrayScaleImage img = ImageFactory.createGrayScaleImage( ImageFactory.DEPTH_8BITS, 6 , 5 );
 		
