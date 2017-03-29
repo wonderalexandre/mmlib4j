@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import sun.security.util.Length;
+import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.filtering.EdgeDetectors;
 import mmlib4j.gui.WindowImages;
@@ -432,7 +433,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 	}
 	
-	/* compute shapes ( canonical pixels ) */
+	/* 
+	 * 
+	 * 
+	 *  Pós-processamento da tree-of-shapes para obter o pixel canonico  
+	 *  de cada Shape.
+	 *  
+	 *  
+	 * */
 	
 	public void posProcessing() {
 		
@@ -508,6 +516,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 		}
 		
+		/*for( int i = 0 ; i < Ch.length ; i++ ) {
+			
+			int t = shapes.get( i );
+			
+			System.out.println( Ch[ t ] );
+			
+		}*/
+		
 		for( int i = 0 ; i < shapes.size() ; i++ ) {
 			
 			int t = shapes.get( i );
@@ -525,6 +541,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		for( int i = 0 ; i < shapes.size() ; i++ ) {
 			
 			int t = shapes.get( i );
+				
+			System.out.println( areaR[ t ] );
+				
+		}
+		
+		for( int i = 0 ; i < shapes.size() ; i++ ) {
+			
+			int t = shapes.get( i );
 		
 			aDel[ t ] = sumGrad[ t ] / contourLength[ t ];
 					
@@ -532,41 +556,112 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 			A[ t ] = ( int ) ( ( pow2( sumGrayR[ t ] ) / areaR[ t ] ) + ( pow2( sumGrayR[ tp ] ) / areaR[ tp ] ) - ( pow2( sumGrayR[ t ] + sumGrayR[ tp ] ) / ( areaR[ t ] + areaR[ tp ] )  ) ) / contourLength[ t ];
 			
-		}
+		}			
 		
-		for( int i = 0 ; i < shapes.size() ; i++ ) {
-			
-			int t = shapes.get( i );
-			
-			System.out.println( A[ t ] );
-			
-		}
+		int Rt [] = sortNodes( aDel );
 		
-		/*System.out.println("A");
-		
-		for( int y = 0 ;  y < interpHeight ;  y++ ) {
+		/*for( int i = 0 ; i < Rt.length ; i++ ) {
 			
-			for( int x = 0 ; x < interpWidth ; x++ ) {
+			int t = Rt[ i ];
 				
-				int p = areaR[ x + y * interpWidth ];
+			System.out.println( t + " " + A[ t ] + " " + aDel[ i ] );
 				
-				if( x%2==1 && y%2==1 ) {
-					
-					System.out.printf( "(%d,%d) ", x + y * interpWidth, p );
+		}*/
+		
+		for( int i = 0 ; i < Rt.length ; i++ ) {
+			
+			int t = Rt[ i ];
+			
+			int tp = parent[ t ];
+			
+			int a = ( int ) ( ( pow2( sumGrayR[ t ] ) / areaR[ t ] ) + ( pow2( sumGrayR[ tp ] ) / areaR[ tp ] ) - ( pow2( sumGrayR[ t ] + sumGrayR[ tp ] ) / ( areaR[ t ] + areaR[ tp ] )  ) ) / contourLength[ t ];
+			
+			if( a > A[ t ] ) {
 				
-				}else{
-					
-					System.out.printf( "[%d,%d] ", x + y * interpWidth, p );
-					
-				}
+				A[ t ] = a;
 				
 			}
 			
-			System.out.println();
+			if( !Ch[ tp ].isEmpty() ) {
 			
+				Ch[ tp ].remove( Ch[ tp ].indexOf( t ) );
+				
+			}
+			
+			if( Ch[ t ] != null ) {
+			
+				for( Integer tc : Ch[ t ] ) {
+				
+					parent[ tc ] = tp;					
+				
+					Ch[ tp ].add( tc );
+				
+				}
+			}
+			
+			areaR[ tp ] = areaR[ tp ] + areaR[ t ];
+			
+			sumGrayR[ tp ] = sumGrayR[ tp ] + sumGrayR[ t ]; 
+			
+		}
+			
+		/*for( int i = 0 ; i < Rt.length ; i++ ) {
+				
+			int t = Rt[ i ];
+				
+			System.out.println( t + " " + A[ t ] + " " + aDel[ i ] );
+				
 		}*/
 		
 		return A;
+		
+	}
+	
+	/* 
+	 * 
+	 * 
+	 *  Ordena os nós da tree-of-shapes baseado na
+	 *  
+	 *  Magnitude do gradiente ao longo do contorno de cada shape.
+	 *  
+	 *  aDel = $ \mathcal{A}_{\nabla} $
+	 *  
+	 *  
+	 * */
+	
+	int [] sortNodes( int [] aDel ) {
+		
+		int [] Rt = new int[ shapes.size() ];
+		
+		int maxPriority = aDel[ 0 ];
+		
+		for( int i = 1 ; i < aDel.length ; i++ ) {
+			
+			if( maxPriority < aDel[ i ] ) {
+				
+				maxPriority = aDel[ i ];
+				
+			}
+			
+		}
+		
+		PriorityQueueDial queue = new PriorityQueueDial( aDel, maxPriority, PriorityQueueDial.LIFO, false );
+
+		for( int i = 0 ; i < shapes.size() ; i++ ) {
+			
+			queue.add( shapes.get( i ), aDel[ shapes.get( i ) ] );
+			
+		}
+		
+		int i = 0;
+		
+		while( !queue.isEmpty() ) {
+			
+			Rt[ i++ ] = queue.remove();
+			
+		}
+		
+		return Rt;
 		
 	}
 	
@@ -964,13 +1059,13 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, example, width, height), false);
 		
-		/*System.out.println("imgR");
+		System.out.println("imgU");
 		
 		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
 			
 			for( int x = 0 ; x < build.interpWidth ; x++ ) {
 				
-				int p = build.imgR[ x + y * build.interpWidth ];
+				int p = build.imgU[ x + y * build.interpWidth ];
 				
 				if( x%2==1 && y%2==1 ) {
 					
@@ -1012,7 +1107,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 		}
 		
-		System.out.println( "area" );
+		/*System.out.println( "area" );
 		
 		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
 			

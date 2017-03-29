@@ -30,6 +30,27 @@ public class PriorityQueueDial  {
     public PriorityQueueDial(GrayScaleImage img, int maxPriority, int policy){
     	this(img, maxPriority, policy, false);
     }
+    
+    public PriorityQueueDial( int [] aDel, int maxPriority, int policy, boolean isDual) {
+    	
+    	vetorDDL = new NodeDDL[ aDel.length ];
+    	
+    	this.maxPriority = maxPriority;
+    	
+    	this.policy = policy;
+    	
+    	this.isDual = isDual;
+    	
+    	buckets = new ArrayList<Bucket>(maxPriority + 1);
+    	
+    	for (int i = 0; i <= maxPriority; i++) {
+    		
+    		buckets.add( new Bucket( policy ) );
+    		
+    	}
+    	
+    }
+    
     public PriorityQueueDial(GrayScaleImage img, int maxPriority, int policy, boolean isDual) {
     	vetorDDL = new NodeDDL[img.getSize()];
     	this.img = img;
@@ -52,7 +73,7 @@ public class PriorityQueueDial  {
     	this.add(element, img.getPixel(element));
     }
 
-    private void add(Integer element, int priority) {
+    public void add(Integer element, int priority) {
     	vetorDDL[element] = new NodeDDL(element);
     	if (priority < priorityLowerBound) {
     		priorityLowerBound = priority;
