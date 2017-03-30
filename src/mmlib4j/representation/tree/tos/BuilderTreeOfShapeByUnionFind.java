@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
 import sun.security.util.Length;
 import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.datastruct.PriorityQueueToS;
@@ -34,7 +36,8 @@ import mmlib4j.utils.ImageUtils;
 public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	private final static int NIL = -1;
 	private final static int px[] = new int[]{1, 0,-1, 0};
-  	private final static int py[] = new int[]{0, 1, 0,-1};
+  	private final static int py[] = new int[]{0, 1, 0,-1};  
+  	
 	private int interpWidth;
 	private int interpHeight;
 	private int imgWidth;
@@ -112,7 +115,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		posProcessing();
 		
-		computeAttribute();
+		//computeAttribute();
 	
 		this.img = getImageInterpolated();
 		this.imgWidth = img.getWidth();
@@ -342,7 +345,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 				area[ p ] = 1;
 				
-				sumGray[ p ] = imgU[ p ];
+				sumGray[ p ] = ByteImage.toInt( imgU[ p ] );
 			
 			}
 			
@@ -368,9 +371,9 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				}
 			}
 			
-			/* Attributes calculated using contour information */
+			/* Attributes calculated using contour information */					
 				
-			for( Integer e : getBoundaries( p ) ) {
+			for( Integer e : getBoundaries( p ) ) {			
 					
 				if( !is_boundary[ e ] ) {
 						
@@ -538,13 +541,13 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 		}
 		
-		for( int i = 0 ; i < shapes.size() ; i++ ) {
+		/*for( int i = 0 ; i < shapes.size() ; i++ ) {
 			
 			int t = shapes.get( i );
 				
-			System.out.println( areaR[ t ] );
+			System.out.println( contourLength[ t ] );
 				
-		}
+		}*/
 		
 		for( int i = 0 ; i < shapes.size() ; i++ ) {
 			
@@ -586,17 +589,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 				Ch[ tp ].remove( Ch[ tp ].indexOf( t ) );
 				
-			}
+			}	
 			
-			if( Ch[ t ] != null ) {
-			
-				for( Integer tc : Ch[ t ] ) {
+			for( Integer tc : getChildren( t, Ch ) ) {										
 				
-					parent[ tc ] = tp;					
+				parent[ tc ] = tp;					
 				
-					Ch[ tp ].add( tc );
-				
-				}
+				Ch[ tp ].add( tc );
+								
 			}
 			
 			areaR[ tp ] = areaR[ tp ] + areaR[ t ];
@@ -616,6 +616,34 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		return A;
 		
 	}
+	
+	/**
+	 * Devolve a lista de pixels do contorno do pixel de referencia, se o pixel não é um contorno do grid. 
+	 * @param p => pixel de referencia
+	 * @return pixel do contorno
+	 */
+    public Iterable<Integer> getChildren( final int t, final ArrayList<Integer> Ch [] ) {
+
+        return new Iterable<Integer>() {
+			public Iterator<Integer> iterator() {
+				return new Iterator<Integer>() {
+					private int i = 0;
+					public boolean hasNext() {								
+			        	if( Ch[t] != null && i < Ch[ t ].size() )
+							return true;				    
+						return false;
+					}
+					public Integer next() {
+						int son = Ch[ t ].get( i );
+						i++;
+						return son;
+					}
+					public void remove() { }
+					
+				};
+			}
+		};
+    }
 	
 	/* 
 	 * 
@@ -645,7 +673,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 		}
 		
-		PriorityQueueDial queue = new PriorityQueueDial( aDel, maxPriority, PriorityQueueDial.LIFO, false );
+		PriorityQueueDial queue = new PriorityQueueDial( aDel, maxPriority, PriorityQueueDial.FIFO, false );
 
 		for( int i = 0 ; i < shapes.size() ; i++ ) {
 			
@@ -862,7 +890,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		// Calculated based on Thierry examples
 		int median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;
-
+		
 		int min, max;
 		int adjX[] =  null;
 		int adjY[] =  null;
@@ -912,6 +940,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			}
 			interpolation[pT][0] = ByteImage.toByte(min);
 			interpolation[pT][1] = ByteImage.toByte(max);
+			
 		}
         
         long tf = System.currentTimeMillis();
@@ -1029,23 +1058,23 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		int example[] = new int[] {
 				
-			5,5,5,5,5,5,
+			/*5,5,5,5,5,5,
 			5,4,4,4,4,5,
 			5,4,2,2,4,5,
 			5,4,2,2,4,5,
 			5,4,4,4,4,5,
-			5,5,5,5,5,5
+			5,5,5,5,5,5*/
 				
 			/*5,5,5,5,			
 			5,2,2,5,
 			5,2,2,5,
 			5,5,5,5*/
 			
-			/*1,1,1,1,1,1,
+			1,1,1,1,1,1,
 			1,0,0,3,3,1,
 			1,0,1,1,3,1,
 			1,0,0,3,3,1,
-			1,1,1,1,1,1*/
+			1,1,1,1,1,1
 			
 			/*5,5,5,
 			5,2,5,
@@ -1055,9 +1084,11 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		int width = 6;
 		
-		int height = 6;
+		int height = 5;
 		
 		BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, example, width, height), false);
+		
+		//BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(input, false);
 		
 		System.out.println("imgU");
 		
@@ -1065,7 +1096,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 			for( int x = 0 ; x < build.interpWidth ; x++ ) {
 				
-				int p = build.imgU[ x + y * build.interpWidth ];
+				int p = ByteImage.toInt( build.imgU[ x + y * build.interpWidth ] );
 				
 				if( x%2==1 && y%2==1 ) {
 					
@@ -1107,7 +1138,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 		}
 		
-		/*System.out.println( "area" );
+		System.out.println( "contour" );
 		
 		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
 			
@@ -1129,7 +1160,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 			System.out.println();
 			
-		}*/
+		}
 		
 		/*GrayScaleImage img = ImageFactory.createGrayScaleImage( ImageFactory.DEPTH_8BITS, 6 , 5 );
 		
