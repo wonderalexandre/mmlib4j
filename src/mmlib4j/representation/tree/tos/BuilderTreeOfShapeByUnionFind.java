@@ -286,6 +286,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		/* is_boundary ( initialized as false ) */
 		
+		//boolean [] is_boundary = new boolean[ imgR.length ]; 
+		
 		boolean [] is_boundary = new boolean[ imgR.length ]; 
 		
 		
@@ -326,7 +328,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 			contourLength[ p ] = 0;
 			
-			sumGrad[ p ] = 0;
+			sumGrad[ p ] = 0;		
 			
 			
 		}
@@ -385,8 +387,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 					
 					appear[ e ] = p;
 						
-				} else {
+				} else {					
+					
+					/*if( imgU[ is_boundary[ e ] ] == imgU[ p ] ) {
 						
+						contourLength[ p ] = contourLength[ p ] - 1;
+						
+					}*/	
+					
 					is_boundary[ e ] = false;
 					
 					contourLength[ p ] = contourLength[ p ] - 1;
@@ -1100,11 +1108,11 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				
 				if( x%2==1 && y%2==1 ) {
 					
-					System.out.printf( "(%d,%d) ", x + y * build.interpWidth, p );
+					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
 				
 				}else{
 					
-					System.out.printf( "[%d,%d] ", x + y * build.interpWidth, p );
+					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
 					
 				}
 				
@@ -1124,11 +1132,11 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				
 				if( x%2==1 && y%2==1 ) {
 					
-					System.out.printf( "(%d,%d) ", x + y * build.interpWidth, p );
+					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
 				
 				}else{
 					
-					System.out.printf( "[%d,%d] ", x + y * build.interpWidth, p );
+					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
 					
 				}
 				
@@ -1148,11 +1156,11 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				
 				if( x%2==1 && y%2==1 ) {
 					
-					System.out.printf( "(%d,%d) ", x + y * build.interpWidth, p );
+					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
 				
 				}else{
 					
-					System.out.printf( "[%d,%d] ", x + y * build.interpWidth, p );
+					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
 					
 				}
 				
