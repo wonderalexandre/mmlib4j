@@ -203,11 +203,17 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	 * Desinterpolacao da arvore e a transforma em uma arvore de estrutura ligada. 
 	 * @return raiz da arvore
 	 */
-	public void unInterpolateAndCreateTree( int parent[]  ){
+	
+	public void unInterpolateAndCreateTree( int parent[]  ) {
+		
 		long ti = System.currentTimeMillis();
+		
 		this.numNode = 0;
+		
 		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
-		//WindowImages.show(ImageFactory.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight)); 
+		
+		//WindowImages.show(ImageFactory.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight));
+		
 		for (int i = 0; i < imgR.length; i++) {
 			
 			int p = imgR[i];
@@ -216,8 +222,10 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			int y = p / interpWidth;
 			int pixelUnterpolate = (x/2) + (y/2) * imgWidth;
 			
-			if(p == pai){ //Note que:  p = pInfinito
+			if(p == pai){ //Note que: p = pInfinito
+				
 				this.root = nodesMapTmp[p] = new NodeToS(numNode++, imgU[p], img, pixelUnterpolate);
+				
 				if(x % 2 == 1 && y % 2 == 1){
 					nodesMapTmp[p].addPixel( pixelUnterpolate );
 					
@@ -455,7 +463,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	
 	public void posProcessing() {
 		
-		shapes = new ArrayList<>();
+		shapes = new ArrayList<Integer>();
 		
 		for( int i = 0 ; i < imgR.length ; i++ ) {
 			
@@ -517,7 +525,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				
 				if( Ch[ parent[ t ] ] == null ) {
 					
-					Ch[ parent[ t ] ] = new ArrayList<>();
+					Ch[ parent[ t ] ] = new ArrayList<Integer>();
 					
 				}
 				

@@ -1,6 +1,7 @@
 package mmlib4j.representation.tree.tos;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -55,9 +56,15 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	int sumGray [];
 	int contourLength [];
 	
+	/**/
+	
+	ArrayList<Integer> shapes;
+	
+	
 	private BuilderTreeOfShapeByUnionFindParallel(){ }
 			
-	public BuilderTreeOfShapeByUnionFindParallel getClone(){
+	public BuilderTreeOfShapeByUnionFindParallel getClone() {
+		
 		BuilderTreeOfShapeByUnionFindParallel b = new BuilderTreeOfShapeByUnionFindParallel();
 		b.interpWidth = this.interpWidth;
 		b.interpHeight = this.interpHeight;
@@ -126,7 +133,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	
 	
 	
-	public BuilderTreeOfShapeByUnionFindParallel(GrayScaleImage img, int xInfinito, int yInfinito){
+	public BuilderTreeOfShapeByUnionFindParallel(GrayScaleImage img, int xInfinito, int yInfinito) {
+		
 		super();
 		this.img = img;
 		this.xInfinito = xInfinito;
@@ -135,6 +143,10 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		sort( interpolateImage() );
 		
 		this.parent = createTreeByUnionFind();
+		
+		unInterpolateTree( parent );
+		
+		//posProcessing();
 		
 		/*Object obj[] = interpolateImageParallel( img );
 		sort( obj );
@@ -177,27 +189,32 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	 * Desinterpolacao da arvore e a transforma em uma arvore de estrutura ligada. 
 	 * @return raiz da arvore
 	 */
-	public void unInterpolateTree( int parent[]  ){
+	public void unInterpolateTree( int parent[]  ) {
+		
 		long ti = System.currentTimeMillis();
+		
 		this.numNode = 0;
+		
 		this.root = null;
+		
 		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
+		
 		boolean flags[] = new boolean[parent.length];
+		
 		//WindowImages.show(ImageFactory.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight));
 		
 		int p = imgR[0];
 		int pai = parent[p];
 		int x = p % interpWidth;
 		int y = p / interpWidth;
-		int pixelUnterpolate = (x/4) + (y/4) * img.getWidth();
-		
+		int pixelUnterpolate = (x/4-1) + (y/4) * img.getWidth();
+		if(pixelUnterpolate< 0) pixelUnterpolate=0;
 		if(p == pai){ //Note que:  p = pInfinito
 			this.root = nodesMapTmp[p] = new NodeToS(numNode++, ByteImage.toInt(imgU[p]), img, pixelUnterpolate);
-			if(x % 4 == 0 && y % 4 == 0){
+			if(x % 4 == 1 && y % 4 == 1){
 				nodesMapTmp[p].addPixel( pixelUnterpolate );
 			}
 		}
-		
 		
 		//paralelisavel
 		for (int i = 1; i < imgR.length; i++) {
@@ -206,8 +223,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			pai = parent[p];
 			x = p % interpWidth;
 			y = p / interpWidth;
-			pixelUnterpolate = (x/4) + (y/4) * img.getWidth();	
 			
+			pixelUnterpolate = (x/4-1) + (y/4) * img.getWidth();	
+			if(pixelUnterpolate< 0) pixelUnterpolate=0;
 			if(imgU[p] != imgU[pai]){ //novo no
 				
 				if(nodesMapTmp[p] == null){
@@ -217,7 +235,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				if(nodesMapTmp[pai] == null){
 					int xPai = pai % interpWidth;
 					int yPai = pai / interpWidth;
-					int pixelUnterpolatePai = (xPai/4) + (yPai/4) * img.getWidth();	
+					int pixelUnterpolatePai = (xPai/4-1) + (yPai/4) * img.getWidth();	
 					int paiPai = parent[pai];
 					nodesMapTmp[pixelUnterpolatePai] = new NodeToS(numNode++, ByteImage.toInt(imgU[paiPai]), img, pixelUnterpolatePai);
 				}
@@ -233,7 +251,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				if(nodesMapTmp[pai] == null){
 					int xPai = pai % interpWidth;
 					int yPai = pai / interpWidth;
-					int pixelUnterpolatePai = (xPai/4) + (yPai/4) * img.getWidth();	
+					int pixelUnterpolatePai = (xPai/4-1) + (yPai/4) * img.getWidth();	
 					int paiPai = parent[pai];
 					nodesMapTmp[pixelUnterpolatePai] = new NodeToS(numNode++, ByteImage.toInt(imgU[paiPai]), img, pixelUnterpolatePai);
 				}
@@ -241,7 +259,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				nodesMapTmp[p] = nodesMapTmp[pai];
 			}
 			
-			if(x % 4 == 0 && y % 4 == 0){
+			if(x % 4 == 1 && y % 4 == 1){
 				nodesMapTmp[p].addPixel( pixelUnterpolate );
 			}
 		}
@@ -370,13 +388,13 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 			zPar[ p ] = p;
 			
-			if( isRealPixel( p ) ) {
+			//if( isRealPixel( p ) || isFakePixelNextLine( p ) || isFakePixelSameLine( p ) ) {
 				
 				area[ p ] = 1;
 				
 				sumGray[ p ] =  ByteImage.toInt( imgU[ p ] );
 				
-			}
+			//}
 			
 			for ( Integer n : getAdjPixels( p, zPar ) ) {
 				
@@ -912,7 +930,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		/* Print */
 		
-		/*for( int j = 0 ; j < this.interpHeight ; j++ ) {
+		for( int j = 0 ; j < this.interpHeight ; j++ ) {
 			
 			for( int i = 0 ; i < this.interpWidth ; i++ ) {
 				
@@ -922,13 +940,17 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 					
 					System.out.printf( "(%2d, %2d)", ByteImage.toInt( interpolation[ i + j * interpWidth ][ 0 ] ), ByteImage.toInt( interpolation[ i + j * interpWidth ][ 1 ] ) );
 					
-				}															
+				} else{
+					
+					System.out.printf( "[%2d, %2d]", ByteImage.toInt( interpolation[ i + j * interpWidth ][ 0 ] ), ByteImage.toInt( interpolation[ i + j * interpWidth ][ 1 ] ) );
+					
+				}
 				
 			}
 			
 			System.out.println();
 			
-		}*/
+		}
 		
 		long tf = System.currentTimeMillis();
 		
@@ -955,7 +977,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				return new Iterator<Integer>() {
 					private int i = 0;
 					public boolean hasNext() {
-						while( i < px.length && isRealPixel( x, y ) ) {
+						while( i < px.length && ( isRealPixel( x, y ) || isFakePixelNextLine(x, y) || isFakePixelSameLine(x, y) ) ) {
 						//while( i < px.length ) {
 							int xx = px[i] + x;
 							int yy = py[i] + y;							
@@ -997,9 +1019,21 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 	}
 	
+	public boolean isFakePixelSameLine( int p ) {
+		
+		return isFakePixelSameLine( p%interpWidth, p/interpWidth );
+		
+	} 
+	
 	public boolean isFakePixelSameLine( int x, int y ) {
 		
 		return !( x % 4 == 1 ) && ( x%2 == 1 && y%2 == 1 && y%4 == 1 );
+		
+	}
+	
+	public boolean isFakePixelNextLine( int p ) {
+		
+		return isFakePixelNextLine( p%interpWidth, p/interpWidth );
 		
 	}
 	
@@ -1081,13 +1115,53 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
   			System.out.println("Tempo de execucao [sort] "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
-	/* End modifications */
+	/* 
+	 * 
+	 * 
+	 *  Pós-processamento da tree-of-shapes para obter o pixel canonico  
+	 *  de cada Shape.
+	 *  
+	 *  
+	 * *
+	
+	public void posProcessing() {
+		
+		shapes = new ArrayList<>();
+		
+		for( int i = 0 ; i < imgR.length ; i++ ) {
+			
+			int p = imgR[ i ];
+			
+			if( p == parent[ p ] || ( imgU[ p ] != imgU[ parent[ p ] ] ) ) {
+				
+				shapes.add( p );		
+				
+			}
+			
+			if( imgU[ p ] == imgU[ parent[ p ] ] ) {
+				
+			//	area[ p ] = area[ parent[ p ] ];
+				
+				contourLength[ p ] = contourLength[ parent[ p ] ];
+				
+			//	sumGrad[ p ] = sumGrad[ parent[ p ] ];
+				
+			//	sumGray[ p ] = sumGray[ parent[ p ] ];
+				
+			}
+			
+		}
+		
+	}
+	
+	 End modifications */
 	
 	/**
 	 * Interpola os pixels da imagem. 
 	 * @param matrix => pixels da imagem 
 	 * @return pixels interpolados.
 	 */
+	
 	public Object[] interpolateImageParallel(final GrayScaleImage img) {
 		
 		long ti = System.currentTimeMillis();
@@ -1252,20 +1326,26 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				4, 1, 1, 7, 7, 4,
 				4, 4, 4, 4, 4, 4*/
 				
-				5,5,5,
+				/*5,5,5,
 				5,2,5,
-				5,5,5
+				5,5,5*/
 				
-				/*24,24,24,24,24,24,
+				/*1,1,1,1,1,1,
+				1,0,0,3,3,1,
+				1,0,1,1,3,1,
+				1,0,0,3,3,1,
+				1,1,1,1,1,1*/
+				
+				24,24,24,24,24,24,
 				24,24, 0, 0, 0,24,
 				24, 0, 6, 8, 0,24,
 				24,24, 0, 0,24,24,
-				24,24,24,24,24,24*/
+				24,24,24,24,24,24
 				
 				
 		};
-		width = 3;
-		height = 3;
+		width = 6;
+		height = 5;
 		//int width = 5;
 		//int height = 2;
 		
@@ -1279,10 +1359,71 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			System.out.println();
 		}	
 		
+		// Second example of Thierry
+		
+		GrayScaleImage input = ImageFactory.createGrayScaleImage( ImageFactory.DEPTH_8BITS, 
+						  												  5, 5 );
+		
+		input.setPixel( 0, 0, 128 );
+				
+		input.setPixel( 1, 0, 124 );
+				
+		input.setPixel( 2, 0, 150 );
+						
+		input.setPixel( 3, 0, 137 );
+				
+		input.setPixel( 4, 0, 106 );
+				
+				
+		input.setPixel( 0, 1, 116 );
+				
+		input.setPixel( 1, 1, 128 );
+				
+		input.setPixel( 2, 1, 156 );
+				
+		input.setPixel( 3, 1, 165 );
+				
+		input.setPixel( 4, 1, 117 );		
+				
+				
+		input.setPixel( 0, 2, 117 );
+				
+		input.setPixel( 1, 2, 90 );
+				
+		input.setPixel( 2, 2, 131 );
+				
+		input.setPixel( 3, 2, 108 );
+				
+		input.setPixel( 4, 2, 151 );
+				
+				
+		input.setPixel( 0, 3, 107 );
+				
+		input.setPixel( 1, 3, 87 );
+				
+		input.setPixel( 2, 3, 118 );
+				
+		input.setPixel( 3, 3, 109 );
+				
+		input.setPixel( 4, 3, 167 );
+				
+				
+		input.setPixel( 0, 4, 107 );
+				
+		input.setPixel( 1, 4, 73 );
+				
+		input.setPixel( 2, 4, 125 );
+				
+		input.setPixel( 3, 4, 157 );
+				
+		input.setPixel( 4, 4, 117 );
+				
+		
 		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height), -1, -1 );
 		
+		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( input, -1, -1 );
 		
-		System.out.println( "parent" );
+		/*System.out.println( "parent" );
 		
 		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
 			
@@ -1312,7 +1453,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 			for( int x = 0 ; x < build.interpWidth ; x++ ) {
 				
-				int p = build.imgU[ x + y * build.interpWidth ];
+				int p = ByteImage.toInt( build.imgU[ x + y * build.interpWidth ] );
 				
 				if( build.isRealPixel( x, y ) ) {
 					
@@ -1378,6 +1519,11 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 		}
 		
+		for( int i = 0 ; i < build.shapes.size() ; i++ ) {
+						
+			System.out.println( build.shapes.get( i ) );
+			
+		}
 		
         /*NodeToS root = builder.getRoot();
 		
