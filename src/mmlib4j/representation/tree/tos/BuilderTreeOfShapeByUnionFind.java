@@ -54,6 +54,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	
 	private NodeToS root;
 	
+	private int median;
+	
 	/* 
 	 * 
 	 * 	Parameters from article : 
@@ -719,18 +721,29 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	 * @param interpolation => pixels da imagem interpolada
 	 */
 	public void sort(byte interpolation[][]){
+		
 		long ti = System.currentTimeMillis();
-  		//Algoritmo de ordenacao do paper
+  		
+		//Algoritmo de ordenacao do paper
 		int size = interpWidth * interpHeight;
+		
   		PriorityQueueToS queue = new PriorityQueueToS( );
+  		
 		int i = 0;
+		
 		boolean dejavu[] = new boolean[size]; //dejavu eh inicializado com false
+		
 		this.imgR = new int[size];
 		this.imgU = new byte[size];
-		int pInfinito = 0;//getInfinity(interpolation); 
+		
+		int pInfinito = 0;//getInfinity(interpolation);
+		
 		//System.out.println("pInfinito (" + xInfinito + ", " + yInfinito + ")");
-		queue.initial(pInfinito, ByteImage.toInt(interpolation[pInfinito][0]));
-		dejavu[pInfinito] = true;
+		
+		queue.initial( pInfinito, this.median );
+		
+		dejavu[ pInfinito ] = true;
+		
 		while(!queue.isEmpty()){
 			int h = queue.priorityPop();
 			imgU[h] = ByteImage.toByte( queue.getCurrentPriority() ); //l = prioridade corrente da queue
@@ -877,6 +890,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	 * @return pixels interpolados.
 	 */
 	public byte[][] interpolateImage( ) {
+		
 		long ti = System.currentTimeMillis();
 		
         this.interpWidth = (imgWidth*2+1);
@@ -901,7 +915,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		Arrays.sort( pixels );		
 		
 		// Calculated based on Thierry examples
-		int median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;
+		this.median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;
 		
 		int min, max;
 		int adjX[] =  null;
@@ -942,11 +956,11 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 					}
 				}
 				else{
-					if(median > max){
-						max = median;
+					if(this.median > max){
+						max = this.median;
 					}
-					if(median < min){
-						min = median;
+					if(this.median < min){
+						min = this.median;
 					}
 				}
 			}
