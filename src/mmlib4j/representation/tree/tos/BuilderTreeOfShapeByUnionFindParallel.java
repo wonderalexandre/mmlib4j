@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.PriorityQueueToS;
+import mmlib4j.filtering.EdgeDetectors;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
@@ -146,7 +147,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		unInterpolateTree( parent );
 		
-		//posProcessing();
+		posProcessing();
 		
 		/*Object obj[] = interpolateImageParallel( img );
 		sort( obj );
@@ -361,7 +362,15 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		sumGray = new int[ imgR.length ]; 
 		
 		
-		/* Attributes based on contour */
+		/* Attributes calculated on contour ( sumGrad, appear, vanish, contourLength ) */
+		
+		imgGrad = EdgeDetectors.sobel( ImageFactory.createReferenceGrayScaleImage( 8, imgU, interpWidth, interpHeight ) );
+		
+		sumGrad = new int[ imgR.length ];
+		
+		appear = new int[ imgR.length ];
+		
+		vanish = new int[ imgR.length ];
 			
 		contourLength = new int[ imgR.length ];
 		
@@ -378,23 +387,25 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 			contourLength[ p ] = 0;
 			
+			sumGrad[ p ] = 0;	
+	
+			
 		}
 		
 		for( int i = imgR.length-1 ; i >= 0 ; i-- ) {
+			
 			
 			int p = imgR[ i ];
 			
 			parent[ p ] = p;
 			
 			zPar[ p ] = p;
+				
 			
-			//if( isRealPixel( p ) || isFakePixelNextLine( p ) || isFakePixelSameLine( p ) ) {
+			area[ p ] = 1;
 				
-				area[ p ] = 1;
+			sumGray[ p ] =  ByteImage.toInt( imgU[ p ] );
 				
-				sumGray[ p ] =  ByteImage.toInt( imgU[ p ] );
-				
-			//}
 			
 			for ( Integer n : getAdjPixels( p, zPar ) ) {
 				
@@ -412,6 +423,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 					
 					contourLength[ p ] = contourLength[ p ] + contourLength[ r ];
 					
+					sumGrad[ p ] = sumGrad[ p ] + sumGrad[ r ];
+					
 				}
 				
 			}
@@ -424,11 +437,19 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 					
 					contourLength[ p ] = contourLength[ p ] + 1;
 					
+					sumGrad[ p ] = sumGrad[ p ] + imgGrad.getPixel( e ); 
+					
+					appear[ e ] = p;
+					
 				} else {
 					
 					is_boundary[ e ] = false;
 					
 					contourLength[ p ] = contourLength[ p ] - 1;
+					
+					sumGrad[ p ] = sumGrad[ p ] - imgGrad.getPixel( e );
+					
+					vanish[ e ] = p;
 					
 				}
 				
@@ -768,8 +789,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		int median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2; 	
 		
 		
-		/* Fake pixels in same line */
 		
+		/* Fake pixels in same line */
 		
 		int min, max;
 		
@@ -930,7 +951,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		/* Print */
 		
-		for( int j = 0 ; j < this.interpHeight ; j++ ) {
+		/*for( int j = 0 ; j < this.interpHeight ; j++ ) {
 			
 			for( int i = 0 ; i < this.interpWidth ; i++ ) {
 				
@@ -950,7 +971,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 			System.out.println();
 			
-		}
+		}*/
 		
 		long tf = System.currentTimeMillis();
 		
@@ -977,8 +998,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				return new Iterator<Integer>() {
 					private int i = 0;
 					public boolean hasNext() {
-						while( i < px.length && ( isRealPixel( x, y ) || isFakePixelNextLine(x, y) || isFakePixelSameLine(x, y) ) ) {
-						//while( i < px.length ) {
+						while( i < px.length ) {
 							int xx = px[i] + x;
 							int yy = py[i] + y;							
 				        	if(xx >= 0 && xx < interpWidth && yy >= 0 && yy < interpHeight)
@@ -1115,14 +1135,14 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
   			System.out.println("Tempo de execucao [sort] "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
-	/* 
+	/** 
 	 * 
 	 * 
 	 *  Pós-processamento da tree-of-shapes para obter o pixel canonico  
 	 *  de cada Shape.
 	 *  
 	 *  
-	 * *
+	 **/
 	
 	public void posProcessing() {
 		
@@ -1140,7 +1160,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 			if( imgU[ p ] == imgU[ parent[ p ] ] ) {
 				
-			//	area[ p ] = area[ parent[ p ] ];
+				area[ p ] = area[ parent[ p ] ];
 				
 				contourLength[ p ] = contourLength[ parent[ p ] ];
 				
@@ -1154,7 +1174,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 	}
 	
-	 End modifications */
+	 /* End modifications */
 	
 	/**
 	 * Interpola os pixels da imagem. 
@@ -1326,28 +1346,26 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				4, 1, 1, 7, 7, 4,
 				4, 4, 4, 4, 4, 4*/
 				
-				/*5,5,5,
+				5,5,5,
 				5,2,5,
-				5,5,5*/
+				5,5,5 // ok
 				
 				/*1,1,1,1,1,1,
 				1,0,0,3,3,1,
 				1,0,1,1,3,1,
 				1,0,0,3,3,1,
-				1,1,1,1,1,1*/
+				1,1,1,1,1,1*/ // ok
 				
-				24,24,24,24,24,24,
+				/*24,24,24,24,24,24,
 				24,24, 0, 0, 0,24,
 				24, 0, 6, 8, 0,24,
 				24,24, 0, 0,24,24,
-				24,24,24,24,24,24
+				24,24,24,24,24,24*/ // ok
 				
 				
 		};
-		width = 6;
-		height = 5;
-		//int width = 5;
-		//int height = 2;
+		width = 3;
+		height = 3;
 		
 		System.out.println("[nivel de cinza; pixel; parent]");
 		for(int y=0; y < height; y++){
@@ -1419,6 +1437,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		input.setPixel( 4, 4, 117 );
 				
 		
+		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), -1, -1 );
+	
 		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height), -1, -1 );
 		
 		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( input, -1, -1 );
@@ -1517,11 +1537,15 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 			System.out.println();
 			
-		}
+		}*/
 		
 		for( int i = 0 ; i < build.shapes.size() ; i++ ) {
-						
-			System.out.println( build.shapes.get( i ) );
+			
+			if( build.contourLength[ build.shapes.get( i ) ] == 0 ) {
+				
+				System.out.println( build.shapes.get( i ) );
+				
+			}						
 			
 		}
 		

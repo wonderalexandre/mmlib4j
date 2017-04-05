@@ -349,15 +349,11 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			parent[ p ] = p;
 			
 			zPar[ p ] = p;
+		
 			
-			
-			if( isNotBoundarie( p ) ) {
-			
-				area[ p ] = 1;
+			area[ p ] = 1;
 				
-				sumGray[ p ] = ByteImage.toInt( imgU[ p ] );
-			
-			}
+			sumGray[ p ] = ByteImage.toInt( imgU[ p ] );
 			
 			
 			for ( Integer n : getAdjPixels( p, zPar ) ) {
