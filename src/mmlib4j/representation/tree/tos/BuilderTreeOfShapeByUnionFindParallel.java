@@ -357,7 +357,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		int zPar[] = new int[ imgR.length ];
 		
 		
-		/* Is boundary image */
+		/* Is boundary image */	
 		
 		boolean is_boundary [] = new boolean[ imgR.length ];
 		
@@ -381,6 +381,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 		contourLength = new int[ imgR.length ];
 					
+		
+		allPixels = new ArrayList<Integer>();
 		
 		
 		for ( int p = 0; p < imgR.length; p++ ) {
@@ -413,7 +415,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			area[ p ] = 1;
 				
 			sumGray[ p ] =  ByteImage.toInt( imgU[ p ] );
-				
+			
 			
 			for ( Integer n : getAdjPixels( p, zPar ) ) {
 				
@@ -435,13 +437,21 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 					
 				}
 				
-			}
+			}					
 			
-			for( Integer e : getBoundaries( p )  ) {
+			if( imgU[ p ] == 1 || imgU[ p ] == 0 ) continue;				
+			
+			for( Integer e : getBoundaries( p )  ) {									
+				
+				if( imgU[ p ] == 0 ){
+				
+					allPixels.add( p );
+				
+				}
 				
 				if( !is_boundary[ e ] ) {
 					
-					is_boundary[ e ] = true;
+					is_boundary[ e ] = true;										
 					
 					contourLength[ p ] = contourLength[ p ] + 1;
 					
@@ -451,7 +461,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 					
 				} else {
 					
-					is_boundary[ e ] = false;
+					is_boundary[ e ] = false;																					
 					
 					contourLength[ p ] = contourLength[ p ] - 1;
 					
@@ -463,9 +473,14 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 			}
 			
+			if( imgU[ p ] == 0 ) {
+				
+				System.out.println( contourLength[ p ] );
+				
+			}
+			
 		}
-
-		
+	 	
 		// canonizacao da arvore
 		
 		for ( int i = 0 ; i < imgR.length ; i++ ) {
@@ -481,6 +496,36 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			}
 			
 		}
+		
+		/*for( int y = 0 ; y < interpHeight ; y++ ) {
+			
+			for( int x = 0 ; x < interpWidth ; x++ ) {				
+				
+				System.out.print( ( allPixels[ x + y * interpWidth ] == 0? "-" : allPixels[ x + y * interpWidth ] ) + " " );
+			
+			}
+			
+			System.out.println();
+			
+		}*/
+		
+		/*System.out.println( "Pixels" );
+		
+		int repeat = allPixels.get( 0 );
+		
+		System.out.printf( "(x= %d, y= %d)\n", allPixels.get( 0 )%interpWidth, allPixels.get( 0 )/interpWidth );
+		
+		for( int y = 1 ; y < allPixels.size() ; y++ ) {
+	
+			if( repeat != allPixels.get( y ) ){
+			
+				System.out.printf( "(x= %d, y= %d)\n", allPixels.get( y )%interpWidth, allPixels.get( y )/interpWidth );
+			
+				repeat = allPixels.get( y );
+			
+			}
+			
+		}*/
 		
 		zPar = null;
 		
@@ -794,9 +839,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		/* median value */
 		
-		this.median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2; 	
-		
-		System.out.println( this.median );
+		this.median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;
 		
 		
 		/* Fake pixels in same line */
@@ -1147,7 +1190,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
   		
   		long tf = System.currentTimeMillis();
   		if(Utils.debug)
-  			System.out.println("Tempo de execucao [sort] "+ ((tf - ti) /1000.0)  + "s");
+  			System.out.println( "Tempo de execucao [sort] "+ ((tf - ti) /1000.0)  + "s" );
 	}
 	
 	/** 
@@ -1177,7 +1220,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 				area[ p ] = area[ parent[ p ] ];
 				
-				contourLength[ p ] = contourLength[ parent[ p ] ];
+				//contourLength[ p ] = contourLength[ parent[ p ] ];
 				
 			//	sumGrad[ p ] = sumGrad[ parent[ p ] ];
 				
@@ -1361,19 +1404,19 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				4, 1, 1, 7, 7, 4,
 				4, 4, 4, 4, 4, 4*/
 				
-				1,2,3,
+				/*1,2,3,
 				6,1,6,
-				7,3,9 //			
+				7,3,9*/ //			
 				
 				/*5,5,5,
 				5,2,5,
 				5,5,5*/
 				
-				/*1,1,1,1,1,1,
+				1,1,1,1,1,1,
 				1,0,0,3,3,1,
 				1,0,1,1,3,1,
 				1,0,0,3,3,1,
-				1,1,1,1,1,1*/ // ok
+				1,1,1,1,1,1 // ok
 				
 				/*24,24,24,24,24,24,
 				24,24, 0, 0, 0,24,
@@ -1384,8 +1427,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 		};
 		
-		width = 3;
-		height = 3;
+		width = 6;
+		height = 5;
 		
 		System.out.println("[nivel de cinza; pixel; parent]");
 		for(int y=0; y < height; y++){
@@ -1487,7 +1530,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 		}
 		
-		System.out.println( "imgU" );
+		/*System.out.println( "imgU" );
 		
 		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
 			
@@ -1509,7 +1552,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 			System.out.println();
 			
-		}
+		}*/
 		
 		/*System.out.println( "area" );
 		
