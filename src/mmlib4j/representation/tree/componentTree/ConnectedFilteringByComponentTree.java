@@ -1,5 +1,6 @@
 package mmlib4j.representation.tree.componentTree;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -19,6 +20,7 @@ import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTre
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
+import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedBitQuadsDT;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -36,6 +38,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	private boolean hasComputerCentralMomentAttribute = false;
 	private boolean hasComputerAttributeBasedBitQuads = false;
 	private boolean hasComputerDistanceTransform = false;
+	private boolean hasComputerAttributeBasedBitQuadsOpt = false;
 	private ComputerDistanceTransform dt = null;
 	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
@@ -127,6 +130,13 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 	}
 
+	public void computerAttributeBasedBitQuadsOpt() throws IOException {
+		if (!hasComputerAttributeBasedBitQuadsOpt) {
+			new ComputerAttributeBasedBitQuadsDT(this).addAttributeInNodesCT(getListNodes());
+			hasComputerAttributeBasedBitQuadsOpt = true;
+		}
+	}
+	
 	public void computerCentralMomentAttribute(){
 		if(!hasComputerCentralMomentAttribute){
 			new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesCT(getListNodes());
