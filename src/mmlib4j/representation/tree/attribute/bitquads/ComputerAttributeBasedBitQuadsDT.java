@@ -13,6 +13,7 @@ import mmlib4j.representation.tree.attribute.bitquads.PatternsCounter.PatternTyp
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
+import mmlib4j.utils.Utils;
 
 public class ComputerAttributeBasedBitQuadsDT extends AttributeComputedIncrementally {
 	protected GrayScaleImage img;
@@ -21,12 +22,22 @@ public class ComputerAttributeBasedBitQuadsDT extends AttributeComputedIncrement
 	protected PatternsCounter patternsCounter;
 	
 	public ComputerAttributeBasedBitQuadsDT(ConnectedFilteringByComponentTree tree) throws IOException {
+		long ti = System.currentTimeMillis();
 		img = tree.getInputImage();
 		adj = tree.getAdjacency();
 		bitquads = new AttributeBasedBitQuads[tree.getNumNode()];
 		img.setPixelIndexer(PixelIndexer.getDefaultValueIndexer(img.getWidth(), img.getHeight()));
 		patternsCounter = new PatternsCounter();
 		computerAttribute(tree.getRoot());
+		
+		for(AttributeBasedBitQuads attr: bitquads) {
+			System.out.println(attr.printPattern());
+		}
+		
+		if (Utils.debug) {
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [extraction of attributes - bit-quads] " + ((tf - ti) / 1000.0) + "s");
+		}
 	}
 	
 	@Override
@@ -83,16 +94,16 @@ public class ComputerAttributeBasedBitQuadsDT extends AttributeComputedIncrement
 	
 	public void addAttributeInNodes(NodeLevelSets node) {
 		node.addAttribute(Attribute.BIT_QUADS_PERIMETER, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getPerimeter()));
-		node.addAttribute(Attribute.BIT_QUADS_NUMBER_EULER, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getNumberEuler()));
-		node.addAttribute(Attribute.BIT_QUADS_NUMBER_HOLES, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getNumberHoles()));
-		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getPerimeterContinuous()));
-		node.addAttribute(Attribute.BIT_QUADS_CIRCULARITY, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getCircularity(node.getArea())));
-		node.addAttribute(Attribute.BIT_QUADS_AREA_AVERAGE, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getAreaAverage(node.getArea())));
-		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_AVERAGE, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getPerimeterAverage()));
-		node.addAttribute(Attribute.BIT_QUADS_LENGTH_AVERAGE, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getLengthAverage()));
-		node.addAttribute(Attribute.BIT_QUADS_WIDTH_AVERAGE, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getWidthAverage(node.getArea())));
-		node.addAttribute(Attribute.BIT_QUADS_AREA, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getArea()));
-		node.addAttribute(Attribute.BIT_QUADS_AREA_DUDA, new Attribute(Attribute.BIT_QUADS_PERIMETER, bitquads[node.getId()].getAreaDuda()));
+		node.addAttribute(Attribute.BIT_QUADS_NUMBER_EULER, new Attribute(Attribute.BIT_QUADS_NUMBER_EULER, bitquads[node.getId()].getNumberEuler()));
+		node.addAttribute(Attribute.BIT_QUADS_NUMBER_HOLES, new Attribute(Attribute.BIT_QUADS_NUMBER_HOLES, bitquads[node.getId()].getNumberHoles()));
+		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, new Attribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, bitquads[node.getId()].getPerimeterContinuous()));
+		node.addAttribute(Attribute.BIT_QUADS_CIRCULARITY, new Attribute(Attribute.BIT_QUADS_CIRCULARITY, bitquads[node.getId()].getCircularity(node.getArea())));
+		node.addAttribute(Attribute.BIT_QUADS_AREA_AVERAGE, new Attribute(Attribute.BIT_QUADS_AREA_AVERAGE, bitquads[node.getId()].getAreaAverage(node.getArea())));
+		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_AVERAGE, new Attribute(Attribute.BIT_QUADS_PERIMETER_AVERAGE, bitquads[node.getId()].getPerimeterAverage()));
+		node.addAttribute(Attribute.BIT_QUADS_LENGTH_AVERAGE, new Attribute(Attribute.BIT_QUADS_LENGTH_AVERAGE, bitquads[node.getId()].getLengthAverage()));
+		node.addAttribute(Attribute.BIT_QUADS_WIDTH_AVERAGE, new Attribute(Attribute.BIT_QUADS_WIDTH_AVERAGE, bitquads[node.getId()].getWidthAverage(node.getArea())));
+		node.addAttribute(Attribute.BIT_QUADS_AREA, new Attribute(Attribute.BIT_QUADS_AREA, bitquads[node.getId()].getArea()));
+		node.addAttribute(Attribute.BIT_QUADS_AREA_DUDA, new Attribute(Attribute.BIT_QUADS_AREA_DUDA, bitquads[node.getId()].getAreaDuda()));
 	}
 		
 	class AttributeBasedBitQuads {
@@ -123,7 +134,7 @@ public class ComputerAttributeBasedBitQuadsDT extends AttributeComputedIncrement
 		}
 		
 		public int getArea() {
-			return (nQ1 + (2*nQ2) + (3*nQ3) + (4*nQ4) + (2*nQD));
+			return (nQ1 + (2*nQ2) + (3*nQ3) + (4*nQ4) + (2*nQD))/4;
 		}
 		
 		public double getAreaDuda() {
@@ -156,7 +167,7 @@ public class ComputerAttributeBasedBitQuadsDT extends AttributeComputedIncrement
 		
 		public String printPattern() {
 			return "Q1: " + nQ1 + "\tQ2: " + nQ2 + "\tQ3: " + nQ3 + "\tQD: " + nQD + "\tQ4: " + nQ4 + "\tQ1T: "
-					+ nQ1T + "\tQ2T: " + nQ2T + "\tQ3T: " + nQ3T + "\tQTD" + nQDT;
+					+ nQ1T + "\tQ2T: " + nQ2T + "\tQ3T: " + nQ3T + "\tQTD :" + nQDT;
 		}
 	}
 }
