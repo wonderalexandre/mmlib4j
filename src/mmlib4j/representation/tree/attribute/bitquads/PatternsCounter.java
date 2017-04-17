@@ -24,8 +24,8 @@ public class PatternsCounter {
 	private byte[][] leavesMap;
 	private char[] tempKey;
 	
-	public PatternsCounter() throws IOException {
-		InputStream in = PatternsCounter.class.getResourceAsStream("decision-tree.dat");	
+	public PatternsCounter(String filename) throws IOException {
+		InputStream in = PatternsCounter.class.getResourceAsStream(filename);	
 		leavesMap = new byte[N_LEAVES][];
 		tempKey = new char[8];
 		
@@ -39,14 +39,14 @@ public class PatternsCounter {
 		return Integer.parseInt(base3string, 3);
 	}
 	
-	/* 0 - equals relation (=) , 1 - greater than relation (>), 2 - lower than relation (<) */
+	/* 0 - lower than relation (<) , 1 - equals relation (=), 2 - greater than relation (>) */
 	private char computeRelationType(int px, int py, int qx, int qy, GrayScaleImage img) {
 		if (!img.isPixelValid(qx, qy) || (img.getValue(qx, qy) < img.getValue(px, py)))
-			return '2';
-		else if (img.getValue(qx, qy) > img.getValue(px, py))
-			return '1';
-		else
 			return '0';
+		else if (img.getValue(qx, qy) > img.getValue(px, py))
+			return '2';
+		else
+			return '1';
 	}
 	
 	private int computeLeavesMapKey(int px, int py, GrayScaleImage img) {

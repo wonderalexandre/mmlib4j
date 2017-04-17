@@ -27,7 +27,7 @@ public class ComputerAttributeBasedBitQuadsDT extends AttributeComputedIncrement
 		adj = tree.getAdjacency();
 		bitquads = new AttributeBasedBitQuads[tree.getNumNode()];
 		img.setPixelIndexer(PixelIndexer.getDefaultValueIndexer(img.getWidth(), img.getHeight()));
-		patternsCounter = new PatternsCounter();
+		patternsCounter = new PatternsCounter(getFilenameFromCTType(tree));
 		computerAttribute(tree.getRoot());
 		
 		for(AttributeBasedBitQuads attr: bitquads) {
@@ -38,6 +38,22 @@ public class ComputerAttributeBasedBitQuadsDT extends AttributeComputedIncrement
 			long tf = System.currentTimeMillis();
 			System.out.println("Tempo de execucao [extraction of attributes - bit-quads] " + ((tf - ti) / 1000.0) + "s");
 		}
+	}
+	
+	private String getFilenameFromCTType(ConnectedFilteringByComponentTree tree) {
+		if (tree.isMaxtree()) {
+			if (tree.getAdjacency() == AdjacencyRelation.getAdjacency4())
+				return "dt-max-tree-4c.dat";
+			else 
+				return "dt-max-tree-8c.dat";
+		}
+		else 
+		{
+			if (tree.getAdjacency() == AdjacencyRelation.getAdjacency4())
+				return "dt-min-tree-4c.dat";
+			else 
+				return "dt-min-tree-8c.dat";	
+		}		
 	}
 	
 	@Override
