@@ -15,13 +15,13 @@ import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
-public class ComputerAttributeBasedBitQuadsDT extends AttributeComputedIncrementally {
+public class ComputerAttributeBasedBitQuads extends AttributeComputedIncrementally {
 	protected GrayScaleImage img;
 	protected AdjacencyRelation adj; 
 	protected AttributeBasedBitQuads[] bitquads;
 	protected PatternsCounter patternsCounter;
 	
-	public ComputerAttributeBasedBitQuadsDT(ConnectedFilteringByComponentTree tree) throws IOException {
+	public ComputerAttributeBasedBitQuads(ConnectedFilteringByComponentTree tree) {
 		long ti = System.currentTimeMillis();
 		img = tree.getInputImage();
 		adj = tree.getAdjacency();

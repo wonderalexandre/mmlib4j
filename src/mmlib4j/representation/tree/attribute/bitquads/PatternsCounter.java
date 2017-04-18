@@ -24,15 +24,20 @@ public class PatternsCounter {
 	private byte[][] leavesMap;
 	private char[] tempKey;
 	
-	public PatternsCounter(String filename) throws IOException {
+	public PatternsCounter(String filename) {
 		InputStream in = PatternsCounter.class.getResourceAsStream(filename);	
 		leavesMap = new byte[N_LEAVES][];
 		tempKey = new char[8];
 		
-		for (int i = 0; i < leavesMap.length; ++i) {
-			leavesMap[i] = new byte[N_PATTERNS_TYPE];	
-			in.read(leavesMap[i]);
-		}
+		try {
+			for (int i = 0; i < leavesMap.length; ++i) {
+				leavesMap[i] = new byte[N_PATTERNS_TYPE];	
+				in.read(leavesMap[i]);
+			}
+		} catch(IOException e) {
+			System.err.println("mmlib4j got an error, when it tried to read a decision tree for bit-quads computation.");
+			e.printStackTrace();
+		}		
 	}
 	
 	private int getBase10IntFromABase3String(String base3string) {
