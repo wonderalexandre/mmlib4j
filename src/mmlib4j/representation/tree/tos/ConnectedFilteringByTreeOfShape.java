@@ -114,6 +114,9 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			case Attribute.CIRCULARITY:
 			case Attribute.COMPACTNESS:
 			case Attribute.ELONGATION:
+				
+			/* Gobber add */	
+			case Attribute.SUM_GRAD:
 				computerAttributeBasedPerimeterExternal();
 				break;
 				
@@ -274,8 +277,10 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 							fifoPruning.enqueue(song);	 
 						}
 					}
-					for(Integer p: nodePruning.getCanonicalPixels()){
-						imgOut.setPixel(p, levelPropagation);
+					for( Integer p: nodePruning.getCanonicalPixels() ) {
+						
+						imgOut.setPixel( p, levelPropagation );
+						
 					}
 				}
 			}

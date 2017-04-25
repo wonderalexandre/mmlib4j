@@ -85,6 +85,10 @@ public class Attribute {
 	//mser
 	public static final int MSER = 40;
 	
+	
+	// parameters for energy ( based on contour )
+	public static final int SUM_GRAD = 60;
+	
 	public String getHeader(){
 		switch(type){
 			case ALTITUDE: return "ALTITUDE";	
