@@ -15,6 +15,7 @@ import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
+import mmlib4j.representation.tree.attribute.ComputerTosContourInformation;
 import mmlib4j.utils.Utils;
 
 
@@ -29,6 +30,9 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	private boolean hasComputerAttributeBasedPerimeterExternal = false;
 	private boolean hasComputerCentralMomentAttribute = false;
 	private boolean hasComputerDistanceTransform = false;
+	
+	private boolean hasComputerAttributeBasedContourInformation = false;
+	
 	private ComputerDistanceTransform dt = null;
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img){
@@ -79,7 +83,13 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			hasComputerAttributeBasedPerimeterExternal = true;
 		}
 	}
-		
+	
+	public void computerAttributeBasedContourInformation(){
+		if(!hasComputerAttributeBasedContourInformation){
+			new ComputerTosContourInformation(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
+			hasComputerAttributeBasedContourInformation = true;
+		}
+	}
 
 	public void loadAttribute(int attr){
 		switch(attr){
@@ -119,7 +129,10 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			case Attribute.SUM_GRAD:
 				computerAttributeBasedPerimeterExternal();
 				break;
-				
+			
+			case Attribute.CONTOUR_LENGTH:
+				computerAttributeBasedContourInformation();
+				break;
 				
 		}
 	}

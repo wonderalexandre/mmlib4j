@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.sun.org.apache.bcel.internal.generic.ATHROW;
 
@@ -15,6 +16,7 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerTosContourInformation;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
@@ -171,10 +173,15 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	}
 	
 	public void createTree( int parent[]  ){
+		
 		long ti = System.currentTimeMillis();
+		
 		this.numNode = 0;
-		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
+		
+		NodeToS nodesMapTmp[] = new NodeToS[ parent.length ];
+		
 		for (int i = 0; i < imgR.length; i++) {
+			
 			int p = imgR[i];
 			int pai = parent[p];
 			
@@ -198,10 +205,10 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				nodesMapTmp[pai].children.add(nodesMapTmp[p]);	
 			}else{ 
 				//mesmo no
-				nodesMapTmp[p] = nodesMapTmp[pai];
+				nodesMapTmp[ p ] = nodesMapTmp[pai];
 			}
-			nodesMapTmp[p].addPixel( p );
 			
+			nodesMapTmp[ p ].addPixel( p );			
 		}
 		
 		nodesMapTmp = null;
@@ -642,27 +649,6 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
   			}
   			order++;
   		}
-  		
-  		/*System.out.println("imgR");
-		System.out.println("[nivel de cinza; pixel; parent]");
-  		for(int y=0; y < interpHeight; y++){
-			for(int x=0; x < interpWidth; x++){
-				int pixel = x + y * interpWidth;
-				//System.out.printf("(%2d, %2d) ", find(imgR, pixel), imgRZP[pixel]);
-				System.out.printf("%3d & ", findNivel(imgR, pixel));
-				
-			}
-			System.out.println();
-		}
-		
-  		System.out.println("\n\nimgU\n");
-  		for(int y=0; y < interpHeight; y++){
-			for(int x=0; x < interpWidth; x++){
-				int pmax = imgU[x + y * interpWidth];
-				System.out.printf("%2d &", pmax);
-			}
-			System.out.println();
-		}*/
   		
   		long tf = System.currentTimeMillis();
   		if(Utils.debug)
@@ -1840,139 +1826,36 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		input.setPixel( 4, 4, 117 );
 				
 		
-		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), -1, -1 );
+		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), -1, -1 );
 	
 		
-		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage( 32, pixels5, width, height ), true );	
+		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage( 32, pixels5, width, height ), false );			
 		
 		
 		ConnectedFilteringByTreeOfShape filtering = new ConnectedFilteringByTreeOfShape( build );
 		
+				
+		filtering.computerAttributeBasedContourInformation();
+	
 		
-		filtering.computerAttributeBasedPerimeterExternal();
+		System.out.println( build.getRoot().getChildren().get( 1 ).countPixelInFrame );
 		
 		
-		/*System.out.println( "parent" );
-		
-		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
-			
-			for( int x = 0 ; x < build.interpWidth ; x++ ) {
-				
-				int p = build.parent[ x + y * build.interpWidth ];
-				
-				if( build.isRealPixel( x, y ) ) {
-					
-					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
-				
-				}else{
-					
-					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
-					
-				}
-				
-			}
-			
-			System.out.println();
-			
-		}
-		
-		System.out.println( "imgU" );
-		
-		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
-			
-			for( int x = 0 ; x < build.interpWidth ; x++ ) {				
-				
-				int p = build.imgU[ x + y * build.interpWidth ];
-				
-				if( build.isRealPixel( x, y ) ) {
-					
-					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
-				
-				}else{
-					
-					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
-					
-				}
-				
-			}
-			
-			System.out.println();
-			
-		}
-		
-		/*System.out.println( "area" );
-		
-		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
-			
-			for( int x = 0 ; x < build.interpWidth ; x++ ) {
-				
-				int p = build.area[ x + y * build.interpWidth ];
-				
-				if( build.isRealPixel( x, y ) ) {
-					
-					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
-				
-				}else{
-					
-					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
-					
-				}
-				
-			}
-			
-			System.out.println();
-			
-		}*/
-		
-		/*System.out.println( "contourLength" );
-		
-		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
-			
-			for( int x = 0 ; x < build.interpWidth ; x++ ) {
-				
-				int p = build.contourLength[ x + y * build.interpWidth ];
-				
-				if( build.isRealPixel( x, y ) ) {
-					
-					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
-				
-				}else{
-					
-					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
-					
-				}
-				
-			}
-			
-			System.out.println();
-			
-		}*/
-		
-		/*for( int i = 0 ; i < build.shapes.size() ; i++ ) {		
-			
-			//if( build.contourLength[ build.shapes.get( i ) ] == 0 ) {
-				
-				System.out.printf( "%d, %d\n", build.shapes.get( i ), build.contourLength[ build.shapes.get( i ) ] );
-				
-			//}
-				
-		}*/							
-		
-       /* NodeToS root = build.getRoot();                
+        /*NodeToS root = build.getRoot();                
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(root, System.out, "<-");
-		System.out.println("***************************************************\n");*/
-				
+		System.out.println("***************************************************\n");					
         
 		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
+		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");*/			
 
 	}
     
-
+    
+    
 	public static void printTree(NodeToS no, PrintStream out, String s){
-		out.printf(s + "[%3d; %.2f]\n", no.getLevel(), no.getAttributeValue( Attribute.SUM_GRAD ) );
+		out.printf(s + "[%3d; %.2f]\n", no.getLevel(), no.getAttributeValue( Attribute.CONTOUR_LENGTH ) );
 		if(no.children != null)
 			for(NodeToS son: no.children){
 				printTree(son, out, s + "------");

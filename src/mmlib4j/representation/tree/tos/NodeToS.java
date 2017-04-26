@@ -145,9 +145,11 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 		return null;
 	}
 	
-	public void addPixel(int p){		
+	public void addPixel( int p ) {		
+		
 		int x = p % img.getWidth();
 		int y = p / img.getWidth();
+		
 		if(x < xmin){ 
 			xmin = x;
 			pixelXmin = p;

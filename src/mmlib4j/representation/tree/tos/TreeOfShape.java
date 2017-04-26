@@ -138,7 +138,8 @@ public class TreeOfShape{
 			}
 		}
 		
-		for(NodeToS son: node.children){
+		for(NodeToS son: node.children) {
+			
 			computerInforTree(son, height + 1);
 			
 			if(node.isNodeMaxtree != son.isNodeMaxtree)
