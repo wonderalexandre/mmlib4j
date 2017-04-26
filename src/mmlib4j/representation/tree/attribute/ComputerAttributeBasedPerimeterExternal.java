@@ -24,7 +24,6 @@ public class ComputerAttributeBasedPerimeterExternal {
 
 	private ThreadPoolExecutor pool;	
 	private Attribute perimeters[];
-	private Attribute sumGrads[];
 	private GrayScaleImage img;
 	private static final int[][] delta = { { 1,0}, { 1, 1}, {0, 1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, { 1,-1} };
 	NodeLevelSets rootTree;
@@ -36,14 +35,9 @@ public class ComputerAttributeBasedPerimeterExternal {
 	public ComputerAttributeBasedPerimeterExternal( int numNode, NodeLevelSets root, GrayScaleImage img ) {
 		long ti = System.currentTimeMillis();
 		this.img = img;		
-		
-		
+				
 		this.rootTree = root;
-		perimeters = new Attribute[numNode];	
-		
-		/* Gobber add */
-		this.imgGrad = EdgeDetectors.sobel( img );
-		sumGrads = new Attribute[ numNode ];
+		perimeters = new Attribute[numNode];
 		
 		//pool =  new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 		computerAttribute( root );
@@ -61,53 +55,19 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 		perimeters[node.getId()] = new Attribute( Attribute.PERIMETER_EXTERNAL );
 		
-		/* Gobber add */
-		
-		sumGrads[ node.getId() ] = new Attribute( Attribute.SUM_GRAD );
-		
 		if( node == rootTree ) {
 			
 			perimeters[ node.getId() ].value = img.getWidth() * 2 + img.getHeight() * 2;
-			
-			/* Gobber add */	
-			
-			SimpleLinkedList<Integer> pixels = node.getCanonicalPixels();
-				
-			for( Integer pixel : pixels ) {
-					
-				sumGrads[ node.getId() ].value += imgGrad.getPixel( pixel );
-					
-			}
 			
 		}else{
 			
 			if( node.getArea() < 3 ) {				
 				
 				perimeters[ node.getId() ].value = node.getArea();
-				
-				/* Gobber add */
-				
-				SimpleLinkedList<Integer> pixels = node.getCanonicalPixels();
-					
-				for( Integer pixel : pixels ) {
-						
-					sumGrads[ node.getId() ].value += imgGrad.getPixel( pixel );
-						
-				}			
-				
+
 			}else if( node.getParent().getArea() - node.getArea() < 3 ) {
 				
 				perimeters[ node.getId() ].value = perimeters[ node.getParent().getId() ].value - 1;
-				 
-				/* Gobber add */
-					
-				SimpleLinkedList<Integer> pixels = node.getCanonicalPixels();
-					
-				for( Integer pixel : pixels ) {
-						
-					sumGrads[ node.getId() ].value += imgGrad.getPixel( pixel );
-						
-				}								
 				  
 			}else
 				new ThreadNodeCTPerimeter( node, perimeters[ node.getId() ] ).run();
@@ -149,10 +109,6 @@ public class ComputerAttributeBasedPerimeterExternal {
 		node.addAttribute( Attribute.CIRCULARITY, new Attribute( Attribute.CIRCULARITY, getCircularity( node ) ) );
 		node.addAttribute( Attribute.COMPACTNESS, new Attribute( Attribute.COMPACTNESS, getCompacity( node ) ) );
 		node.addAttribute( Attribute.ELONGATION, new Attribute( Attribute.ELONGATION, getElongation( node ) ) );
-		
-		/* Gobber add */
-		
-		node.addAttribute( Attribute.SUM_GRAD, sumGrads[ node.getId() ] );
 		
 	}
 	
@@ -208,7 +164,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 					
 					System.out.println( (p % img.getWidth()) );
 					
-					imgBin[px][py] = true;
+					imgBin[ px ][ py ] = true;
 					
 				}
 				
@@ -258,19 +214,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 						
 			xP = xS; yP = yS;
 			xC = xT = pt.x;
-			yC = yT = pt.y;						
-			
-			//System.out.printf( "( px=%d, py=%d )", pt.x, pt.y );
-			
-			
-			/* Gobber add */
-			
-			/*if( ( pt.x + xmin ) < img.getWidth() && ( pt.y + ymin ) < img.getHeight() ) {
-		
-				sumGrads[ node.getId() ].value += imgGrad.getPixel( pt.x + xmin, pt.y + ymin );
-			
-			}*/
-			
+			yC = yT = pt.y;								
 			
 			boolean done = (xS==xT && yS==yT);
 			
@@ -286,23 +230,13 @@ public class ComputerAttributeBasedPerimeterExternal {
 				done = (xP==xS && yP==yS && xC==xT && yC==yT);
 				
 				if (!done) {
-					
-					/* Gobber add */
-					
-					/*if( ( pt.x + xmin ) < img.getWidth() && ( pt.y + ymin ) < img.getHeight() ) {
-										
-						sumGrads[ node.getId() ].value += imgGrad.getPixel( pt.x + xmin, pt.y + ymin );
-						
-					}*/
-					
+
 					if(dNext % 2 ==0)
 						perimeter += 1;
 					else
 						perimeter += Math.sqrt(2);
 					
-				}
-				
-				//System.out.printf( "( px=%d, py=%d )", pt.x, pt.y );
+				}			
 				
 			}
 			return perimeter;

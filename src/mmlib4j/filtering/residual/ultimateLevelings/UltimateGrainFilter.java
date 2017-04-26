@@ -50,6 +50,9 @@ public class UltimateGrainFilter {
 	public final static int RESIDUES_NEG_MIN_MIN = 3;
 	public final static int RESIDUES_NEG_MAX_MIN = 4;
 	
+	public static int CONTRAST_NEG_MIN = 5;	
+	public static int CONTRAST_POS_MIN = 6;
+	
 	
 	public UltimateGrainFilter(TreeOfShape tree){
 		this.tree = tree;

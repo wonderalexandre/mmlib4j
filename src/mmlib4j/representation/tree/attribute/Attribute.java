@@ -88,7 +88,7 @@ public class Attribute {
 	
 	// parameters for energy ( based on contour )
 	public static final int SUM_GRAD = 60;
-	public static final int CONTOUR_LENGTH = 61;
+	public static final int CONTOUR_LENGTH = 61;	
 	
 	public String getHeader(){
 		switch(type){

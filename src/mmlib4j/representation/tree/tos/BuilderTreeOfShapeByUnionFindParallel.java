@@ -1830,25 +1830,20 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	
 		
 		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage( 32, pixels5, width, height ), false );			
-		
-		
-		ConnectedFilteringByTreeOfShape filtering = new ConnectedFilteringByTreeOfShape( build );
-		
+				
+		ConnectedFilteringByTreeOfShape filtering = new ConnectedFilteringByTreeOfShape( build );		
 				
 		filtering.computerAttributeBasedContourInformation();
-	
-		
-		System.out.println( build.getRoot().getChildren().get( 1 ).countPixelInFrame );
 		
 		
-        /*NodeToS root = build.getRoot();                
+        NodeToS root = build.getRoot();                
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(root, System.out, "<-");
 		System.out.println("***************************************************\n");					
         
 		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");*/			
+		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
 
 	}
     
