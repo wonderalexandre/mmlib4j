@@ -1836,11 +1836,34 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		filtering.computerAttributeBasedContourInformation();
 		
 		
-        NodeToS root = build.getRoot();                
+		/*int appear [] = ComputerTosContourInformation.appear;
+		
+		int vanish [] = ComputerTosContourInformation.vanish;
+		
+		
+		for( int i = 0 ; i < build.getInputImage().getSize() ; i++ ) {
+			
+			if( build.isFace1( i ) ) {
+				
+				int na = appear[ i ], nv = vanish[ i ];
+				
+				while( na != nv ) {
+					
+					//System.out.println( "equals" );
+					
+					na = build.parent[ na ];
+					
+				}
+				
+			}
+			
+		}*/
+		
+        /*NodeToS root = build.getRoot();                
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(root, System.out, "<-");
-		System.out.println("***************************************************\n");					
+		System.out.println("***************************************************\n");*/					
         
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			

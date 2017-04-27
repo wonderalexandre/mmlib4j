@@ -29,6 +29,8 @@ public class ComputerTosContourInformation {
 	
 	private int appear[];
 	
+	private int vanish[];
+	
 	
 	private GrayScaleImage img;
 	
@@ -57,6 +59,8 @@ public class ComputerTosContourInformation {
 		
 		appear = new int[ img.getWidth() * img.getHeight() ];
 		
+		vanish = new int[ img.getWidth() * img.getHeight() ];
+		
 		
 		is_boundary = new int[ img.getWidth() * img.getHeight() ];
 		
@@ -64,6 +68,10 @@ public class ComputerTosContourInformation {
 		for( int i = 0 ; i < is_boundary.length ; i++ ) {
 			
 			is_boundary[ i ] = NIL;
+			
+			appear[ i ] = NIL;
+			
+			vanish[ i ] = NIL;
 			
 		}			
 		
@@ -81,9 +89,17 @@ public class ComputerTosContourInformation {
 	
 
 	public void computerAttribute( NodeLevelSets node ) {
-		
+
 		
 		List<NodeLevelSets> children = node.getChildren();
+		
+		
+		for( NodeLevelSets son : children ) {
+			
+			computerAttribute( son );
+			
+		}
+		
 		
 		contourLength[ node.getId() ] = new Attribute( Attribute.CONTOUR_LENGTH );
 		
@@ -99,24 +115,47 @@ public class ComputerTosContourInformation {
 				if( isFace2( p ) ) {
 						
 					for( int e : getBoundaries( p ) ) {
-							
+													
 						if( is_boundary[ e ] != node.getId() ) {
 								
+							
 							is_boundary[ e ] = node.getId();
 								
 							contourLength[ node.getId() ].value++;
 							
 							sumGrads[ node.getId() ].value += imgGrad.getPixel( e );
 							
-							appear[ e ] = p; 
+							
+							if( appear[ e ] != NIL && vanish[ e ] == NIL ) {
+								
+								vanish[ e ] = p; 
+								
+							}
+							
+							
+							if( appear[ e ] == NIL ) {
+							
+								appear[ e ] = p; 
+							
+							}
+							
 								
 						} else {
-								
+							
+							
 							is_boundary[ e ] = NIL;
 								
 							contourLength[ node.getId() ].value--;
 							
 							sumGrads[ node.getId() ].value -= imgGrad.getPixel( e );
+							
+							
+							if( vanish[ e ] == NIL ) {
+							
+								vanish[ e ] = p;
+							
+							}
+							
 								
 						}
 						
@@ -128,11 +167,7 @@ public class ComputerTosContourInformation {
 			
 		}	
 		
-		for( NodeLevelSets son: children ) {
-			
-			computerAttribute( son );
-			
-		}
+		
 		
 	}
 	
