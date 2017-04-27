@@ -16,7 +16,7 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.attribute.ComputerTosContourInformation;
+import mmlib4j.representation.tree.attribute.ComputerXuAttribute;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
@@ -219,31 +219,6 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
         	System.out.println("Tempo de execucao [unInterpolate2] "+ ((tf - ti) /1000.0)  + "s");
-		
-	}
-	
-	
-	public BuilderTreeOfShapeByUnionFindParallel(GrayScaleImage img, int xInfinito, int yInfinito) {
-		
-		super();
-		this.img = img;
-		this.xInfinito = xInfinito;
-		this.yInfinito = yInfinito;
-        
-		sort( interpolateImage() );
-		
-		this.parent = createTreeByUnionFind();
-		
-		unInterpolateAndCreateTree( parent );
-		
-		this.img = getImageInterpolated();
-		
-		posProcessing();
-		
-		/*Object obj[] = interpolateImageParallel( img );
-		sort( obj );
-		this.parent = createTreeByUnionFind();
-		unInterpolateTree( parent );*/
 		
 	}
 	
@@ -1738,22 +1713,22 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				1,0,0,3,3,1,
 				1,1,1,1,1,1*/ // ok
 				
-				/*1,1,1,1,1,
+				1,1,1,1,1,
 				1,3,0,0,1,
 				1,3,0,3,1,
 				1,3,0,3,1,
-				1,1,1,1,1*/
+				1,1,1,1,1
 				
 				/*5,5,5,5,
 				5,2,2,5,
 				5,2,2,5,
 				5,5,5,5*/
 				
-				1,1,1,1,1,1,1,
+				/*1,1,1,1,1,1,1,
 				1,0,0,3,3,3,1,
 				1,0,1,1,2,2,1,
 				1,0,0,3,3,3,1,
-				1,1,1,1,1,1,1
+				1,1,1,1,1,1,1*/
 				
 				/*24,24,24,24,24,24,
 				24,24, 0, 0, 0,24,
@@ -1764,7 +1739,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 		};
 		
-		int width = 7;
+		int width = 5;
 		int height = 5;
 		
 		// Second example of Thierry
@@ -1826,14 +1801,14 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		input.setPixel( 4, 4, 117 );
 				
 		
-		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), -1, -1 );
+		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), false );
 	
 		
 		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage( 32, pixels5, width, height ), false );			
 				
 		ConnectedFilteringByTreeOfShape filtering = new ConnectedFilteringByTreeOfShape( build );		
 				
-		filtering.computerAttributeBasedContourInformation();
+		filtering.ComputerXuAttribute();
 		
 		
 		/*int appear [] = ComputerTosContourInformation.appear;
@@ -1859,11 +1834,11 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 		}*/
 		
-        /*NodeToS root = build.getRoot();                
+        NodeToS root = build.getRoot();                
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(root, System.out, "<-");
-		System.out.println("***************************************************\n");*/					
+		System.out.println("***************************************************\n");					
         
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
@@ -1872,11 +1847,22 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
     
     
     
-	public static void printTree(NodeToS no, PrintStream out, String s){
-		out.printf(s + "[%3d; %.2f]\n", no.getLevel(), no.getAttributeValue( Attribute.CONTOUR_LENGTH ) );
-		if(no.children != null)
-			for(NodeToS son: no.children){
-				printTree(son, out, s + "------");
+	public static void printTree(NodeToS no, PrintStream out, String s) { 
+		
+		out.printf(s + "[%3d; %.2f]\n", no.getLevel(), no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );
+		
+		/*if( no.getAttributeValue( Attribute.CONTOUR_LENGTH ) <= 0 ) {
+			
+			System.out.println( "wrong " + no.getId() );
+			
+		}*/
+		
+		if( no.children != null )
+			
+			for( NodeToS son: no.children ) {
+				
+				printTree( son, out, s + "------" );
+				
 			}
 	}
 	

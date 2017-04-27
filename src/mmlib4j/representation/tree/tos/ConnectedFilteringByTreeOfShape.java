@@ -15,7 +15,7 @@ import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
-import mmlib4j.representation.tree.attribute.ComputerTosContourInformation;
+import mmlib4j.representation.tree.attribute.ComputerXuAttribute;
 import mmlib4j.utils.Utils;
 
 
@@ -31,7 +31,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	private boolean hasComputerCentralMomentAttribute = false;
 	private boolean hasComputerDistanceTransform = false;
 	
-	private boolean hasComputerAttributeBasedContourInformation = false;
+	private boolean hasComputerXuAttribute = false;
 	
 	private ComputerDistanceTransform dt = null;
 	
@@ -84,10 +84,10 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		}
 	}
 	
-	public void computerAttributeBasedContourInformation(){
-		if(!hasComputerAttributeBasedContourInformation){
-			new ComputerTosContourInformation(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
-			hasComputerAttributeBasedContourInformation = true;
+	public void ComputerXuAttribute(){
+		if(!hasComputerXuAttribute){
+			new ComputerXuAttribute(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
+			hasComputerXuAttribute = true;
 		}
 	}
 
@@ -124,14 +124,17 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			case Attribute.CIRCULARITY:
 			case Attribute.COMPACTNESS:
 			case Attribute.ELONGATION:
-				
-			/* Gobber add */	
-			case Attribute.SUM_GRAD:
 				computerAttributeBasedPerimeterExternal();
 				break;
-			
-			case Attribute.CONTOUR_LENGTH:
-				computerAttributeBasedContourInformation();
+						
+			case Attribute.SUM_GRAD:
+			case Attribute.CONTOUR_LENGTH:		
+			case Attribute.FACE_2_AREA:
+			case Attribute.FACE_2_VOLUME:	
+			case Attribute.MUMFORD_SHA_ENERGY:
+			case Attribute.SUM_GRAD_CONTOUR:
+			case Attribute.FACE_2_VOLUME_2:
+				ComputerXuAttribute();
 				break;
 				
 		}

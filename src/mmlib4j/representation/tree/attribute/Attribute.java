@@ -86,9 +86,14 @@ public class Attribute {
 	public static final int MSER = 40;
 	
 	
-	// parameters for energy ( based on contour )
+	// parameters for mumford sha energy calculation	
 	public static final int SUM_GRAD = 60;
-	public static final int CONTOUR_LENGTH = 61;	
+	public static final int CONTOUR_LENGTH = 61;		
+	public static final int FACE_2_AREA = 62;
+	public static final int FACE_2_VOLUME = 63;	
+	public static final int MUMFORD_SHA_ENERGY = 64;
+	public static final int SUM_GRAD_CONTOUR = 65;
+	public static final int FACE_2_VOLUME_2 = 66;
 	
 	public String getHeader(){
 		switch(type){
@@ -130,6 +135,14 @@ public class Attribute {
 			case BIT_QUADS_WIDTH_AVERAGE: return "BIT_QUADS_WIDTH_AVERAGE";
 			case BIT_QUADS_AREA: return "BIT_QUADS_AREA";
 			case BIT_QUADS_AREA_DUDA: return "BIT_QUADS_AREA_DUDA";
+			
+			case SUM_GRAD: return "SUM_GRAD";
+			case CONTOUR_LENGTH: return "CONTOUR_LENGTH";		
+			case FACE_2_AREA: return "FACE_2_AREA";
+			case FACE_2_VOLUME: return "FACE_2_VOLUME";	
+			case MUMFORD_SHA_ENERGY: return "MUMFORD_SHA_ENERGY";
+			case SUM_GRAD_CONTOUR: return "SUM_GRAD_CONTOUR";
+			case FACE_2_VOLUME_2: return "FACE_2_VOLUME_2";
 			
 			default: return "UNDEFINED";
 		}

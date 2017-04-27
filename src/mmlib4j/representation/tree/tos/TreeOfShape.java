@@ -58,7 +58,7 @@ public class TreeOfShape{
 		this.height = img.getHeight();
 		this.imgInput = img;
 		//this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true);
-		this.build = new BuilderTreeOfShapeByUnionFindParallel(img, xInfinito, yInfinito);
+		this.build = new BuilderTreeOfShapeByUnionFindParallel( img, true );
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
 		computerInforTree(this.root, 0);
