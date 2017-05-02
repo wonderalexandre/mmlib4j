@@ -1503,7 +1503,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	 *  
 	 *  aDel = $ \mathcal{A}_{\nabla} $ 
 	 *  
-	 * */
+	 * */    
 	
 	int [] sortNodes( int [] aDel ) {
 		
@@ -1713,22 +1713,22 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				1,0,0,3,3,1,
 				1,1,1,1,1,1*/ // ok
 				
-				1,1,1,1,1,
+				/*1,1,1,1,1,
 				1,3,0,0,1,
 				1,3,0,3,1,
 				1,3,0,3,1,
-				1,1,1,1,1
+				1,1,1,1,1*/
 				
 				/*5,5,5,5,
 				5,2,2,5,
 				5,2,2,5,
 				5,5,5,5*/
 				
-				/*1,1,1,1,1,1,1,
+				1,1,1,1,1,1,1,
 				1,0,0,3,3,3,1,
 				1,0,1,1,2,2,1,
 				1,0,0,3,3,3,1,
-				1,1,1,1,1,1,1*/
+				1,1,1,1,1,1,1
 				
 				/*24,24,24,24,24,24,
 				24,24, 0, 0, 0,24,
@@ -1739,7 +1739,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 		};
 		
-		int width = 5;
+		int width = 7;
 		int height = 5;
 		
 		// Second example of Thierry

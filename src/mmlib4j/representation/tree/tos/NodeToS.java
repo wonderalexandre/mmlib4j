@@ -88,6 +88,10 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	public int getId(){
 		return id;
 	}
+	
+	public void setParent( NodeToS parent ){
+		this.parent = parent;
+	}
 
 	public NodeToS getParent(){
 		return parent;
