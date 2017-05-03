@@ -1834,11 +1834,11 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 		}*/
 		
-        NodeToS root = build.getRoot();                
+        /*NodeToS root = build.getRoot();                
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(root, System.out, "<-");
-		System.out.println("***************************************************\n");					
+		System.out.println("***************************************************\n");*/					
         
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
