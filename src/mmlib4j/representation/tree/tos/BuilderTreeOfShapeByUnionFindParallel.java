@@ -73,9 +73,14 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	
 	private BuilderTreeOfShapeByUnionFindParallel(){ }
 			
+	
+	/* Arrumar depois */
+	
+	
 	public BuilderTreeOfShapeByUnionFindParallel getClone() {
 		
 		BuilderTreeOfShapeByUnionFindParallel b = new BuilderTreeOfShapeByUnionFindParallel();
+		
 		b.interpWidth = this.interpWidth;
 		b.interpHeight = this.interpHeight;
 		b.parent = this.parent;
@@ -86,7 +91,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		b.imgR = this.imgR;
 		b.imgU = this.imgU;
 		
-		b.unInterpolateAndCreateTree( b.parent );
+		b.createTree( b.parent );
+		
 		return b;
 	}
 	
@@ -1410,7 +1416,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 		}			
 		
-		int Rt [] = sortNodes( aDel );
+		//int Rt [] = sortNodes( aDel );
+		
+		int Rt [] = null;
 		
 		/*for( int i = 0 ; i < Rt.length ; i++ ) {
 			
@@ -1505,7 +1513,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	 *  
 	 * */    
 	
-	int [] sortNodes( int [] aDel ) {
+	/*int [] sortNodes( int [] aDel ) {
 		
 		int [] Rt = new int[ shapes.size() ];
 		
@@ -1539,7 +1547,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		return Rt;
 		
-	}
+	}*/
 	
 	double pow2( int a ) {
 		
@@ -1686,6 +1694,10 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
         	System.out.println("Tempo de execucao [interpolacao parallel] "+ ((tf - ti) /1000.0)  + "s");
         return new Object[]{interpolationMin, interpolationMax};
 	}
+	
+	static ArrayList<Boolean> perimeterK;
+	
+	static ArrayList<Boolean> perimeterL;
     
     public static void main(String[] args) {
     	
@@ -1802,13 +1814,15 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 		
 		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), false );
-	
 		
-		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage( 32, pixels5, width, height ), false );			
-				
+		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels5, width, height), false );				
+		
+		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( input, false );
+		
+		
 		ConnectedFilteringByTreeOfShape filtering = new ConnectedFilteringByTreeOfShape( build );		
 				
-		filtering.ComputerXuAttribute();
+		filtering.ComputerXuAttribute();	
 		
 		
 		/*int appear [] = ComputerTosContourInformation.appear;
@@ -1834,11 +1848,13 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 		}*/
 		
-        /*NodeToS root = build.getRoot();                
+        NodeToS root = build.getRoot();                
 		
 		System.out.println("\n**********************ARVORE***********************");
-		printTree(root, System.out, "<-");
-		System.out.println("***************************************************\n");*/					
+		
+		printTree( root, System.out, "<-" );
+		
+		System.out.println("***************************************************\n");					
         
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
@@ -1847,9 +1863,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
     
     
     
-	public static void printTree(NodeToS no, PrintStream out, String s) { 
-		
-		out.printf(s + "[%3d; %.2f]\n", no.getLevel(), no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );
+	public static void printTree( NodeToS no, PrintStream out, String s ) {
+			
+		out.printf(s + "[%3d; %.2f]\n", no.getLevel(), no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );			
 		
 		/*if( no.getAttributeValue( Attribute.CONTOUR_LENGTH ) <= 0 ) {
 			
@@ -1857,7 +1873,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 		}*/
 		
-		if( no.children != null )
+		//if( no.children != null )
 			
 			for( NodeToS son: no.children ) {
 				

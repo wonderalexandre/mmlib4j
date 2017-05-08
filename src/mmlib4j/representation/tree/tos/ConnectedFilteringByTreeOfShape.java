@@ -85,8 +85,12 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	}
 	
 	public void ComputerXuAttribute(){
-		if(!hasComputerXuAttribute){
-			new ComputerXuAttribute(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
+		
+		if( !hasComputerXuAttribute ) {
+				
+			TreeOfShape t = new TreeOfShape( this.build.getClone() );
+			
+			new ComputerXuAttribute( t, t.getInputImage() ).addAttributeInNodesToS(getListNodes());
 			hasComputerXuAttribute = true;
 		}
 	}
@@ -133,7 +137,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			case Attribute.FACE_2_VOLUME:	
 			case Attribute.MUMFORD_SHA_ENERGY:
 			case Attribute.SUM_GRAD_CONTOUR:
-			case Attribute.FACE_2_VOLUME_2:
 				ComputerXuAttribute();
 				break;
 				

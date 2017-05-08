@@ -40,7 +40,9 @@ public class TreeOfShape{
 		this(img, -1, -1);
 	}
 	
-	protected TreeOfShape(BuilderTreeOfShape build){
+	/* Arrumar depois (estava como protected) */
+	
+	public TreeOfShape(BuilderTreeOfShape build){
 		this.build = build;
 		this.width = build.getInputImage().getWidth();
 		this.height = build.getInputImage().getHeight();

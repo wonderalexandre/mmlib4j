@@ -3,6 +3,7 @@ package mmlib4j.datastruct;
 import java.util.ArrayList;
 
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.tree.attribute.Attribute;
  
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -31,7 +32,7 @@ public class PriorityQueueDial  {
     	this(img, maxPriority, policy, false);
     }
     
-    public PriorityQueueDial( int [] aDel, int maxPriority, int policy, boolean isDual) {
+    public PriorityQueueDial( Attribute [] aDel, int maxPriority, int policy, boolean isDual) {
     	
     	vetorDDL = new NodeDDL[ aDel.length ];
     	

@@ -162,7 +162,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 					int px = (p % img.getWidth()) - xmin;
 					int py = (p / img.getWidth()) - ymin;
 					
-					System.out.println( (p % img.getWidth()) );
+					//System.out.println( (p % img.getWidth()) );
 					
 					imgBin[ px ][ py ] = true;
 					

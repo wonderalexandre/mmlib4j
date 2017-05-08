@@ -575,7 +575,9 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			
 		}			
 		
-		int Rt [] = sortNodes( aDel );
+		//int Rt [] = sortNodes( aDel );
+		
+		int Rt [] = null;
 		
 		/*for( int i = 0 ; i < Rt.length ; i++ ) {
 			
@@ -671,7 +673,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	 *  
 	 * */
 	
-	int [] sortNodes( int [] aDel ) {
+	/*int [] sortNodes( int [] aDel ) {
 		
 		int [] Rt = new int[ shapes.size() ];
 		
@@ -705,7 +707,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		return Rt;
 		
-	}
+	}*/
 	
 	double pow2( int a ) {
 		

@@ -93,7 +93,6 @@ public class Attribute {
 	public static final int FACE_2_VOLUME = 63;	
 	public static final int MUMFORD_SHA_ENERGY = 64;
 	public static final int SUM_GRAD_CONTOUR = 65;
-	public static final int FACE_2_VOLUME_2 = 66;
 	
 	public String getHeader(){
 		switch(type){
@@ -142,7 +141,6 @@ public class Attribute {
 			case FACE_2_VOLUME: return "FACE_2_VOLUME";	
 			case MUMFORD_SHA_ENERGY: return "MUMFORD_SHA_ENERGY";
 			case SUM_GRAD_CONTOUR: return "SUM_GRAD_CONTOUR";
-			case FACE_2_VOLUME_2: return "FACE_2_VOLUME_2";
 			
 			default: return "UNDEFINED";
 		}

@@ -13,7 +13,9 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
+import mmlib4j.representation.tree.tos.BuilderTreeOfShape;
 import mmlib4j.representation.tree.tos.NodeToS;
+import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
 
 public class ComputerXuAttribute {	
@@ -40,8 +42,6 @@ public class ComputerXuAttribute {
 	
 	private Attribute sumGradContour[];
 	
-	private Attribute volume2[];
-	
 	
 //	private int appear[];
 	
@@ -63,8 +63,6 @@ public class ComputerXuAttribute {
 	
 	private double volumeR[];
 	
-	private double volumeR2[];
-	
 		
 	/* Nodes */
 	
@@ -77,6 +75,11 @@ public class ComputerXuAttribute {
 	
 	private Children [] Ch;
 	
+	public ComputerXuAttribute( TreeOfShape treeOfShape, GrayScaleImage img ) {
+		
+		this( treeOfShape.getNumNode(), treeOfShape.getRoot(), img );
+		
+	}
 	
 	public ComputerXuAttribute( int numNode, NodeLevelSets root, GrayScaleImage img ) {
 				
@@ -94,9 +97,7 @@ public class ComputerXuAttribute {
 		
 		area = new Attribute[ numNode ];
 		
-		volume = new Attribute[ numNode ];
-		
-		volume2 = new Attribute[ numNode ];
+		volume = new Attribute[ numNode ];		
 				 
 		/*appear = new int[ img.getWidth() * img.getHeight() ];
 		
@@ -120,9 +121,7 @@ public class ComputerXuAttribute {
 				
 		areaR = new double[ numNode ];
 		
-		volumeR = new double[ numNode ];
-		
-		volumeR2 = new double[ numNode ];		
+		volumeR = new double[ numNode ];		
 		
 		//Ch = new ArrayList[ numNode ];			
 				
@@ -130,11 +129,11 @@ public class ComputerXuAttribute {
 		
 		nodes = new NodeLevelSets[ numNode ];
 						
-		preProcessing( root );
+		preProcessing( root );	
 		
 		/* Remove accumulated information in attributes based on region */
 		
-		removeChildrenAttribute( root );
+		removeChildrenAttribute( root );	
 		
 		/* Energy calculation */
 		
@@ -146,7 +145,7 @@ public class ComputerXuAttribute {
 		
 		/* Sort nodes in increasing gradient contour magnitude sum order and calculate energy attribute  */		
 		
-		calculateEnergy( sortNodes( numNode ) );
+		//calculateEnergy( sortNodes( numNode ) );
 		
 		if( Utils.debug ) {
 			
@@ -178,9 +177,23 @@ public class ComputerXuAttribute {
 		
 		if( nodep != null ) {
 		
-			int idp = nodep.getId();			
+			int idp = nodep.getId();	
+			
+			double p1 = pow2( volumeR[ id ] ) / areaR[ id ];
+			
+			double p2 = pow2( volumeR[ idp ] ) / areaR[ idp ];
+			
+			double p3 = pow2( volumeR[ id ] + volumeR[ idp ] ) / ( areaR[ id ] + areaR[ idp ] );
+			
+			mumfordShaEnergy[ id ].value = ( p1 + p2 - p3) / contourLength[ id ].value;
+			
+			/*if( Double.isNaN( mumfordShaEnergy[ id ].value ) || Double.isInfinite( mumfordShaEnergy[ id ].value )  ) {
+				
+				System.out.println( "NaN" );
+				
+			}*/
 		
-			mumfordShaEnergy[ id ].value = ( volumeR2[ id ] / areaR[ id ] + volumeR2[ idp ] / areaR[ idp ] - ( pow2( volumeR[ id ] + volumeR[ idp ] ) / ( areaR[ id ] + areaR[ idp ] ) ) ) / contourLength[ id ].value;
+			//mumfordShaEnergy[ id ].value = ( pow2( volumeR[ id ] ) / areaR[ id ] + pow2( volumeR[ idp ] ) / areaR[ idp ] - ( pow2( volumeR[ id ] + volumeR[ idp ] ) / ( areaR[ id ] + areaR[ idp ] ) ) ) / contourLength[ id ].value;
 		
 		}
 		
@@ -202,13 +215,15 @@ public class ComputerXuAttribute {
 				
 		List<NodeLevelSets> children = node.getChildren();		
 		
-		if( node.getParent() != null ) {
+		if( node.getParent() != null && node.getParent().getId() != 0 ) {
 		
 			areaR[ node.getParent().getId() ] -= area[ node.getId() ].value;
 		
 			volumeR[ node.getParent().getId() ] -= volume[ node.getId() ].value;
 			
-			volumeR2[ node.getParent().getId() ] -= volume2[ node.getId() ].value;			
+			/*area[ node.getParent().getId() ].value -= area[ node.getId() ].value;
+			
+			volume[ node.getParent().getId() ].value -= volume[ node.getId() ].value;*/	
 		
 		}
 			
@@ -226,9 +241,7 @@ public class ComputerXuAttribute {
 		
 		areaR[ node.getId() ] = area[ node.getId() ].value ;
 		
-		volumeR[ node.getId() ] = volume[ node.getId() ].value;
-		
-		volumeR2[ node.getId() ] = volume2[ node.getId() ].value;
+		volumeR[ node.getId() ] = volume[ node.getId() ].value;	
 				
 		if( node.getParent() != null ) {
 			
@@ -251,6 +264,8 @@ public class ComputerXuAttribute {
 		}			
 		
 		nodes[ node.getId() ] = ( ( NodeToS ) node ).getClone();		
+		
+		//System.out.println( node.getLevel() );
 		
 		for( NodeLevelSets son : children ) {
 			
@@ -277,9 +292,7 @@ public class ComputerXuAttribute {
 		
 		area[ node.getId() ] = new Attribute( Attribute.FACE_2_AREA, 0 );
 		
-		volume[ node.getId() ] = new Attribute( Attribute.FACE_2_VOLUME, 0 );	
-		
-		volume2[ node.getId() ] = new Attribute( Attribute.FACE_2_VOLUME_2, 0 );
+		volume[ node.getId() ] = new Attribute( Attribute.FACE_2_VOLUME, 0 );					
 		
 		if( node instanceof NodeToS ) {
 				
@@ -291,9 +304,7 @@ public class ComputerXuAttribute {
 					
 					area[ node.getId() ].value++;
 					
-					volume[ node.getId() ].value += img.getPixel( p );
-					
-					volume2[ node.getId() ].value = volume[ node.getId() ].value * volume[ node.getId() ].value;							
+					volume[ node.getId() ].value += img.getPixel( p );															
 					
 					for( int e : getBoundaries( p ) ) {
 													
@@ -354,9 +365,15 @@ public class ComputerXuAttribute {
 			
 			NodeLevelSets t = nodes[ id ];
 			
-			NodeLevelSets tp = nodes[ id ].getParent();					
-																			
-			mumfordShaEnergyTmp = ( volumeR2[ t.getId()  ] / areaR[ t.getId()  ] + volumeR2[ tp.getId() ] / areaR[ tp.getId() ] - ( pow2( volumeR[ t.getId()  ] + volumeR[ tp.getId() ] ) / ( areaR[ t.getId()  ] + areaR[ tp.getId() ] ) ) ) / contourLength[ t.getId()  ].value;									
+			NodeLevelSets tp = nodes[ id ].getParent();		
+			
+			double p1 = pow2( volumeR[ t.getId() ] ) / areaR[ t.getId() ];
+			
+			double p2 = pow2( volumeR[ tp.getId() ] ) / areaR[ tp.getId() ];
+			
+			double p3 = pow2( volumeR[ t.getId() ] + volumeR[ tp.getId() ] ) / ( areaR[ t.getId() ] + areaR[ tp.getId() ] );
+			
+			mumfordShaEnergyTmp = ( p1 + p2 - p3) / contourLength[ id ].value;																										
 			
 			if( mumfordShaEnergyTmp > mumfordShaEnergy[ t.getId() ].value ) {
 				
@@ -394,9 +411,7 @@ public class ComputerXuAttribute {
 			
 			areaR[ tp.getId() ] = areaR[ tp.getId() ] + areaR[ t.getId() ];
 			
-			volumeR[ tp.getId() ] = volumeR[ tp.getId() ] + volumeR[ t.getId() ];
-			
-			volumeR2[ tp.getId() ] = volumeR2[ tp.getId() ] + volumeR2[ t.getId() ];
+			volumeR[ tp.getId() ] = volumeR[ tp.getId() ] + volumeR[ t.getId() ];		
 			
 		}
 		
@@ -426,11 +441,11 @@ public class ComputerXuAttribute {
 			
 		}			
 		
-		PriorityQueueDial queue = new PriorityQueueDial( img, ( int ) maxPriority, PriorityQueueDial.FIFO, false ); 
+		PriorityQueueDial queue = new PriorityQueueDial( sumGradContour, ( int ) maxPriority, PriorityQueueDial.FIFO, false ); 
 		
 		for( int i = 1 ; i < numNode ; i++ ) {
 			
-			queue.add( i, ( int ) sumGradContour[ i ].value );
+			queue.add( i, ( int ) sumGradContour[ i ].value );		
 			
 		}
 		
@@ -438,7 +453,7 @@ public class ComputerXuAttribute {
 		
 		while( !queue.isEmpty() ) {
 			
-			Rt[ i ] = queue.remove();		
+			Rt[ i ] = queue.remove();				
 			
 			i++;
 			
@@ -474,7 +489,6 @@ public class ComputerXuAttribute {
 		node.addAttribute( Attribute.SUM_GRAD, sumGrad[ node.getId() ] );
 		node.addAttribute( Attribute.FACE_2_AREA, area[ node.getId() ] );
 		node.addAttribute( Attribute.FACE_2_VOLUME, volume[ node.getId() ] );
-		node.addAttribute( Attribute.FACE_2_VOLUME_2, volume2[ node.getId() ] );
 		node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );
 		node.addAttribute( Attribute.MUMFORD_SHA_ENERGY , mumfordShaEnergy[ node.getId() ] );
 		
