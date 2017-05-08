@@ -38,7 +38,6 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	List<NodeToS> children = new ArrayList<NodeToS>();
 	SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
 	
-	
 	//basic attribute node
 	int xmin;
 	int ymin;

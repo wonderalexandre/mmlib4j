@@ -523,5 +523,5 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 	public int getPixelWithYmin() {
 		return pixelYmin;
 	}
-	
+
 }

@@ -5,18 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-
-import com.sun.org.apache.bcel.internal.generic.ATHROW;
-
-import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.filtering.EdgeDetectors;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.attribute.ComputerXuAttribute;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
@@ -71,7 +65,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	ArrayList<Integer> shapes;
 	
 	
-	private BuilderTreeOfShapeByUnionFindParallel(){ }
+	private BuilderTreeOfShapeByUnionFindParallel(){ }	
 			
 	
 	/* Arrumar depois */
@@ -100,6 +94,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	//1-face m=[4 ate 11]
 	//0-face m=[12 ate 15]
 	// moves[x][0] movimentos em y, moves[x][1] movimentos em x
+	
 	private final static int[][] moves = {
 		
 		{ 0, 0 }, //bloco principal
@@ -1694,10 +1689,6 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
         	System.out.println("Tempo de execucao [interpolacao parallel] "+ ((tf - ti) /1000.0)  + "s");
         return new Object[]{interpolationMin, interpolationMax};
 	}
-	
-	static ArrayList<Boolean> perimeterK;
-	
-	static ArrayList<Boolean> perimeterL;
     
     public static void main(String[] args) {
     	
@@ -1725,22 +1716,22 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				1,0,0,3,3,1,
 				1,1,1,1,1,1*/ // ok
 				
-				/*1,1,1,1,1,
+				1,1,1,1,1,
 				1,3,0,0,1,
 				1,3,0,3,1,
 				1,3,0,3,1,
-				1,1,1,1,1*/
+				1,1,1,1,1
 				
 				/*5,5,5,5,
 				5,2,2,5,
 				5,2,2,5,
 				5,5,5,5*/
 				
-				1,1,1,1,1,1,1,
+				/*1,1,1,1,1,1,1,
 				1,0,0,3,3,3,1,
 				1,0,1,1,2,2,1,
 				1,0,0,3,3,3,1,
-				1,1,1,1,1,1,1
+				1,1,1,1,1,1,1*/
 				
 				/*24,24,24,24,24,24,
 				24,24, 0, 0, 0,24,
@@ -1751,7 +1742,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 		};
 		
-		int width = 7;
+		int width = 5;
 		int height = 5;
 		
 		// Second example of Thierry
@@ -1813,9 +1804,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		input.setPixel( 4, 4, 117 );
 				
 		
-		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), false );
+		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), false );
 		
-		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels5, width, height), false );				
+		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels5, width, height), false );				
 		
 		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( input, false );
 		
@@ -1846,26 +1837,34 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 			}
 			
-		}*/
+		}*/					
 		
-        NodeToS root = build.getRoot();                
+        /*NodeToS root = build.getRoot();                       
 		
 		System.out.println("\n**********************ARVORE***********************");
 		
 		printTree( root, System.out, "<-" );
 		
-		System.out.println("***************************************************\n");					
+		System.out.println("***************************************************\n");*/		
         
 		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
+		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");		
 
 	}
     
-    
+    public static void exploreTree( NodeToS no ) {						
+			
+		for( NodeToS son: no.children ) {
+				
+			exploreTree( son );
+						
+		}
+		
+	}
     
 	public static void printTree( NodeToS no, PrintStream out, String s ) {
 			
-		out.printf(s + "[%3d; %.2f]\n", no.getLevel(), no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );			
+		out.printf(s + "[%3d; %.2f]\n", no.getId(), no.getAttributeValue( Attribute.SUM_GRAD_CONTOUR ) );		
 		
 		/*if( no.getAttributeValue( Attribute.CONTOUR_LENGTH ) <= 0 ) {
 			
