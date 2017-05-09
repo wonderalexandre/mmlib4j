@@ -4,14 +4,31 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
+
+import mmlib4j.representation.tree.attribute.Attribute;
 
 public class AttributeToCvs {
 
-	private final String SEPARATOR = ";";
+	private final String SEPARATOR = ",";
 	
 	private PrintWriter output;
 	
-	public AttributeToCvs( File file ) {
+	private static AttributeToCvs instance;
+	
+	public static AttributeToCvs createInstance( File file ) {
+		
+		return instance = new AttributeToCvs( file );
+		
+	}
+	
+	public static AttributeToCvs getInstance() {
+		
+		return instance;
+		
+	}
+	
+	private AttributeToCvs ( File file ) {
 		
 		try {
 			
@@ -21,13 +38,23 @@ public class AttributeToCvs {
 						
 			e.printStackTrace();
 			
-		}
+		}	
 		
 	}
 	
-	public void writeData( double sGrad, double energy ) {
+	public void write( HashMap<Integer, Attribute> attributesValues, int ... attributes ) {
+			
+		StringBuffer data = new StringBuffer();			
 		
-		output.println( sGrad + SEPARATOR + energy );
+		for( int attribute : attributes ) {
+			
+			data.append( attributesValues.get( attribute ).getValue() + SEPARATOR );
+			
+		}
+		
+		data.deleteCharAt( data.length() - 1 );
+		
+		output.println( data );
 		
 	}
 	

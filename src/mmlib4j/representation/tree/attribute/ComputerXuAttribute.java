@@ -63,6 +63,8 @@ public class ComputerXuAttribute {
 	
 	NodeLevelSets rootTree;
 	
+	int numNode;
+	
 	private GrayScaleImage imgGrad;
 	
 	
@@ -84,7 +86,35 @@ public class ComputerXuAttribute {
 	
 	public ComputerXuAttribute( TreeOfShape treeOfShape, GrayScaleImage img ) {
 		
-		this( treeOfShape.getNumNode(), treeOfShape.getRoot(), img );		
+		//this( treeOfShape.getNumNode(), treeOfShape.getRoot(), img );
+		
+		long ti = System.currentTimeMillis();
+		
+		this.img = img;				
+		
+		rootTree = treeOfShape.getRoot();
+		
+		this.numNode = treeOfShape.getNumNode();	
+		
+		/*HashSet<NodeToS> n = treeOfShape.getListNodes();			
+		
+		for( NodeToS node : n ) {						
+			
+			System.out.println( "Id : " + node.getId() );
+			
+		}*/
+		
+		run();
+		
+		if( Utils.debug ) {
+			
+			long tf = System.currentTimeMillis();
+			
+			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );
+			
+		}			
+		
+		
 		
 	}
 	
@@ -95,6 +125,22 @@ public class ComputerXuAttribute {
 		this.img = img;				
 		
 		rootTree = root;
+		
+		this.numNode = numNode; 		
+		
+		run();
+		
+		if( Utils.debug ) {
+			
+			long tf = System.currentTimeMillis();
+			
+			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );
+			
+		}			
+		
+	}
+	
+	private void run() {
 		
 		imgGrad = EdgeDetectors.sobel( img );
 		
@@ -122,7 +168,7 @@ public class ComputerXuAttribute {
 			
 		}			
 		
-		computerAttribute( root );			
+		computerAttribute( rootTree );			
 		
 		/* Pre-processing Energy calculation */
 				
@@ -136,7 +182,7 @@ public class ComputerXuAttribute {
 		
 		nodes = new NodeLevelSets[ numNode ];
 						
-		preProcessing( root );	
+		preProcessing( rootTree );	
 		
 		/*for( int i = 0 ; i < Ch.length; i++ ) {
 			
@@ -152,7 +198,7 @@ public class ComputerXuAttribute {
 		
 		/* Remove accumulated information in attributes based on region */
 		
-		removeChildrenAttribute( root );	
+		removeChildrenAttribute( rootTree );	
 		
 		/* Energy calculation */
 		
@@ -160,19 +206,11 @@ public class ComputerXuAttribute {
 		
 		mumfordShaEnergy = new Attribute[ numNode ];			
 		
-		prepareEnergy( root );
+		prepareEnergy( rootTree );
 		
 		/* Sort nodes in increasing gradient contour magnitude sum order and calculate energy attribute  */		
 		
 		calculateEnergy( sortNodes( numNode ) );
-		
-		if( Utils.debug ) {
-			
-			long tf = System.currentTimeMillis();
-			
-			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );
-			
-		}			
 		
 	}
 	
@@ -370,7 +408,7 @@ public class ComputerXuAttribute {
 			
 			double p3 = pow2( volumeR[ t.getId() ] + volumeR[ tp.getId() ] ) / ( areaR[ t.getId() ] + areaR[ tp.getId() ] );
 			
-			mumfordShaEnergyTmp = ( p1 + p2 - p3) / contourLength[ t.getId() ].value;																										
+			mumfordShaEnergyTmp = ( p1 + p2 - p3 ) / contourLength[ t.getId() ].value;																										
 			
 			if( mumfordShaEnergyTmp > mumfordShaEnergy[ t.getId() ].value ) {
 				

@@ -1,16 +1,19 @@
 package mmlib4j.representation.tree.tos;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.filtering.EdgeDetectors;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.utils.AttributeToCvs;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
@@ -1804,9 +1807,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		input.setPixel( 4, 4, 117 );
 				
 		
-		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), false );
+		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), false );
 		
-		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels5, width, height), false );				
+		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels5, width, height), false );				
 		
 		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( input, false );
 		
@@ -1845,14 +1848,24 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		printTree( root, System.out, "<-" );
 		
-		System.out.println("***************************************************\n");*/		
+		System.out.println("***************************************************\n");*/
+		
+		AttributeToCvs.createInstance( new File( "/home/gobber/values.csv" ) );
+		
+		exploreTree( build.getRoot() );
+		
+		AttributeToCvs.getInstance().destroy();
         
 		long tf = System.currentTimeMillis();
+		
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");		
 
 	}
     
     public static void exploreTree( NodeToS no ) {						
+    	
+    	AttributeToCvs.getInstance()
+		  			  .write( no.getAttributes(), Attribute.SUM_GRAD_CONTOUR, Attribute.MUMFORD_SHA_ENERGY );
 			
 		for( NodeToS son: no.children ) {
 				
@@ -1870,15 +1883,14 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			
 			System.out.println( "wrong " + no.getId() );
 			
-		}*/
-		
-		//if( no.children != null )
+		}*/	
 			
-			for( NodeToS son: no.children ) {
+		for( NodeToS son: no.children ) {
 				
-				printTree( son, out, s + "------" );
+			printTree( son, out, s + "------" );
 				
-			}
+		}
+		
 	}
 	
 }
