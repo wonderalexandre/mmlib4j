@@ -1850,7 +1850,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		System.out.println("***************************************************\n");*/
 		
-		AttributeToCvs.createInstance( new File( "/home/gobber/values.csv" ) );
+		AttributeToCvs.createInstance( new File( "/home/ubuntu-uninove/values.csv" ) );
 		
 		exploreTree( build.getRoot() );
 		

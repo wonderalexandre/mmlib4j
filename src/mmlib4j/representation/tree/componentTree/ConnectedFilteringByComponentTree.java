@@ -48,8 +48,10 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		computerBasicAttribute();
 	}
 	
-	public void loadAttribute(int attr){
+	public void loadAttribute( int attr ) {
+		
 		switch(attr){
+		
 			case Attribute.ALTITUDE:
 			case Attribute.AREA:
 			case Attribute.VOLUME:

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -360,16 +361,27 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 				4, 4, 4, 4, 4, 4, 4, 4, 4
 		};
 		
-		int width = 9;
+		/*int width = 9;
 		int height = 9;
 		int pixels4[] = new int[] { 
 				3, 3, 1, 4, 2,
 				4, 1, 2, 3, 1
-		};
-		//int width = 5;
-		//int height = 2;
+		};*/
 		
-		System.out.println("[nivel de cinza; pixel; parent]");
+		int [] pixelsTest = new int[] {
+			
+			1,1,1,1,1,
+			1,3,0,0,1,
+			1,3,0,3,1,
+			1,3,0,3,1,
+			1,1,1,1,1
+				
+		};
+		
+		int width = 5;
+		int height = 5;				
+		
+		/*System.out.println("[nivel de cinza; pixel; parent]");
 		for(int y=0; y < height; y++){
 			for(int x=0; x < width; x++){
 				int p = pixels5[x + y * width];
@@ -377,11 +389,17 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 				
 			}
 			System.out.println();
-		}
+		}*/
 		
 		
-		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
+		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( ImageFactory.createReferenceGrayScaleImage( 32, pixelsTest, width, height ), AdjacencyRelation.getCircular( 1 ), true );
+		
 		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageBuilder.openGrayImage(), AdjacencyRelation.getCircular(1.5), false);
+		
+		ConnectedFilteringByComponentTree filtering = new ConnectedFilteringByComponentTree( new ComponentTree( builder ) );
+		
+		filtering.computerAttributeBasedPerimeterExternal();		
+		
 		NodeCT root = builder.getRoot();
 		
 		System.out.println("\n**********************ARVORE***********************");
@@ -389,15 +407,12 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		System.out.println("***************************************************\n");
 		
 		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");
-		
-		
+		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
 
 	}
-	
-	
+		
 	public static void printTree(NodeCT no, PrintStream out, String s){
-		out.printf(s + "[%3d; %d]\n", no.level, no.getCanonicalPixels().size());
+		out.printf(s + "[%3d; %.2f]\n", no.level, no.getAttributeValue( Attribute.PERIMETER_EXTERNAL ));
 		if(no.children != null)
 			for(NodeCT son: no.children){
 				printTree(son, out, s + "------");
@@ -422,8 +437,6 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	@Override
 	public int getNumNodeIdMax() {
 		return numNodeIdMax;
-	}
-	
-	
+	}	
 	
 }
