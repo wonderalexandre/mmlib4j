@@ -13,7 +13,6 @@ import mmlib4j.representation.tree.componentTree.BuilderComponentTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.BuilderTreeOfShape;
-import mmlib4j.representation.tree.tos.BuilderTreeOfShapeByUnionFindParallel;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;

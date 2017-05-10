@@ -10,7 +10,6 @@ public interface MappingStrategyOfPruning {
 
 	public boolean[] getMappingSelectedNodes ();
 	
-	
 	//public LinkedList getListOfSelectedNodes ();
 	
 }

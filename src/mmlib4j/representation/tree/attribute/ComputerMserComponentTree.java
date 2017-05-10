@@ -151,8 +151,6 @@ public class ComputerMserComponentTree implements ComputerMser {
 		
 	}
 	
-
-	
 	public boolean[] getMappingNodesByMSER(int delta){
 		ascendant = new NodeCT[tree.getNumNode()];
 		descendants = new NodeCT[tree.getNumNode()];

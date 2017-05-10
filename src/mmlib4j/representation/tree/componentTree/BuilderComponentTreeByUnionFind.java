@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.PriorityQueueDial;
+import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.AttributeToCvs;
 import mmlib4j.utils.ImageBuilder;
@@ -27,6 +27,7 @@ import mmlib4j.utils.Utils;
  * Effective component tree computation with application to pattern recognition in astronomical imaging,
  * ICIP, 2007
  */
+
 public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	
 	final int NIL = -1;
@@ -320,6 +321,11 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		return -1;
 	}
     
+	static ColorImage energy;
+	
+	static double maxEnergy = Double.MIN_VALUE;
+	
+	static int nodeMax;
     
     public static void main(String[] args) {
     	
@@ -400,29 +406,38 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 			}
 			System.out.println();
 		}*/
+				
+		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( ImageFactory.createReferenceGrayScaleImage( 32, pixelsTest, width, height ), AdjacencyRelation.getCircular( 1 ), true );
+		
+		ColorImage cimg = ImageBuilder.openRGBImage();		
 		
 		
-		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( ImageFactory.createReferenceGrayScaleImage( 32, pixelsTest, width, height ), AdjacencyRelation.getCircular( 1 ), true );
-		
-		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageBuilder.openGrayImage(), AdjacencyRelation.getCircular(1.5), false);
+		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( cimg.getGreen(), AdjacencyRelation.getCircular(1.5), true );
+				
 		
 		ConnectedFilteringByComponentTree filtering = new ConnectedFilteringByComponentTree( new ComponentTree( builder ) );
+		
+		energy = ImageFactory.createColorImage( cimg.getWidth(), cimg.getHeight() );	
 		
 		//filtering.computerAttributeBasedPerimeterExternal();		
 		
 		filtering.computerXuAttribute();	
 		
-		/*AttributeToCvs.createInstance( new File( "/home/gobber/values.csv" ) );
+		AttributeToCvs.createInstance( new File( "/home/ubuntu-uninove/values.csv" ) );
 		
 		exploreTree( builder.getRoot() );
 		
-		AttributeToCvs.getInstance().destroy();*/
+		AttributeToCvs.getInstance().destroy();
 		
-		NodeCT root = builder.getRoot();
+		ImageBuilder.saveImage( energy , new File("/home/ubuntu-uninove/energy.png") );
+		
+		System.out.println( maxEnergy + " node: " + nodeMax%cimg.getWidth() + ", " + nodeMax/cimg.getWidth() );
+		
+		/*NodeCT root = builder.getRoot();
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(root, System.out, "<-");
-		System.out.println("***************************************************\n");
+		System.out.println("***************************************************\n");*/
 		
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
@@ -433,7 +448,21 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
     	
     	AttributeToCvs.getInstance()
 		  			  .write( no.getAttributes(), Attribute.SUM_GRAD_CONTOUR, Attribute.MUMFORD_SHA_ENERGY );
-			
+    	
+    	if( no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) > maxEnergy ) {
+    		
+    		maxEnergy = no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY );
+    		
+    		nodeMax = no.getCanonicalPixel();
+    		
+    	}
+		
+    	for( int pixel : no.getCanonicalPixels() ) {
+    		
+    		energy.setPixel( pixel , ( int ) no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );
+    		
+    	}    	    
+    	
 		for( NodeCT son: no.children ) {
 				
 			exploreTree( son );
