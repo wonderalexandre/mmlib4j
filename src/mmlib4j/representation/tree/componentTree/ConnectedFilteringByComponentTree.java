@@ -3,6 +3,8 @@ package mmlib4j.representation.tree.componentTree;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import javax.smartcardio.ATR;
+
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
@@ -19,6 +21,7 @@ import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTre
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
+import mmlib4j.representation.tree.attribute.ComputerXuAttribute;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -36,6 +39,9 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	private boolean hasComputerCentralMomentAttribute = false;
 	private boolean hasComputerAttributeBasedBitQuads = false;
 	private boolean hasComputerDistanceTransform = false;
+	
+	private boolean hasComputerXuAttribute = false;
+	
 	private ComputerDistanceTransform dt = null;
 	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
@@ -83,6 +89,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.CIRCULARITY:
 			case Attribute.COMPACTNESS:
 			case Attribute.ELONGATION:
+			case Attribute.SUM_GRAD:
 				computerAttributeBasedPerimeterExternal();
 				break;
 				
@@ -98,6 +105,11 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.BIT_QUADS_WIDTH_AVERAGE:
 				computerAttributeBasedBitQuads();
 				break;				
+			
+			case Attribute.SUM_GRAD_CONTOUR:
+			case Attribute.MUMFORD_SHA_ENERGY:
+				computerXuAttribute();
+			
 		}
 	}
 	
@@ -149,7 +161,20 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			hasComputerAttributeBasedPerimeterExternal = true;
 		}
 	}
+	
+	public void computerXuAttribute() {
 		
+		computerAttributeBasedPerimeterExternal();
+		
+		if( !hasComputerXuAttribute ) {					
+			
+			new ComputerXuAttribute( builder ).addAttributeInNodesCT( getListNodes() );
+			
+			hasComputerXuAttribute = true;
+			
+		}
+		
+	}
 	
 	public void simplificationByCriterion(int alpha){
 		Queue<NodeCT> fifo = new Queue<NodeCT>();

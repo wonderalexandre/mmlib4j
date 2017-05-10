@@ -123,6 +123,12 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 		parent = p;
 	}
 	
+	public void setParent( NodeLevelSets parent ) {
+		
+		this.parent = ( NodeCT ) parent;
+		
+	}
+	
 	public void addChildren(NodeCT n){
 		children.add(n);
 	}

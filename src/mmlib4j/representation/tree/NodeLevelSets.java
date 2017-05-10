@@ -16,6 +16,7 @@ import mmlib4j.representation.tree.attribute.Attribute;
 public interface NodeLevelSets {
 	
 	public NodeLevelSets getParent();
+	public void setParent( NodeLevelSets parent );
 	public List getChildren();
 	public int getLevel();
 	public boolean isNodeMaxtree();

@@ -9,7 +9,11 @@ import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.filtering.EdgeDetectors;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.componentTree.BuilderComponentTree;
+import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
+import mmlib4j.representation.tree.tos.BuilderTreeOfShape;
+import mmlib4j.representation.tree.tos.BuilderTreeOfShapeByUnionFindParallel;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
@@ -84,13 +88,59 @@ public class ComputerXuAttribute {
 	
 	private Children [] Ch;
 	
-	public ComputerXuAttribute( TreeOfShape treeOfShape, GrayScaleImage img ) {
+	public ComputerXuAttribute( BuilderComponentTree builder ) {
 		
-		//this( treeOfShape.getNumNode(), treeOfShape.getRoot(), img );
+		long ti = System.currentTimeMillis();	
+		
+		ComponentTree componentTree = new ComponentTree( builder.getClone() );
+		
+		this.img = componentTree.getInputImage();
+		
+		rootTree = componentTree.getRoot();
+		
+		this.numNode = componentTree.getNumNode();
+		
+		HashSet<NodeCT> hashSet = builder.getListNodes();
+		
+		contourLength = new Attribute[ numNode ];
+		
+		sumGrad = new Attribute[ numNode ];
+		
+		area = new Attribute[ numNode ];
+		
+		volume = new Attribute[ numNode ];		
+		
+		for( NodeCT node : hashSet ) {
+			
+			contourLength[ node.getId() ] = node.getAttribute( Attribute.PERIMETER_EXTERNAL ); 
+			
+			sumGrad[ node.getId() ] = node.getAttribute( Attribute.SUM_GRAD );
+			
+			area[ node.getId() ] = node.getAttribute( Attribute.AREA );
+			
+			volume[ node.getId() ] = node.getAttribute( Attribute.VOLUME );
+			
+		}
+		
+		run();
+		
+		if( Utils.debug ) {
+			
+			long tf = System.currentTimeMillis();
+			
+			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );
+			
+		}	
+		
+	}
+	
+	public ComputerXuAttribute( BuilderTreeOfShape builder ) {
 		
 		long ti = System.currentTimeMillis();
 		
-		this.img = img;				
+		TreeOfShape treeOfShape = new TreeOfShape( builder.getClone() );		
+		
+		this.img = treeOfShape.getInputImage();				
 		
 		rootTree = treeOfShape.getRoot();
 		
@@ -102,45 +152,7 @@ public class ComputerXuAttribute {
 			
 			System.out.println( "Id : " + node.getId() );
 			
-		}*/
-		
-		run();
-		
-		if( Utils.debug ) {
-			
-			long tf = System.currentTimeMillis();
-			
-			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );
-			
-		}			
-		
-		
-		
-	}
-	
-	public ComputerXuAttribute( int numNode, NodeLevelSets root, GrayScaleImage img ) {
-				
-		long ti = System.currentTimeMillis();
-				
-		this.img = img;				
-		
-		rootTree = root;
-		
-		this.numNode = numNode; 		
-		
-		run();
-		
-		if( Utils.debug ) {
-			
-			long tf = System.currentTimeMillis();
-			
-			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );
-			
-		}			
-		
-	}
-	
-	private void run() {
+		}*/	
 		
 		imgGrad = EdgeDetectors.sobel( img );
 		
@@ -168,7 +180,21 @@ public class ComputerXuAttribute {
 			
 		}			
 		
-		computerAttribute( rootTree );			
+		computerAttribute( rootTree );
+		
+		run();
+		
+		if( Utils.debug ) {
+			
+			long tf = System.currentTimeMillis();
+			
+			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );
+			
+		}				
+		
+	}
+	
+	private void run() {			
 		
 		/* Pre-processing Energy calculation */
 				
@@ -284,7 +310,7 @@ public class ComputerXuAttribute {
 				
 		List<NodeLevelSets> children = node.getChildren();				
 		
-		areaR[ node.getId() ] = area[ node.getId() ].value ;
+		areaR[ node.getId() ] = area[ node.getId() ].value;
 		
 		volumeR[ node.getId() ] = volume[ node.getId() ].value;	
 				
@@ -422,7 +448,7 @@ public class ComputerXuAttribute {
 			
 				for( int tc : Ch[ t.getId() ].getChildren().keySet() ) {											
 				
-					( ( NodeToS ) nodes[ tc ] ).setParent( ( NodeToS ) tp );
+					nodes[ tc ].setParent( tp );
 				
 					Ch[ tp.getId() ].insert( tc );
 				
@@ -510,12 +536,21 @@ public class ComputerXuAttribute {
 	
 	public void addAttributeInNodes( NodeLevelSets node ) {
 		
-		node.addAttribute( Attribute.CONTOUR_LENGTH, contourLength[ node.getId() ] );
-		node.addAttribute( Attribute.SUM_GRAD, sumGrad[ node.getId() ] );
-		node.addAttribute( Attribute.FACE_2_AREA, area[ node.getId() ] );
-		node.addAttribute( Attribute.FACE_2_VOLUME, volume[ node.getId() ] );
-		node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );
-		node.addAttribute( Attribute.MUMFORD_SHA_ENERGY , mumfordShaEnergy[ node.getId() ] );
+		if( node instanceof NodeCT ) {
+			
+			node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );
+			node.addAttribute( Attribute.MUMFORD_SHA_ENERGY , mumfordShaEnergy[ node.getId() ] );
+			
+		} else {
+		
+			node.addAttribute( Attribute.CONTOUR_LENGTH, contourLength[ node.getId() ] );
+			node.addAttribute( Attribute.SUM_GRAD, sumGrad[ node.getId() ] );
+			node.addAttribute( Attribute.FACE_2_AREA, area[ node.getId() ] );
+			node.addAttribute( Attribute.FACE_2_VOLUME, volume[ node.getId() ] );
+			node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );
+			node.addAttribute( Attribute.MUMFORD_SHA_ENERGY , mumfordShaEnergy[ node.getId() ] );
+		
+		}
 		
 	}
 	

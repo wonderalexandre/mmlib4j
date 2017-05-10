@@ -1807,9 +1807,9 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		input.setPixel( 4, 4, 117 );
 				
 		
-		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), false );
+		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageBuilder.openGrayImage(), false );
 		
-		BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels5, width, height), false );				
+		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels5, width, height), false );				
 		
 		//BuilderTreeOfShapeByUnionFindParallel build = new BuilderTreeOfShapeByUnionFindParallel( input, false );
 		
@@ -1850,7 +1850,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		
 		System.out.println("***************************************************\n");*/
 		
-		AttributeToCvs.createInstance( new File( "/home/ubuntu-uninove/values.csv" ) );
+		AttributeToCvs.createInstance( new File( "/home/gobber/values.csv" ) );
 		
 		exploreTree( build.getRoot() );
 		
@@ -1877,7 +1877,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
     
 	public static void printTree( NodeToS no, PrintStream out, String s ) {
 			
-		out.printf(s + "[%3d; %.2f]\n", no.getId(), no.getAttributeValue( Attribute.SUM_GRAD_CONTOUR ) );		
+		out.printf(s + "[%3d; %.2f]\n", no.getId(), no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );		
 		
 		/*if( no.getAttributeValue( Attribute.CONTOUR_LENGTH ) <= 0 ) {
 			

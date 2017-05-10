@@ -1,5 +1,6 @@
 package mmlib4j.representation.tree.componentTree;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -8,7 +9,10 @@ import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
+import mmlib4j.utils.AttributeToCvs;
+import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
 
@@ -58,8 +62,8 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		
 		sort();
 		createTreeByUnionFind();
-		createTreeStructure( );
-		imgR = null;
+		createTreeStructure();
+		//imgR = null;
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
 			System.out.println("Tempo de execucao [criacao da arvore - union-find]  "+ ((tf - ti) /1000.0)  + "s");
@@ -375,6 +379,12 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 			1,3,0,3,1,
 			1,3,0,3,1,
 			1,1,1,1,1
+			
+			/*1,1,1,1,1,1,1,
+			1,0,0,3,3,3,1,
+			1,0,1,1,2,2,1,
+			1,0,0,3,3,3,1,
+			1,1,1,1,1,1,1*/
 				
 		};
 		
@@ -398,7 +408,15 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		
 		ConnectedFilteringByComponentTree filtering = new ConnectedFilteringByComponentTree( new ComponentTree( builder ) );
 		
-		filtering.computerAttributeBasedPerimeterExternal();		
+		//filtering.computerAttributeBasedPerimeterExternal();		
+		
+		filtering.computerXuAttribute();	
+		
+		/*AttributeToCvs.createInstance( new File( "/home/gobber/values.csv" ) );
+		
+		exploreTree( builder.getRoot() );
+		
+		AttributeToCvs.getInstance().destroy();*/
 		
 		NodeCT root = builder.getRoot();
 		
@@ -410,9 +428,22 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
 
 	}
+	
+    public static void exploreTree( NodeCT no ) {						
+    	
+    	AttributeToCvs.getInstance()
+		  			  .write( no.getAttributes(), Attribute.SUM_GRAD_CONTOUR, Attribute.MUMFORD_SHA_ENERGY );
+			
+		for( NodeCT son: no.children ) {
+				
+			exploreTree( son );
+						
+		}
 		
+	}
+    
 	public static void printTree(NodeCT no, PrintStream out, String s){
-		out.printf(s + "[%3d; %.2f]\n", no.level, no.getAttributeValue( Attribute.PERIMETER_EXTERNAL ));
+		out.printf(s + "[%3d; %.2f]\n", no.level, no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ));
 		if(no.children != null)
 			for(NodeCT son: no.children){
 				printTree(son, out, s + "------");

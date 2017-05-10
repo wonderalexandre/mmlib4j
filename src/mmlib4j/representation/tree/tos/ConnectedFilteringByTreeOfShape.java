@@ -86,12 +86,12 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	
 	public void ComputerXuAttribute(){
 		
-		if( !hasComputerXuAttribute ) {
-				
-			TreeOfShape t = new TreeOfShape( this.build.getClone() );
+		if( !hasComputerXuAttribute ) {			
 			
-			new ComputerXuAttribute( t, t.getInputImage() ).addAttributeInNodesToS(getListNodes());
+			new ComputerXuAttribute( build ).addAttributeInNodesToS( getListNodes() );
+			
 			hasComputerXuAttribute = true;
+			
 		}
 	}
 

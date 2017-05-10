@@ -4,10 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.filtering.EdgeDetectors;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ByteImage;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -82,6 +80,18 @@ public class ComputerAttributeBasedPerimeterExternal {
 			
 			perimeters[ node.getId() ].value = img.getWidth() * 2 + img.getHeight() * 2;
 			
+			for( int cols = 0 ; cols < img.getWidth() ; cols++ ) {					
+				
+				sumGrad[ node.getId() ].value += ( imgGrad.getPixel( cols, 0 ) + imgGrad.getPixel( cols, imgGrad.getHeight()-1 ) );
+				
+			}
+			
+			for( int rows = 1 ; rows < img.getHeight()-1 ; rows++ ) {
+				
+				sumGrad[ node.getId() ].value += ( imgGrad.getPixel( 0, rows ) + imgGrad.getPixel( imgGrad.getWidth()-1, rows ) );
+				
+			}
+			
 		}else{
 			
 			if( node.getArea() < 3 ) {				
@@ -121,7 +131,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 	}
 	
 	
-	public Attribute[] getAttribute(){
+	public Attribute[] getAttribute() {
 		return perimeters;
 	}
 	
@@ -180,7 +190,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 		boolean is8Connected=true;
 		int xmin, ymin;
 		
-		public ThreadNodeCTPerimeter(NodeLevelSets node, Attribute perimeter, Attribute sumgrad) {
+		public ThreadNodeCTPerimeter( NodeLevelSets node, Attribute perimeter, Attribute sumgrad ) {
 			
 			this.node = node;
 			
@@ -227,7 +237,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 			}*/
 			//System.out.println( "Nivel : " + node.getLevel() );
 			
-			double values [] = computerContour( node.getPixelWithYmin() % img.getWidth()-xmin, node.getPixelWithYmin() / img.getWidth()-ymin );
+			double values [] = computerContourAndSumGrad( node.getPixelWithYmin() % img.getWidth()-xmin, node.getPixelWithYmin() / img.getWidth()-ymin );
 			
 			perimeter.value = values[ 0 ];
 			
@@ -239,7 +249,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 		private boolean isForeground(int x, int y){
 			
-			if(imgBin == null){
+			if( imgBin == null ) {
 				
 				if(!img.isPixelValid(x, y)) return false;
 				
@@ -256,7 +266,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 			}
 		}
 		
-		double [] computerContour ( int xS, int yS ) {
+		double [] computerContourAndSumGrad ( int xS, int yS ) {
 			
 			int xT, yT; 
 			int xP, yP; 
@@ -264,7 +274,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 			
 			double perimeter = 1;
 			
-			double sumgrad = 0;
+			double sumgrad = imgGrad.getPixel( xS + xmin, yS + ymin );
 			
 			Pixel pt = new Pixel( xS, yS, 0 ); 
 			int dNext = findNextPoint( pt, 0 );
@@ -301,7 +311,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 				
 			}
 			
-			return new double [] {perimeter, sumgrad};
+			return new double [] { perimeter, sumgrad };
 			
 		}
 		
