@@ -22,11 +22,10 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  *
- * Implementação do cálculo do atributo de energia para tree of shapes descrito em: 
+ * Implementação do cálculo do atributo de energia para tree of shapes e component tree descrito em: 
  * 
  * Yongchao Xu, Thierry Géraud, Laurent Najman
  * Hierarchical image simplification and segmentation based on Mumford-Shah-salient level line selection
- * 
  * 
  */
 
@@ -87,11 +86,12 @@ public class ComputerXuAttribute {
 	
 	private Children [] Ch;
 	
+	
 	public ComputerXuAttribute( BuilderComponentTree builder ) {
 		
-		long ti = System.currentTimeMillis();	
+		long ti = System.currentTimeMillis();				
 		
-		ComponentTree componentTree = new ComponentTree( builder.getClone() );
+		ComponentTree componentTree = new ComponentTree( builder.getClone() );		
 		
 		this.img = componentTree.getInputImage();
 		
@@ -111,7 +111,7 @@ public class ComputerXuAttribute {
 		
 		for( NodeCT node : hashSet ) {
 			
-			contourLength[ node.getId() ] = node.getAttribute( Attribute.PERIMETER_EXTERNAL ); 
+			contourLength[ node.getId() ] = node.getAttribute( Attribute.PERIMETER_EXTERNAL ); 		
 			
 			sumGrad[ node.getId() ] = node.getAttribute( Attribute.SUM_GRAD );
 			
@@ -493,6 +493,8 @@ public class ComputerXuAttribute {
 		
 		for( int i = 1 ; i < numNode ; i++ ) {
 			
+			//System.out.println( "Contour : " + contourLength[ i ].value );
+			
 			queue.add( i, ( int ) sumGradContour[ i ].value );		
 			
 		}
@@ -535,21 +537,17 @@ public class ComputerXuAttribute {
 	
 	public void addAttributeInNodes( NodeLevelSets node ) {
 		
-		if( node instanceof NodeCT ) {
-			
-			node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );
-			node.addAttribute( Attribute.MUMFORD_SHA_ENERGY , mumfordShaEnergy[ node.getId() ] );
-			
-		} else {
+		if( node instanceof NodeToS ) {			
 		
 			node.addAttribute( Attribute.CONTOUR_LENGTH, contourLength[ node.getId() ] );
 			node.addAttribute( Attribute.SUM_GRAD, sumGrad[ node.getId() ] );
 			node.addAttribute( Attribute.FACE_2_AREA, area[ node.getId() ] );
-			node.addAttribute( Attribute.FACE_2_VOLUME, volume[ node.getId() ] );
-			node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );
-			node.addAttribute( Attribute.MUMFORD_SHA_ENERGY , mumfordShaEnergy[ node.getId() ] );
+			node.addAttribute( Attribute.FACE_2_VOLUME, volume[ node.getId() ] );		
 		
 		}
+		
+		node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );
+		node.addAttribute( Attribute.MUMFORD_SHA_ENERGY , mumfordShaEnergy[ node.getId() ] );
 		
 	}
 	

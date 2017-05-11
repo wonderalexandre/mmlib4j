@@ -409,21 +409,21 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 				
 		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( ImageFactory.createReferenceGrayScaleImage( 32, pixelsTest, width, height ), AdjacencyRelation.getCircular( 1 ), true );
 		
-		ColorImage cimg = ImageBuilder.openRGBImage();		
+/*		ColorImage cimg = ImageBuilder.openRGBImage();		
 		
+		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( cimg.getGreen(), AdjacencyRelation.getCircular(1.5), true );*/
 		
-		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( cimg.getGreen(), AdjacencyRelation.getCircular(1.5), true );
-				
+		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( ImageBuilder.openGrayImage(new File("/home/ubuntu-uninove/MEGA/Datasets/big-energy-teste-green-channel.png")), AdjacencyRelation.getCircular(1.5), true );
 		
 		ConnectedFilteringByComponentTree filtering = new ConnectedFilteringByComponentTree( new ComponentTree( builder ) );
 		
-		energy = ImageFactory.createColorImage( cimg.getWidth(), cimg.getHeight() );	
+		//energy = ImageFactory.createColorImage( cimg.getWidth(), cimg.getHeight() );	
 		
 		//filtering.computerAttributeBasedPerimeterExternal();		
 		
 		filtering.computerXuAttribute();	
 		
-		AttributeToCvs.createInstance( new File( "/home/ubuntu-uninove/values.csv" ) );
+		/*AttributeToCvs.createInstance( new File( "/home/ubuntu-uninove/values.csv" ) );
 		
 		exploreTree( builder.getRoot() );
 		
@@ -431,7 +431,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		
 		ImageBuilder.saveImage( energy , new File("/home/ubuntu-uninove/energy.png") );
 		
-		System.out.println( maxEnergy + " node: " + nodeMax%cimg.getWidth() + ", " + nodeMax/cimg.getWidth() );
+		System.out.println( maxEnergy + " node: " + nodeMax%cimg.getWidth() + ", " + nodeMax/cimg.getWidth() );*/
 		
 		/*NodeCT root = builder.getRoot();
 		

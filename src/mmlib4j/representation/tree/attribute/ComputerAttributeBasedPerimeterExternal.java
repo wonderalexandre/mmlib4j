@@ -74,7 +74,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 		perimeters[ node.getId() ] = new Attribute( Attribute.PERIMETER_EXTERNAL );
 		
-		sumGrad[ node.getId() ] = new Attribute( Attribute.PERIMETER_EXTERNAL );
+		sumGrad[ node.getId() ] = new Attribute( Attribute.SUM_GRAD );
 		
 		if( node == rootTree ) {
 			
@@ -104,9 +104,15 @@ public class ComputerAttributeBasedPerimeterExternal {
 					
 				}
 
-			}else if( node.getParent().getArea() - node.getArea() < 3 ) {
+			}/*else if( node.getParent().getArea() - node.getArea() < 3 ) {
 				
 				perimeters[ node.getId() ].value = perimeters[ node.getParent().getId() ].value - 1;
+				
+				if( perimeters[ node.getId() ].value < 0 ) {
+					
+					System.out.println( "Perimeter " + perimeters[ node.getId() ].value );
+					
+				}
 				
 			//	sumGrad[ node.getId() ].value = sumGrad[ node.getParent().getId() ].value;
 				
@@ -116,11 +122,17 @@ public class ComputerAttributeBasedPerimeterExternal {
 					
 				}
 				  
-			}else
+			}*/else
 				
 				new ThreadNodeCTPerimeter( node, perimeters[ node.getId() ], sumGrad[ node.getId() ] ).run();
 				//pool.execute(new ThreadNodeCTPerimeter(node, perimeters[node.getId()]));
 		}
+		
+		/*if( perimeters[ node.getId() ].value < 0 ) {
+		
+		System.out.println( "Perimeter " + perimeters[ node.getId() ].value );
+		
+		}*/
 		
 		for( NodeLevelSets son: children ) {
 			
@@ -136,16 +148,20 @@ public class ComputerAttributeBasedPerimeterExternal {
 	}
 	
 	public void addAttributeInNodesCT(HashSet<NodeCT> list){
-		for(NodeCT node: list){
-			addAttributeInNodes(node);
+		
+		for( NodeCT node: list ) {
+			
+			addAttributeInNodes( node );
+			
 		}
+		
 	}
 	
 	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
 		
-		for(NodeLevelSets node: hashSet) {
+		for( NodeLevelSets node: hashSet ) {
 			
-			addAttributeInNodes(node);
+			addAttributeInNodes( node );
 			
 		}
 		
@@ -239,7 +255,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 			
 			double values [] = computerContourAndSumGrad( node.getPixelWithYmin() % img.getWidth()-xmin, node.getPixelWithYmin() / img.getWidth()-ymin );
 			
-			perimeter.value = values[ 0 ];
+			perimeter.value = values[ 0 ];			
 			
 			sumgrad.value = values[ 1 ];
 						

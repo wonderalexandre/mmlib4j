@@ -9,6 +9,10 @@ public class PruningBasedMumfordShahEnergy implements MappingStrategyOfPruning {
 	
 	private MorphologicalTreeFiltering tree;
 	
+	private int minArea = 0;
+	
+	private int maxArea = 0;
+	
 	private double minEnergy = 0;
 	
 	private double maxEnergy;
@@ -23,7 +27,7 @@ public class PruningBasedMumfordShahEnergy implements MappingStrategyOfPruning {
 		
 		for( NodeCT node : ( ( ComponentTree ) tree ).getListNodes() ) {
 			
-			double energy = node.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY );
+			double energy = node.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY );			
 			
 			if( energy > max ) {
 				
@@ -33,7 +37,15 @@ public class PruningBasedMumfordShahEnergy implements MappingStrategyOfPruning {
 			
 		}
 		
-		this.maxEnergy = delta * max / 50;
+		this.maxEnergy = delta * max / 500;
+		
+	}
+	
+	public void setParameters( int minArea, int maxArea ) {
+		
+		this.minArea = minArea;
+		
+		this.maxArea = maxArea;
 		
 	}
 
@@ -44,11 +56,13 @@ public class PruningBasedMumfordShahEnergy implements MappingStrategyOfPruning {
 		
 		boolean [] mumfordsha = new boolean[ tree.getNumNode() ];
 		
-		for( NodeCT node : ( ( ComponentTree ) tree ).getListNodes() ) {
+		for( NodeCT node : ( ( ComponentTree ) tree ).getListNodes() ) {			
 			
 			double energy = node.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY );
 			
-			if( energy > maxEnergy ) {
+			double area = node.getAttributeValue( Attribute.AREA );
+			
+			if( energy > maxEnergy && ( minArea < area && area < maxArea )  ) {
 				
 				mumfordsha[ node.getId() ] = true;
 				
