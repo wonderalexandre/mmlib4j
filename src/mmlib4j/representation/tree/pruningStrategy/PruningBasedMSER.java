@@ -151,7 +151,4 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 		return num;
 	}
 	
-
-
-	
 }
