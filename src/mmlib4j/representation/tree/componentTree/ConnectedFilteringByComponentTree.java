@@ -18,6 +18,7 @@ import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
+import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
@@ -41,6 +42,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	private boolean hasComputerDistanceTransform = false;
 	
 	private boolean hasComputerXuAttribute = false;
+	private boolean hasComputerFunctionalVariacionalAttribute = false;
 	
 	private ComputerDistanceTransform dt = null;
 	
@@ -109,6 +111,10 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.SUM_GRAD_CONTOUR:
 			case Attribute.MUMFORD_SHA_ENERGY:
 				computerXuAttribute();
+				break;
+				
+			/*case Attribute.FUNCTIONAL_VARIATIONAL:				
+				break;*/
 			
 		}
 	}
@@ -162,18 +168,20 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 	}
 	
-	public void computerXuAttribute() {
-		
-		computerAttributeBasedPerimeterExternal();
-		
-		if( !hasComputerXuAttribute ) {					
-			
-			new ComputerXuAttribute( builder ).addAttributeInNodesCT( getListNodes() );
-			
-			hasComputerXuAttribute = true;
-			
-		}
-		
+	public void computerXuAttribute() {	
+		computerAttributeBasedPerimeterExternal();		
+		if( !hasComputerXuAttribute ) {								
+			new ComputerXuAttribute( builder ).addAttributeInNodesCT( getListNodes() );			
+			hasComputerXuAttribute = true;			
+		}		
+	}
+	
+	public void computerFunctionalVariacionalAttribute( double scale ) {	
+		computerAttributeBasedPerimeterExternal();		
+		if( !hasComputerFunctionalVariacionalAttribute ) {								
+			new ComputerFunctionalVariational( builder, scale );			
+			hasComputerFunctionalVariacionalAttribute = true;			
+		}		
 	}
 	
 	public void simplificationByCriterion(int alpha){

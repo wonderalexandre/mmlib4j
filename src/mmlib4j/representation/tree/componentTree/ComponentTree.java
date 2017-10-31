@@ -147,14 +147,53 @@ public class ComponentTree {
 			System.out.println("Tempo de execucao [computerAdjcencyNodes] "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
+	/* Add by gobber */	
 	
-	public void prunning(NodeCT node){
+	public void mergeFather( NodeCT node ) {
+		
+		if( node != root ) {			
+			
+			NodeCT parent = node.parent;
+			parent.children.remove( node );
+			
+			listNode.remove( node );
+			numNode--;
+			
+			for( int p: node.getCanonicalPixels() ) {
+				
+				parent.addPixel( p );	
+				
+				map[ p ] = parent;
+				
+			}
+			
+			for( NodeCT child : node.getChildren() ) {				
+			
+				parent.addChildren( child );
+				
+				child.setParent( parent );			
+				
+				for( int p: child.getCanonicalPixels() ) {												
+					
+					map[ p ] = parent;
+					
+				}
+			
+			}
+			
+			node = null;
+			
+		}
+		
+	}
+	
+	public void prunning( NodeCT node ) {
 		if(node != root && map[node.getCanonicalPixel()] == node){
 			NodeCT parent = node.parent;
 			parent.children.remove(node);
 			listLeaves = null;
 			for(NodeCT no: node.getNodesDescendants()){
-				listNode.remove(no);
+				listNode.remove( no );
 				numNode--;
 				for(int p: no.getCanonicalPixels()){
 					parent.addPixel(p);

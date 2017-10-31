@@ -94,6 +94,10 @@ public class Attribute {
 	public static final int MUMFORD_SHA_ENERGY = 64;
 	public static final int SUM_GRAD_CONTOUR = 65;
 	
+	// parameters functional variational
+	
+	public static final int FUNCTIONAL_VARIATIONAL = 66;
+	
 	public String getHeader(){
 		switch(type){
 			case ALTITUDE: return "ALTITUDE";	

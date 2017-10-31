@@ -380,11 +380,11 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		
 		int [] pixelsTest = new int[] {
 			
-			1,1,1,1,1,
+			/*1,1,1,1,1,
 			1,3,0,0,1,
 			1,3,0,3,1,
 			1,3,0,3,1,
-			1,1,1,1,1
+			1,1,1,1,1*/
 			
 			/*1,1,1,1,1,1,1,
 			1,0,0,3,3,3,1,
@@ -392,10 +392,63 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 			1,0,0,3,3,3,1,
 			1,1,1,1,1,1,1*/
 				
+			/*188, 187, 186,
+			186, 0, 0,
+			185, 0, 0*/
+				
+			/*0,0,0,0,0,0,0,
+			0,4,4,4,7,7,7,
+			0,7,7,4,7,4,7,
+			0,7,4,4,7,4,7,
+			0,4,4,4,7,4,7,
+			0,7,7,4,7,7,7,
+			0,0,0,0,0,0,0*/
+				
+			/*0,0,0,0,0,0,0,
+			0,6,6,6,6,6,0,
+			0,6,6,8,6,6,0,
+			0,6,6,8,6,6,0,
+			0,6,6,8,6,6,0,
+			0,6,6,6,6,6,0,
+			0,0,0,0,0,0,0*/
+				
+			/*4,4,4,3,3,3,
+			4,4,4,3,3,3,
+			4,4,4,3,3,3,
+			1,1,1,2,2,2,
+			1,1,1,2,2,2,
+			1,1,1,2,2,2*/
+				
+			/*0,0,0,0,0,0,0,
+			0,7,7,7,7,7,0,
+			0,7,6,8,6,7,0,
+			0,7,6,8,6,7,0,
+			0,7,6,8,6,7,0,
+			0,7,7,7,7,7,0,
+			0,0,0,0,0,0,0,*/
+			
+			/*4,4,4,4,4,4,4,4,4,
+			4,7,7,7,7,7,7,7,4,
+			4,7,0,0,0,0,0,7,4,
+			4,7,0,2,7,2,0,7,4,
+			4,7,0,2,7,2,0,7,4,
+			4,7,0,2,7,2,0,7,4,
+			4,7,0,0,0,0,0,7,4,
+			4,7,7,7,7,7,7,7,4,
+			4,4,4,4,4,4,4,4,4,*/
+				
+			7,7,7,7,7,7,7,7,
+			7,8,8,8,8,8,8,7,
+			7,8,6,6,6,6,8,7,
+			7,8,6,6,6,6,8,7,
+			7,8,6,6,6,6,8,7,
+			7,8,6,6,6,6,8,7,
+			7,8,8,8,8,8,8,7,
+			7,7,7,7,7,7,7,7
 		};
 		
-		int width = 5;
-		int height = 5;				
+		int width = 8;
+		int height = 8;				
 		
 		/*System.out.println("[nivel de cinza; pixel; parent]");
 		for(int y=0; y < height; y++){
@@ -407,37 +460,13 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 			System.out.println();
 		}*/
 				
-		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( ImageFactory.createReferenceGrayScaleImage( 32, pixelsTest, width, height ), AdjacencyRelation.getCircular( 1 ), true );
+		ConnectedFilteringByComponentTree connectedFilteringByComponentTree = new ConnectedFilteringByComponentTree( ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, pixelsTest, width, height), AdjacencyRelation.getCircular( 1 ), false );
 		
-/*		ColorImage cimg = ImageBuilder.openRGBImage();		
-		
-		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( cimg.getGreen(), AdjacencyRelation.getCircular(1.5), true );*/
-		
-		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind( ImageBuilder.openGrayImage(new File("/home/ubuntu-uninove/MEGA/Datasets/big-energy-teste-green-channel.png")), AdjacencyRelation.getCircular(1.5), true );
-		
-		ConnectedFilteringByComponentTree filtering = new ConnectedFilteringByComponentTree( new ComponentTree( builder ) );
-		
-		//energy = ImageFactory.createColorImage( cimg.getWidth(), cimg.getHeight() );	
-		
-		//filtering.computerAttributeBasedPerimeterExternal();		
-		
-		filtering.computerXuAttribute();	
-		
-		/*AttributeToCvs.createInstance( new File( "/home/ubuntu-uninove/values.csv" ) );
-		
-		exploreTree( builder.getRoot() );
-		
-		AttributeToCvs.getInstance().destroy();
-		
-		ImageBuilder.saveImage( energy , new File("/home/ubuntu-uninove/energy.png") );
-		
-		System.out.println( maxEnergy + " node: " + nodeMax%cimg.getWidth() + ", " + nodeMax/cimg.getWidth() );*/
-		
-		/*NodeCT root = builder.getRoot();
+		NodeCT root = connectedFilteringByComponentTree.getRoot();		
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(root, System.out, "<-");
-		System.out.println("***************************************************\n");*/
+		System.out.println("***************************************************\n");
 		
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
@@ -472,7 +501,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	}
     
 	public static void printTree(NodeCT no, PrintStream out, String s){
-		out.printf(s + "[%3d; %.2f]\n", no.level, no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ));
+		out.printf(s + "[%3d; %3f]\n", no.getLevel(), no.getAttributeValue( Attribute.HEIGHT ) );
 		if(no.children != null)
 			for(NodeCT son: no.children){
 				printTree(son, out, s + "------");

@@ -32,6 +32,26 @@ public class PriorityQueueDial  {
     	this(img, maxPriority, policy, false);
     }
     
+    public PriorityQueueDial( int size, int maxPriority, int policy, boolean isDual ) {
+    	
+    	vetorDDL = new NodeDDL[ size ];
+    	
+    	this.maxPriority = maxPriority;
+    	
+    	this.policy = policy;
+    	
+    	this.isDual = isDual;
+    	
+    	buckets = new ArrayList<Bucket>(maxPriority + 1);
+    	
+    	for (int i = 0; i <= maxPriority; i++) {
+    		
+    		buckets.add( new Bucket( policy ) );
+    		
+    	}
+    	
+    }
+    
     public PriorityQueueDial( Attribute [] aDel, int maxPriority, int policy, boolean isDual) {
     	
     	vetorDDL = new NodeDDL[ aDel.length ];
@@ -92,7 +112,18 @@ public class PriorityQueueDial  {
     		buckets.get(priority).add(vetorDDL[element]);
     	}
     }
-   
+
+    public void remove(Integer element, int priority) {
+    	NodeDDL node = vetorDDL[element];
+    	if(node == null){
+    		return; //esse node nao entrou na fila
+    	}else{    	
+    		buckets.get(priority).remove(node);
+    		vetorDDL[node.pixel] = null;
+    		numElements--;
+    	}
+    	    	    	
+    }
 
     public void remove(Integer element) {
     	NodeDDL node = vetorDDL[element];
@@ -104,9 +135,7 @@ public class PriorityQueueDial  {
     		vetorDDL[node.pixel] = null;
     		numElements--;
     	}
-    	
-    	
-    	
+    	    	    	
     }
 
     public Integer remove() {

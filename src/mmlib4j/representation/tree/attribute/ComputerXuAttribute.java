@@ -63,9 +63,9 @@ public class ComputerXuAttribute {
 	
 	private int is_boundary[];	
 	
-	NodeLevelSets rootTree;
+	private NodeLevelSets rootTree;
 	
-	int numNode;
+	private int numNode;
 	
 	private GrayScaleImage imgGrad;
 	
@@ -122,6 +122,16 @@ public class ComputerXuAttribute {
 		}
 		
 		run();
+		
+		Ch = null;
+		
+		nodes = null;
+		
+		areaR = null;
+		
+		volumeR = null;
+		
+		is_boundary = null;
 		
 		if( Utils.debug ) {
 			
@@ -267,8 +277,8 @@ public class ComputerXuAttribute {
 			
 			double p3 = pow2( volumeR[ id ] + volumeR[ idp ] ) / ( areaR[ id ] + areaR[ idp ] );
 			
-			mumfordShaEnergy[ id ].value = ( p1 + p2 - p3 ) / contourLength[ id ].value;			
-		
+			mumfordShaEnergy[ id ].value = ( p1 + p2 - p3 ) / contourLength[ id ].value;
+			
 		}
 		
 		for( NodeLevelSets son : children ) {
@@ -319,7 +329,7 @@ public class ComputerXuAttribute {
 				
 				Ch[ node.getParent().getId() ] = new Children( children.size() );
 				
-			}
+			}			
 			
 			Ch[ node.getParent().getId() ].insert( node.getId() );	
 			
@@ -421,7 +431,7 @@ public class ComputerXuAttribute {
 		
 		for( int i = 0 ; i < Rt.length ; i++ ) {			
 			
-			int id = Rt[ i ];			
+			int id = Rt[ i ];							
 			
 			NodeLevelSets t = nodes[ id ];
 			
@@ -433,7 +443,7 @@ public class ComputerXuAttribute {
 			
 			double p3 = pow2( volumeR[ t.getId() ] + volumeR[ tp.getId() ] ) / ( areaR[ t.getId() ] + areaR[ tp.getId() ] );
 			
-			mumfordShaEnergyTmp = ( p1 + p2 - p3 ) / contourLength[ t.getId() ].value;																										
+			mumfordShaEnergyTmp = ( p1 + p2 - p3 ) / contourLength[ t.getId() ].value;
 			
 			if( mumfordShaEnergyTmp > mumfordShaEnergy[ t.getId() ].value ) {
 				

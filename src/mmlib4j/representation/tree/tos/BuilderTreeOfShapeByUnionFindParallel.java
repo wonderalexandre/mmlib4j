@@ -1719,11 +1719,14 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				1,0,0,3,3,1,
 				1,1,1,1,1,1*/ // ok
 				
-				1,1,1,1,1,
-				1,3,0,0,1,
-				1,3,0,3,1,
-				1,3,0,3,1,
-				1,1,1,1,1
+				5,5,5,5,5,5,5,5,
+				5,3,3,3,3,3,3,5,
+				5,3,1,1,1,1,3,5,
+				5,3,1,0,0,1,3,5,
+				5,3,1,0,0,1,3,5,
+				5,3,1,1,1,1,3,5,
+				5,3,3,3,3,3,3,5,
+				5,5,5,5,5,5,5,5
 				
 				/*5,5,5,5,
 				5,2,2,5,
@@ -1745,8 +1748,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 				
 		};
 		
-		int width = 5;
-		int height = 5;
+		int width = 8;
+		int height = 8;
 		
 		// Second example of Thierry
 		

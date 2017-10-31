@@ -7,7 +7,7 @@ import mmlib4j.images.GrayScaleImage;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
- * @author FLávio Kubo
+ * @author Fl√°vio Kubo
  */
 public class QualityEstimationIndexes {
 

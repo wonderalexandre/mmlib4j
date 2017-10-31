@@ -52,11 +52,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 		sumGrad = new Attribute[ numNode ];
 		
-		//pool =  new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-		
 		computerAttribute( root );
-		
-		//while(pool.getActiveCount() != 0);
 		
 		if( Utils.debug ) {
 			
@@ -104,35 +100,13 @@ public class ComputerAttributeBasedPerimeterExternal {
 					
 				}
 
-			}/*else if( node.getParent().getArea() - node.getArea() < 3 ) {
-				
-				perimeters[ node.getId() ].value = perimeters[ node.getParent().getId() ].value - 1;
-				
-				if( perimeters[ node.getId() ].value < 0 ) {
-					
-					System.out.println( "Perimeter " + perimeters[ node.getId() ].value );
-					
-				}
-				
-			//	sumGrad[ node.getId() ].value = sumGrad[ node.getParent().getId() ].value;
-				
-				for( int pixel : node.getCanonicalPixels() ) {
-					
-					sumGrad[ node.getId() ].value += imgGrad.getPixel( pixel );
-					
-				}
-				  
-			}*/else
+			} else {
 				
 				new ThreadNodeCTPerimeter( node, perimeters[ node.getId() ], sumGrad[ node.getId() ] ).run();
-				//pool.execute(new ThreadNodeCTPerimeter(node, perimeters[node.getId()]));
+				
+			}
+		
 		}
-		
-		/*if( perimeters[ node.getId() ].value < 0 ) {
-		
-		System.out.println( "Perimeter " + perimeters[ node.getId() ].value );
-		
-		}*/
 		
 		for( NodeLevelSets son: children ) {
 			
@@ -144,10 +118,12 @@ public class ComputerAttributeBasedPerimeterExternal {
 	
 	
 	public Attribute[] getAttribute() {
+		
 		return perimeters;
+		
 	}
 	
-	public void addAttributeInNodesCT(HashSet<NodeCT> list){
+	public void addAttributeInNodesCT(HashSet<NodeCT> list) {
 		
 		for( NodeCT node: list ) {
 			
@@ -157,7 +133,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 	}
 	
-	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
+	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet) {
 		
 		for( NodeLevelSets node: hashSet ) {
 			
@@ -229,9 +205,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 				for( int p: n.getPixelsOfCC() ) {
 					
 					int px = (p % img.getWidth()) - xmin;
-					int py = (p / img.getWidth()) - ymin;
-					
-					//System.out.println( (p % img.getWidth()) );
+					int py = (p / img.getWidth()) - ymin;		
 					
 					imgBin[ px ][ py ] = true;
 					
@@ -242,24 +216,12 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 		public void run() {
 			
-			//cont++;
-			/*if(cont == 6331){
-				BinaryImage b = ImageFactory.createBinaryImage(imgBin.length, imgBin[0].length);
-				for(int x=0; x < imgBin.length; x++)
-					for(int y=0; y < imgBin[0].length; y++)
-						b.setPixel(x,  y, imgBin[x][y]);
-				WindowImages.show( b, "imgBin" );
-				WindowImages.show( node.createImage() );
-			}*/
-			//System.out.println( "Nivel : " + node.getLevel() );
-			
 			double values [] = computerContourAndSumGrad( node.getPixelWithYmin() % img.getWidth()-xmin, node.getPixelWithYmin() / img.getWidth()-ymin );
 			
 			perimeter.value = values[ 0 ];			
 			
 			sumgrad.value = values[ 1 ];
-						
-			//System.out.println();
+			
 		}
 		
 		
@@ -276,7 +238,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 			}
 			else{
 				if((x >= 0 && x < imgBin.length && y >= 0 && y < imgBin[0].length))
-					return imgBin[x][y];//.getPixel(x, y);
+					return imgBin[x][y];
 				else
 					return false;
 			}
@@ -302,8 +264,6 @@ public class ComputerAttributeBasedPerimeterExternal {
 			boolean done = (xS==xT && yS==yT);
 			
 			while (!done) {
-				//pt.x = xC;
-				//pt.y = yC;
 				
 				dNext = findNextPoint(pt, (dNext + 6) % 8);
 				xP = xC;  
@@ -315,8 +275,6 @@ public class ComputerAttributeBasedPerimeterExternal {
 				if ( !done ) {									
 					
 					sumgrad += imgGrad.getPixel( pt.x + xmin, pt.y + ymin );
-					
-					//System.out.printf( "x = %d , y = %d, level = %d\n" , pt.x+xmin, pt.y+ymin, img.getPixel( pt.x + xmin, pt.y + ymin ) );
 
 					if(dNext % 2 ==0)
 						perimeter += 1;

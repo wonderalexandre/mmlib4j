@@ -1,26 +1,16 @@
 package mmlib4j.representation.tree.tos;
 
-import java.awt.event.WindowAdapter;
-import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
-import sun.security.util.Length;
-import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.filtering.EdgeDetectors;
-import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.Image2D;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.utils.ImageBuilder;
-import mmlib4j.utils.ImageUtils;
-
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -126,7 +116,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	}
 	
 	/**
-	 * Constru��o da arvore de formas
+	 * Construcao da arvore de formas
 	 * @param pixels => pixels da imagem no formato de um vetor 1D, ou seja, (x,y) eh a posicao (x + y * width) do vetor  
 	 * @param imgWidth => largura da imagem
 	 * @param imgHeight => altura da imagem
@@ -917,7 +907,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		Arrays.sort( pixels );		
 		
 		// Calculated based on Thierry examples
-		this.median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;
+		this.median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;			
 		
 		int min, max;
 		int adjX[] =  null;
@@ -1098,27 +1088,90 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			5,2,2,5,
 			5,5,5,5*/
 			
-			1,1,1,1,1,1,
+			/*1,1,1,1,1,1,
 			1,0,0,3,3,1,
 			1,0,1,1,3,1,
 			1,0,0,3,3,1,
-			1,1,1,1,1,1
+			1,1,1,1,1,1*/
 			
 			/*5,5,5,
 			5,2,5,
 			5,5,5*/
 				
+			/*0,0,0,0,0,0,0,
+			0,7,7,7,7,7,0,
+			0,7,6,8,6,7,0,
+			0,7,6,8,6,7,0,
+			0,7,6,8,6,7,0,
+			0,7,7,7,7,7,0,
+			0,0,0,0,0,0,0,*/
+				
+			/*5,5,5,5,5,5,5,5,
+			5,3,3,3,3,3,3,5,
+			5,3,4,4,4,4,3,5,
+			5,3,4,0,0,4,3,5,
+			5,3,4,0,0,4,3,5,
+			5,3,4,4,4,4,3,5,
+			5,3,3,3,3,3,3,5,
+			5,5,5,5,5,5,5,5*/
+				
+				5,5,5,5,5,5,5,5,
+				5,3,3,3,3,3,3,5,
+				5,3,1,1,1,1,3,5,
+				5,3,1,0,0,1,3,5,
+				5,3,1,0,0,1,3,5,
+				5,3,1,1,1,1,3,5,
+				5,3,3,3,3,3,3,5,
+				5,5,5,5,5,5,5,5
+			
+			/*0,0,0,0,0,0,0,
+			0,4,4,4,7,7,7,
+			0,7,7,4,7,4,7,
+			0,7,4,4,7,4,7,
+			0,4,4,4,7,4,7,
+			0,7,7,4,7,7,7,
+			0,0,0,0,0,0,0*/
+		
 		};
 		
-		int width = 6;
+		int width = 8;
 		
-		int height = 5;
+		int height = 8;
+		
+		//
+		
+		double	volA=183,
+			   
+				areaA=46; // pai			
+		
+		
+		double  volB=3,
+				
+				areaB=3; // filho
+		
+		//
+		
+		double contour = 8;
+		
+		//
+		
+		double ni = 3;
+		
+		//		
+		
+		double var = (Math.pow( volA + volB, 2 )/(areaA + areaB)) - ((volA*volA)/areaA) - ((volB*volB)/areaB) + (ni*contour);
+		
+		System.out.println( "Energy=" + var );
 		
 		BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, example, width, height), false);
 		
+		System.out.println("\n**********************ARVORE***********************");
+		printTree(build.getRoot(), System.out, "<-");
+		System.out.println("\n***************************************************");
+		
 		//BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(input, false);
 		
-		System.out.println("imgU");
+		/*System.out.println("imgU");
 		
 		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
 			
@@ -1207,6 +1260,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		ImageBuilder.saveImage( img, new File("/home/gobber/img.png") );*/
 		
 		
+	}
+	
+	public static void printTree(NodeToS no, PrintStream out, String s){
+		out.printf(s + "[%3d; %3d]\n", no.level, no.getCanonicalPixels().size() );
+		if(no.children != null)
+			for(NodeToS son: no.children){
+				printTree(son, out, s + "------");
+			}
 	}
 
 }

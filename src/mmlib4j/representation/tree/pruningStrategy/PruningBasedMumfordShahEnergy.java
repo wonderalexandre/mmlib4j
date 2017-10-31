@@ -11,13 +11,73 @@ public class PruningBasedMumfordShahEnergy implements MappingStrategyOfPruning {
 	
 	private int minArea = 0;
 	
-	private int maxArea = 0;
+	private int maxArea = Integer.MAX_VALUE;
 	
-	private double minEnergy = 0;
+	private double maxEnergy = Double.MAX_VALUE;
 	
-	private double maxEnergy;
+	private double minEnergy = Double.MIN_VALUE;
+
+	public PruningBasedMumfordShahEnergy( MorphologicalTreeFiltering tree, double minEnergy){
+		
+		this.tree = tree;
+		
+		tree.loadAttribute( Attribute.MUMFORD_SHA_ENERGY );
+		
+		this.minEnergy = minEnergy;
+		
+	}
 	
-	public PruningBasedMumfordShahEnergy( MorphologicalTreeFiltering tree, int delta ) {
+	public PruningBasedMumfordShahEnergy( MorphologicalTreeFiltering tree, int minEnergy, int maxEnergy ) {
+		
+		this.tree = tree;
+		
+		tree.loadAttribute( Attribute.MUMFORD_SHA_ENERGY );
+		
+		/*double max = Double.MIN_VALUE;
+		
+		for( NodeCT node : ( ( ComponentTree ) tree ).getListNodes() ) {
+			
+			double energy = node.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY );			
+			
+			if( energy > max ) {
+				
+				max = energy;
+				
+			}
+			
+		}*/
+		
+		this.minEnergy = minEnergy;
+		
+		this.maxEnergy = maxEnergy;
+		
+	}
+	
+	public PruningBasedMumfordShahEnergy( MorphologicalTreeFiltering tree, int minEnergy ) {
+		
+		this.tree = tree;
+		
+		tree.loadAttribute( Attribute.MUMFORD_SHA_ENERGY );
+		
+		/*double max = Double.MIN_VALUE;
+		
+		for( NodeCT node : ( ( ComponentTree ) tree ).getListNodes() ) {
+			
+			double energy = node.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY );			
+			
+			if( energy > max ) {
+				
+				max = energy;
+				
+			}
+			
+		}*/
+		
+		this.minEnergy = minEnergy;
+		
+	}
+	
+	/*public PruningBasedMumfordShahEnergy( MorphologicalTreeFiltering tree, int delta, int maxDelta ) {
 		
 		this.tree = tree;
 		
@@ -37,9 +97,9 @@ public class PruningBasedMumfordShahEnergy implements MappingStrategyOfPruning {
 			
 		}
 		
-		this.maxEnergy = delta * max / 500;
+		this.maxEnergy = delta * max / maxDelta;
 		
-	}
+	}*/
 	
 	public void setParameters( int minArea, int maxArea ) {
 		
@@ -47,12 +107,12 @@ public class PruningBasedMumfordShahEnergy implements MappingStrategyOfPruning {
 		
 		this.maxArea = maxArea;
 		
+		//this.delta = delta;
+		
 	}
 
 	@Override
-	public boolean[] getMappingSelectedNodes() {
-		
-		System.out.println( "in energy " + maxEnergy );
+	public boolean[] getMappingSelectedNodes() {		
 		
 		boolean [] mumfordsha = new boolean[ tree.getNumNode() ];
 		
@@ -62,7 +122,7 @@ public class PruningBasedMumfordShahEnergy implements MappingStrategyOfPruning {
 			
 			double area = node.getAttributeValue( Attribute.AREA );
 			
-			if( energy > maxEnergy && ( minArea < area && area < maxArea )  ) {
+			if( minEnergy < energy && energy < maxEnergy && ( minArea < area && area < maxArea )  ) {
 				
 				mumfordsha[ node.getId() ] = true;
 				
