@@ -212,7 +212,7 @@ public class ComputerFunctionalVariational {
 		
 		while( !queue.isEmpty() ) {
 			
-			int id = queue.remove();		
+			int id = queue.remove();
 			
 			NodeCT node = ( NodeCT ) mapNodes[ id ];		
 				

@@ -1138,8 +1138,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		int height = 8;
 		
-		//
-		
+		/*
 		double	volA=183,
 			   
 				areaA=46; // pai			
@@ -1149,116 +1148,19 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				
 				areaB=3; // filho
 		
-		//
-		
 		double contour = 8;
-		
-		//
 		
 		double ni = 3;
 		
-		//		
-		
 		double var = (Math.pow( volA + volB, 2 )/(areaA + areaB)) - ((volA*volA)/areaA) - ((volB*volB)/areaB) + (ni*contour);
 		
-		System.out.println( "Energy=" + var );
+		System.out.println( "Energy=" + var );*/
 		
 		BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, example, width, height), false);
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(build.getRoot(), System.out, "<-");
 		System.out.println("\n***************************************************");
-		
-		//BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(input, false);
-		
-		/*System.out.println("imgU");
-		
-		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
-			
-			for( int x = 0 ; x < build.interpWidth ; x++ ) {
-				
-				int p = ByteImage.toInt( build.imgU[ x + y * build.interpWidth ] );
-				
-				if( x%2==1 && y%2==1 ) {
-					
-					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
-				
-				}else{
-					
-					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
-					
-				}
-				
-			}
-			
-			System.out.println();
-			
-		}
-		
-		System.out.println("parent");
-		
-		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
-			
-			for( int x = 0 ; x < build.interpWidth ; x++ ) {
-				
-				int p = build.parent[ x + y * build.interpWidth ];
-				
-				if( x%2==1 && y%2==1 ) {
-					
-					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
-				
-				}else{
-					
-					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
-					
-				}
-				
-			}
-			
-			System.out.println();
-			
-		}
-		
-		System.out.println( "contour" );
-		
-		for( int y = 0 ;  y < build.interpHeight ;  y++ ) {
-			
-			for( int x = 0 ; x < build.interpWidth ; x++ ) {
-				
-				int p = build.contourLength[ x + y * build.interpWidth ];
-				
-				if( x%2==1 && y%2==1 ) {
-					
-					System.out.printf( "(%3d,%3d) ", x + y * build.interpWidth, p );
-				
-				}else{
-					
-					System.out.printf( "[%3d,%3d] ", x + y * build.interpWidth, p );
-					
-				}
-				
-			}
-			
-			System.out.println();
-			
-		}
-		
-		/*GrayScaleImage img = ImageFactory.createGrayScaleImage( ImageFactory.DEPTH_8BITS, 6 , 5 );
-		
-		byte [] pixels = new byte [] {
-				
-			1,1,1,1,1,1,
-			1,0,0,3,3,1,
-			1,0,1,1,3,1,
-			1,0,0,3,3,1,
-			1,1,1,1,1,1
-				
-		};
-		
-		img.setPixels(6, 5, pixels);
-		
-		ImageBuilder.saveImage( img, new File("/home/gobber/img.png") );*/
-		
 		
 	}
 	
