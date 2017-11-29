@@ -12,6 +12,8 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.MorphologicalTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -22,7 +24,7 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ComponentTree {
+public class ComponentTree implements MorphologicalTree{
 	protected NodeCT root;
 	protected NodeCT[] map;
 	protected HashSet<NodeCT> listNode;
@@ -53,7 +55,7 @@ public class ComponentTree {
 		this.imgInput = img;
 		this.isMaxtree = isMaxtree;
 		this.adj = adj;
-		this.builder = new BuilderComponentTreeByUnionFind(img, adj, isMaxtree);
+		this.builder = new BuilderComponentTreeByUnionFind(img, adj, isMaxtree );
 		//this.builder = new BuilderComponentTreeByRegionGrowing(img, adj, isMaxtree);
 		this.root = builder.getRoot();
 		this.numNode = builder.getNunNode();
@@ -149,7 +151,9 @@ public class ComponentTree {
 	
 	/* Add by gobber */	
 	
-	public void mergeFather( NodeCT node ) {
+	public void mergeFather( NodeLevelSets nodeG ) {
+		
+		NodeCT node = (NodeCT) nodeG;
 		
 		if( node != root ) {			
 			
@@ -161,8 +165,7 @@ public class ComponentTree {
 			
 			for( int p: node.getCanonicalPixels() ) {
 				
-				parent.addPixel( p );	
-				
+				parent.addPixel( p );				
 				map[ p ] = parent;
 				
 			}
@@ -504,6 +507,5 @@ public class ComponentTree {
 	public int getValueMax() {
 		return imgInput.maxValue();
 	}
-
 	
 }

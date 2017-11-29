@@ -8,7 +8,10 @@ import java.util.LinkedList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.MorphologicalTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -18,7 +21,7 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class TreeOfShape{
+public class TreeOfShape implements MorphologicalTree {
 	protected NodeToS root;
 	protected int width;
 	protected int height;
@@ -34,7 +37,6 @@ public class TreeOfShape{
 	protected int sup = 255;
 	protected int inf = 0;
 	protected boolean isExtendedTree;
-	
 	
 	public TreeOfShape(GrayScaleImage img){
 		this(img, -1, -1);
@@ -59,8 +61,8 @@ public class TreeOfShape{
 		this.width = img.getWidth();
 		this.height = img.getHeight();
 		this.imgInput = img;
-		//this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true);
-		this.build = new BuilderTreeOfShapeByUnionFindParallel( img, true );
+		this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true);
+		//this.build = new BuilderTreeOfShapeByUnionFindParallel( img, true );
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
 		computerInforTree(this.root, 0);
@@ -326,17 +328,23 @@ public class TreeOfShape{
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this.root);
+		
 		while(!fifo.isEmpty()){
+			
 			NodeToS no = fifo.dequeue();
+			
 			for(int p: no.getCanonicalPixels()){
+				
 				imgOut.setPixel(p, no.level);
+				
 			}
 			
 			for(NodeToS son: no.children){
 				fifo.enqueue(son);	 
-			}
+			}			
 			
 		}
+		
 		return imgOut;
 	}
 	
@@ -359,8 +367,46 @@ public class TreeOfShape{
 		return imgOut;
 	}
 	
+	/* Add by gobber */	
 	
-	
+	public void mergeFather( NodeLevelSets nodeG ) {
+		
+		NodeToS node = ( NodeToS ) nodeG;
+		
+		if( node != root ) {			
+			
+			NodeToS parent = node.parent;
+			parent.children.remove( node );
+			
+			listNode.remove( node );
+			numNode--;
+			
+			for( int p: node.getCanonicalPixels() ) {
+				
+				parent.addPixel( p );				
+				map[ p ] = parent;
+				
+			}
+			
+			for( NodeToS child : node.getChildren() ) {
+				
+				parent.children.add( child );
+				
+				child.setParent( parent );			
+				
+				for( int p: child.getCanonicalPixels() ) {												
+					
+					map[ p ] = parent;
+					
+				}
+			
+			}
+			
+			node = null;
+			
+		}
+		
+	}	
 	
 	public static void prunning(TreeOfShape tree, NodeToS node){
 		if(node != tree.root){

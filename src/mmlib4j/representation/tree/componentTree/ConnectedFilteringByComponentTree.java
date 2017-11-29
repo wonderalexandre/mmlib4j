@@ -112,9 +112,6 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.MUMFORD_SHA_ENERGY:
 				computerXuAttribute();
 				break;
-				
-			/*case Attribute.FUNCTIONAL_VARIATIONAL:				
-				break;*/
 			
 		}
 	}
@@ -176,10 +173,10 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}		
 	}
 	
-	public void computerFunctionalVariacionalAttribute( double scale ) {	
+	public void computerFunctionalVariacionalAttribute( double scale, boolean useHeuristic ) {	
 		computerAttributeBasedPerimeterExternal();		
 		if( !hasComputerFunctionalVariacionalAttribute ) {								
-			new ComputerFunctionalVariational( builder, scale );			
+			new ComputerFunctionalVariational( builder, scale, useHeuristic );			
 			hasComputerFunctionalVariacionalAttribute = true;			
 		}		
 	}

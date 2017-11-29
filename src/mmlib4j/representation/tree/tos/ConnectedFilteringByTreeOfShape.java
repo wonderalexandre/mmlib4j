@@ -14,6 +14,7 @@ import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
+import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerXuAttribute;
 import mmlib4j.utils.Utils;
@@ -30,6 +31,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	private boolean hasComputerAttributeBasedPerimeterExternal = false;
 	private boolean hasComputerCentralMomentAttribute = false;
 	private boolean hasComputerDistanceTransform = false;
+	private boolean hasComputerFunctionalVariacionalAttribute = false;
 	
 	private boolean hasComputerXuAttribute = false;
 	
@@ -84,15 +86,19 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		}
 	}
 	
-	public void ComputerXuAttribute(){
-		
-		if( !hasComputerXuAttribute ) {			
-			
-			new ComputerXuAttribute( build ).addAttributeInNodesToS( getListNodes() );
-			
-			hasComputerXuAttribute = true;
-			
+	public void computerXuAttribute(){		
+		if( !hasComputerXuAttribute ) {						
+			new ComputerXuAttribute( build ).addAttributeInNodesToS( getListNodes() );			
+			hasComputerXuAttribute = true;			
 		}
+	}
+	
+	public void computerFunctionalVariacionalAttribute( double scale, boolean useHeuristic ) {	
+		computerAttributeBasedPerimeterExternal();		
+		if( !hasComputerFunctionalVariacionalAttribute ) {								
+			new ComputerFunctionalVariational( build, scale, useHeuristic );			
+			hasComputerFunctionalVariacionalAttribute = true;			
+		}		
 	}
 
 	public void loadAttribute(int attr){
@@ -124,20 +130,17 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 				computerCentralMomentAttribute();
 				break;
 			
+			case Attribute.SUM_GRAD:
 			case Attribute.PERIMETER_EXTERNAL:
 			case Attribute.CIRCULARITY:
 			case Attribute.COMPACTNESS:
 			case Attribute.ELONGATION:
 				computerAttributeBasedPerimeterExternal();
 				break;
-						
-			case Attribute.SUM_GRAD:
-			case Attribute.CONTOUR_LENGTH:		
-			case Attribute.FACE_2_AREA:
-			case Attribute.FACE_2_VOLUME:	
+										
 			case Attribute.MUMFORD_SHA_ENERGY:
 			case Attribute.SUM_GRAD_CONTOUR:
-				ComputerXuAttribute();
+				computerXuAttribute();
 				break;
 				
 		}

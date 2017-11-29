@@ -12,12 +12,12 @@ import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.Pixel;
 import mmlib4j.utils.Utils;
 
-
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves
  *
  */
+
 public class ComputerAttributeBasedPerimeterExternal {
 
 	private ThreadPoolExecutor pool;	
@@ -101,7 +101,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 				}
 
 			} else {
-				
+			
 				new ThreadNodeCTPerimeter( node, perimeters[ node.getId() ], sumGrad[ node.getId() ] ).run();
 				
 			}
@@ -200,7 +200,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 				ymin = node.getYmin();
 				imgBin = new boolean[ xmax-xmin+1 ][ ymax-ymin+1 ];			
 				
-				NodeToS n = ( NodeToS ) node;
+				NodeToS n = ( NodeToS ) node;	
 				
 				for( int p: n.getPixelsOfCC() ) {
 					

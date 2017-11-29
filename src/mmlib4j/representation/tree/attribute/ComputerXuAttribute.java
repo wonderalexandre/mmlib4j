@@ -153,15 +153,7 @@ public class ComputerXuAttribute {
 		
 		rootTree = treeOfShape.getRoot();
 		
-		this.numNode = treeOfShape.getNumNode();	
-		
-		/*HashSet<NodeToS> n = treeOfShape.getListNodes();			
-		
-		for( NodeToS node : n ) {						
-			
-			System.out.println( "Id : " + node.getId() );
-			
-		}*/	
+		this.numNode = treeOfShape.getNumNode();
 		
 		imgGrad = EdgeDetectors.sobel( img );
 		
@@ -218,18 +210,6 @@ public class ComputerXuAttribute {
 		nodes = new NodeLevelSets[ numNode ];
 						
 		preProcessing( rootTree );	
-		
-		/*for( int i = 0 ; i < Ch.length; i++ ) {
-			
-			if( Ch[ i ] != null ) {
-				
-				System.out.print( "Id : " + i + " " );
-			
-				Ch[ i ].printChildren();
-			
-			}
-			
-		}*/
 		
 		/* Remove accumulated information in attributes based on region */
 		

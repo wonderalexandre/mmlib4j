@@ -20,8 +20,7 @@ public interface MorphologicalTreeFiltering {
 	public final static int PRUNING_GRADUAL_TRANSITION = 6;
 	
 	public final static int RULE_DIRECT = 0;
-	//public final static int RULE_SUBTRACTIVE = 1;
-	
+	//public final static int RULE_SUBTRACTIVE = 1;	
 	
 	public GrayScaleImage filteringByPruning(double attributeValue, int type);
 	
