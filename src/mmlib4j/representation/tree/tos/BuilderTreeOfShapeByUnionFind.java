@@ -112,7 +112,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		else
 			createTree( parent );
 		
-	//	postProcessing( getRoot() );
+		postProcessing( getRoot() );
 	
 		// this.img = getImageInterpolated();
 		// this.imgWidth = img.getWidth();
@@ -423,7 +423,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				
 				parent[ p ] = parent[ q ];
 				
-			}
+			}			
 			
 		}
 		
@@ -714,7 +714,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			// Get coords to set grid pixel value
 			interpolation[pT][0] = interpolation[pT][1] = ByteImage.toByte( img.getPixel( p ) );
 		}
-		Arrays.sort( pixels );		
+		Arrays.sort( pixels );
 		
 		// Calculated based on Thierry examples
 		this.median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;			
@@ -794,14 +794,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			5,2,2,1,
 			5,3,3,1,*/
 							
-			5,5,5,5,5,5,5,5,
+			/*5,5,5,5,5,5,5,5,
 			5,3,3,3,3,3,3,5,
 			5,3,1,1,1,1,3,5,
 			5,3,1,0,0,1,3,5,
 			5,3,1,0,0,1,3,5,
 			5,3,1,1,1,1,3,5,
 			5,3,3,3,3,3,3,5,
-			5,5,5,5,5,5,5,5
+			5,5,5,5,5,5,5,5*/
 			
 			/*0,0,0,0,0,0,0,
 			0,4,4,4,7,7,7,
@@ -811,17 +811,20 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			0,7,7,4,7,7,7,
 			0,0,0,0,0,0,0*/
 				
-				/*1,1,1,1,1,1,1,
-				1,0,0,3,3,3,1,
-				1,0,1,1,2,2,1,
-				1,0,0,3,3,3,1,
-				1,1,1,1,1,1,1*/				
+			/*1,1,1,1,1,1,1,
+			1,0,0,3,3,3,1,
+			1,0,1,1,2,2,1,
+			1,0,0,3,3,3,1,
+			1,1,1,1,1,1,1*/				
 		
+			5,5,5,
+			3,8,8,
+			2,3,8
 		};
 		
-		int width = 8;
+		int width = 3;
 		
-		int height = 8;
+		int height = 3;
 		
 		/*
 		double	volA=183,
@@ -858,14 +861,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		System.out.println();
 			
-		//System.out.println("\n**********************ARVORE***********************");
-		//printTree(build.getRoot(), System.out, "<-");
-		//System.out.println("\n***************************************************");
+		System.out.println("\n**********************ARVORE***********************");
+		printTree(build.getRoot(), System.out, "<-");
+		System.out.println("\n***************************************************");
 		
 	}
 	
 	public static void printTree(NodeToS no, PrintStream out, String s){
-		out.printf(s + "[%3d; %3d]\n", no.level, no.getCanonicalPixels().size() );
+		out.printf(s + "[%3d; %3f]\n", no.level, no.getAttributeValue( Attribute.PERIMETER_EXTERNAL ) );
 		if(no.children != null)
 			for(NodeToS son: no.children){
 				printTree(son, out, s + "------");

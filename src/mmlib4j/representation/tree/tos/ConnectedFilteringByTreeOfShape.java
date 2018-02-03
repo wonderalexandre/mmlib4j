@@ -37,6 +37,8 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	
 	private ComputerDistanceTransform dt = null;
 	
+	private ComputerFunctionalVariational fv = null;
+	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img){
 		super(img, -1, -1);
 		computerBasicAttribute();
@@ -86,19 +88,23 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		}
 	}
 	
-	public void computerXuAttribute(){		
+	public void computerXuAttribute( boolean useHeuristic ){		
+		computerAttributeBasedPerimeterExternal();
 		if( !hasComputerXuAttribute ) {						
-			new ComputerXuAttribute( build ).addAttributeInNodesToS( getListNodes() );			
+			new ComputerXuAttribute( this.getClone(), useHeuristic ).addAttributeInNodesToS( getListNodes() );			
 			hasComputerXuAttribute = true;			
 		}
 	}
 	
-	public void computerFunctionalVariacionalAttribute( double scale, boolean useHeuristic ) {	
+	public ComputerFunctionalVariational computerFunctionalVariacionalAttribute( double scale, boolean useHeuristic ) {	
 		computerAttributeBasedPerimeterExternal();		
 		if( !hasComputerFunctionalVariacionalAttribute ) {								
-			new ComputerFunctionalVariational( build, scale, useHeuristic );			
+			fv = new ComputerFunctionalVariational( this.getClone(), scale, useHeuristic );
+			fv.addAttributeInNodesToS( getListNodes() );
 			hasComputerFunctionalVariacionalAttribute = true;			
 		}		
+		
+		return fv;
 	}
 
 	public void loadAttribute(int attr){
@@ -135,13 +141,13 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			case Attribute.CIRCULARITY:
 			case Attribute.COMPACTNESS:
 			case Attribute.ELONGATION:
+			case Attribute.SUM_GRAD_CONTOUR:
 				computerAttributeBasedPerimeterExternal();
 				break;
 										
-			case Attribute.MUMFORD_SHA_ENERGY:
-			case Attribute.SUM_GRAD_CONTOUR:
-				computerXuAttribute();
-				break;
+	//		case Attribute.MUMFORD_SHA_ENERGY:
+		//		computerXuAttribute();
+			//	break;
 				
 		}
 	}

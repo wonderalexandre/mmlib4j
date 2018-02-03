@@ -174,15 +174,11 @@ public class ComponentTree implements MorphologicalTree{
 			
 				parent.addChildren( child );
 				
-				child.setParent( parent );			
-				
-				for( int p: child.getCanonicalPixels() ) {												
-					
-					map[ p ] = parent;
-					
-				}
+				child.setParent( parent );
 			
 			}
+			
+			/* update attributes */						
 			
 			node = null;
 			

@@ -10,6 +10,7 @@ import mmlib4j.images.Image2D;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
+import mmlib4j.utils.Utils;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -81,7 +82,9 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
 			}
 		}
 		long tf = System.currentTimeMillis();
-		System.out.println("Tempo de execucao [reconstruction morphological - L.Vincent(1993)]  "+ ((tf - ti) /1000.0)  + "s");
+		if( Utils.debug ){
+			System.out.println("Tempo de execucao [reconstruction morphological - L.Vincent(1993)]  "+ ((tf - ti) /1000.0)  + "s");
+		}
 		return imgF;
 	}
 	

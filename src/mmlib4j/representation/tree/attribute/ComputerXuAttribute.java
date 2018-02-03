@@ -8,13 +8,19 @@ import java.util.List;
 import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.filtering.EdgeDetectors;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.BuilderComponentTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
+import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.BuilderTreeOfShape;
+import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
+import mmlib4j.utils.AdjacencyRelation;
+import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
 /**
@@ -29,109 +35,49 @@ import mmlib4j.utils.Utils;
  * 
  */
 
-public class ComputerXuAttribute {	
-	
-	
-	private final static int NIL = -1;
-	
-	private final static int px[] = new int[]{1, 0,-1, 0};
-	
-  	private final static int py[] = new int[]{0, 1, 0,-1};
+public class ComputerXuAttribute {
   	
-  	
-  	/* Attributes */
-  	
-	private Attribute contourLength[];
-	
-	private Attribute sumGrad[];
-	
-	private Attribute area[];
-	
-	private Attribute volume[];
+  	/* Attribute */
 	
 	private Attribute mumfordShaEnergy[];
-	
-	private Attribute sumGradContour[];
-	
-	
-//	private int appear[];
-	
-//	private int vanish[];
-	
-	
-	private GrayScaleImage img;
-	
-	private int is_boundary[];	
 	
 	private NodeLevelSets rootTree;
 	
 	private int numNode;
 	
-	private GrayScaleImage imgGrad;
+	private double maxEnergy = Double.MIN_VALUE;
 	
-	
-	/* Auxiliary structures */
-	
-	private double areaR[];
-	
-	private double volumeR[];
-	
+	private boolean useHeuristic = false;
 		
 	/* Nodes */
 	
-	private NodeLevelSets [] nodes;
+	private NodeLevelSets [] mapNodes;
 	
+	private double areaR[];
+	
+	private double volumeR[];	
 		
 	/* Children */
 	
 	private Children [] Ch;
-	
-	
-	public ComputerXuAttribute( BuilderComponentTree builder ) {
+		
+	public ComputerXuAttribute( ComponentTree componentTree, boolean useHeuristic ) {
 		
 		long ti = System.currentTimeMillis();				
 		
-		ComponentTree componentTree = new ComponentTree( builder.getClone() );		
-		
-		this.img = componentTree.getInputImage();
+		//ComponentTree componentTree = new ComponentTree( builder.getClone() );
 		
 		rootTree = componentTree.getRoot();
 		
 		this.numNode = componentTree.getNumNode();
 		
-		HashSet<NodeCT> hashSet = builder.getListNodes();
+		this.useHeuristic = useHeuristic;
 		
-		contourLength = new Attribute[ numNode ];
-		
-		sumGrad = new Attribute[ numNode ];
-		
-		area = new Attribute[ numNode ];
-		
-		volume = new Attribute[ numNode ];		
-		
-		for( NodeCT node : hashSet ) {
-			
-			contourLength[ node.getId() ] = node.getAttribute( Attribute.PERIMETER_EXTERNAL ); 		
-			
-			sumGrad[ node.getId() ] = node.getAttribute( Attribute.SUM_GRAD );
-			
-			area[ node.getId() ] = node.getAttribute( Attribute.AREA );
-			
-			volume[ node.getId() ] = node.getAttribute( Attribute.VOLUME );
-			
-		}
-		
-		run();
+		run( componentTree );
 		
 		Ch = null;
 		
-		nodes = null;
-		
-		areaR = null;
-		
-		volumeR = null;
-		
-		is_boundary = null;
+		mapNodes = null;
 		
 		if( Utils.debug ) {
 			
@@ -143,47 +89,19 @@ public class ComputerXuAttribute {
 		
 	}
 	
-	public ComputerXuAttribute( BuilderTreeOfShape builder ) {
+	public ComputerXuAttribute( TreeOfShape treeOfShape, boolean useHeuristic ) {
 		
 		long ti = System.currentTimeMillis();
 		
-		TreeOfShape treeOfShape = new TreeOfShape( builder.getClone() );		
-		
-		this.img = treeOfShape.getInputImage();				
+		//TreeOfShape treeOfShape = new TreeOfShape( builder.getClone() );		
 		
 		rootTree = treeOfShape.getRoot();
 		
 		this.numNode = treeOfShape.getNumNode();
 		
-		imgGrad = EdgeDetectors.sobel( img );
+		this.useHeuristic = useHeuristic;
 		
-		contourLength = new Attribute[ numNode ];				
-		
-		sumGrad = new Attribute[ numNode ];
-		
-		area = new Attribute[ numNode ];
-		
-		volume = new Attribute[ numNode ];		
-				 
-		/*appear = new int[ img.getWidth() * img.getHeight() ];
-		
-		vanish = new int[ img.getWidth() * img.getHeight() ];*/		
-		
-		is_boundary = new int[ img.getWidth() * img.getHeight() ];		
-		
-		for( int i = 0 ; i < is_boundary.length ; i++ ) {
-			
-			is_boundary[ i ] = NIL;
-			
-			/*appear[ i ] = NIL;
-			
-			vanish[ i ] = NIL;*/
-			
-		}			
-		
-		computerAttribute( rootTree );
-		
-		run();
+		run( treeOfShape );
 		
 		if( Utils.debug ) {
 			
@@ -195,29 +113,23 @@ public class ComputerXuAttribute {
 		
 	}
 	
-	private void run() {			
+	private void run( MorphologicalTree tree ) {			
 		
-		/* Pre-processing Energy calculation */
-				
+		/* Pre-processing Energy calculation */	
+		
 		areaR = new double[ numNode ];
 		
-		volumeR = new double[ numNode ];		
+		volumeR = new double[ numNode ];
 		
-		//Ch = new ArrayList[ numNode ];			
+		getChildrenAttribute( rootTree );
 				
 		Ch = new Children[ numNode ];
 		
-		nodes = new NodeLevelSets[ numNode ];
+		mapNodes = new NodeLevelSets[ numNode ];
 						
-		preProcessing( rootTree );	
-		
-		/* Remove accumulated information in attributes based on region */
-		
-		removeChildrenAttribute( rootTree );	
+		preProcessing( rootTree );
 		
 		/* Energy calculation */
-		
-		sumGradContour = new Attribute[ numNode ];
 		
 		mumfordShaEnergy = new Attribute[ numNode ];			
 		
@@ -225,39 +137,55 @@ public class ComputerXuAttribute {
 		
 		/* Sort nodes in increasing gradient contour magnitude sum order and calculate energy attribute  */		
 		
-		calculateEnergy( sortNodes( numNode ) );
+		if( useHeuristic ) {
+			
+			calculateEnergyByHeuristic( sortNodes( numNode ) );
+		
+		} else {
+		
+			calculateEnergy( tree );
+			
+		}
 		
 	}
 	
-	private void prepareEnergy( NodeLevelSets node ) {
+	private void getChildrenAttribute( NodeLevelSets node ) {
 		
 		List<NodeLevelSets> children = node.getChildren();		
+			
+		areaR[ node.getId() ] = node.getAttributeValue( Attribute.AREA );
 		
-		int id = node.getId(); 
+		volumeR[ node.getId() ] = node.getAttributeValue( Attribute.VOLUME );		
+		
+		for( NodeLevelSets son : children ) {
+			
+			getChildrenAttribute( son );
+			
+		}
+		
+	}
+
+	private void prepareEnergy( NodeLevelSets node ) {
+		
+		List<NodeLevelSets> children = node.getChildren(); 
 		
 		/* Allocation */
 		
-		sumGradContour[ id ] = new Attribute( Attribute.SUM_GRAD_CONTOUR , 0 );
-		
-		mumfordShaEnergy[ id ] = new Attribute( Attribute.MUMFORD_SHA_ENERGY , 0 );
+		mumfordShaEnergy[ node.getId() ] = new Attribute( Attribute.MUMFORD_SHA_ENERGY , 0 );
 				
 		/* Calculation */
 		
-		sumGradContour[ id ].value = sumGrad[ id ].value / contourLength[ id ].value;
+		NodeLevelSets parent = node.getParent();	
 		
-		NodeLevelSets nodep = node.getParent();	
-		
-		if( nodep != null ) {
-		
-			int idp = nodep.getId();	
+		if( parent != null ) {
 			
-			double p1 = pow2( volumeR[ id ] ) / areaR[ id ];
+			mumfordShaEnergy[ node.getId() ].value = calculateFuncional( node );
 			
-			double p2 = pow2( volumeR[ idp ] ) / areaR[ idp ];
-			
-			double p3 = pow2( volumeR[ id ] + volumeR[ idp ] ) / ( areaR[ id ] + areaR[ idp ] );
-			
-			mumfordShaEnergy[ id ].value = ( p1 + p2 - p3 ) / contourLength[ id ].value;
+			if( maxEnergy < mumfordShaEnergy[ node.getId() ].value ) {
+				
+				maxEnergy = mumfordShaEnergy[ node.getId() ].value;
+				
+			}
 			
 		}
 		
@@ -274,48 +202,55 @@ public class ComputerXuAttribute {
 		return v*v;
 		
 	}
-
-	private void removeChildrenAttribute( NodeLevelSets node ) {
-				
-		List<NodeLevelSets> children = node.getChildren();		
+	
+	private double calculateFuncional( NodeLevelSets node ) { 
 		
-		if( node.getParent() != null && node.getParent().getId() != 0 ) {
+		NodeLevelSets parent = node.getParent();
 		
-			areaR[ node.getParent().getId() ] -= area[ node.getId() ].value;
+		double p1 = pow2( volumeR[ node.getId() ] ) / areaR[ node.getId() ];
 		
-			volumeR[ node.getParent().getId() ] -= volume[ node.getId() ].value;
+		double p2 = pow2( volumeR[ parent.getId() ] ) / areaR[ parent.getId() ];
 		
-		}
-			
-		for( NodeLevelSets son : children ) {
-			
-			removeChildrenAttribute( son );
-			
-		}
+		double p3 = pow2( volumeR[ node.getId() ] + volumeR[ parent.getId() ] ) / ( areaR[ node.getId() ] + areaR[ parent.getId() ] );
+		
+		return ( p1 + p2 - p3 ) / node.getAttributeValue( Attribute.PERIMETER_EXTERNAL );
 		
 	}
 	
+	
 	private void preProcessing( NodeLevelSets node ) {
-				
-		List<NodeLevelSets> children = node.getChildren();				
 		
-		areaR[ node.getId() ] = area[ node.getId() ].value;
+		List<NodeLevelSets> children = node.getChildren();	
 		
-		volumeR[ node.getId() ] = volume[ node.getId() ].value;	
+		NodeLevelSets parent = node.getParent();
 				
-		if( node.getParent() != null ) {
+		if( parent != null ) {
 			
-			if( Ch[ node.getParent().getId() ] == null ) {
+			if( node.getParent() != rootTree ) {
 				
-				Ch[ node.getParent().getId() ] = new Children( children.size() );
+				areaR[ node.getParent().getId() ] -= areaR[ node.getId() ];
+				
+				volumeR[ node.getParent().getId() ] -= volumeR[ node.getId() ];
+			
+				/*parent.getAttribute( Attribute.AREA )
+					  .setValue( parent.getAttributeValue(Attribute.AREA) - node.getAttributeValue(Attribute.AREA) );
+			
+				parent.getAttribute( Attribute.VOLUME )
+				      .setValue( parent.getAttributeValue(Attribute.VOLUME) - node.getAttributeValue(Attribute.VOLUME) );*/
+			
+			}
+			
+			if( Ch[ parent.getId() ] == null ) {
+				
+				Ch[ parent.getId() ] = new Children( children.size() );
 				
 			}			
 			
-			Ch[ node.getParent().getId() ].insert( node.getId() );	
+			Ch[ parent.getId() ].insert( node.getId() );	
 			
 		}			
 		
-		nodes[ node.getId() ] = node;			
+		mapNodes[ node.getId() ] = node;			
 		
 		for( NodeLevelSets son : children ) {
 			
@@ -325,129 +260,49 @@ public class ComputerXuAttribute {
 		
 	}
 	
-
-	public void computerAttribute( NodeLevelSets node ) {
-		
-		List<NodeLevelSets> children = node.getChildren();
-			
-		for( NodeLevelSets son : children ) {
-			
-			computerAttribute( son );
-			
-		}
-				
-		contourLength[ node.getId() ] = new Attribute( Attribute.CONTOUR_LENGTH, 0 );
-		
-		sumGrad[ node.getId() ] = new Attribute( Attribute.SUM_GRAD, 0 );
-		
-		area[ node.getId() ] = new Attribute( Attribute.FACE_2_AREA, 0 );
-		
-		volume[ node.getId() ] = new Attribute( Attribute.FACE_2_VOLUME, 0 );					
-		
-		if( node instanceof NodeToS ) {
-				
-			NodeToS n = ( NodeToS ) node;
-			
-			for( int p: n.getPixelsOfCC() ) {	
-						
-				if( isFace2( p ) ) {						
-					
-					area[ node.getId() ].value++;
-					
-					volume[ node.getId() ].value += img.getPixel( p );															
-					
-					for( int e : getBoundaries( p ) ) {
-													
-						if( is_boundary[ e ] != node.getId() ) {
-								
-							is_boundary[ e ] = node.getId();
-								
-							contourLength[ node.getId() ].value++;
-							
-							sumGrad[ node.getId() ].value += imgGrad.getPixel( e );							
-							
-						/*	if( appear[ e ] != NIL && vanish[ e ] == NIL ) {
-								
-								vanish[ e ] = p; 
-								
-							}
-							
-							
-							if( appear[ e ] == NIL ) {
-							
-								appear[ e ] = p; 
-							
-							}*/
-															
-						} else {
-														
-							is_boundary[ e ] = NIL;
-								
-							contourLength[ node.getId() ].value--;
-							
-							sumGrad[ node.getId() ].value -= imgGrad.getPixel( e );							
-							
-						/*	if( vanish[ e ] == NIL ) {
-							
-								vanish[ e ] = p;
-							
-							}*/
-															
-						}
-						
-					}
-						
-				}
-				
-			}	
-			
-		}					
-		
-	}
-	
-	private void calculateEnergy( int [] Rt ) {
+	private void calculateEnergyByHeuristic( int [] Rt ) {
 				
 		double mumfordShaEnergyTmp;		
 		
 		for( int i = 0 ; i < Rt.length ; i++ ) {			
-			
+						
 			int id = Rt[ i ];							
 			
-			NodeLevelSets t = nodes[ id ];
+			NodeLevelSets node = mapNodes[ id ];
 			
-			NodeLevelSets tp = nodes[ id ].getParent();		
+			NodeLevelSets parent = mapNodes[ id ].getParent();		
 			
-			double p1 = pow2( volumeR[ t.getId() ] ) / areaR[ t.getId() ];
+			mumfordShaEnergyTmp = calculateFuncional( node );
 			
-			double p2 = pow2( volumeR[ tp.getId() ] ) / areaR[ tp.getId() ];
-			
-			double p3 = pow2( volumeR[ t.getId() ] + volumeR[ tp.getId() ] ) / ( areaR[ t.getId() ] + areaR[ tp.getId() ] );
-			
-			mumfordShaEnergyTmp = ( p1 + p2 - p3 ) / contourLength[ t.getId() ].value;
-			
-			if( mumfordShaEnergyTmp > mumfordShaEnergy[ t.getId() ].value ) {
+			if( mumfordShaEnergyTmp > mumfordShaEnergy[ node.getId() ].value ) {
 				
-				mumfordShaEnergy[ t.getId() ].value = mumfordShaEnergyTmp;
+				mumfordShaEnergy[ node.getId() ].value = mumfordShaEnergyTmp;
 				
 			}											
 			
-			Ch[ tp.getId() ].remove( t.getId() );
+			Ch[ parent.getId() ].remove( node.getId() );
 			
-			if( Ch[ t.getId() ] != null ) {
+			if( Ch[ node.getId() ] != null ) {
 			
-				for( int tc : Ch[ t.getId() ].getChildren().keySet() ) {											
+				for( int childId : Ch[ node.getId() ].getChildren().keySet() ) {											
 				
-					nodes[ tc ].setParent( tp );
+					mapNodes[ childId ].setParent( parent );
 				
-					Ch[ tp.getId() ].insert( tc );
+					Ch[ parent.getId() ].insert( childId );
 				
 				}
 				
 			}
 			
-			areaR[ tp.getId() ] = areaR[ tp.getId() ] + areaR[ t.getId() ];
+			areaR[ node.getParent().getId() ] += areaR[ node.getId() ];
 			
-			volumeR[ tp.getId() ] = volumeR[ tp.getId() ] + volumeR[ t.getId() ];		
+			volumeR[ node.getParent().getId() ] += volumeR[ node.getId() ];
+			
+			/*parent.getAttribute( Attribute.AREA )
+			  	  .setValue( parent.getAttributeValue(Attribute.AREA) + node.getAttributeValue(Attribute.AREA) );
+	
+			parent.getAttribute( Attribute.VOLUME )
+		      	  .setValue( parent.getAttributeValue(Attribute.VOLUME) + node.getAttributeValue(Attribute.VOLUME) );*/		
 			
 		}
 		
@@ -465,27 +320,26 @@ public class ComputerXuAttribute {
 		
 		int Rt [] = new int[ numNode-1 ];
 		
-		double maxPriority = sumGradContour[ 1 ].value;
+		double maxPriority = Double.MIN_VALUE;
 		
-		for( int i = 2 ; i < numNode ; i++ ) { 
+		for( int i = 1 ; i < numNode ; i++ ) { 
 			
-			if( maxPriority < sumGradContour[ i ].value ) {
+			if( maxPriority < mapNodes[ i ].getAttributeValue( Attribute.SUM_GRAD_CONTOUR ) ) {
 				
-				maxPriority = sumGradContour[ i ].value;
+				maxPriority = mapNodes[ i ].getAttributeValue( Attribute.SUM_GRAD_CONTOUR );
 				
 			}
 			
 		}			
 		
-		//System.out.println( "Max : " + maxPriority );
-		
-		PriorityQueueDial queue = new PriorityQueueDial( sumGradContour, ( int ) maxPriority, PriorityQueueDial.FIFO, false ); 
+		PriorityQueueDial queue = new PriorityQueueDial( numNode, 
+														( int ) maxPriority, 
+														PriorityQueueDial.FIFO, 
+														false ); 
 		
 		for( int i = 1 ; i < numNode ; i++ ) {
 			
-			//System.out.println( "Contour : " + contourLength[ i ].value );
-			
-			queue.add( i, ( int ) sumGradContour[ i ].value );		
+			queue.add( i, ( int ) mapNodes[ i ].getAttributeValue( Attribute.SUM_GRAD_CONTOUR ) );		
 			
 		}
 		
@@ -494,8 +348,6 @@ public class ComputerXuAttribute {
 		while( !queue.isEmpty() ) {
 			
 			Rt[ i ] = queue.remove();	
-			
-			//System.out.println( sumGradContour[ Rt[ i ] ] );
 			
 			i++;
 			
@@ -527,146 +379,85 @@ public class ComputerXuAttribute {
 	
 	public void addAttributeInNodes( NodeLevelSets node ) {
 		
-		if( node instanceof NodeToS ) {			
-		
-			node.addAttribute( Attribute.CONTOUR_LENGTH, contourLength[ node.getId() ] );
-			node.addAttribute( Attribute.SUM_GRAD, sumGrad[ node.getId() ] );
-			node.addAttribute( Attribute.FACE_2_AREA, area[ node.getId() ] );
-			node.addAttribute( Attribute.FACE_2_VOLUME, volume[ node.getId() ] );		
-		
-		}
-		
-		node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );
 		node.addAttribute( Attribute.MUMFORD_SHA_ENERGY , mumfordShaEnergy[ node.getId() ] );
 		
 	}
 	
-    public boolean isFace2( int p ) {
-    	
-    	return isRealPixel( p ) || isFakePixelNextLine( p ) || isFakePixelSameLine( p );
-    	
-    }
-    
-    public boolean isFace2( int x, int y ) {
-    	
-    	return isRealPixel( x, y ) || isFakePixelNextLine( x, y ) || isFakePixelSameLine( x, y );
-    	
-    }
-    
-	public boolean isRealPixel( int p ) {
-		
-		return isRealPixel( p%img.getWidth(), p/img.getWidth() );
-		
-	}
-	
-	public boolean isRealPixel( int x, int y ) {
-		
-		return ( x%4 == 1 && y%4 == 1 );
-		
-	}
-	
-	public boolean isFakePixelSameLine( int p ) {
-		
-		return isFakePixelSameLine( p%img.getWidth(), p/img.getWidth() );
-		
-	} 
-	
-	public boolean isFakePixelSameLine( int x, int y ) {
-		
-		return !( x % 4 == 1 ) && ( x%2 == 1 && y%2 == 1 && y%4 == 1 );
-		
-	}
-	
-	public boolean isFakePixelNextLine( int p ) {
-		
-		return isFakePixelNextLine( p%img.getWidth(), p/img.getWidth() );
-		
-	}
-	
-	public boolean isFakePixelNextLine( int x, int y ) {
-		
-		return ( x%2 == 1 && ( y-1 )%2 == 0 ) && !( y % 4 == 1 );
-		
-	}
-	
-	public boolean isCircle( int x, int y ) {
-		
-		return ( x%2 == 0 && y%2 == 0 );
-	}
-	
-	public boolean isFace1( int p ) {
-		
-		return isHorizontalRect( p ) || isVerticalRect( p );
-		
-	}
-	
-	public boolean isFace1( int x, int y ) {
-		
-		return isHorizontalRect( x, y ) || isVerticalRect( x, y );
-		
-	}
-
-	public boolean isHorizontalRect( int p ) {
-		
-		return isHorizontalRect( p%img.getWidth(), p/img.getWidth() );
-		
-	}
-	
-	public boolean isVerticalRect( int p ) { 
-		
-		return isVerticalRect( p%img.getWidth(), p/img.getWidth() );
-		
-	}
-	
-	public boolean isHorizontalRect( int x, int y ) {
-		
-		return ( x%2 == 1 && y%2 == 0 );
-		
-	}
-	
-	public boolean isVerticalRect( int x, int y ) { 
-		
-		return ( x%2 == 0 && y%2 == 1 );
-		
-	}
-	
 	/**
-	 * Devolve a lista de pixels do contorno do pixel de referencia. 
-	 * @param p => pixel de referencia
-	 * @return pixel do contorno e
-	 */
+	 *   
+	 *  
+	 *   
+	 * 
+	 * */
 	
-    public Iterable<Integer> getBoundaries( int p ) {
-    	
-    	final int x = p % img.getWidth();
-    	final int y = p / img.getWidth();
-    	
-        return new Iterable<Integer>() {
-			public Iterator<Integer> iterator() {
-				return new Iterator<Integer>() {
-					private int i = 0;
-					public boolean hasNext() {
-						while( i < px.length ) {
-							int xx = px[i] + x;
-							int yy = py[i] + y;							
-				        	if(xx >= 0 && xx < img.getWidth() && yy >= 0 && yy < img.getHeight())
-								return true;
-				        	i++;
-						} 
-						return false;
-					}
-					public Integer next() {
-						int pixel = (px[i] + x) + (py[i] + y) * img.getWidth();
-						i++;
-						return pixel;
-					}
-					public void remove() { }
+	private void updateEnergy( PriorityQueueDial queue, NodeLevelSets node ) {
+		
+		double beforeEnergy = mumfordShaEnergy[ node.getId() ].value;
+		
+		double newEnergy = calculateFuncional( node );
+			
+		queue.remove( node.getId(), ( int ) beforeEnergy );
+	
+		queue.add( node.getId(), ( int ) newEnergy );
+		
+		mumfordShaEnergy[ node.getId() ].value = newEnergy;
+		
+	}	
+	
+	private void calculateEnergy( MorphologicalTree tree ) {
+		
+		PriorityQueueDial queue = new PriorityQueueDial( numNode, ( int ) maxEnergy, PriorityQueueDial.FIFO, false );
+		
+		/* Initializing heap */	
+		
+		for( int i = 1 ; i < numNode ; i++ ) {		
+
+			queue.add( i, ( int ) mumfordShaEnergy[ i ].value );
+			
+		}		
+		
+		/* Greedy */
+		
+		while( !queue.isEmpty() ) {
+			
+			int id = queue.remove();
+			
+			NodeLevelSets node = mapNodes[ id ];		
+				
+			NodeLevelSets parent = node.getParent();
+			
+			tree.mergeFather( node );
+				
+			/* Update parameters */
+				
+			areaR[ parent.getId() ] += areaR[ node.getId() ];
+				
+			volumeR[ parent.getId() ] += volumeR[ node.getId() ];						
+				
+			/* Update parent energy (if it is not the root) */
+			
+			if( parent != rootTree ) {
+				
+				updateEnergy( queue, parent );
 					
-				};
 			}
-		};
-    }
-   
+				
+			/* Update for children of parent */
+			
+			List<NodeLevelSets> list = parent.getChildren();
+				
+			for( NodeLevelSets child : list ) {
+									
+				updateEnergy( queue, child );
+					
+			}
+			
+			mapNodes[ id ] = null;				
+			
+		}	
+		
+	}
+	
     /**
      *
      * 
@@ -682,7 +473,7 @@ public class ComputerXuAttribute {
     	
     	public Children( int size ) {
     		
-    		this.children = new HashMap<>( size );
+    		this.children = new HashMap<Integer, Integer>( size );
     		
     	}
     	
@@ -717,6 +508,54 @@ public class ComputerXuAttribute {
     		System.out.println();
     		
     	}
+    	
+    }
+    
+    public static void main(String args[]) {
+    	
+    	//GrayScaleImage image = ImageBuilder.openGrayImage();  
+    	
+    	Utils.debug = false;
+    	
+    	int example[] = new int[] {    				
+    		1,1,1,1,1,1,1,
+    		1,0,0,3,3,3,1,
+    		1,0,1,1,2,2,1,
+    		1,0,0,3,3,3,1,
+    		1,1,1,1,1,1,1				    		
+    	};
+    		
+    	int width = 7;
+    		
+    	int height = 5;   		
+    	
+    	ConnectedFilteringByTreeOfShape connectedFilteringByTreeOfShape = new ConnectedFilteringByTreeOfShape( ImageFactory.createReferenceGrayScaleImage(32, example, width, height) );		
+		
+		connectedFilteringByTreeOfShape.computerXuAttribute( false );
+    	
+		System.out.println("Tree of shapes");
+		
+    	for( NodeLevelSets node : connectedFilteringByTreeOfShape.getListNodes()  ){
+			
+			System.out.printf("Id=%d Energy=%.2f\n", node.getId(), node.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );
+			
+		}
+
+		//
+    	
+    	System.out.println("Component tree");
+		
+		ConnectedFilteringByComponentTree connectedFilteringByComponentTree = new ConnectedFilteringByComponentTree( ImageFactory.createReferenceGrayScaleImage(32, example, width, height), AdjacencyRelation.getCircular( 1 ), true );		
+		
+		connectedFilteringByComponentTree.computerXuAttribute( false );
+		
+		for( NodeLevelSets node : connectedFilteringByComponentTree.getListNodes() ) {
+			
+			System.out.printf("Id=%d Energy=%.2f\n", node.getId(), node.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );
+			
+		}
+		
+		System.err.println( "Finished" );
     	
     }
     

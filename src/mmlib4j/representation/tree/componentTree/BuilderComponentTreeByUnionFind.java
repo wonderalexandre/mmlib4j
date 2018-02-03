@@ -270,8 +270,16 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 			
 			if(img.getPixel(parent[q]) == img.getPixel(q)){
 				parent[p] = parent[q];
-			}
+			}						
+			
 		}
+		
+		/*for (int i = 0; i < imgR.length; i++) {
+			
+			System.out.print(parent[i] + " ");
+			
+		}*/
+		
 		zPar = null;
 		
 	}
@@ -320,12 +328,6 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		}
 		return -1;
 	}
-    
-	static ColorImage energy;
-	
-	static double maxEnergy = Double.MIN_VALUE;
-	
-	static int nodeMax;
     
     public static void main(String[] args) {
     	
@@ -437,18 +439,22 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 			4,7,7,7,7,7,7,7,4,
 			4,4,4,4,4,4,4,4,4,*/
 				
-			7,7,7,7,7,7,7,7,
+			/*7,7,7,7,7,7,7,7,
 			7,8,8,8,8,8,8,7,
 			7,8,6,6,6,6,8,7,
 			7,8,6,6,6,6,8,7,
 			7,8,6,6,6,6,8,7,
 			7,8,6,6,6,6,8,7,
 			7,8,8,8,8,8,8,7,
-			7,7,7,7,7,7,7,7
+			7,7,7,7,7,7,7,7*/
+				
+			5,5,5,
+			3,8,8,
+			2,3,8
 		};
 		
-		int width = 8;
-		int height = 8;				
+		int width = 3;
+		int height = 3;				
 		
 		/*System.out.println("[nivel de cinza; pixel; parent]");
 		for(int y=0; y < height; y++){
@@ -471,37 +477,10 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");			
 
-	}
-	
-    public static void exploreTree( NodeCT no ) {						
-    	
-    	AttributeToCvs.getInstance()
-		  			  .write( no.getAttributes(), Attribute.SUM_GRAD_CONTOUR, Attribute.MUMFORD_SHA_ENERGY );
-    	
-    	if( no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) > maxEnergy ) {
-    		
-    		maxEnergy = no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY );
-    		
-    		nodeMax = no.getCanonicalPixel();
-    		
-    	}
-		
-    	for( int pixel : no.getCanonicalPixels() ) {
-    		
-    		energy.setPixel( pixel , ( int ) no.getAttributeValue( Attribute.MUMFORD_SHA_ENERGY ) );
-    		
-    	}    	    
-    	
-		for( NodeCT son: no.children ) {
-				
-			exploreTree( son );
-						
-		}
-		
-	}
+    }
     
 	public static void printTree(NodeCT no, PrintStream out, String s){
-		out.printf(s + "[%3d; %3f]\n", no.getLevel(), no.getAttributeValue( Attribute.HEIGHT ) );
+		out.printf(s + "[%3d; %3f]\n", no.getLevel(), no.getAttributeValue( Attribute.AREA ) );
 		if(no.children != null)
 			for(NodeCT son: no.children){
 				printTree(son, out, s + "------");
@@ -519,7 +498,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		b.imgR = this.imgR;
 		b.parent = this.parent;
 		b.numNodeIdMax = this.numNodeIdMax;
-		b.createTreeStructure( );
+		b.createTreeStructure();
 		return b;
 	}
 	

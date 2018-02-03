@@ -66,7 +66,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	}
 	
 	public void preProcessing(NodeLevelSets node) {
-		attr[node.getId()] = new CentralMomentsAttribute(node, withImg);
+		attr[ node.getId() ] = new CentralMomentsAttribute(node, withImg);
 		//area e volume
 		
 		for(int pixel: node.getCanonicalPixels()){

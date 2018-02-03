@@ -46,6 +46,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	private ComputerDistanceTransform dt = null;
 	
+	private ComputerFunctionalVariational fv = null;
+	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		super(img, adj, isMaxtree);
 		computerBasicAttribute();
@@ -92,6 +94,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.COMPACTNESS:
 			case Attribute.ELONGATION:
 			case Attribute.SUM_GRAD:
+			case Attribute.SUM_GRAD_CONTOUR:
 				computerAttributeBasedPerimeterExternal();
 				break;
 				
@@ -107,11 +110,10 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.BIT_QUADS_WIDTH_AVERAGE:
 				computerAttributeBasedBitQuads();
 				break;				
-			
-			case Attribute.SUM_GRAD_CONTOUR:
-			case Attribute.MUMFORD_SHA_ENERGY:
-				computerXuAttribute();
-				break;
+						
+		//	case Attribute.MUMFORD_SHA_ENERGY:
+		//		computerXuAttribute();
+			//	break;
 			
 		}
 	}
@@ -165,20 +167,24 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 	}
 	
-	public void computerXuAttribute() {	
+	public void computerXuAttribute( boolean useHeuristic ) {
 		computerAttributeBasedPerimeterExternal();		
 		if( !hasComputerXuAttribute ) {								
-			new ComputerXuAttribute( builder ).addAttributeInNodesCT( getListNodes() );			
+			new ComputerXuAttribute( this.getClone(), useHeuristic ).addAttributeInNodesCT( getListNodes() );			
 			hasComputerXuAttribute = true;			
 		}		
 	}
 	
-	public void computerFunctionalVariacionalAttribute( double scale, boolean useHeuristic ) {	
-		computerAttributeBasedPerimeterExternal();		
-		if( !hasComputerFunctionalVariacionalAttribute ) {								
-			new ComputerFunctionalVariational( builder, scale, useHeuristic );			
+	public ComputerFunctionalVariational computerFunctionalVariacionalAttribute( double scale, boolean useHeuristic ) {	
+		computerAttributeBasedPerimeterExternal();						
+		if( !hasComputerFunctionalVariacionalAttribute ) {			
+			/* está sendo clonado */
+			fv = new ComputerFunctionalVariational( this.getClone(), scale, useHeuristic );
+			fv.addAttributeInNodesCT( getListNodes() );
 			hasComputerFunctionalVariacionalAttribute = true;			
-		}		
+		}	
+		
+		return fv;
 	}
 	
 	public void simplificationByCriterion(int alpha){

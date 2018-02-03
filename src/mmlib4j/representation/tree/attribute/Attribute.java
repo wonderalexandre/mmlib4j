@@ -26,6 +26,12 @@ public class Attribute {
 		value = v;
 	}
 	
+	public void setValue( double v ) {
+		
+		value = v;
+		
+	}
+	
 	public double getValue(){
 		return value;
 	}

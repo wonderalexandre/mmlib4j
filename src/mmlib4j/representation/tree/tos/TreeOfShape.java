@@ -392,13 +392,7 @@ public class TreeOfShape implements MorphologicalTree {
 				
 				parent.children.add( child );
 				
-				child.setParent( parent );			
-				
-				for( int p: child.getCanonicalPixels() ) {												
-					
-					map[ p ] = parent;
-					
-				}
+				child.setParent( parent );
 			
 			}
 			

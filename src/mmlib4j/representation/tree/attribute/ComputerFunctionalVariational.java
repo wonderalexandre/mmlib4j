@@ -2,6 +2,7 @@ package mmlib4j.representation.tree.attribute;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.HashSet;
 import java.util.List;
 
 import mmlib4j.datastruct.PriorityQueueDial;
@@ -43,7 +44,7 @@ public class ComputerFunctionalVariational {
 	
 	private double scale = 1;
 	
-	/* Heurística */
+	/* Heurística do Xu */
 	
 	private boolean useHeuristic = false;
 	
@@ -55,27 +56,25 @@ public class ComputerFunctionalVariational {
 	
 	private double volumeR[];
 	
-	private double contourLength[];
-	
 	private double maxEnergy = Double.MIN_VALUE;
-	
-	private double maxSumgrad = Double.MIN_VALUE;	
 	
 	/* Image */
 	
 	private GrayScaleImage simplifiedImage;
 	
+	private MorphologicalTree simplifiedTree;
+	
 	/* Attribute */
 	
 	private Attribute functionalVariational [];
 	
-	private Attribute sumGradContour [];
+	// pass a clone
 	
-	public ComputerFunctionalVariational( BuilderComponentTree builder, double scale, boolean useHeuristic ) {
+	public ComputerFunctionalVariational( ComponentTree componentTree, double scale, boolean useHeuristic ) {
 		
 		long ti = System.currentTimeMillis();
 		
-		ComponentTree componentTree = new ComponentTree( builder.getClone() );
+		//ComponentTree componentTree = new ComponentTree( builder );//.getClone();
 		
 		this.rootTree = componentTree.getRoot();
 		
@@ -87,13 +86,13 @@ public class ComputerFunctionalVariational {
 		
 		/* Init the structures */
 		
-		init( builder.getRoot() );		
+		init( rootTree );		
 		
 		/* Pre-processing */
 		
 		removeChildrenAttribute( rootTree );
 		
-		prepareEnergy( rootTree );
+		prepareEnergy( rootTree );		
 		
 		if( useHeuristic ) {
 			
@@ -111,7 +110,9 @@ public class ComputerFunctionalVariational {
 		
 		simplifiedImage = componentTree.reconstruction();
 		
-		ImageBuilder.saveImage( simplifiedImage, new File("/home/gobber/reconstructed.png"));
+		simplifiedTree = componentTree;
+		
+		//ImageBuilder.saveImage( simplifiedImage, new File("/home/gobber/reconstructed.png"));
 		
 		if( Utils.debug ) {
 			
@@ -123,11 +124,11 @@ public class ComputerFunctionalVariational {
 		
 	}
 	
-	public ComputerFunctionalVariational( BuilderTreeOfShape builder, double scale, boolean useHeuristic ) {
+	public ComputerFunctionalVariational( TreeOfShape treeOfShape, double scale, boolean useHeuristic ) {
 		
 		long ti = System.currentTimeMillis();
 		
-		TreeOfShape treeOfShape = new TreeOfShape( builder.getClone() );
+		//TreeOfShape treeOfShape = new TreeOfShape( builder ).getClone();
 		
 		this.rootTree = treeOfShape.getRoot();
 		
@@ -139,7 +140,7 @@ public class ComputerFunctionalVariational {
 		
 		/* Init some structures */
 		
-		init( builder.getRoot() );
+		init( rootTree );
 		
 		/* Pre-processing */
 		
@@ -162,6 +163,8 @@ public class ComputerFunctionalVariational {
 		/* Reconstruct image */
 		
 		simplifiedImage = treeOfShape.reconstruction();
+		
+		simplifiedTree = treeOfShape;
 		
 		ImageBuilder.saveImage( simplifiedImage, new File("/home/gobber/reconstructed.png"));
 		
@@ -199,41 +202,9 @@ public class ComputerFunctionalVariational {
 		
 		volumeR = new double[ numNode ];
 		
-		contourLength = new double[ numNode ];
-		
 		functionalVariational = new Attribute[ numNode ];
 		
 		getChildrenAttribute( root );
-		
-		if( useHeuristic ) {
-			
-			sumGradContour = new Attribute[ numNode ];
-			
-			computerAttributesForHeuristic( root );
-			
-		}
-		
-	}
-	
-	private void computerAttributesForHeuristic( NodeLevelSets node ) {
-		
-		List<NodeLevelSets> children = node.getChildren();
-		
-		double sumgradC = node.getAttributeValue( Attribute.SUM_GRAD ) / contourLength[ node.getId() ];
-		
-		sumGradContour[ node.getId() ] = new Attribute( Attribute.SUM_GRAD_CONTOUR, sumgradC ); 
-		
-		if( sumGradContour[ node.getId() ].value > maxSumgrad ){
-			
-			maxSumgrad = sumGradContour[ node.getId() ].value;
-			
-		}
-		
-		for( NodeLevelSets child : children ) {
-			
-			computerAttributesForHeuristic( child );
-			
-		}
 		
 	}
 	
@@ -243,9 +214,7 @@ public class ComputerFunctionalVariational {
 			
 		areaR[ node.getId() ] = node.getAttributeValue( Attribute.AREA );
 		
-		volumeR[ node.getId() ] = node.getAttributeValue( Attribute.VOLUME );
-			
-		contourLength[ node.getId() ] = node.getAttributeValue( Attribute.PERIMETER_EXTERNAL );
+		volumeR[ node.getId() ] = node.getAttributeValue( Attribute.VOLUME );		
 		
 		for( NodeLevelSets son : children ) {
 			
@@ -287,7 +256,9 @@ public class ComputerFunctionalVariational {
 		
 		double t3 = pow2( volumeR[ node.getId() ] + volumeR[ node.getParent().getId() ] ) / ( areaR[ node.getId() ] + areaR[ node.getParent().getId() ] );
 		
-		return ( t3 - t1 - t2 ) + ( scale * contourLength[ node.getId() ] );
+		return ( t3 - t1 - t2 ) + ( scale * node.getAttributeValue( Attribute.PERIMETER_EXTERNAL ) );
+		
+		//return ( t3 - t1 - t2 ) + ( scale * contourLength[ node.getId() ] );
 		
 	}
 	
@@ -381,7 +352,9 @@ public class ComputerFunctionalVariational {
 			
 			tree.mergeFather( node );
 				
-			/* Update parameters */			
+			/* Update parameters */		
+			
+			updateAttributes( node );
 				
 			areaR[ parent.getId() ] += areaR[ node.getId() ];
 				
@@ -423,13 +396,30 @@ public class ComputerFunctionalVariational {
 	
 	public int [] sortNodes() {
 		
-		int Rt [] = new int[ numNode-1 ];
+		int Rt [] = new int[ numNode-1 ];	
+		double maxSumgrad = Double.MIN_VALUE;
 		
-		PriorityQueueDial queue = new PriorityQueueDial( sumGradContour, ( int ) maxSumgrad*100, PriorityQueueDial.FIFO, false ); 
+		/* Get max value */
 		
 		for( int i = 1 ; i < numNode ; i++ ) {
 			
-			queue.add( i, ( int ) sumGradContour[ i ].value*100 );		
+			double sumGrad = mapNodes[ i ].getAttributeValue( Attribute.SUM_GRAD_CONTOUR );
+			
+			if( maxSumgrad <  sumGrad ) {
+			
+				maxSumgrad = sumGrad;
+			
+			}
+			
+		}
+		
+		PriorityQueueDial queue = new PriorityQueueDial( numNode, 
+														( int ) maxSumgrad, 
+														PriorityQueueDial.FIFO, false ); 
+				
+		for( int i = 1 ; i < numNode ; i++ ) {
+			
+			queue.add( i, ( int ) mapNodes[ i ].getAttributeValue( Attribute.SUM_GRAD_CONTOUR ) );		
 			
 		}
 		
@@ -445,7 +435,7 @@ public class ComputerFunctionalVariational {
 		
 		return Rt;
 		
-	}
+	}		
 	
 	private void calculateEnergyByHeuristic( MorphologicalTree tree ) {		
 		
@@ -485,13 +475,16 @@ public class ComputerFunctionalVariational {
 				
 					nodesToMerge.enqueue( node );
 					
+					// atualiza atributos locais e da árvore
 					
-					mapNodes[ node.getId() ] = null;
+					updateAttributes( node );
 									
 					areaR[ parent.getId() ] += areaR[ node.getId() ];
 					
 					volumeR[ parent.getId() ] += volumeR[ node.getId() ];					
-													
+					
+					mapNodes[ node.getId() ] = null;
+					
 					
 					if( !explored[ parent.getId() ] ) {
 						
@@ -545,6 +538,47 @@ public class ComputerFunctionalVariational {
 		
 	}
 	
+	// atualiza os atributos do pai do nó removido ( área e volume ) 	
+	
+	public void updateAttributes( NodeLevelSets node ) {
+		
+		NodeLevelSets parent = node.getParent();
+		
+		Attribute area = parent.getAttribute( Attribute.AREA );
+		Attribute volume = parent.getAttribute( Attribute.VOLUME );		
+		
+		area.setValue( area.getValue() - areaR[ node.getId() ] );
+		
+		volume.setValue( volume.getValue() + ( parent.getLevel() * areaR[ node.getId() ] ) );
+		
+	}
+	
+	public void addAttributeInNodesCT(HashSet<NodeCT> list) {
+		
+		for( NodeCT node: list ) {
+			
+			addAttributeInNodes( node );
+			
+		}
+		
+	}
+	
+	public void addAttributeInNodesToS( HashSet<NodeToS> hashSet ) {
+		
+		for( NodeLevelSets node: hashSet ) {
+			
+			addAttributeInNodes( node );
+			
+		}
+		
+	} 
+	
+	public void addAttributeInNodes( NodeLevelSets node ) {
+		
+		node.addAttribute( Attribute.FUNCTIONAL_VARIATIONAL, functionalVariational[ node.getId() ] );
+		
+	}	
+	
 	private double pow2( double v ) {
 		
 		return v*v;
@@ -570,13 +604,15 @@ public class ComputerFunctionalVariational {
 		
 		ImageBuilder.saveImage( fattr.getSimplifiedImage(), new File("/home/gobber/reconstructed.png"));*/
 		
-		ConnectedFilteringByTreeOfShape connectedFilteringByTreeOfShape = new ConnectedFilteringByTreeOfShape( image );		
+		/*ConnectedFilteringByTreeOfShape connectedFilteringByTreeOfShape = new ConnectedFilteringByTreeOfShape( image );		
 		
-		connectedFilteringByTreeOfShape.computerFunctionalVariacionalAttribute( 10, true );
+		connectedFilteringByTreeOfShape.computerFunctionalVariacionalAttribute( 20, true );*/
 				
-		/*ConnectedFilteringByComponentTree connectedFilteringByComponentTree = new ConnectedFilteringByComponentTree( image, AdjacencyRelation.getCircular( 1 ), true );		
+		ConnectedFilteringByComponentTree connectedFilteringByComponentTree = new ConnectedFilteringByComponentTree( image, AdjacencyRelation.getCircular( 1 ), true );		
 		
-		connectedFilteringByComponentTree.computerFunctionalVariacionalAttribute( 1000, false );*/
+		// 50
+		
+		connectedFilteringByComponentTree.computerFunctionalVariacionalAttribute( 20, true );
 	
 		System.err.println( "Finished" );				
 		
@@ -588,6 +624,18 @@ public class ComputerFunctionalVariational {
 			for(NodeCT son: no.getChildren()){
 				printTree(son, out, s + "------");
 			}
+	}
+
+	public MorphologicalTree getSimplifiedTree() {
+		
+		return simplifiedTree;
+		
+	}
+
+	public void setSimplifiedTree(MorphologicalTree tree) {
+		
+		this.simplifiedTree = tree;
+		
 	}
 
 }

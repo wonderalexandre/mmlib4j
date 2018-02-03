@@ -28,6 +28,8 @@ public class ComputerAttributeBasedPerimeterExternal {
 	
 	private Attribute sumGrad[];
 	
+	private Attribute sumGradContour[];
+	
 	private GrayScaleImage img;
 	
 	private static final int[][] delta = { { 1,0}, { 1, 1}, {0, 1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, { 1,-1} };
@@ -52,6 +54,8 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 		sumGrad = new Attribute[ numNode ];
 		
+		sumGradContour = new Attribute[ numNode ];
+		
 		computerAttribute( root );
 		
 		if( Utils.debug ) {
@@ -72,6 +76,8 @@ public class ComputerAttributeBasedPerimeterExternal {
 		
 		sumGrad[ node.getId() ] = new Attribute( Attribute.SUM_GRAD );
 		
+		sumGradContour[ node.getId() ] = new Attribute( Attribute.SUM_GRAD_CONTOUR );
+		
 		if( node == rootTree ) {
 			
 			perimeters[ node.getId() ].value = img.getWidth() * 2 + img.getHeight() * 2;
@@ -88,6 +94,8 @@ public class ComputerAttributeBasedPerimeterExternal {
 				
 			}
 			
+			sumGradContour[ node.getId() ].value = sumGrad[ node.getId() ].value/perimeters[ node.getId() ].value;
+			
 		}else{
 			
 			if( node.getArea() < 3 ) {				
@@ -99,10 +107,15 @@ public class ComputerAttributeBasedPerimeterExternal {
 					sumGrad[ node.getId() ].value += imgGrad.getPixel( pixel );
 					
 				}
+				
+				sumGradContour[ node.getId() ].value = sumGrad[ node.getId() ].value/perimeters[ node.getId() ].value;
 
 			} else {
 			
-				new ThreadNodeCTPerimeter( node, perimeters[ node.getId() ], sumGrad[ node.getId() ] ).run();
+				new ThreadNodeCTPerimeter( node, 
+										   perimeters[ node.getId() ], 
+										   sumGrad[ node.getId() ], 
+										   sumGradContour[ node.getId() ] ).run();
 				
 			}
 		
@@ -149,7 +162,8 @@ public class ComputerAttributeBasedPerimeterExternal {
 		node.addAttribute( Attribute.CIRCULARITY, new Attribute( Attribute.CIRCULARITY, getCircularity( node ) ) );
 		node.addAttribute( Attribute.COMPACTNESS, new Attribute( Attribute.COMPACTNESS, getCompacity( node ) ) );
 		node.addAttribute( Attribute.ELONGATION, new Attribute( Attribute.ELONGATION, getElongation( node ) ) );
-		node.addAttribute( Attribute.SUM_GRAD , sumGrad[ node.getId() ] );
+		node.addAttribute( Attribute.SUM_GRAD , sumGrad[ node.getId() ] );		
+		node.addAttribute( Attribute.SUM_GRAD_CONTOUR , sumGradContour[ node.getId() ] );	
 		
 	}
 	
@@ -177,18 +191,21 @@ public class ComputerAttributeBasedPerimeterExternal {
 		private NodeLevelSets node;
 		private Attribute perimeter;
 		private Attribute sumgrad;
+		private Attribute sumGradContour;
 		
 		boolean imgBin[][];
 		boolean is8Connected=true;
 		int xmin, ymin;
 		
-		public ThreadNodeCTPerimeter( NodeLevelSets node, Attribute perimeter, Attribute sumgrad ) {
+		public ThreadNodeCTPerimeter( NodeLevelSets node, Attribute perimeter, Attribute sumgrad, Attribute sumGradContour ) {
 			
 			this.node = node;
 			
 			this.perimeter = perimeter;
 			
 			this.sumgrad = sumgrad;
+			
+			this.sumGradContour = sumGradContour;
 			
 			if( node instanceof NodeToS ) {
 				
@@ -221,6 +238,8 @@ public class ComputerAttributeBasedPerimeterExternal {
 			perimeter.value = values[ 0 ];			
 			
 			sumgrad.value = values[ 1 ];
+			
+			sumGradContour.value = values[ 1 ]/values[ 0 ];
 			
 		}
 		

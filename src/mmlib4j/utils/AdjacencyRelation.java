@@ -22,12 +22,10 @@ public class AdjacencyRelation {
 		return px.length;
 	}
 	
-	protected AdjacencyRelation(int n) {
+	public AdjacencyRelation(int n) {
 		px = new int[n];
 		py = new int[n];
 	}
-	
-	
 	
 	public AdjacencyRelation(int px[], int py[]) {
 		this.px = px;
@@ -35,12 +33,8 @@ public class AdjacencyRelation {
 	}
 
 	public static void main(String args[]){
-		AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5).diagonalUpperRightSide();
-		
-		adj.print();
-		
-		
-		
+		AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5).diagonalUpperRightSide();		
+		adj.print();						
 	}
 	
 	public int getX(int index){

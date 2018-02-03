@@ -249,10 +249,6 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     	}
         return stats.mean;
     }
-    
-    
-    
-    
 
     /**
      * Pega o valor menor pixel da imagem

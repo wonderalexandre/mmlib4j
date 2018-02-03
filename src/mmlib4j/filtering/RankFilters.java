@@ -465,8 +465,8 @@ public class RankFilters  {
 		int vetY[] = adj.getVectorY();
 		int numPontos = vetX.length;
 		
-		int x2 = ArrayUtils.maxValue(vetX);
-		int y1 = ArrayUtils.minValue(vetY);
+		int x2 = ArrayUtils.maxValue(vetX);		
+		int y1 = ArrayUtils.minValue(vetY);				
 		int y2 = ArrayUtils.maxValue(vetY);
 		
 		int kernel[] = new int[((y2 - y1 + 1)*2) +2 ];
@@ -493,6 +493,7 @@ public class RankFilters  {
 			
 		kernel[kernel.length-1] = x2;
 		kernel[kernel.length-2] = numPontos; 
+				
 		return kernel;
 	}
 	
