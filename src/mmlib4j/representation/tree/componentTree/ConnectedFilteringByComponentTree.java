@@ -86,14 +86,14 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				
 			//case Attribute.NUM_HOLES:
 			case Attribute.BIT_QUADS_PERIMETER:
-			case Attribute.BIT_QUADS_NUMBER_EULER:
-			case Attribute.BIT_QUADS_NUMBER_HOLES:
+			case Attribute.BIT_QUADS_EULER_NUMBER:
+			case Attribute.BIT_QUADS_HOLE_NUMBER:
 			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
 			case Attribute.BIT_QUADS_CIRCULARITY:
-			case Attribute.BIT_QUADS_AREA_AVERAGE:
-			case Attribute.BIT_QUADS_PERIMETER_AVERAGE:
-			case Attribute.BIT_QUADS_LENGTH_AVERAGE:
-			case Attribute.BIT_QUADS_WIDTH_AVERAGE:
+			case Attribute.BIT_QUADS_AVERAGE_AREA:
+			case Attribute.BIT_QUADS_AVERAGE_PERIMETER:
+			case Attribute.BIT_QUADS_AVERAGE_LENGTH:
+			case Attribute.BIT_QUADS_AVERAGE_WIDTH:
 				computerAttributeBasedBitQuads();
 				break;				
 		}

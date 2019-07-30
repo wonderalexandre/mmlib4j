@@ -371,14 +371,14 @@ public class ComputerAttributeBasedBitQuads extends AttributeComputedIncremental
 	
 	public void addAttributeInNodes(NodeLevelSets node){
 		node.addAttribute(Attribute.BIT_QUADS_PERIMETER, new Attribute(Attribute.BIT_QUADS_PERIMETER, attr[ node.getId() ].getPerimeter()));
-		node.addAttribute(Attribute.BIT_QUADS_NUMBER_EULER, new Attribute(Attribute.BIT_QUADS_NUMBER_EULER, attr[ node.getId() ].getNumberEuler()));
-		node.addAttribute(Attribute.BIT_QUADS_NUMBER_HOLES, new Attribute(Attribute.BIT_QUADS_NUMBER_HOLES, attr[ node.getId() ].getNumberHoles()));
+		node.addAttribute(Attribute.BIT_QUADS_EULER_NUMBER, new Attribute(Attribute.BIT_QUADS_EULER_NUMBER, attr[ node.getId() ].getNumberEuler()));
+		node.addAttribute(Attribute.BIT_QUADS_HOLE_NUMBER, new Attribute(Attribute.BIT_QUADS_HOLE_NUMBER, attr[ node.getId() ].getNumberHoles()));
 		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, new Attribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, attr[ node.getId() ].getPerimeterContinuous()));
 		node.addAttribute(Attribute.BIT_QUADS_CIRCULARITY, new Attribute(Attribute.BIT_QUADS_CIRCULARITY, attr[ node.getId() ].getCircularity(node.getArea())));
-		node.addAttribute(Attribute.BIT_QUADS_AREA_AVERAGE, new Attribute(Attribute.BIT_QUADS_AREA_AVERAGE, attr[ node.getId() ].getAreaAverage(node.getArea())));
-		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_AVERAGE, new Attribute(Attribute.BIT_QUADS_PERIMETER_AVERAGE, attr[ node.getId() ].getPerimeterAverage()));
-		node.addAttribute(Attribute.BIT_QUADS_LENGTH_AVERAGE, new Attribute(Attribute.BIT_QUADS_LENGTH_AVERAGE, attr[ node.getId() ].getLengthAverage()));
-		node.addAttribute(Attribute.BIT_QUADS_WIDTH_AVERAGE, new Attribute(Attribute.BIT_QUADS_WIDTH_AVERAGE, attr[ node.getId() ].getWidthAverage(node.getArea())));
+		node.addAttribute(Attribute.BIT_QUADS_AVERAGE_AREA, new Attribute(Attribute.BIT_QUADS_AVERAGE_AREA, attr[ node.getId() ].getAreaAverage(node.getArea())));
+		node.addAttribute(Attribute.BIT_QUADS_AVERAGE_PERIMETER, new Attribute(Attribute.BIT_QUADS_AVERAGE_PERIMETER, attr[ node.getId() ].getPerimeterAverage()));
+		node.addAttribute(Attribute.BIT_QUADS_AVERAGE_LENGTH, new Attribute(Attribute.BIT_QUADS_AVERAGE_LENGTH, attr[ node.getId() ].getLengthAverage()));
+		node.addAttribute(Attribute.BIT_QUADS_AVERAGE_WIDTH, new Attribute(Attribute.BIT_QUADS_AVERAGE_WIDTH, attr[ node.getId() ].getWidthAverage(node.getArea())));
 		node.addAttribute(Attribute.BIT_QUADS_AREA, new Attribute(Attribute.BIT_QUADS_AREA, attr[node.getId()].getArea()));
 		node.addAttribute(Attribute.BIT_QUADS_AREA_DUDA, new Attribute(Attribute.BIT_QUADS_AREA_DUDA, attr[node.getId()].getAreaDuda()));
 	}
