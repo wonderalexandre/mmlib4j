@@ -10,7 +10,6 @@ import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.attribute.ComputerAttributeBasedBitQuads;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
@@ -19,6 +18,7 @@ import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTre
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
+import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -86,14 +86,14 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				
 			//case Attribute.NUM_HOLES:
 			case Attribute.BIT_QUADS_PERIMETER:
-			case Attribute.BIT_QUADS_NUMBER_EULER:
-			case Attribute.BIT_QUADS_NUMBER_HOLES:
+			case Attribute.BIT_QUADS_EULER_NUMBER:
+			case Attribute.BIT_QUADS_HOLE_NUMBER:
 			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
 			case Attribute.BIT_QUADS_CIRCULARITY:
-			case Attribute.BIT_QUADS_AREA_AVERAGE:
-			case Attribute.BIT_QUADS_PERIMETER_AVERAGE:
-			case Attribute.BIT_QUADS_LENGTH_AVERAGE:
-			case Attribute.BIT_QUADS_WIDTH_AVERAGE:
+			case Attribute.BIT_QUADS_AVERAGE_AREA:
+			case Attribute.BIT_QUADS_AVERAGE_PERIMETER:
+			case Attribute.BIT_QUADS_AVERAGE_LENGTH:
+			case Attribute.BIT_QUADS_AVERAGE_WIDTH:
 				computerAttributeBasedBitQuads();
 				break;				
 		}
@@ -122,7 +122,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	public void computerAttributeBasedBitQuads(){
 		if(!hasComputerAttributeBasedBitQuads){
-			new ComputerAttributeBasedBitQuads(numNode, getRoot(), imgInput, adj).addAttributeInNodesCT(getListNodes());
+			new ComputerAttributeBasedOnBitQuads(this).addAttributeInNodesCT(getListNodes());
 			hasComputerAttributeBasedBitQuads = true;
 		}
 	}
