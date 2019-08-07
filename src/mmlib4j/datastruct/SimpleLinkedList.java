@@ -75,6 +75,12 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 		}
 	}
 	
+	public void clear() {
+		while(!isEmpty())
+			remove();
+		
+	}
+	
 	public Iterator<T> iterator() {
 		
 		return new Iterator<T>() {
@@ -191,6 +197,10 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     	 for(int i : l){
     		  System.out.println(i);
     	 }
+    	 System.out.println("size:" + l.size());
+    	 l.clear();
+    	 System.out.println("list after cleared, size:" + l.size());
+    	 
      }
 
 	
