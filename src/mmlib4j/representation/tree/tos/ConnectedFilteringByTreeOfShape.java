@@ -35,8 +35,9 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		computerBasicAttribute();
 	}
 	
-	protected ConnectedFilteringByTreeOfShape(BuilderTreeOfShapeByUnionFind build){
+	public ConnectedFilteringByTreeOfShape(BuilderTreeOfShape build){
 		super(build);
+		computerBasicAttribute();
 	}
 	
 	public ConnectedFilteringByTreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
