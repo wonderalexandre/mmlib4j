@@ -1,9 +1,9 @@
 package mmlib4j.representation.tree.componentTree;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 
 import mmlib4j.datastruct.Queue;
+import mmlib4j.datastruct.SimpleArrayList;
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
@@ -86,14 +86,14 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				
 			//case Attribute.NUM_HOLES:
 			case Attribute.BIT_QUADS_PERIMETER:
-			case Attribute.BIT_QUADS_NUMBER_EULER:
-			case Attribute.BIT_QUADS_NUMBER_HOLES:
+			case Attribute.BIT_QUADS_EULER_NUMBER:
+			case Attribute.BIT_QUADS_HOLE_NUMBER:
 			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
 			case Attribute.BIT_QUADS_CIRCULARITY:
-			case Attribute.BIT_QUADS_AREA_AVERAGE:
-			case Attribute.BIT_QUADS_PERIMETER_AVERAGE:
-			case Attribute.BIT_QUADS_LENGTH_AVERAGE:
-			case Attribute.BIT_QUADS_WIDTH_AVERAGE:
+			case Attribute.BIT_QUADS_AVERAGE_AREA:
+			case Attribute.BIT_QUADS_AVERAGE_PERIMETER:
+			case Attribute.BIT_QUADS_AVERAGE_LENGTH:
+			case Attribute.BIT_QUADS_AVERAGE_WIDTH:
 				computerAttributeBasedBitQuads();
 				break;				
 		}
@@ -132,7 +132,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesCT(getListNodes());
 			hasComputerCentralMomentAttribute = true;
 		}
-	}
+	} 
 	
 	public void computerBasicAttribute(){
 		if(!hasComputerBasicAttribute){
@@ -200,7 +200,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	}
 	
 	
-	ArrayList<ExtinctionValueNode> extincaoPorNode;
+	SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
 	ComputerExtinctionValueComponentTree extinctionValue;
 	public GrayScaleImage filteringByExtinctionValue(double attributeValue, int type){
 		loadAttribute(type);
@@ -364,7 +364,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
 		ComputerMserComponentTree mser = new ComputerMserComponentTree(this);
 		boolean resultPruning[] = new boolean[this.getNumNode()];
-		LinkedList<NodeCT> list = mser.getNodesByMSER(delta);
+		SimpleLinkedList<NodeCT> list = mser.getNodesByMSER(delta);
 		for(NodeCT node: list){
 			if(getAttribute(node, type) <= attributeValue){ //poda				
 				for(NodeCT song: node.children){
@@ -396,7 +396,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
 		PruningBasedGradualTransition gt = new PruningBasedGradualTransition(this, type, delta); 
 		boolean resultPruning[] = gt.getMappingSelectedNodes( );
-		LinkedList<NodeLevelSets> list = gt.getListOfSelectedNodes( );
+		SimpleLinkedList<NodeLevelSets> list = gt.getListOfSelectedNodes( );
 		for(NodeLevelSets obj: list){
 			NodeCT node = (NodeCT) obj;
 			if(getAttribute(node, type) <= attributeValue){ //poda				

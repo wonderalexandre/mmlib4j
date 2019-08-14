@@ -1,10 +1,10 @@
 package mmlib4j.representation.tree.componentTree;
 
 import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.PriorityQueueDial;
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
@@ -35,7 +35,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	
 	int parent[];
 	NodeCT nodesMap[];
-	HashSet<NodeCT> listNode;
+	SimpleLinkedList<NodeCT> listNode;
 	
 	NodeCT root;
 	GrayScaleImage img;
@@ -72,7 +72,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		return numNode;
 	}
 	
-	public HashSet<NodeCT> getListNodes(){
+	public SimpleLinkedList<NodeCT> getListNodes(){
 		return listNode;
 	}
 	
@@ -88,7 +88,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	public void createTreeStructure( ){
 		this.numNode = 0;
 		this.nodesMap = new NodeCT[parent.length];
-		this.listNode = new HashSet<NodeCT>();
+		this.listNode = new SimpleLinkedList<NodeCT>();
 		for (int i = 0; i < imgR.length; i++) {
 			int p = imgR[i];
 			int pai = parent[p];

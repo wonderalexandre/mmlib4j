@@ -1,7 +1,6 @@
 package mmlib4j.representation.tree.componentTree;
 
-import java.util.HashSet;
-
+import mmlib4j.datastruct.SimpleLinkedList;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -16,7 +15,7 @@ public interface BuilderComponentTree {
 	
 	public NodeCT[] getMap( );
 	
-	public HashSet<NodeCT> getListNodes();
+	public SimpleLinkedList<NodeCT> getListNodes();
 	
 	public int getNunNode();
 	

@@ -1,9 +1,7 @@
 package mmlib4j.representation.tree.componentTree;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
@@ -40,7 +38,7 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 	boolean isClone = false;
 	boolean isNodeMaxtree;
 	NodeCT parent;
-	List<NodeCT> children = new ArrayList<NodeCT>();
+	SimpleLinkedList<NodeCT> children = new SimpleLinkedList<NodeCT>();
 	SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
 	
 	//basic attribute node
@@ -131,7 +129,7 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 		try {
 			NodeCT no = (NodeCT) this.clone();
 			no.isClone = true;
-			no.children = new ArrayList<NodeCT>();
+			no.children = new SimpleLinkedList<NodeCT>();
 			no.pixels = new SimpleLinkedList<Integer>();
 			return no;
 		} catch (CloneNotSupportedException e) {
@@ -149,7 +147,7 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 		return parent;
 	}
 	
-	public List<NodeCT> getChildren(){
+	public SimpleLinkedList<NodeCT> getChildren(){
 		return children;
 	}
 	
@@ -326,7 +324,7 @@ public class NodeCT implements NodeLevelSets, Cloneable{
 		//descendentes
 		node = this;
 		while(node.children.size() == 1){
-			node = node.children.get(0);
+			node = node.children.getFisrtElement();
 			numNodeInSameBranch++;
 		}
 		

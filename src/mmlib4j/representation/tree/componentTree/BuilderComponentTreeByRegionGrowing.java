@@ -1,10 +1,10 @@
 package mmlib4j.representation.tree.componentTree;
 
 import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.Queue;
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
@@ -36,7 +36,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 	Queue<Integer> hQueue[]; 
 	int levRoot[];
 	
-	HashSet<NodeCT> listNode;
+	SimpleLinkedList<NodeCT> listNode;
     NodeCT root;
     NodeCT nodesMap[];
     
@@ -102,7 +102,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 		this.limiteSup = sup;
 	}
 	
-	public HashSet<NodeCT> getListNodes(){
+	public SimpleLinkedList<NodeCT> getListNodes(){
 		return listNode;
 	}
 	
@@ -219,7 +219,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 	public void createTreeStructure( ){
 		this.numNode = 0;
 		this.nodesMap = new NodeCT[parent.length];
-		this.listNode = new HashSet<NodeCT>();
+		this.listNode = new SimpleLinkedList<NodeCT>();
 		for(int i=0; i < this.imgR.length; i++){
 			int p = this.imgR[i];
 			int pai = this.parent[p];

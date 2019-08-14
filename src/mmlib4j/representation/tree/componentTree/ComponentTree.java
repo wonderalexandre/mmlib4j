@@ -1,10 +1,7 @@
 package mmlib4j.representation.tree.componentTree;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import mmlib4j.datastruct.Queue;
@@ -12,6 +9,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -25,8 +23,8 @@ import mmlib4j.utils.Utils;
 public class ComponentTree {
 	protected NodeCT root;
 	protected NodeCT[] map;
-	protected HashSet<NodeCT> listNode;
-	protected LinkedList<NodeCT> listLeaves;
+	protected SimpleLinkedList<NodeCT> listNode;
+	protected SimpleLinkedList<NodeCT> listLeaves;
 	
 	protected int numNode;
 	protected int numNodeIdMax;
@@ -183,7 +181,7 @@ public class ComponentTree {
 			tree.numNode = 1;
 			tree.listNode.clear();
 			tree.listNode.add(node);
-			node.children = new ArrayList<NodeCT>();
+			node.children = new SimpleLinkedList<NodeCT>();
 			for(int p=0; p < tree.getInputImage().getSize(); p++){
 				tree.map[p] = node;
 				node.addPixel(p);
@@ -216,6 +214,31 @@ public class ComponentTree {
 		return imgOut;
 	}
 	
+	/* Add by gobber */	
+	public void mergeFather( NodeLevelSets nodeG ) {
+		NodeCT node = (NodeCT) nodeG;
+		if( node != root ) {			
+			NodeCT parent = node.parent;
+			parent.children.remove( node );
+	
+			listNode.remove( node );
+			numNode--;
+			for( int p: node.getCanonicalPixels() ) {
+				parent.addPixel( p );				
+				map[ p ] = parent;
+			}
+			
+			for( NodeCT child : node.getChildren() ) {				
+				parent.addChildren( child );
+				child.setParent( parent );
+			}
+			
+			/* update attributes */						
+			node = null;
+			
+		}
+		
+	}
 	
 	public GrayScaleImage reconstruction(){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
@@ -350,8 +373,8 @@ public class ComponentTree {
 	protected void createNodesMap(){
 		if(map == null)
 			map = new NodeCT[imgInput.getSize()];
-		listNode = new HashSet<NodeCT>();
-		listLeaves = new LinkedList<NodeCT>();
+		listNode = new SimpleLinkedList<NodeCT>();
+		listLeaves = new SimpleLinkedList<NodeCT>();
 		Queue<NodeCT> fifo = new Queue<NodeCT>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
@@ -398,13 +421,13 @@ public class ComponentTree {
 	}
 	
 	
-	public HashSet<NodeCT> getListNodes(){
+	public SimpleLinkedList<NodeCT> getListNodes(){
 		return listNode;
 	}
 	
-	public LinkedList<NodeCT> getLeaves(){
+	public SimpleLinkedList<NodeCT> getLeaves(){
 		if(listLeaves == null){
-			listLeaves = new LinkedList<NodeCT>();
+			listLeaves = new SimpleLinkedList<NodeCT>();
 			for(NodeCT node: listNode){
 				if(node.children.isEmpty())
 					listLeaves.add(node);	
