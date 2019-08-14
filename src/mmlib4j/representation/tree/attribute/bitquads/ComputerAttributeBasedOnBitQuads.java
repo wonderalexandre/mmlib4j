@@ -1,19 +1,15 @@
 package mmlib4j.representation.tree.attribute.bitquads;
 
-import java.io.IOException;
-import java.util.HashSet;
-
-
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.PixelIndexer;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.AttributeComputedIncrementally;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
-import mmlib4j.representation.tree.attribute.Attribute;
 
 
 public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrementally{
@@ -104,7 +100,7 @@ public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrement
 		quadAttributes[nodeId].nPD -= quadAttributes[nodeId].nPDT;
 	}
 	
-	public void addAttributeInNodesCT(HashSet<NodeCT> list)
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> list)
 	{
 		for (NodeCT node : list)
 			addAttributeInNodes(node);

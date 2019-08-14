@@ -132,7 +132,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				nodesMapTmp[pai] = new NodeToS(numNode++, imgU[pai], img, p);
 			}
 			if(nodesMapTmp[pai].children == null)	
-				nodesMapTmp[pai].children = new LinkedList<NodeToS>();
+				nodesMapTmp[pai].children = new SimpleLinkedList<NodeToS>();
 			 
 			if(imgU[p] != imgU[pai]){ //novo no
 				if(nodesMapTmp[p] == null){
