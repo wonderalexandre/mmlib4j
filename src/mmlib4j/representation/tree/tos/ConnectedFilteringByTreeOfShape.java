@@ -1,9 +1,8 @@
 package mmlib4j.representation.tree.tos;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import mmlib4j.datastruct.Queue;
+import mmlib4j.datastruct.SimpleArrayList;
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
@@ -45,7 +44,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		computerBasicAttribute();
 	}
 	
-	public HashSet<NodeToS> getListNodes(){
+	public SimpleLinkedList<NodeToS> getListNodes(){
 		return listNode; 
 	}
 	
@@ -231,7 +230,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	}
 	
 	
-	ArrayList<ExtinctionValueNode> extincaoPorNode;
+	SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
 	ComputerExtinctionValueTreeOfShapes extinctionValue;
 	public GrayScaleImage filteringExtinctionValue(double attributeValue, int type){
 		loadAttribute(type);

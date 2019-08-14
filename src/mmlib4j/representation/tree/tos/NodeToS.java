@@ -1,9 +1,7 @@
 package mmlib4j.representation.tree.tos;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
@@ -35,7 +33,7 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 	boolean isNodeMaxtree;
 	boolean isClone = false;
 	NodeToS parent;
-	List<NodeToS> children = new ArrayList<NodeToS>();
+	SimpleLinkedList<NodeToS> children = new SimpleLinkedList<NodeToS>();
 	SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
 	
 	
@@ -93,7 +91,7 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 		return parent;
 	}
 	
-	public List<NodeToS> getChildren(){
+	public SimpleLinkedList<NodeToS> getChildren(){
 		return children;
 	}
 	
@@ -136,7 +134,7 @@ public class NodeToS implements NodeLevelSets, Cloneable{
 		try {
 			NodeToS no = (NodeToS) this.clone();
 			no.isClone = true;
-			no.children = new ArrayList<NodeToS>();
+			no.children = new SimpleLinkedList<NodeToS>();
 			no.pixels = new SimpleLinkedList<Integer>();
 			return no;
 		} catch (CloneNotSupportedException e) {

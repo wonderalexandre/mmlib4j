@@ -1,7 +1,5 @@
 package mmlib4j.representation.tree;
 
-import java.util.LinkedList;
-
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
@@ -20,7 +18,7 @@ public class InfoPrunedTree {
 	private NodePrunedTree map[];
 	private int numNode;
 	private MorphologicalTreeFiltering tree;
-	private LinkedList<NodeLevelSets> listLeaves;
+	private SimpleLinkedList<NodeLevelSets> listLeaves;
 
 	private int attributeType;
 	private double attributeValue;
@@ -90,9 +88,9 @@ public class InfoPrunedTree {
 		return numNode;
 	}
 	
-	public LinkedList<NodeLevelSets> getLeaves(){
+	public SimpleLinkedList<NodeLevelSets> getLeaves(){
 		if(listLeaves == null){
-			listLeaves = new LinkedList<NodeLevelSets>();
+			listLeaves = new SimpleLinkedList<NodeLevelSets>();
 			Queue<NodePrunedTree> fifo = new Queue<NodePrunedTree>();
 			fifo.enqueue(root);
 			while(!fifo.isEmpty()){

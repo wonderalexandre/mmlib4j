@@ -1,9 +1,9 @@
 package mmlib4j.representation.tree.tos;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import mmlib4j.datastruct.PriorityQueueToS;
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 
 
@@ -165,7 +165,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				nodesMapTmp[pai] = new NodeToS(numNode++, imgU[pai], img, pixelUnterpolate);
 			}
 			if(nodesMapTmp[pai].children == null)	
-				nodesMapTmp[pai].children = new LinkedList<NodeToS>();
+				nodesMapTmp[pai].children = new SimpleLinkedList<NodeToS>();
 			 
 			if(imgU[p] != imgU[pai]){ //novo no
 				if(nodesMapTmp[p] == null){

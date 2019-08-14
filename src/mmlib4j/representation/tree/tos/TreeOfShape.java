@@ -1,11 +1,10 @@
 package mmlib4j.representation.tree.tos;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import mmlib4j.datastruct.Queue;
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
@@ -27,8 +26,8 @@ public class TreeOfShape{
 	protected AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5);
 	protected GrayScaleImage imgInput;
 	protected NodeToS []map;
-	protected HashSet<NodeToS> listNode;
-	protected LinkedList<NodeToS> listLeaves;
+	protected SimpleLinkedList<NodeToS> listNode;
+	protected SimpleLinkedList<NodeToS> listLeaves;
 	protected BuilderTreeOfShape build;
 	
 	protected int sup = 255;
@@ -72,7 +71,7 @@ public class TreeOfShape{
 		return imgInput;
 	}
 
-	public HashSet<NodeToS> getListNodes(){
+	public SimpleLinkedList<NodeToS> getListNodes(){
 		return listNode; 
 	}
 	
@@ -83,8 +82,8 @@ public class TreeOfShape{
 	
 	public void createNodesMap(){
 		map = new NodeToS[getWidth()*getHeight()];
-		listLeaves = new LinkedList<NodeToS>();
-		listNode = new HashSet<NodeToS>();
+		listLeaves = new SimpleLinkedList<NodeToS>();
+		listNode = new SimpleLinkedList<NodeToS>();
 		Queue<NodeToS> fifo = new Queue<NodeToS>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
@@ -102,9 +101,9 @@ public class TreeOfShape{
 		
 	}
 	
-	public LinkedList<NodeToS> getLeaves(){
+	public SimpleLinkedList<NodeToS> getLeaves(){
 		if(listLeaves == null){
-			listLeaves = new LinkedList<NodeToS>();
+			listLeaves = new SimpleLinkedList<NodeToS>();
 			for(NodeToS node: listNode){
 				if(node.children.isEmpty())
 					listLeaves.add(node);	

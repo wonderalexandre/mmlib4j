@@ -1,7 +1,6 @@
 package mmlib4j.representation.tree;
 
 import java.util.HashMap;
-import java.util.List;
 
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.BinaryImage;
@@ -16,7 +15,7 @@ import mmlib4j.representation.tree.attribute.Attribute;
 public interface NodeLevelSets {
 	
 	public NodeLevelSets getParent();
-	public List getChildren();
+	public SimpleLinkedList getChildren();
 	public int getLevel();
 	public boolean isNodeMaxtree();
 	public boolean isLeaf();
