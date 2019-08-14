@@ -1,9 +1,9 @@
 package mmlib4j.representation.tree.attribute;
 
-import java.util.HashSet;
-import java.util.List;
+
 import java.util.concurrent.ThreadPoolExecutor;
 
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -41,7 +41,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 	
 
 	public void computerAttribute(NodeLevelSets node){
-		List<NodeLevelSets> children = node.getChildren();
+		SimpleLinkedList<NodeLevelSets> children = node.getChildren();
 		perimeters[node.getId()] = new Attribute(Attribute.PERIMETER_EXTERNAL);
 		
 		if(node == rootTree){
@@ -67,13 +67,13 @@ public class ComputerAttributeBasedPerimeterExternal {
 		return perimeters;
 	}
 	
-	public void addAttributeInNodesCT(HashSet<NodeCT> list){
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> list){
 		for(NodeCT node: list){
 			addAttributeInNodes(node);
 		}
 	}
 	
-	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeToS> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}

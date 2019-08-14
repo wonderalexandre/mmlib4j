@@ -1,7 +1,6 @@
 package mmlib4j.representation.tree.attribute;
 
-import java.util.List;
-
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.representation.tree.NodeLevelSets;
 
 
@@ -20,7 +19,7 @@ public abstract class AttributeComputedIncrementally {
 	
 	public void computerAttribute(NodeLevelSets root){
 		preProcessing(root);
-		List<NodeLevelSets> children = root.getChildren();
+		SimpleLinkedList<NodeLevelSets> children = root.getChildren();
 		for(NodeLevelSets son: children){
 			computerAttribute(son);
 			mergeChildren(root, son);

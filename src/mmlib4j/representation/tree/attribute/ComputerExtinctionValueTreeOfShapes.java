@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import mmlib4j.datastruct.Queue;
+import mmlib4j.datastruct.SimpleArrayList;
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
@@ -44,7 +46,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	 * @param attributeValue
 	 * @return
 	 */
-	private ColorImage reconstruction(ArrayList<ExtinctionValueNode> extincaoPorNode, int attributeValue1, int attributeValue2){
+	private ColorImage reconstruction(SimpleArrayList<ExtinctionValueNode> extincaoPorNode, int attributeValue1, int attributeValue2){
 		//reconstrucao
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(4); 
 		ColorImage imgOut = ImageFactory.createCopyColorImage(tree.getInputImage());
@@ -76,8 +78,8 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage().getDepth(), tree.getInputImage().getWidth(), tree.getInputImage().getHeight()); 
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
-		ArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
-		Collections.sort(extincaoPorNode);
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
+		extincaoPorNode.sort();
 		if(kmax > extincaoPorNode.size()) kmax = extincaoPorNode.size();
 		for(int i=1; i <= kmax; i++){
 			NodeToS node = extincaoPorNode.get(i-1).node;
@@ -125,8 +127,8 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(tree.getInputImage().getDepth(), tree.getInputImage().getWidth(), tree.getInputImage().getHeight());; 
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
-		ArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
-		Collections.sort(extincaoPorNode);
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
+		extincaoPorNode.sort();
 		int i = 0;
 		for(ExtinctionValueNode ev: extincaoPorNode){
 			if(attValue1 < ev.extinctionValue && ev.extinctionValue < attValue2){
@@ -182,7 +184,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	 * @param attributeValue
 	 * @return
 	 */
-	private ColorImage reconstructionKmax(ArrayList<ExtinctionValueNode> extincaoPorNode, int kmax){
+	private ColorImage reconstructionKmax(SimpleArrayList<ExtinctionValueNode> extincaoPorNode, int kmax){
 		//reconstrucao
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(4); 
 		ColorImage imgOut = ImageFactory.createCopyColorImage(tree.getInputImage());;
@@ -200,7 +202,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 				}
 			}	
 		}
-		Collections.sort(extincaoPorNode);
+		extincaoPorNode.sort();
 		for(int k=0; k < kmax; k++){
 			NodeToS no = extincaoPorNode.get(k).node;
 			//System.out.println(no.getId() + "=> " + extincaoPorNode.get(k).extinctionValue);
@@ -223,7 +225,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	
 	public boolean[] getExtinctionValueNode(int type, InfoPrunedTree prunedTree){
 		this.type = type;
-		ArrayList<ExtinctionValueNode> extincaoPorNode;
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
 		if(type == Attribute.ALTITUDE){
 			extincaoPorNode = getExtinctionCutByAltitude(prunedTree.getLeaves());
 		}else{
@@ -242,14 +244,14 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	
 	public boolean[] getExtinctionValueNode(int type, int t){
 		this.type = type;
-		ArrayList<ExtinctionValueNode> extincaoPorNode;
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
 		if(type == Attribute.ALTITUDE){
 			extincaoPorNode = getExtinctionCutByAltitude(tree.getLeaves());
 		}else{
 			extincaoPorNode = getExtinctionCutByAttribute(type, tree.getLeaves());
 		}
 		
-		Collections.sort(extincaoPorNode);
+		extincaoPorNode.sort();
 		
 		boolean flag[] = new boolean[tree.getNumNode()];
 		for(ExtinctionValueNode nodeEV: extincaoPorNode){
@@ -263,7 +265,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	}
 	
 	
-	private ArrayList<ExtinctionValueNode> getExtinctionValue(int type) {
+	private SimpleArrayList<ExtinctionValueNode> getExtinctionValue(int type) {
 		this.type = type;
 		if(type == Attribute.AREA || type == Attribute.HEIGHT || type == Attribute.WIDTH || type == Attribute.VOLUME)
 			return getExtinctionByAttribute(type);
@@ -273,11 +275,11 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 			 throw new RuntimeException("Erro: Este atributo nao foi implementado..");
 	}
 	
-	private ArrayList<ExtinctionValueNode> getExtinctionByAltitude(){
+	private SimpleArrayList<ExtinctionValueNode> getExtinctionByAltitude(){
 		int extincao;
 		boolean visitado[] = new boolean[tree.getNumNode()];
-		ArrayList<ExtinctionValueNode> extincaoPorNode = new ArrayList<ExtinctionValueNode>();		
-		LinkedList<NodeToS> folhas = tree.getLeaves();
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();		
+		SimpleLinkedList<NodeToS> folhas = tree.getLeaves();
 		for(NodeToS folha: folhas){
 			extincao = (int) tree.getRoot().getAttributeValue(Attribute.ALTITUDE);
 			NodeToS pai = folha.getParent();
@@ -305,11 +307,11 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	 * @param type
 	 * @return
 	 */
-	private ArrayList<ExtinctionValueNode> getExtinctionByAttribute(int type){
+	private SimpleArrayList<ExtinctionValueNode> getExtinctionByAttribute(int type){
 		int extinction;
 		boolean visitado[] = new boolean[tree.getNumNode()];
-		ArrayList<ExtinctionValueNode> extincaoPorNode = new ArrayList<ExtinctionValueNode>();
-		LinkedList<NodeToS> folhas = tree.getLeaves();
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();
+		SimpleLinkedList<NodeToS> folhas = tree.getLeaves();
 		for(NodeToS folha: folhas){
 			extinction = (int)tree.getRoot().getAttributeValue(type);
 			NodeToS aux = folha;
@@ -346,15 +348,15 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	
 	
 	
-	public ArrayList<ExtinctionValueNode> getExtinctionValueCut(double attributeValue, int type){
+	public SimpleArrayList<ExtinctionValueNode> getExtinctionValueCut(double attributeValue, int type){
 		this.type = type;
-		ArrayList<ExtinctionValueNode> extincaoPorNode;
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
 		if(type == Attribute.ALTITUDE){
 			extincaoPorNode = getExtinctionCutByAltitude(tree.getLeaves());
 		}else{
 			extincaoPorNode = getExtinctionCutByAttribute(type, tree.getLeaves());
 		}
-		Collections.sort(extincaoPorNode);
+		extincaoPorNode.sort();
 		return extincaoPorNode;
 	}
 	
@@ -362,10 +364,10 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		return type;
 	}
 	
-	private ArrayList<ExtinctionValueNode> getExtinctionCutByAltitude(LinkedList folhas){
+	private SimpleArrayList<ExtinctionValueNode> getExtinctionCutByAltitude(SimpleLinkedList folhas){
 		int extincao;
 		boolean visitado[] = new boolean[tree.getNumNode()];
-		ArrayList<ExtinctionValueNode> extincaoPorNode = new ArrayList<ExtinctionValueNode>();		
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();		
 		//LinkedList<NodeToS> folhas = tree.getLeaves();
 		for(Object obj: folhas){
 			NodeToS folha = (NodeToS) obj;
@@ -395,10 +397,10 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	 * @param type
 	 * @return
 	 */
-	private ArrayList<ExtinctionValueNode> getExtinctionCutByAttribute(int type, LinkedList folhas){
+	private SimpleArrayList<ExtinctionValueNode> getExtinctionCutByAttribute(int type, SimpleLinkedList folhas){
 		int extinction;
 		boolean visitado[] = new boolean[tree.getNumNode()];
-		ArrayList<ExtinctionValueNode> extincaoPorNode = new ArrayList<ExtinctionValueNode>();
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();
 		//LinkedList<NodeToS> folhas = tree.getLeaves();
 		for(Object obj: folhas){
 			NodeToS folha = (NodeToS) obj;
@@ -437,9 +439,9 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 	public ColorImage extinctionByVolume(int attributeValue1, int attributeValue2) {
 		int extincao;
 		boolean visitado[] = new boolean[tree.getNumNode()];
-		ArrayList<ExtinctionValueNode> extincaoPorNode = new ArrayList<ExtinctionValueNode>();		
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();		
 		boolean continua = true;
-		LinkedList<NodeToS> folhas = tree.getLeaves();
+		SimpleLinkedList<NodeToS> folhas = tree.getLeaves();
 		for(NodeToS folha: folhas){
 			extincao = (int) tree.getRoot().getAttributeValue(Attribute.VOLUME) * 2;
 			NodeToS aux = folha;

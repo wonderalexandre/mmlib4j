@@ -1,8 +1,9 @@
 package mmlib4j.representation.tree.attribute;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -38,13 +39,13 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		return attr;
 	}
 	
-	public void addAttributeInNodesCT(HashSet<NodeCT> list){
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> list){
 		for(NodeCT node: list){
 			addAttributeInNodes(node);
 		}
 	}
 	
-	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeToS> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}

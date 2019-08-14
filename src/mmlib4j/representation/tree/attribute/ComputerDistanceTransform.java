@@ -1,10 +1,10 @@
 package mmlib4j.representation.tree.attribute;
 
-import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.RealImage;
 import mmlib4j.images.impl.ImageFactory;
@@ -49,7 +49,7 @@ public class ComputerDistanceTransform {
 	}
 
 	public void computerDT(NodeLevelSets root){
-		List<NodeLevelSets> children = root.getChildren();
+		SimpleLinkedList<NodeLevelSets> children = root.getChildren();
 		for(NodeLevelSets son: children){
 			computerDT(son);
 		}

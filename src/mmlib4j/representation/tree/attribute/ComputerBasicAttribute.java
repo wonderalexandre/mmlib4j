@@ -1,12 +1,10 @@
 package mmlib4j.representation.tree.attribute;
 
-import java.util.HashSet;
-
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
-import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
 
@@ -21,6 +19,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	int numNode;
 	GrayScaleImage img;
 	boolean flagPerimeter[];
+	
 	public ComputerBasicAttribute(int numNode, NodeLevelSets root, GrayScaleImage img){
 		long ti = System.currentTimeMillis();
 		this.numNode = numNode;
@@ -38,13 +37,13 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		return attr;
 	}
 	
-	public void addAttributeInNodesCT(HashSet<NodeCT> hashSet){
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}
 	} 
 	
-	public void addAttributeInNodesToS(HashSet<NodeToS> hashSet){
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeToS> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}
