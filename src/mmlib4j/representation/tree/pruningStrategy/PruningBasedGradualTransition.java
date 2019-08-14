@@ -1,7 +1,7 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import java.util.LinkedList;
 
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
@@ -94,8 +94,8 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 		return num;
 	}
 	
-	public LinkedList<NodeLevelSets> getListOfSelectedNodes( ){
-		LinkedList<NodeLevelSets> list = new LinkedList<NodeLevelSets>();
+	public SimpleLinkedList<NodeLevelSets> getListOfSelectedNodes( ){
+		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<NodeLevelSets>();
 		if(inputTree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) inputTree;
 			for(NodeCT node: tree.getListNodes()){

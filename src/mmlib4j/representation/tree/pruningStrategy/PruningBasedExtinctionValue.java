@@ -1,5 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -15,15 +16,17 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 
-	private int delta;
+	private int deltaMin;
+	private int deltaMax;
 	private int typeParam;
 	private MorphologicalTreeFiltering tree;
 	private int num;
 	
-	public PruningBasedExtinctionValue(MorphologicalTreeFiltering tree, int typeParam, int delta){
+	public PruningBasedExtinctionValue(MorphologicalTreeFiltering tree, int typeParam, int deltaMin, int deltaMax){
 		this.tree = tree;
 		this.typeParam = typeParam;
-		this.delta = delta;
+		this.deltaMin = deltaMin;
+		this.deltaMax = deltaMax;
 		tree.loadAttribute(Attribute.AREA);
 	}
 	
@@ -31,10 +34,10 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 	public boolean[] getMappingSelectedNodes() {
 		this.num = 0;
 		if(tree instanceof ComponentTree){
-			return getExtinctionValueNodeCT(typeParam, delta);
+			return getExtinctionValueNodeCT(typeParam, deltaMin, deltaMax);
 		}
 		else if(tree instanceof TreeOfShape){
-			return getExtinctionValueNodeToS(typeParam, delta);
+			return getExtinctionValueNodeToS(typeParam, deltaMin, deltaMax);
 		}
 		else
 			return null;
@@ -44,11 +47,11 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		return num;
 	}
 		
-	public boolean[] getExtinctionValueNodeToS(int type, int valueMin){
-		return getExtinctionToSByAttribute(type, valueMin);
+	public boolean[] getExtinctionValueNodeToS(int type, int valueMin, int valueMax){
+		return getExtinctionToSByAttribute(type, valueMin, valueMax);
 	}
 	
-	private boolean[] getExtinctionToSByAttribute(int type, int valueMin){
+	private boolean[] getExtinctionToSByAttribute(int type, int valueMin, int valueMax){
 		boolean selected[] = new boolean[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		TreeOfShape tree = (TreeOfShape) this.tree;
@@ -84,7 +87,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 			
 			if (pai != null){
 				extinction = (int) aux.getAttribute(type).getValue();
-				if(extinction > valueMin){
+				if(extinction >= valueMin && extinction <= valueMax){
 					selected[aux.getId()] = true;
 					for(NodeToS filho: pai.getChildren()){
 						selected[filho.getId()] = true;
@@ -97,11 +100,11 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 	}
 	
 	
-	private boolean[] getExtinctionValueNodeCT(int type, int valueMin){
-		return getExtinctionCTByAttribute(type, valueMin);
+	private boolean[] getExtinctionValueNodeCT(int type, int valueMin, int valueMax){
+		return getExtinctionCTByAttribute(type, valueMin, valueMax);
 	}
 
-	private boolean[] getExtinctionCTByAttribute(int type, int valueMin){
+	private boolean[] getExtinctionCTByAttribute(int type, int valueMin, int valueMax){
 		boolean selected[] = new boolean[tree.getNumNode()];
 		ComponentTree tree = (ComponentTree) this.tree;
 		boolean visitado[] = new boolean[tree.getNumNode()];
@@ -112,7 +115,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 			boolean flag = true;
 			while (flag  &&  pai != null) {
 				if (pai.getNumChildren() > 1) {
-					for(NodeCT filho: pai.getChildren()){  // verifica se possui irmao com area maior
+					for(NodeCT filho: (SimpleLinkedList<NodeCT>) pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
 							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttribute(type) == aux.getAttribute(type)) { //EMPATE Grimaud,92
 								flag = false;
@@ -137,9 +140,9 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 			
 			if (pai != null){
 				extinction = (int) aux.getAttribute(type).getValue();
-				if(extinction > valueMin){
+				if(extinction >= valueMin && extinction <= valueMax){
 					selected[aux.getId()] = true;
-					for(NodeCT filho: pai.getChildren()){
+					for(NodeCT filho: (SimpleLinkedList<NodeCT>) pai.getChildren()){
 						selected[filho.getId()] = true;
 						this.num = this.num + 1;
 					}

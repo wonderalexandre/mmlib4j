@@ -33,7 +33,7 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 		tree.loadAttribute(Attribute.AREA);
 		tree.loadAttribute(Attribute.HEIGHT);
 		tree.loadAttribute(Attribute.WIDTH);
-		tree.loadAttribute(Attribute.BIT_QUADS_NUMBER_HOLES);
+		tree.loadAttribute(Attribute.BIT_QUADS_HOLE_NUMBER);
 		tree.loadAttribute(Attribute.RECTANGULARITY);
 		tree.loadAttribute(Attribute.RATIO_WIDTH_HEIGHT);
 		tree.loadAttribute(Attribute.VARIANCE_LEVEL);
@@ -159,7 +159,7 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 		if((areaMin <= node.getAttributeValue(Attribute.AREA) && node.getAttributeValue(Attribute.AREA) <= areaMax)
 				&& (heightMin <= node.getAttributeValue(Attribute.HEIGHT) && node.getAttributeValue(Attribute.HEIGHT) <= heightMax)
 				&& (widthMin <= node.getAttributeValue(Attribute.WIDTH) && node.getAttributeValue(Attribute.WIDTH) <= widthMax)
-				&& (numHoleMin <= node.getAttributeValue(Attribute.BIT_QUADS_NUMBER_HOLES) && node.getAttributeValue(Attribute.BIT_QUADS_NUMBER_HOLES) <= numHoleMax)
+				&& (numHoleMin <= node.getAttributeValue(Attribute.BIT_QUADS_HOLE_NUMBER) && node.getAttributeValue(Attribute.BIT_QUADS_HOLE_NUMBER) <= numHoleMax)
 				&& (rectMin <= node.getAttributeValue(Attribute.RECTANGULARITY) && node.getAttributeValue(Attribute.RECTANGULARITY) <= rectMax)
 				&& (ratioWHMin <= node.getAttributeValue(Attribute.RATIO_WIDTH_HEIGHT) &&  node.getAttributeValue(Attribute.RATIO_WIDTH_HEIGHT) <= ratioWHMax)
 				&& (varianceMin <= node.getAttributeValue(Attribute.VARIANCE_LEVEL) && node.getAttributeValue(Attribute.VARIANCE_LEVEL) <= varianceMax)

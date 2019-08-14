@@ -16,13 +16,19 @@ public class PruningBasedAttribute implements MappingStrategyOfPruning{
 
 	private MorphologicalTreeFiltering tree;
 	private int typeParam;
+	private double valueParam;
 	private int num;
 	
 	public PruningBasedAttribute(MorphologicalTreeFiltering tree, int typeParam){
 		this.tree = tree;
 		this.typeParam = typeParam;
+		this.valueParam = Double.MAX_VALUE;
 		tree.loadAttribute(typeParam);
 		
+	}
+	
+	public void setParameter(double v){
+		this.valueParam = v;
 	}
 	
 	public boolean[] getMappingSelectedNodes() {
@@ -31,7 +37,7 @@ public class PruningBasedAttribute implements MappingStrategyOfPruning{
 			ComponentTree tree = (ComponentTree) this.tree;
 			boolean selected[] = new boolean[tree.getNumNode()];
 			for(NodeCT node: tree.getListNodes()){
-				if(node.getParent() != null){
+				if(node.getParent() != null && node.getAttribute(typeParam).getValue() <= valueParam){
 					if ( node.getParent().getAttribute(typeParam).getValue() != node.getAttribute(typeParam).getValue()) {
 						selected[node.getId()] = true;
 						num++;
@@ -44,7 +50,7 @@ public class PruningBasedAttribute implements MappingStrategyOfPruning{
 			TreeOfShape tree = (TreeOfShape) this.tree;
 			boolean selected[] = new boolean[tree.getNumNode()];
 			for(NodeToS node: tree.getListNodes()){
-				if(node.getParent() != null){
+				if(node.getParent() != null && node.getAttribute(typeParam).getValue() <= valueParam){
 					if ( node.getParent().getAttributeValue(typeParam) != node.getAttributeValue(typeParam)) {
 						selected[node.getId()] = true;
 						num++;
