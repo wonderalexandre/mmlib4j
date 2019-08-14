@@ -1,9 +1,6 @@
 package mmlib4j.representation.tree.attribute;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;

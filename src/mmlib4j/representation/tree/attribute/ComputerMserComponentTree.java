@@ -1,8 +1,8 @@
 package mmlib4j.representation.tree.attribute;
 
 import java.awt.Color;
-import java.util.LinkedList;
 
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
@@ -110,9 +110,9 @@ public class ComputerMserComponentTree implements ComputerMser {
 		}
 	}
 	
-	public LinkedList<NodeCT> getNodesByMSER(int delta){
+	public SimpleLinkedList<NodeCT> getNodesByMSER(int delta){
 		
-		LinkedList<NodeCT> list = new LinkedList<NodeCT>();
+		SimpleLinkedList<NodeCT> list = new SimpleLinkedList<NodeCT>();
 		ascendant = new NodeCT[tree.getNumNode()];
 		descendants = new NodeCT[tree.getNumNode()];
 

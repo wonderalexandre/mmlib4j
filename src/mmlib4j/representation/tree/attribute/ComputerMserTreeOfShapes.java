@@ -1,8 +1,8 @@
 package mmlib4j.representation.tree.attribute;
 
 import java.awt.Color;
-import java.util.LinkedList;
 
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
@@ -101,9 +101,9 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 			descendants[nodeAsc.getId()] = nodeDes;
 	}
 	
-	public LinkedList<NodeToS> getNodesByMSER(int delta){
+	public SimpleLinkedList<NodeToS> getNodesByMSER(int delta){
 		
-		LinkedList<NodeToS> list = new LinkedList<NodeToS>();
+		SimpleLinkedList<NodeToS> list = new SimpleLinkedList<NodeToS>();
 		ascendant = new NodeToS[tree.getNumNode()];
 		descendants = new NodeToS[tree.getNumNode()];
 		
