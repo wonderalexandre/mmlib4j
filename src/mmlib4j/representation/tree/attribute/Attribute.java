@@ -85,6 +85,11 @@ public class Attribute {
 	//mser
 	public static final int MSER = 40;
 	
+    // energy
+	public static final int SUM_GRAD_CONTOUR = 52;
+	public static final int FUNCTIONAL_ATTRIBUTE = 53;
+	public static final int FUNCTIONAL_VARIATIONAL = 54;
+	
 	public String getHeader(){
 		switch(type){
 			case ALTITUDE: return "ALTITUDE";	
@@ -125,6 +130,11 @@ public class Attribute {
 			case BIT_QUADS_AVERAGE_WIDTH: return "BIT_QUADS_WIDTH_AVERAGE";
 			case BIT_QUADS_AREA: return "BIT_QUADS_AREA";
 			case BIT_QUADS_AREA_DUDA: return "BIT_QUADS_AREA_DUDA";
+			
+			// energy
+			case SUM_GRAD_CONTOUR: return "SUM_GRAD_CONTOUR";
+			case FUNCTIONAL_ATTRIBUTE: return "FUNCTIONAL_ATTRIBUTE";
+			case FUNCTIONAL_VARIATIONAL: return "FUNCTIONAL_VARIATIONAL";
 			
 			default: return "UNDEFINED";
 		}

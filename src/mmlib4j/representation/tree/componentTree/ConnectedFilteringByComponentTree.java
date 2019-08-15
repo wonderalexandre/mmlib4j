@@ -16,6 +16,7 @@ import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
+import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
@@ -38,6 +39,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	private boolean hasComputerAttributeBasedBitQuads = false;
 	private boolean hasComputerDistanceTransform = false;
 	private boolean hasComputerFunctionalAttribute = false;
+	private boolean hasComputerFuncitonalVariational = false;
+	private ComputerFunctionalVariational fv = null;
 	private ComputerDistanceTransform dt = null;
 	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
@@ -127,8 +130,18 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 	}*/
 	
-	public void computerFunctionalAttribute(){
+	public ComputerFunctionalVariational computerFunctionalVariational(double scale) {
+		if(!hasComputerFuncitonalVariational) {
+			computerAttributeBasedPerimeterExternal();
+			fv = new ComputerFunctionalVariational(this, scale);
+			fv.addAttributeInNodesCT(getListNodes());
+		}
+		return fv;
+	} 
+	
+	public void computerFunctionalAttribute(){		
 		if(!hasComputerFunctionalAttribute){
+			computerAttributeBasedPerimeterExternal();
 			new ComputerFunctionalAttribute(this).addAttributeInNodesCT(getListNodes());
 			hasComputerFunctionalAttribute = true;
 		}

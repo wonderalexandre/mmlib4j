@@ -223,12 +223,12 @@ public class ComponentTree {
 			listNode.remove( node );
 			numNode--;			
 			for( int p: node.getCanonicalPixels() ) {				
-				parent.addPixel( p );				
+				parent.addPixel(p);				
 				map[p] = parent;				
 			}			
-			for( NodeCT child : node.getChildren() ) {							
-				parent.addChildren( child );				
-				child.setParent( parent );			
+			for(NodeCT child : node.getChildren()) {							
+				parent.addChildren(child);				
+				child.setParent(parent);			
 			}			
 			/* update attributes */									
 			node = null;			
