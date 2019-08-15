@@ -4,6 +4,7 @@ package mmlib4j.representation.tree.attribute;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.filtering.EdgeOperators;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -21,16 +22,20 @@ public class ComputerAttributeBasedPerimeterExternal {
 
 	private ThreadPoolExecutor pool;	
 	private Attribute perimeters[];
+	private Attribute sumGradContour[];	
 	private GrayScaleImage img;
+	private GrayScaleImage imgGrad;
 	private static final int[][] delta = { { 1,0}, { 1, 1}, {0, 1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, { 1,-1} };
 	NodeLevelSets rootTree;
 	
 	public ComputerAttributeBasedPerimeterExternal(int numNode, NodeLevelSets root, GrayScaleImage img){
 		long ti = System.currentTimeMillis();
 		this.img = img;		
+		this.imgGrad = EdgeOperators.sobel( img ); 
 		this.rootTree = root;
 		perimeters = new Attribute[numNode];
-		//pool =  new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+		sumGradContour = new Attribute[ numNode ];
+		//pool =  new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());		
 		computerAttribute(root);
 		//while(pool.getActiveCount() != 0);
 		if(Utils.debug){
@@ -43,16 +48,34 @@ public class ComputerAttributeBasedPerimeterExternal {
 	public void computerAttribute(NodeLevelSets node){
 		SimpleLinkedList<NodeLevelSets> children = node.getChildren();
 		perimeters[node.getId()] = new Attribute(Attribute.PERIMETER_EXTERNAL);
-		
+		sumGradContour[ node.getId() ] = new Attribute(Attribute.SUM_GRAD_CONTOUR);
 		if(node == rootTree){
 			perimeters[node.getId()].value = img.getWidth() * 2 + img.getHeight() * 2;
+			double sumgrad = 0;
+			for( int cols = 0 ; cols < img.getWidth() ; cols++ ) {								
+				sumgrad += ( imgGrad.getPixel( cols, 0 ) + imgGrad.getPixel( cols, imgGrad.getHeight()-1 ) );				
+			}			
+			for( int rows = 1 ; rows < img.getHeight()-1 ; rows++ ) {			
+				sumgrad += ( imgGrad.getPixel( 0, rows ) + imgGrad.getPixel( imgGrad.getWidth()-1, rows ) );				
+			}			
+			sumGradContour[ node.getId() ].value = sumgrad/perimeters[ node.getId() ].value;
 		}else{
 			if(node.getArea() < 3){
 				perimeters[node.getId()].value = node.getArea();
+				double sumgrad = 0;
+				for( int pixel : node.getCanonicalPixels() ) {					
+					sumgrad += imgGrad.getPixel( pixel );					
+				}				
+				sumGradContour[ node.getId() ].value = sumgrad/perimeters[ node.getId() ].value;
 			}else if(node.getParent().getArea() - node.getArea() < 3){
 				perimeters[node.getId()].value = perimeters[node.getParent().getId()].value - 1;
+				double sumgrad = 0;
+				for( int pixel : node.getCanonicalPixels() ) {					
+					sumgrad += imgGrad.getPixel( pixel );					
+				}				
+				sumGradContour[ node.getId() ].value = sumgrad/perimeters[ node.getId() ].value;
 			}else
-				new ThreadNodeCTPerimeter(node, perimeters[node.getId()]).run();
+				new ThreadNodeCTPerimeter(node, perimeters[node.getId()], sumGradContour[node.getId()]).run();
 				//pool.execute(new ThreadNodeCTPerimeter(node, perimeters[node.getId()]));
 		}
 		
@@ -84,6 +107,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 		node.addAttribute(Attribute.CIRCULARITY, new Attribute(Attribute.CIRCULARITY, getCircularity(node)));
 		node.addAttribute(Attribute.COMPACTNESS, new Attribute(Attribute.COMPACTNESS, getCompacity(node)));
 		node.addAttribute(Attribute.ELONGATION, new Attribute(Attribute.ELONGATION, getElongation(node)));
+		node.addAttribute(Attribute.SUM_GRAD_CONTOUR , sumGradContour[node.getId()]);	
 	}
 	
 	public double getCircularity(NodeLevelSets node){
@@ -101,12 +125,14 @@ public class ComputerAttributeBasedPerimeterExternal {
 	class ThreadNodeCTPerimeter extends Thread {
 		private NodeLevelSets node;
 		private Attribute perimeter;
+		private Attribute sumGradContour;
 		boolean imgBin[][];
 		boolean is8Connected=true;
 		int xmin, ymin;
-		public ThreadNodeCTPerimeter(NodeLevelSets node, Attribute perimeter){
+		public ThreadNodeCTPerimeter(NodeLevelSets node, Attribute perimeter, Attribute sumGradContour){
 			this.node = node;
 			this.perimeter = perimeter;
+			this.sumGradContour = sumGradContour;
 			if(node instanceof NodeToS){
 				is8Connected = node.isNodeMaxtree() == true;
 				
@@ -134,7 +160,9 @@ public class ComputerAttributeBasedPerimeterExternal {
 				WindowImages.show( b, "imgBin" );
 				WindowImages.show( node.createImage() );
 			}*/
-			perimeter.value = computerContour(node.getPixelWithYmin() % img.getWidth()-xmin, node.getPixelWithYmin() / img.getWidth()-ymin );
+			double values [] = computerContour(node.getPixelWithYmin() % img.getWidth()-xmin, node.getPixelWithYmin() / img.getWidth()-ymin);
+			perimeter.value = values[ 0 ];
+			sumGradContour.value = values[ 1 ]/values[ 0 ];
 			//System.out.println(perimeter.value);
 		}
 		
@@ -156,11 +184,12 @@ public class ComputerAttributeBasedPerimeterExternal {
 			}
 		}
 		
-		double computerContour (int xS, int yS) {
+		double [] computerContour (int xS, int yS) {
 			int xT, yT; 
 			int xP, yP; 
 			int xC, yC; 
 			double perimeter = 1;
+			double sumgrad = imgGrad.getPixel(xS+xmin, yS+ymin);
 			Pixel pt = new Pixel(xS, yS, 0); 
 			int dNext = findNextPoint(pt, 0);
 			
@@ -169,10 +198,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 			yC = yT = pt.y;
 			
 			boolean done = (xS==xT && yS==yT);
-			while (!done) {
-				//pt.x = xC;
-				//pt.y = yC;
-				
+			while (!done) {				
 				dNext = findNextPoint(pt, (dNext + 6) % 8);
 				xP = xC;  
 				yP = yC;	
@@ -180,6 +206,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 				yC = pt.y; 
 				done = (xP==xS && yP==yS && xC==xT && yC==yT);
 				if (!done) {
+					sumgrad += imgGrad.getPixel(pt.x+xmin, pt.y+ymin);
 					if(dNext % 2 ==0)
 						perimeter += 1;
 					else
@@ -187,7 +214,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 					
 				}
 			}
-			return perimeter;
+			return new double[] {perimeter, sumgrad};
 		}
 		
 

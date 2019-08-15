@@ -143,8 +143,7 @@ public class PriorityQueueHeap<T>  {
         T elem = queue[1].element;
         swap(1, n--);
         sink(1);
-        queue[n+1] = null;
-        
+        queue[n+1] = null;         
         return elem;
     }
 
@@ -156,7 +155,15 @@ public class PriorityQueueHeap<T>  {
         mapIndexQueue[queue[j].element.hashCode()] = j;
     }
 
-
+    public void remove(T elem) {
+        if (isEmpty()) throw new NoSuchElementException("Priority queue underflow");
+        int index = mapIndexQueue[elem.hashCode()];
+        swap(index, n--);
+        sink(index);
+        swim(index);
+        queue[n+1]=null;         
+    }
+    
    /***************************************************************************
     * Helper functions to restore the heap invariant.
     ***************************************************************************/
@@ -176,11 +183,7 @@ public class PriorityQueueHeap<T>  {
             swap(k, j);
             k = j;
         }
-    }
-
-    
-
-   
+    }  
 
     /**
      * Unit tests the {@code MinPQ} data type.

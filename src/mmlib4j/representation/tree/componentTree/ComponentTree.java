@@ -216,28 +216,23 @@ public class ComponentTree {
 	
 	/* Add by gobber */	
 	public void mergeFather( NodeLevelSets nodeG ) {
-		NodeCT node = (NodeCT) nodeG;
-		if( node != root ) {			
+		NodeCT node = (NodeCT) nodeG;		
+		if( node != root ) {						
 			NodeCT parent = node.parent;
-			parent.children.remove( node );
-	
+			parent.children.remove( node );			
 			listNode.remove( node );
-			numNode--;
-			for( int p: node.getCanonicalPixels() ) {
+			numNode--;			
+			for( int p: node.getCanonicalPixels() ) {				
 				parent.addPixel( p );				
-				map[ p ] = parent;
-			}
-			
-			for( NodeCT child : node.getChildren() ) {				
-				parent.addChildren( child );
-				child.setParent( parent );
-			}
-			
-			/* update attributes */						
-			node = null;
-			
+				map[p] = parent;				
+			}			
+			for( NodeCT child : node.getChildren() ) {							
+				parent.addChildren( child );				
+				child.setParent( parent );			
+			}			
+			/* update attributes */									
+			node = null;			
 		}
-		
 	}
 	
 	public GrayScaleImage reconstruction(){
