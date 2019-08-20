@@ -1,6 +1,7 @@
 package mmlib4j.representation.tree.attribute;
 
 import java.awt.Color;
+import java.util.Comparator;
 
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
@@ -10,6 +11,7 @@ import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.AdjacencyRelation;
@@ -76,7 +78,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
-		extincaoPorNode.sort();
+		extincaoPorNode.sort(getComparator());
 		if(kmax > extincaoPorNode.size()) kmax = extincaoPorNode.size();
 		for(int i=1; i <= kmax; i++){
 			NodeToS node = extincaoPorNode.get(i-1).node;
@@ -125,7 +127,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
-		extincaoPorNode.sort();
+		extincaoPorNode.sort(getComparator());
 		int i = 0;
 		for(ExtinctionValueNode ev: extincaoPorNode){
 			if(attValue1 < ev.extinctionValue && ev.extinctionValue < attValue2){
@@ -199,7 +201,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 				}
 			}	
 		}
-		extincaoPorNode.sort();
+		extincaoPorNode.sort(getComparator());
 		for(int k=0; k < kmax; k++){
 			NodeToS no = extincaoPorNode.get(k).node;
 			//System.out.println(no.getId() + "=> " + extincaoPorNode.get(k).extinctionValue);
@@ -248,7 +250,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 			extincaoPorNode = getExtinctionCutByAttribute(type, tree.getLeaves());
 		}
 		
-		extincaoPorNode.sort();
+		extincaoPorNode.sort(getComparator());
 		
 		boolean flag[] = new boolean[tree.getNumNode()];
 		for(ExtinctionValueNode nodeEV: extincaoPorNode){
@@ -353,7 +355,7 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 		}else{
 			extincaoPorNode = getExtinctionCutByAttribute(type, tree.getLeaves());
 		}
-		extincaoPorNode.sort();
+		extincaoPorNode.sort(getComparator());
 		return extincaoPorNode;
 	}
 	
@@ -475,6 +477,15 @@ public class ComputerExtinctionValueTreeOfShapes implements ComputerExtinctionVa
 
 		}
 		return reconstruction(extincaoPorNode, attributeValue1, attributeValue2);
+	}
+	
+	public Comparator<ExtinctionValueNode> getComparator(){
+		return new Comparator<ExtinctionValueNode>() {
+			public int compare(ExtinctionValueNode o1, ExtinctionValueNode o2) {
+				return o1.compareTo(o2);
+			}
+		};
+		
 	}
 	
 	public class ExtinctionValueNode implements Comparable<ExtinctionValueNode>{
