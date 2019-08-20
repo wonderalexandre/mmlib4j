@@ -113,9 +113,9 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			case Attribute.CIRCULARITY:
 			case Attribute.COMPACTNESS:
 			case Attribute.ELONGATION:
+			case Attribute.SUM_GRAD_CONTOUR:
 				computerAttributeBasedPerimeterExternal();
-				break;
-				
+				break;				
 				
 		}
 	}
