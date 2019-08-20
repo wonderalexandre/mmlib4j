@@ -1,6 +1,7 @@
 package mmlib4j.datastruct;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -31,8 +32,8 @@ public class SimpleArrayList<T> implements Iterable<T> {
 		elementData[size++] = elem;
 	}
 	
-	public void sort() {
-		Arrays.sort(elementData);
+	public void sort(Comparator<T> comp) {
+		Arrays.sort(elementData,0,size-1, comp);
 	}
   
 	public static void main(String args[]){
@@ -42,10 +43,17 @@ public class SimpleArrayList<T> implements Iterable<T> {
 			
 			System.out.println(list.capacity + " " + list.size);
 		}
-			
+		
+		list.sort(new Comparator<Integer>() {
+			public int compare(Integer o1, Integer o2) {
+				return o1.compareTo(o2);
+			}			
+		});
+		
 		for(Integer x: list){
 			System.out.println(x);
 		}
+		
 		
 	}
 	
@@ -118,6 +126,5 @@ public class SimpleArrayList<T> implements Iterable<T> {
 		};
 	}
 
-	
 	
 }
