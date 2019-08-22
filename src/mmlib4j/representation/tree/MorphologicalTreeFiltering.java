@@ -10,20 +10,26 @@ import mmlib4j.images.GrayScaleImage;
  */
 public interface MorphologicalTreeFiltering {
 	
-	public final static int PRUNING = 0;
-	public final static int PRUNING_EXTINCTION_VALUE = 1;
-	//public final static int PRUNING_MIN = 2;
-	//public final static int PRUNING_MAX = 3;
-	//public final static int PRUNING_VERTEBI = 4;
-	public final static int PRUNING_MSER = 4;
-	public final static int PRUNING_TBMR = 5;
-	public final static int PRUNING_GRADUAL_TRANSITION = 6;
+	//public final static int PRUNING = 0;
+	public final static int PRUNING_MIN = 1;
+	public final static int PRUNING_MAX = 2;
+	public final static int PRUNING_VITERBI = 3;
+	public final static int RULE_DIRECT = 4;
+	public final static int RULE_SUBTRACTIVE = 5;
 	
-	public final static int RULE_DIRECT = 0;
-	//public final static int RULE_SUBTRACTIVE = 1;
+	/*public final static int PRUNING_EXTINCTION_VALUE = 1;
+	public final static int PRUNING_MSER = 5;
+	public final static int PRUNING_TBMR = 6;
+	public final static int PRUNING_GRADUAL_TRANSITION = 7;
+	*/
 	
+	public GrayScaleImage getImageFiltered(double attributeValue, int attributeType, int typeSimplification);
 	
-	public GrayScaleImage filteringByPruning(double attributeValue, int type);
+	public InfoPrunedTree getInfoPrunedTree(double attributeValue, int attributeType, int typeSimplification);
+	
+	public void simplificationTree(double attributeValue, int attributeType, int typeSimplification);
+	
+	//public GrayScaleImage filteringByPruning(double attributeValue, int type);
 	
 	public GrayScaleImage getInputImage();
 	

@@ -15,9 +15,9 @@ import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
+import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
-import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
 import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
@@ -214,15 +214,110 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * @param idAttribute - tipo do atributo
 	 * @return imagem filtrada
 	 */
-	public GrayScaleImage filtering(double attributeValue, int type, int typePruning, int typeRec){
-		if(typePruning == MorphologicalTreeFiltering.PRUNING_EXTINCTION_VALUE)
+	public GrayScaleImage getImageFiltered(double attributeValue, int type, int typeSimplification){
+		
+		if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MIN)
+			return filteringByPruningMin(attributeValue, type);
+		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MAX)
+			return filteringByPruningMax(attributeValue, type);
+		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
+			return filteringByPruningViterbi(attributeValue, type);
+		else if(typeSimplification == MorphologicalTreeFiltering.RULE_DIRECT)
+			return filteringByDirectRule(attributeValue, type);
+		else if(typeSimplification == MorphologicalTreeFiltering.RULE_SUBTRACTIVE)
+			return filteringBySubtractiveRule(attributeValue, type);
+		/*
+		if(typeSimplification == MorphologicalTreeFiltering.PRUNING_EXTINCTION_VALUE)
 			return filteringByExtinctionValue(attributeValue, type);
-		else if(typePruning == MorphologicalTreeFiltering.PRUNING)
+		else 
+			if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MIN)
 			return filteringByPruning(attributeValue, type);
+		*/
 		
 		throw new RuntimeException("type filtering invalid");
 	}
 	
+	public GrayScaleImage filteringByPruningMin(double attributeValue, int type){
+		return null;
+	}
+	
+	public GrayScaleImage filteringByPruningMax(double attributeValue, int type){
+		return null;
+	}
+	
+	public GrayScaleImage filteringByPruningViterbi(double attributeValue, int type){
+		return null;
+	}
+	
+	public GrayScaleImage filteringByDirectRule(double attributeValue, int type){
+		return null;
+	}
+	
+	public GrayScaleImage filteringBySubtractiveRule(double attributeValue, int type){
+		return null;
+	}
+	
+	
+	public InfoPrunedTree getInfoPrunedTree(double attributeValue, int attributeType, int typeSimplification){
+		
+		if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MIN)
+			return getInfoPrunedTreeByMin(attributeValue, typeSimplification);
+		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MAX)
+			return getInfoPrunedTreeByMax(attributeValue, typeSimplification);
+		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
+			return getInfoPrunedTreeByViterbi(attributeValue, typeSimplification);
+		
+		
+		throw new RuntimeException("type filtering invalid");
+	}
+	
+	public InfoPrunedTree getInfoPrunedTreeByMin(double attributeValue, int type){
+		return null;
+	}
+	
+	public InfoPrunedTree getInfoPrunedTreeByMax(double attributeValue, int type){
+		return null;
+	}
+	
+	public InfoPrunedTree getInfoPrunedTreeByViterbi(double attributeValue, int type){
+		return null;
+	}
+	
+	public void simplificationTree(double attributeValue, int attributeType, int typeSimplification) {
+		if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MIN)
+			simplificationTreeByPruningMin(attributeValue, attributeType);
+		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MAX)
+			simplificationTreeByPruningMax(attributeValue, attributeType);
+		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
+			simplificationTreeByPruningViterbi(attributeValue, attributeType);
+		else if(typeSimplification == MorphologicalTreeFiltering.RULE_DIRECT)
+			simplificationTreeByDirectRule(attributeValue, attributeType);
+		else if(typeSimplification == MorphologicalTreeFiltering.RULE_SUBTRACTIVE)
+			simplificationTreeBySubstractiveRule(attributeValue, attributeType);
+		
+		
+		throw new RuntimeException("type filtering invalid");
+	}
+	
+	public void simplificationTreeByPruningMin(double attributeValue, int type){
+		
+	}
+	
+	public void simplificationTreeByPruningMax(double attributeValue, int type){
+		
+	}
+	
+	public void simplificationTreeByPruningViterbi(double attributeValue, int type){
+		
+	}
+	
+	public void simplificationTreeByDirectRule(double attributeValue, int type){
+		
+	}
+	
+	public void simplificationTreeBySubstractiveRule(double attributeValue, int type){
+		
+	}
 	
 	SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
 	ComputerExtinctionValueComponentTree extinctionValue;
@@ -248,17 +343,18 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				fifo.enqueue(son);	 
 			}	
 		}
-		
+		boolean flags[] = new boolean[this.getNumNode()];
 		for(int k=extincaoPorNode.size()-1; k >= 0 ; k--){
 			NodeCT no = extincaoPorNode.get(k).node;
 
-			if(extincaoPorNode.get(k).extinctionValue <= attributeValue){ //poda
+			if(extincaoPorNode.get(k).extinctionValue <= attributeValue && !flags[no.getId()]){ //poda
 				int levelPropagation = no.level;
 				//propagacao do nivel do pai para os filhos 
 				Queue<NodeCT> fifoPruning = new Queue<NodeCT>();
 				fifoPruning.enqueue(no);	
 				while(!fifoPruning.isEmpty()){
 					NodeCT nodePruning = fifoPruning.dequeue();
+					flags[nodePruning.getId()] = true;
 					if(nodePruning.children != null){ 
 						for(NodeCT song: nodePruning.children){ 
 							fifoPruning.enqueue(song);	 
