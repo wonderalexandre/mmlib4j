@@ -2,6 +2,7 @@ package mmlib4j.representation.tree.pruningStrategy;
 
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
@@ -55,14 +56,14 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		boolean selected[] = new boolean[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		TreeOfShape tree = (TreeOfShape) this.tree;
-		for(NodeToS folha: tree.getLeaves()){
+		for(NodeLevelSets folha: tree.getLeaves()){
 			int extinction = (int)tree.getRoot().getAttribute(type).getValue();
-			NodeToS aux = folha;
-			NodeToS pai = aux.getParent();
+			NodeLevelSets aux = folha;
+			NodeLevelSets pai = aux.getParent();
 			boolean flag = true;
 			while (flag  &&  pai != null) {
 				if (pai.getNumChildren() > 1) {
-					for(NodeToS filho: pai.getChildren()){  // verifica se possui irmao com area maior
+					for(NodeLevelSets filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
 							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttribute(type) == aux.getAttribute(type)) { //EMPATE Grimaud,92
 								flag = false;
@@ -89,7 +90,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 				extinction = (int) aux.getAttribute(type).getValue();
 				if(extinction >= valueMin && extinction <= valueMax){
 					selected[aux.getId()] = true;
-					for(NodeToS filho: pai.getChildren()){
+					for(NodeLevelSets filho: pai.getChildren()){
 						selected[filho.getId()] = true;
 						this.num = this.num + 1;
 					}
@@ -108,14 +109,14 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 		boolean selected[] = new boolean[tree.getNumNode()];
 		ComponentTree tree = (ComponentTree) this.tree;
 		boolean visitado[] = new boolean[tree.getNumNode()];
-		for(NodeCT folha: tree.getLeaves()){
+		for(NodeLevelSets folha: tree.getLeaves()){
 			int extinction = (int)tree.getRoot().getAttribute(type).getValue();
-			NodeCT aux = folha;
-			NodeCT pai = aux.getParent();
+			NodeLevelSets aux = folha;
+			NodeLevelSets pai = aux.getParent();
 			boolean flag = true;
 			while (flag  &&  pai != null) {
 				if (pai.getNumChildren() > 1) {
-					for(NodeCT filho: (SimpleLinkedList<NodeCT>) pai.getChildren()){  // verifica se possui irmao com area maior
+					for(NodeLevelSets filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
 							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttribute(type) == aux.getAttribute(type)) { //EMPATE Grimaud,92
 								flag = false;
@@ -142,7 +143,7 @@ public class PruningBasedExtinctionValue implements MappingStrategyOfPruning{
 				extinction = (int) aux.getAttribute(type).getValue();
 				if(extinction >= valueMin && extinction <= valueMax){
 					selected[aux.getId()] = true;
-					for(NodeCT filho: (SimpleLinkedList<NodeCT>) pai.getChildren()){
+					for(NodeLevelSets filho:  pai.getChildren()){
 						selected[filho.getId()] = true;
 						this.num = this.num + 1;
 					}

@@ -53,7 +53,7 @@ public class ComputerFunctionalVariational {
 		volumeR = new double[ numNode ];
 		functionalVariational = new Attribute[numNode];
 		
-		for(NodeCT node : tree.getListNodes()) {			
+		for(NodeLevelSets node : tree.getListNodes()) {			
 			mapNodes[node.getId()] = node;
 			areaR[node.getId()] = node.getCanonicalPixels().size();
 			volumeR[node.getId()] = areaR[node.getId()] * node.getLevel();
@@ -195,13 +195,13 @@ public class ComputerFunctionalVariational {
 		
 	}
 		
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> list) {		
-		for( NodeCT node: list ) {			
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list) {		
+		for(NodeLevelSets node: list ) {			
 			addAttributeInNodes( node );			
 		}		
 	}
 	
-	public void addAttributeInNodesToS(SimpleLinkedList<NodeToS> hashSet ) {		
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> hashSet ) {		
 		for(NodeLevelSets node: hashSet) {			
 			addAttributeInNodes( node );			
 		}		

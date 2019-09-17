@@ -1,9 +1,9 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 
@@ -34,11 +34,11 @@ public class PruningBasedTBMR implements MappingStrategyOfPruning{
 			boolean result[] = new boolean[tree.getNumNode()];
 			num = 0;
 			int numChildren[] = new int[tree.getNumNode()];
-			for(NodeCT node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getArea() >= tMin && node.getParent() != null)
 					++numChildren[node.getParent().getId()];
 			}
-			for(NodeCT node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getParent() != null && node.getArea() < tMax && numChildren[node.getId()] == 1 && numChildren[node.getParent().getId()] >= 2){
 					result[node.getId()] = true;
 					num += 1;
@@ -52,11 +52,11 @@ public class PruningBasedTBMR implements MappingStrategyOfPruning{
 			boolean result[] = new boolean[tree.getNumNode()];
 			num = 0;
 			int numChildren[] = new int[tree.getNumNode()];
-			for(NodeToS node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getArea() >= tMin && node.getParent() != null)
 					++numChildren[node.getParent().getId()];
 			}
-			for(NodeToS node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getParent() != null && node.getArea() < tMax && numChildren[node.getId()] == 1 && numChildren[node.getParent().getId()] >= 2){
 					result[node.getId()] = true;
 					num += 1;

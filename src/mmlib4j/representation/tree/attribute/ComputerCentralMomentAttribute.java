@@ -38,13 +38,13 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		return attr;
 	}
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> list){
-		for(NodeCT node: list){
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list){
+		for(NodeLevelSets node: list){
 			addAttributeInNodes(node);
 		}
 	}
 	
-	public void addAttributeInNodesToS(SimpleLinkedList<NodeToS> hashSet){
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}

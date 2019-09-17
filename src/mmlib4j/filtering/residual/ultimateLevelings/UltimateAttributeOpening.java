@@ -7,8 +7,8 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
 import mmlib4j.segmentation.Labeling;
 import mmlib4j.utils.Utils;
@@ -30,9 +30,9 @@ public class UltimateAttributeOpening {
 	private GrayScaleImage imgInput;
 	private boolean computerDistribution = false; 
 	boolean[] nodesWithMaxResidues;
-	private NodeCT[] mapNodes;
+	private NodeLevelSets[] mapNodes;
 	
-	private ArrayList<NodeCT> nodeDistribution[];
+	private ArrayList<NodeLevelSets> nodeDistribution[];
 	
 	public int[] getMaxContrastLUT() {
 		return this.maxContrastLUT;
@@ -67,17 +67,17 @@ public class UltimateAttributeOpening {
 		}
 		this.selectedForPruning = mapNodePruning;
 		this.selectedForFiltering = selectedShape;
-		NodeCT root = tree.getRoot();
+		NodeLevelSets root = tree.getRoot();
 		maxContrastLUT = new int[tree.getNumNode()];
 		associatedIndexLUT = new int[tree.getNumNode()];
-		mapNodes = new NodeCT[tree.getNumNode()];
+		mapNodes = new NodeLevelSets[tree.getNumNode()];
 		nodesWithMaxResidues = new boolean[tree.getNumNode()];
 		
 		maxContrastLUT[root.getId()] = 0;		
 		associatedIndexLUT[root.getId()] = 0;
 
 		if (root.getChildren() != null) {
-			for(NodeCT no: root.getChildren()){
+			for(NodeLevelSets no: root.getChildren()){
 				computeUAO(no, false, false, false, null, root);
 			}
 		}
@@ -92,19 +92,19 @@ public class UltimateAttributeOpening {
 		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam).getMappingSelectedNodes());	
 	}
 	
-	public boolean hasNodeSelectedInPrimitive(NodeCT currentNode){
+	public boolean hasNodeSelectedInPrimitive(NodeLevelSets currentNode){
 		if(selectedForFiltering == null) return true;
 		
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(currentNode);
 		while(!fifo.isEmpty()){
-			NodeCT node = fifo.dequeue();
+			NodeLevelSets node = fifo.dequeue();
 			
 			if(selectedForFiltering[node.getId()]){ 
 				return true;
-			}
+			}	
 				
-			for(NodeCT n: node.getChildren()){
+			for(NodeLevelSets n: node.getChildren()){
 				if(selectedForPruning[n.getId()] == false)
 					fifo.enqueue(n);
 			}
@@ -115,11 +115,11 @@ public class UltimateAttributeOpening {
 	
 
 	
-	private void computeUAO(NodeCT currentNode, boolean qPropag, boolean flagInit, boolean isCalculateResidue, NodeCT firstNodeInNR, NodeCT firstNodeNotInNR){
+	private void computeUAO(NodeLevelSets currentNode, boolean qPropag, boolean flagInit, boolean isCalculateResidue, NodeLevelSets firstNodeInNR, NodeLevelSets firstNodeNotInNR){
 		int contrast = 0;
 		boolean flagResido = false;
 		boolean flagPropag = false;
-		NodeCT parentNode = currentNode.getParent();
+		NodeLevelSets parentNode = currentNode.getParent();
 		
 		if(currentNode.getAttributeValue(typeParam) <= maxCriterion && selectedForPruning[currentNode.getId()]){
 			flagInit = true;
@@ -146,7 +146,7 @@ public class UltimateAttributeOpening {
 			
 			int maxContrast;
 			int associatedIndex;
-			NodeCT associatedNode;
+			NodeLevelSets associatedNode;
 			if (maxContrastLUT[parentNode.getId()] >= contrast) {
 				maxContrast = maxContrastLUT[parentNode.getId()];
 				associatedIndex = associatedIndexLUT[parentNode.getId()];
@@ -172,18 +172,18 @@ public class UltimateAttributeOpening {
 			
 			if(computerDistribution == true && associatedIndex != 0 && isCalculateResidue){
 				if(nodeDistribution[id] == null)
-					nodeDistribution[id] = new ArrayList<NodeCT>();
+					nodeDistribution[id] = new ArrayList<NodeLevelSets>();
 				nodeDistribution[id].add(currentNode); //computer granulometries
 			}
 		}
 		
-		for(NodeCT no: currentNode.getChildren()){
+		for(NodeLevelSets no: currentNode.getChildren()){
 			computeUAO(no, flagPropag, flagInit, isCalculateResidue, firstNodeInNR, firstNodeNotInNR);
 		}
 	}
 	
 	
-	public ArrayList<NodeCT>[] getNodeDistribuition(){
+	public ArrayList<NodeLevelSets>[] getNodeDistribuition(){
 		return nodeDistribution;
 	}
 	
@@ -208,7 +208,7 @@ public class UltimateAttributeOpening {
 	public GrayScaleImage getAttributeResidues(int attr){
 		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		boolean map[] = getNodesWithMaximumResidues();
-		for(NodeCT node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(map[node.getId()]){
 				int value = (int) node.getAttributeValue(attr);
 				for(int p: node.getPixelsOfCC()){
@@ -222,15 +222,15 @@ public class UltimateAttributeOpening {
 	
 	public GrayScaleImage getResidues(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, maxContrastLUT[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -243,18 +243,18 @@ public class UltimateAttributeOpening {
 	public boolean[] getNodesWithMaximumResidues(){
 		return nodesWithMaxResidues;
 	}
-	public NodeCT[] getNodesMap(){
-		NodeCT map[] = new NodeCT[imgInput.getSize()];
+	public NodeLevelSets[] getNodesMap(){
+		NodeLevelSets map[] = new NodeLevelSets[imgInput.getSize()];
 		
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				map[p] = mapNodes[no.getId()];
 			}
 			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -264,15 +264,15 @@ public class UltimateAttributeOpening {
 	
 	public GrayScaleImage getAssociateIndexImage(){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedIndexLUT[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}

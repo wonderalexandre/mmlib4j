@@ -7,6 +7,7 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -18,16 +19,16 @@ import mmlib4j.utils.Utils;
  *
  */
 public class TreeOfShape{
-	protected NodeToS root;
+	protected NodeLevelSets root;
 	protected int width;
 	protected int height;
 	protected int numNode; 
 	protected int heightTree;
 	protected AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5);
 	protected GrayScaleImage imgInput;
-	protected NodeToS []map;
-	protected SimpleLinkedList<NodeToS> listNode;
-	protected SimpleLinkedList<NodeToS> listLeaves;
+	protected NodeLevelSets []map;
+	protected SimpleLinkedList<NodeLevelSets> listNode;
+	protected SimpleLinkedList<NodeLevelSets> listLeaves;
 	protected BuilderTreeOfShape build;
 	
 	protected int sup = 255;
@@ -72,28 +73,28 @@ public class TreeOfShape{
 		return imgInput;
 	}
 
-	public SimpleLinkedList<NodeToS> getListNodes(){
+	public SimpleLinkedList<NodeLevelSets> getListNodes(){
 		return listNode; 
 	}
 	
 	
-	public NodeToS[] getNodesMap(){
+	public NodeLevelSets[] getNodesMap(){
 		return map;
 	}
 	
 	public void createNodesMap(){
-		map = new NodeToS[getWidth()*getHeight()];
-		listLeaves = new SimpleLinkedList<NodeToS>();
-		listNode = new SimpleLinkedList<NodeToS>();
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		map = new NodeLevelSets[getWidth()*getHeight()];
+		listLeaves = new SimpleLinkedList<NodeLevelSets>();
+		listNode = new SimpleLinkedList<NodeLevelSets>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				map[p] = no;
 			}
 			listNode.add(no);
-			for(NodeToS son: no.children){
+			for(NodeLevelSets son: no.getChildren()){
 				fifo.enqueue(son);	 
 			}
 			if(no.isLeaf())
@@ -102,11 +103,11 @@ public class TreeOfShape{
 		
 	}
 	
-	public SimpleLinkedList<NodeToS> getLeaves(){
+	public SimpleLinkedList<NodeLevelSets> getLeaves(){
 		if(listLeaves == null){
-			listLeaves = new SimpleLinkedList<NodeToS>();
-			for(NodeToS node: listNode){
-				if(node.children.isEmpty())
+			listLeaves = new SimpleLinkedList<NodeLevelSets>();
+			for(NodeLevelSets node: listNode){
+				if(node.getChildren().isEmpty())
 					listLeaves.add(node);	
 			}
 		}
@@ -114,57 +115,52 @@ public class TreeOfShape{
 	}
 	
 
-	public void computerInforTree(NodeToS node, int height){
+	public void computerInforTree(NodeLevelSets node, int height){
 		
-		node.heightNode = height;
+		node.setHeightNode( height );
 		if(height > heightTree)
 			heightTree = height;
 		
 		if(node != root){
-			node.numSiblings = node.parent.children.size();
-			if(node.parent.level < node.level)
-				node.isNodeMaxtree = true; //maxtree
-			else if(node.parent.level > node.level)
-				node.isNodeMaxtree = false; //mintree
+			if(node.getParent().getLevel() < node.getLevel())
+				node.setNodeType( true ); //maxtree
+			else if(node.getParent().getLevel() > node.getLevel())
+				node.setNodeType( false );//mintree
 		}
-		
 		else{
-			node.numSiblings = 0;
 			if(node.getLevel() == imgInput.minValue()){
-				node.isNodeMaxtree = true;
+				node.setNodeType( true ); //maxtree
 			}else{
-				node.isNodeMaxtree = false;
+				node.setNodeType( false );//mintree
 			}
 		}
 		
-		for(NodeToS son: node.children){
+		for(NodeLevelSets son: node.getChildren()){
 			computerInforTree(son, height + 1);
 			
-			if(node.isNodeMaxtree != son.isNodeMaxtree)
-				node.countHoles++;
 			if(son.isLeaf())
-				node.numDescendentLeaf += 1; 
-			node.numDescendent += son.numDescendent;
-			node.numDescendentLeaf += son.numDescendentLeaf;
-			node.sumX += son.sumX;
-			node.sumY += son.sumY;
-			node.area += son.area;
+				node.setNumDescendentLeaf( node.getNumDescendentLeaf() + 1 ); 
+			node.setNumDescendent(node.getNumDescendent() + son.getNumDescendent());
+			node.setNumDescendentLeaf(node.getNumDescendentLeaf() + son.getNumDescendentLeaf());
+			node.setSumX( node.getSumX() + son.getSumX() );
+			node.setSumY( node.getSumY() + son.getSumY() );
+			node.setArea( node.getArea() + son.getArea() );
 		}
 		
 	}
 	
-	public Iterable<NodeToS> getPathToRoot(final NodeToS node){
-		return new Iterable<NodeToS>() {
-			public Iterator<NodeToS> iterator() {
-				return new Iterator<NodeToS>() {
-					NodeToS nodeRef = node;
+	public Iterable<NodeLevelSets> getPathToRoot(final NodeLevelSets node){
+		return new Iterable<NodeLevelSets>() {
+			public Iterator<NodeLevelSets> iterator() {
+				return new Iterator<NodeLevelSets>() {
+					NodeLevelSets nodeRef = node;
 					public boolean hasNext() {
 						return nodeRef != null;
 					}
 
-					public NodeToS next() {
-						NodeToS n = nodeRef;
-						nodeRef = nodeRef.parent;
+					public NodeLevelSets next() {
+						NodeLevelSets n = nodeRef;
+						nodeRef = nodeRef.getParent();
 						return n;
 					}
 
@@ -181,32 +177,32 @@ public class TreeOfShape{
 	
 	public void extendedTree(int inf, int sup){
 		long ti = System.currentTimeMillis();
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		this.isExtendedTree = true;
 		this.sup = sup;
 		this.inf = inf;
-		for(NodeToS son: this.root.children){
+		for(NodeLevelSets son: this.root.getChildren()){
 			fifo.enqueue(son);
 		}
 		
-		if(this.root.isNodeMaxtree && root.level > inf){
-			this.root = getExtendedBranchOfMaxtree(this.root, inf, this.root.level);
+		if(this.root.isNodeMaxtree() && root.getLevel() > inf){
+			this.root = getExtendedBranchOfMaxtree(this.root, inf, this.root.getLevel());
 		}
-		else if(!this.root.isNodeMaxtree && root.level < sup){
-			this.root = getExtendedBranchOfMintree(this.root, sup, this.root.level);
+		else if(!this.root.isNodeMaxtree() && root.getLevel() < sup){
+			this.root = getExtendedBranchOfMintree(this.root, sup, this.root.getLevel());
 		}
 		
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 		
-			for(NodeToS son: no.children){
+			for(NodeLevelSets son: no.getChildren()){
 				fifo.enqueue(son);
 			}
 			
 			if(no.isNodeMaxtree()){
-				getExtendedBranchOfMaxtree(no, no.parent.level+1, no.level);
+				getExtendedBranchOfMaxtree(no, no.getParent().getLevel()+1, no.getLevel());
 			}else{
-				getExtendedBranchOfMintree(no, no.parent.level-1, no.level);
+				getExtendedBranchOfMintree(no, no.getParent().getLevel()-1, no.getLevel());
 			}
 		}
 		long tf = System.currentTimeMillis();
@@ -214,71 +210,71 @@ public class TreeOfShape{
 	}
 	
 	
-	private NodeToS getExtendedBranchOfMaxtree(NodeToS no, int inicio, int fim){
+	private NodeLevelSets getExtendedBranchOfMaxtree(NodeLevelSets no, int inicio, int fim){
 		if(inicio >= fim) return null;
-		NodeToS ramoInicio = no.getClone();
-		NodeToS ramoFim = ramoInicio;
+		NodeLevelSets ramoInicio = no.getClone();
+		NodeLevelSets ramoFim = ramoInicio;
 		
-		ramoFim.parent = no.parent;
-		if(ramoFim.parent != null){
-			ramoFim.parent.children.remove(no);
-			ramoFim.parent.children.add(ramoFim);
+		ramoFim.setParent( no.getParent() );
+		if(ramoFim.getParent() != null){
+			ramoFim.getParent().getChildren().remove(no);
+			ramoFim.getParent().addChildren(ramoFim);
 		}
-		ramoFim.level = inicio;
-		ramoFim.id = ++numNode;
+		ramoFim.setLevel( inicio );
+		ramoFim.setId( ++numNode );
 		for(int i=inicio+1; i < fim; i++){
-			NodeToS noAtual = no.getClone();
+			NodeLevelSets noAtual = no.getClone();
 			
-			noAtual.parent = ramoFim;
-			noAtual.level = i;
-			noAtual.id = ++numNode;
+			noAtual.setParent( ramoFim );
+			noAtual.setLevel( i );
+			noAtual.setId( ++numNode );
 			
-			ramoFim.children.add(noAtual);
+			ramoFim.addChildren(noAtual);
 			ramoFim = noAtual;
 			
 			
 		}
-		ramoFim.children.add(no);
-		no.parent = ramoFim;
+		ramoFim.addChildren(no);
+		no.setParent( ramoFim );
 		
 		return ramoInicio;
 	}
 	
-	private NodeToS getExtendedBranchOfMintree(NodeToS no, int inicio, int fim){
+	private NodeLevelSets getExtendedBranchOfMintree(NodeLevelSets no, int inicio, int fim){
 		if(inicio <= fim) return null;
-		NodeToS ramoInicio = no.getClone();
-		NodeToS ramoFim = ramoInicio;
+		NodeLevelSets ramoInicio = no.getClone();
+		NodeLevelSets ramoFim = ramoInicio;
 		
-		ramoFim.parent = no.parent;
-		if(ramoFim.parent != null){
-			ramoFim.parent.children.remove(no);
-			ramoFim.parent.children.add(ramoFim);
+		ramoFim.setParent( no.getParent() );
+		if(ramoFim.getParent() != null){
+			ramoFim.getParent().getChildren().remove(no);
+			ramoFim.getParent().addChildren(ramoFim);
 		}
-		ramoFim.level = inicio;
-		ramoFim.id = ++numNode;
+		ramoFim.setLevel( inicio );
+		ramoFim.setId( ++numNode );
 		for(int i=inicio-1; i > fim; i--){
-			NodeToS noAtual = no.getClone();
+			NodeLevelSets noAtual = no.getClone();
 			
-			noAtual.parent = ramoFim;
-			noAtual.level = i;
-			noAtual.id = ++numNode;
-			ramoFim.children.add(noAtual);
+			noAtual.setParent( ramoFim );
+			noAtual.setLevel( i );
+			noAtual.setId( ++numNode );
+			ramoFim.addChildren(noAtual);
 			ramoFim = noAtual;
 			
 			
 		}
-		ramoFim.children.add(no);
-		no.parent = ramoFim;
+		ramoFim.addChildren(no);
+		no.setParent( ramoFim );
 		
 		return ramoInicio;
 	}
 	
-	public NodeToS getSC(int p){
+	public NodeLevelSets getSC(int p){
 		return map[p]; 
 	}
 	
 	
-	public NodeToS getRoot() {
+	public NodeLevelSets getRoot() {
 		return root;
 	}
 
@@ -308,7 +304,7 @@ public class TreeOfShape{
 		c.sup = this.sup;
 		c.inf = this.inf;
 		for(int p=0; p < this.map.length; p++){
-			c.map[p].attributes = (HashMap<Integer, Attribute>) this.map[p].attributes.clone();
+			c.map[p].setAttributes( (HashMap<Integer, Attribute>) this.map[p].getAttributes().clone() );
 			//System.out.println(map[p].attributes);
 		}
 		if(this.isExtendedTree){
@@ -320,15 +316,15 @@ public class TreeOfShape{
 
 	public GrayScaleImage reconstruction(){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(int p: no.getCanonicalPixels()){
-				imgOut.setPixel(p, no.level);
+				imgOut.setPixel(p, no.getLevel());
 			}
 			
-			for(NodeToS son: no.children){
+			for(NodeLevelSets son: no.getChildren()){
 				fifo.enqueue(son);	 
 			}
 			
@@ -339,15 +335,15 @@ public class TreeOfShape{
 
 	public GrayScaleImage reconstructionByDepth(){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(int p: no.getCanonicalPixels()){
-				imgOut.setPixel(p, no.heightNode);
+				imgOut.setPixel(p, no.getHeightNode());
 			}
 			
-			for(NodeToS son: no.children){
+			for(NodeLevelSets son: no.getChildren()){
 				fifo.enqueue(son);	 
 			}
 			
@@ -358,13 +354,13 @@ public class TreeOfShape{
 	
 	
 	
-	public static void prunning(TreeOfShape tree, NodeToS node){
+	public static void prunning(TreeOfShape tree, NodeLevelSets node){
 		if(node != tree.root){
-			NodeToS parent = node.parent;
+			NodeLevelSets parent = node.getParent();
 			parent.getChildren().remove(node);
 			tree.listLeaves = null;
 			
-			for(NodeToS no: node.getNodesDescendants()){
+			for(NodeLevelSets no: node.getNodesDescendants()){
 				tree.listNode.remove(no);
 				tree.numNode--;
 				for(int p: no.getCanonicalPixels()){
@@ -376,7 +372,7 @@ public class TreeOfShape{
 			tree.numNode = 1;
 			tree.listNode.clear();
 			tree.listNode.add(node);
-			node.children.clear();
+			node.getChildren().clear();
 			for(int p=0; p < tree.getInputImage().getSize(); p++){
 				tree.map[p] = node;
 				node.addPixel(p);

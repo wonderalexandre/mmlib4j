@@ -3,10 +3,9 @@ package mmlib4j.filtering.residual.ultimateLevelings;
 
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -170,11 +169,11 @@ public class UltimateAttributeOpenClose{
 	}
 	
 
-	public NodeCT[] getNodesMapPositive(){
+	public NodeLevelSets[] getNodesMapPositive(){
 		return processMaxtree.uao.getNodesMap();
 	}
 	
-	public NodeCT[] getNodesMapNegative(){
+	public NodeLevelSets[] getNodesMapNegative(){
 		return processMintree.uao.getNodesMap();
 	}
 	

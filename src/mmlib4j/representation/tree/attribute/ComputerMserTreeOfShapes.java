@@ -20,8 +20,8 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
 public class ComputerMserTreeOfShapes implements ComputerMser{
 	 
 	private TreeOfShape tree;
-	private NodeToS ascendant[];
-	private NodeToS descendants[];
+	private NodeLevelSets ascendant[];
+	private NodeLevelSets descendants[];
 	private int num;
 	private double maxVariation = Double.MAX_VALUE;
 	private int minArea=0;
@@ -59,7 +59,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	public Double[] getScoreOfBranch(NodeLevelSets no){
 		
 		Double score[] = new Double[tree.getNumNode()];
-		for(NodeToS node: ((NodeToS)no).getPathToRoot()){
+		for(NodeLevelSets node: no.getPathToRoot()){
 			if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
 				score[node.getId()] = getStability(node);
 			}
@@ -68,8 +68,8 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	}
 	
 	
-	private NodeToS getNodeAscendant(NodeToS node, int h){
-		NodeToS n = node;
+	private NodeLevelSets getNodeAscendant(NodeLevelSets node, int h){
+		NodeLevelSets n = node;
 		if(estimateDelta)
 			h =  (int) node.getAttributeValue(Attribute.ALTITUDE)/2;
 		for(int i=0; i < h; i++){
@@ -88,12 +88,12 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	}
 
 	
-	private double getStability(NodeToS node){
+	private double getStability(NodeLevelSets node){
 		return (ascendant[node.getId()].getAttributeValue(attribute) - descendants[node.getId()].getAttributeValue(attribute)) / (double) node.getAttributeValue(attribute); 
 	}
 	
 
-	private void maxAreaDescendants(NodeToS nodeAsc, NodeToS nodeDes){
+	private void maxAreaDescendants(NodeLevelSets nodeAsc, NodeLevelSets nodeDes){
 		if(descendants[nodeAsc.getId()] == null)
 			descendants[nodeAsc.getId()] = nodeDes;
 		
@@ -101,14 +101,14 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 			descendants[nodeAsc.getId()] = nodeDes;
 	}
 	
-	public SimpleLinkedList<NodeToS> getNodesByMSER(int delta){
+	public SimpleLinkedList<NodeLevelSets> getNodesByMSER(int delta){
 		
-		SimpleLinkedList<NodeToS> list = new SimpleLinkedList<NodeToS>();
-		ascendant = new NodeToS[tree.getNumNode()];
-		descendants = new NodeToS[tree.getNumNode()];
+		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<NodeLevelSets>();
+		ascendant = new NodeLevelSets[tree.getNumNode()];
+		descendants = new NodeLevelSets[tree.getNumNode()];
 		
-		for(NodeToS node: tree.getListNodes()){
-			NodeToS nodeAsc = getNodeAscendant(node, delta);
+		for(NodeLevelSets node: tree.getListNodes()){
+			NodeLevelSets nodeAsc = getNodeAscendant(node, delta);
 			if(nodeAsc != null){
 				maxAreaDescendants(nodeAsc, node);
 				ascendant[node.getId()] = nodeAsc;
@@ -116,12 +116,12 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 		}
 		
 		stability = new Attribute[tree.getNumNode()];
-		for(NodeToS node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(ascendant[node.getId()] != null && descendants[node.getId()] != null)
 				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
 		}
 
-		for(NodeToS node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(stability[node.getId()] != null && stability[ ascendant[node.getId()].getId() ] != null && stability[ descendants[node.getId()].getId() ] != null){
 				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
 				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
@@ -145,13 +145,13 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	
 	public boolean[] getMappingNodesByMSER(int delta){
 		num = 0;
-		ascendant = new NodeToS[tree.getNumNode()];
-		descendants = new NodeToS[tree.getNumNode()];
+		ascendant = new NodeLevelSets[tree.getNumNode()];
+		descendants = new NodeLevelSets[tree.getNumNode()];
 		boolean mser[] = new boolean[tree.getNumNode()];
 		
 
-		for(NodeToS node: tree.getListNodes()){
-			NodeToS nodeAsc = getNodeAscendant(node, delta);
+		for(NodeLevelSets node: tree.getListNodes()){
+			NodeLevelSets nodeAsc = getNodeAscendant(node, delta);
 			if(nodeAsc != null){
 				maxAreaDescendants(nodeAsc, node);
 				ascendant[node.getId()] = nodeAsc;
@@ -159,12 +159,12 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 		}
 		
 		stability = new Attribute[tree.getNumNode()];
-		for(NodeToS node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(ascendant[node.getId()] != null && descendants[node.getId()] != null)
 				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
 		}
 
-		for(NodeToS node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(stability[node.getId()] != null && stability[ ascendant[node.getId()].getId() ] != null && stability[ descendants[node.getId()].getId() ] != null){
 				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
 				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
@@ -183,15 +183,15 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	
 	
 	public boolean[] getMappingNodesByMSER(int delta, InfoPrunedTree prunedTree){
-		ascendant = new NodeToS[tree.getNumNode()];
-		descendants = new NodeToS[tree.getNumNode()];
+		ascendant = new NodeLevelSets[tree.getNumNode()];
+		descendants = new NodeLevelSets[tree.getNumNode()];
 		boolean mser[] = new boolean[tree.getNumNode()];
 		
-		for(NodeToS node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(prunedTree.wasPruned(node))
 				continue;
 			
-			NodeToS nodeAsc = getNodeAscendant(node, delta);
+			NodeLevelSets nodeAsc = getNodeAscendant(node, delta);
 			if(nodeAsc != null){
 				maxAreaDescendants(nodeAsc, node);
 				ascendant[node.getId()] = nodeAsc;
@@ -200,7 +200,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 		
 		stability = new Attribute[tree.getNumNode()];
 
-		for(NodeToS node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(prunedTree.wasPruned(node))
 				continue;
 			
@@ -208,7 +208,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
 		}
 		
-		for(NodeToS node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(prunedTree.wasPruned(node))
 				continue;
 			
@@ -263,7 +263,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	
 	public ColorImage getImageMSER(int delta){
 		ColorImage img = ImageFactory.createCopyColorImage(tree.getInputImage());
-		for(NodeToS node: getNodesByMSER(delta)){
+		for(NodeLevelSets node: getNodesByMSER(delta)){
 			for(int p: node.getPixelsOfCC()){
 				img.setPixel(p, Color.RED.getRGB());
 			}
@@ -273,7 +273,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 
 	public ColorImage getPointImageMSER(int delta){
 		ColorImage img = ImageFactory.createCopyColorImage(tree.getInputImage());
-		for(NodeToS node: getNodesByMSER(delta)){
+		for(NodeLevelSets node: getNodesByMSER(delta)){
 			for(int p: node.getCanonicalPixels()){
 				img.setPixel(p, Color.RED.getRGB());
 			}

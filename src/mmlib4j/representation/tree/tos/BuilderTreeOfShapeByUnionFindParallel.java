@@ -8,6 +8,7 @@ import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
@@ -205,10 +206,10 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 					nodesMapTmp[pixelUnterpolatePai] = new NodeToS(numNode++, ByteImage.toInt(imgU[paiPai]), img, pixelUnterpolatePai);
 				}
 				
-				nodesMapTmp[p].parent = nodesMapTmp[pai];
+				nodesMapTmp[p].setParent( nodesMapTmp[pai] );
 				if(!flags[p]){
 					flags[p] = true;
-					nodesMapTmp[pai].children.add(nodesMapTmp[p]);
+					nodesMapTmp[pai].addChildren(nodesMapTmp[p]);
 				}
 			}
 			else{ 
@@ -270,8 +271,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 					if(nodesMap[p] == null){ 
 						nodesMap[p] = new NodeToS(numNode++, imgU[p], img, p);	
 					}
-					nodesMap[p].parent = nodesMap[pai];
-					nodesMap[pai].children.add(nodesMap[p]);
+					nodesMap[p].setParent( nodesMap[pai] );
+					nodesMap[pai].addChildren(nodesMap[p]);
 					nodesMap[p].addPixel( p );
 				}else if (img.getPixel(pai) == img.getPixel(p)){ 
 					//mesmo no
@@ -779,12 +780,11 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	}
     
 
-	public static void printTree(NodeToS no, PrintStream out, String s){
+	public static void printTree(NodeLevelSets no, PrintStream out, String s){
 		out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCanonicalPixels().size());
-		if(no.children != null)
-			for(NodeToS son: no.children){
-				printTree(son, out, s + "------");
-			}
+		for(NodeLevelSets son: no.getChildren()){
+			printTree(son, out, s + "------");
+		}
 	}
 
 

@@ -63,7 +63,7 @@ public class ComputerAttributeBasedPerimeterExternal {
 			if(node.getArea() < 3){
 				perimeters[node.getId()].value = node.getArea();
 				double sumgrad = 0;
-				for( int pixel : node.getCanonicalPixels() ) {					
+				for( int pixel : node.getCanonicalPixels()) {					
 					sumgrad += imgGrad.getPixel( pixel );					
 				}				
 				sumGradContour[ node.getId() ].value = sumgrad/perimeters[ node.getId() ].value;
@@ -90,13 +90,13 @@ public class ComputerAttributeBasedPerimeterExternal {
 		return perimeters;
 	}
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> list){
-		for(NodeCT node: list){
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list){
+		for(NodeLevelSets node: list){
 			addAttributeInNodes(node);
 		}
 	}
 	
-	public void addAttributeInNodesToS(SimpleLinkedList<NodeToS> hashSet){
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}

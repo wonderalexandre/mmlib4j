@@ -97,7 +97,7 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 		if(tree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) this.tree;
 			
-			for(NodeCT node: tree.getNodesMap()){
+			for(NodeLevelSets node: tree.getNodesMap()){
 				if( (selectedNodes == null && isNodeTextLocation(node) ) ||(selectedNodes != null && selectedNodes[node.getId()] && isNodeTextLocation(node)) ){
 					selectedNodesTextLocation[node.getId()] = true;
 				}
@@ -106,7 +106,7 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 		}
 		else if(tree instanceof TreeOfShape){
 			TreeOfShape tree = (TreeOfShape) this.tree;
-			for(NodeToS node: tree.getNodesMap()){
+			for(NodeLevelSets node: tree.getNodesMap()){
 				if( (selectedNodes == null && isNodeTextLocation(node) ) ||(selectedNodes != null && selectedNodes[node.getId()] && isNodeTextLocation(node)) ){
 					selectedNodesTextLocation[node.getId()] = true;
 				}

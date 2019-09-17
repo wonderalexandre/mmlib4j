@@ -7,6 +7,7 @@ import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -34,10 +35,10 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	boolean isMaxtree;
 	
 	int parent[];
-	NodeCT nodesMap[];
-	SimpleLinkedList<NodeCT> listNode;
+	NodeLevelSets nodesMap[];
+	SimpleLinkedList<NodeLevelSets> listNode;
 	
-	NodeCT root;
+	NodeLevelSets root;
 	GrayScaleImage img;
 	
 	
@@ -64,7 +65,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 			System.out.println("Tempo de execucao [criacao da arvore - union-find]  "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
-	public NodeCT getRoot( ){
+	public NodeLevelSets getRoot( ){
 		return root;
 	}
 	
@@ -72,11 +73,11 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		return numNode;
 	}
 	
-	public SimpleLinkedList<NodeCT> getListNodes(){
+	public SimpleLinkedList<NodeLevelSets> getListNodes(){
 		return listNode;
 	}
 	
-	public NodeCT[] getMap(){
+	public NodeLevelSets[] getMap(){
 		return nodesMap;
 	}
 	
@@ -87,8 +88,8 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	 */
 	public void createTreeStructure( ){
 		this.numNode = 0;
-		this.nodesMap = new NodeCT[parent.length];
-		this.listNode = new SimpleLinkedList<NodeCT>();
+		this.nodesMap = new NodeLevelSets[parent.length];
+		this.listNode = new SimpleLinkedList<NodeLevelSets>();
 		for (int i = 0; i < imgR.length; i++) {
 			int p = imgR[i];
 			int pai = parent[p];
@@ -103,8 +104,8 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 						this.nodesMap[p] = new NodeCT(isMaxtree, numNode++, img, p);
 						this.listNode.add(nodesMap[p]);
 					}
-					this.nodesMap[p].parent = nodesMap[pai];
-					this.nodesMap[pai].children.add(nodesMap[p]);
+					this.nodesMap[p].setParent( nodesMap[pai] );
+					this.nodesMap[pai].getChildren().add(nodesMap[p]);
 					this.nodesMap[p].addPixel( p );
 				}else if (img.getPixel(pai) == img.getPixel(p)){ 
 					//mesmo no
@@ -382,7 +383,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		
 		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
 		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageBuilder.openGrayImage(), AdjacencyRelation.getCircular(1.5), false);
-		NodeCT root = builder.getRoot();
+		NodeLevelSets root = builder.getRoot();
 		
 		System.out.println("\n**********************ARVORE***********************");
 		printTree(root, System.out, "<-");
@@ -398,12 +399,11 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	}
 	
 	
-	public static void printTree(NodeCT no, PrintStream out, String s){
-		out.printf(s + "[%3d; %d]\n", no.level, no.getCanonicalPixels().size());
-		if(no.children != null)
-			for(NodeCT son: no.children){
-				printTree(son, out, s + "------");
-			}
+	public static void printTree(NodeLevelSets no, PrintStream out, String s){
+		out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCanonicalPixels().size());
+		for(NodeLevelSets son: no.getChildren()){
+			printTree(son, out, s + "------");
+		}
 	}
 
 	@Override

@@ -9,6 +9,6 @@ package mmlib4j.utils;
 public class Utils {
 
 	
-	public static boolean debug = true; 
+	public static boolean debug = false; 
 	
 }

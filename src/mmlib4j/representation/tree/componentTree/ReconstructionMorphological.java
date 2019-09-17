@@ -6,6 +6,7 @@ import mmlib4j.filtering.MorphologicalOperatorsBasedOnSE;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageAlgebra;
 import mmlib4j.utils.ImageBuilder;
@@ -21,6 +22,11 @@ public class ReconstructionMorphological {
 	private GrayScaleImage imgInput;
 	ComponentTree mintree;
 	ComponentTree maxtree;
+	boolean flagProcessMaxtree[];
+	boolean flagPruningMaxtree[];
+	boolean flagProcessMintree[];
+	boolean flagPruningMintree[];
+	
 	
 	public ReconstructionMorphological(GrayScaleImage img){
 		this.imgInput = img;
@@ -28,6 +34,10 @@ public class ReconstructionMorphological {
 		this.maxtree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), true);
 		this.maxtree.extendedTree();
 		this.mintree.extendedTree();
+		flagProcessMaxtree = new boolean[maxtree.getNumNode()];
+		flagPruningMaxtree = new boolean[maxtree.getNumNode()];
+		flagProcessMintree = new boolean[mintree.getNumNode()];
+		flagPruningMintree = new boolean[mintree.getNumNode()];
 	}
 	
 	public ReconstructionMorphological(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
@@ -35,9 +45,13 @@ public class ReconstructionMorphological {
 		if(isMaxtree){
 			this.maxtree = new ComponentTree(img, adj, isMaxtree);
 			this.maxtree.extendedTree();
+			flagProcessMaxtree = new boolean[maxtree.getNumNode()];
+			flagPruningMaxtree = new boolean[maxtree.getNumNode()];
 		}else{	
 			this.mintree = new ComponentTree(img, adj, isMaxtree);
 			this.mintree.extendedTree();
+			flagProcessMintree = new boolean[mintree.getNumNode()];
+			flagPruningMintree = new boolean[mintree.getNumNode()];
 		}
 		
 	}
@@ -52,6 +66,10 @@ public class ReconstructionMorphological {
 		this.maxtree = maxtree;
 		this.maxtree.extendedTree(); 
 		this.mintree.extendedTree();
+		flagProcessMaxtree = new boolean[maxtree.getNumNode()];
+		flagPruningMaxtree = new boolean[maxtree.getNumNode()];
+		flagProcessMintree = new boolean[mintree.getNumNode()];
+		flagPruningMintree = new boolean[mintree.getNumNode()];
 	}
 	
 	
@@ -86,43 +104,44 @@ public class ReconstructionMorphological {
 	public static GrayScaleImage dilationByReconstruction(GrayScaleImage imgInput, GrayScaleImage imgMarcador, BuilderComponentTreeByRegionGrowing tree){
 		long ti = System.currentTimeMillis();
 		PriorityQueue<Integer> queue = new PriorityQueue<Integer>(255);
-		
+		boolean flagProcess[] = new boolean[tree.getNunNode()];
+		boolean flagPruning[] = new boolean[tree.getNunNode()];
 		for(int p=0; p < imgInput.getSize(); p++){
 			if(imgMarcador.getPixel(p) <= imgInput.getPixel(p)){
 				queue.add(p, imgMarcador.getPixel(p));
 			}
-			tree.nodesMap[p].flagProcess = false;
-			tree.nodesMap[p].flagPruning = true;
+			flagProcess[tree.nodesMap[p].getId()] = false;
+			flagPruning[tree.nodesMap[p].getId()] = true;
 		}
 		int p;
 		while(!queue.isEmpty()){
 			p = queue.removeMax();
-			NodeCT node = tree.nodesMap[p]; 
-			if(!node.flagProcess){
-				node.flagProcess = true;
-				while(node.flagPruning && imgMarcador.getPixel(p) < node.level){
-					node = node.parent;
+			NodeLevelSets node = tree.nodesMap[p]; 
+			if(! flagProcess[node.getId()]){
+				flagProcess[node.getId()] = true;
+				while(flagPruning[node.getId()] && imgMarcador.getPixel(p) < node.getLevel()){
+					node = node.getParent();
 				}
 				//Invariante (neste ponto): imgMarcador.getPixel(p) >= node.level ==>ou seja, este node eh preservado na arvore
-				node.flagPruning = false;
-				while(node.parent != null && node.parent.flagPruning){
-					node.parent.flagPruning = false;
-					node = node.parent;
+				flagPruning[node.getId()] = false;
+				while(node.getParent() != null && flagPruning[node.getParent().getId()]){
+					flagPruning[node.getParent().getId()] = false;
+					node = node.getParent();
 				}
 			}
 		}
 		
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.root);
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
-			if(no.flagPruning){ //poda
-				Queue<NodeCT> fifoPruning = new Queue<NodeCT>();
+			NodeLevelSets no = fifo.dequeue();
+			if(flagPruning[no.getId()]){ //poda
+				Queue<NodeLevelSets> fifoPruning = new Queue<NodeLevelSets>();
 				fifoPruning.enqueue(no);	
-				int levelPropagation = no.parent == null ? no.level : no.parent.level;
+				int levelPropagation = no.getParent() == null ? no.getLevel() : no.getParent().getLevel();
 				while(!fifoPruning.isEmpty()){
-					NodeCT nodePruning = fifoPruning.dequeue();
-					for(NodeCT song: nodePruning.children){ 
+					NodeLevelSets nodePruning = fifoPruning.dequeue();
+					for(NodeLevelSets song: nodePruning.getChildren()){ 
 						fifoPruning.enqueue(song);
 					}
 					for(Integer pixel: nodePruning.getCanonicalPixels()){
@@ -130,7 +149,7 @@ public class ReconstructionMorphological {
 					}
 				}
 			}else{
-				for(NodeCT son: no.children){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -160,21 +179,25 @@ public class ReconstructionMorphological {
 	 * @param root
 	 * @param imgOut
 	 */
-	public void reconstructionImageOfSubtree(NodeCT root, GrayScaleImage imgOut){
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+	public void reconstructionImageOfSubtree(NodeLevelSets root, GrayScaleImage imgOut){
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
+		boolean flagPruning;
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
-			if(no.flagPruning){ //poda
-				Queue<NodeCT> fifoPruning = new Queue<NodeCT>();
+			NodeLevelSets no = fifo.dequeue();
+			if(no.isNodeMaxtree())
+				flagPruning = flagPruningMaxtree[no.getId()];
+			else
+				flagPruning = flagPruningMintree[no.getId()];
+			
+			if(flagPruning){ //poda
+				Queue<NodeLevelSets> fifoPruning = new Queue<NodeLevelSets>();
 				fifoPruning.enqueue(no);	
-				int levelPropagation = no.parent == null ? no.level : no.parent.level;
+				int levelPropagation = no.getParent() == null ? no.getLevel() : no.getParent().getLevel();
 				while(!fifoPruning.isEmpty()){
-					NodeCT nodePruning = fifoPruning.dequeue();
-					if(nodePruning.children != null){ 
-						for(NodeCT song: nodePruning.children){ 
-							fifoPruning.enqueue(song);
-						}
+					NodeLevelSets nodePruning = fifoPruning.dequeue();
+					for(NodeLevelSets song: nodePruning.getChildren()){ 
+						fifoPruning.enqueue(song);
 					}
 					for(Integer pixel: nodePruning.getCanonicalPixels()){
 						imgOut.setPixel(pixel, levelPropagation);
@@ -182,10 +205,8 @@ public class ReconstructionMorphological {
 				}
 
 			}else{
-				if(no.children != null){
-					for(NodeCT son: no.children){
-						fifo.enqueue(son);	 
-					}
+				for(NodeLevelSets son: no.getChildren()){
+					fifo.enqueue(son);	 
 				}
 			}
 		}
@@ -250,8 +271,12 @@ public class ReconstructionMorphological {
 		long ti = System.currentTimeMillis();
 		PriorityQueue<Integer> queue = new PriorityQueue<Integer>(255);
 		
-		for(NodeCT node: tree.listNode){
-			node.flagPruning = true;
+		for(NodeLevelSets node: tree.listNode){
+			if(tree.isMaxtree){
+				flagPruningMaxtree[node.getId()] = true;
+			}else {
+				flagPruningMintree[node.getId()] = true;
+			}
 		}
 		
 		for(int p=0; p < imgInput.getSize(); p++){
@@ -259,43 +284,68 @@ public class ReconstructionMorphological {
 				if(imgMarcador.getPixel(p) <= imgInput.getPixel(p)){
 					queue.add(p, imgMarcador.getPixel(p));
 				}
+				flagProcessMaxtree[tree.map[p].getId()] = false;
+				//tree.map[p].flagProcess = false;
 			}else{
 				if(imgMarcador.getPixel(p) >= imgInput.getPixel(p)){
 					queue.add(p, imgMarcador.getPixel(p));
 				}
+				flagProcessMintree[tree.map[p].getId()] = false;
+				//tree.map[p].flagProcess = false;
 			}
-			tree.map[p].flagProcess = false;
+			
 		}
 
 		
 		int p;
-		
+		boolean flagProcess;
 		while(!queue.isEmpty()){
 			if(tree.isMaxtree)
 				p = queue.removeMax();
 			else
 				p = queue.remove();
 			
-			NodeCT node = tree.map[p]; 
-			if(!node.flagProcess){
-				node.flagProcess = true;
+			NodeLevelSets node = tree.map[p]; 
+			if(tree.isMaxtree)
+				flagProcess = flagProcessMaxtree[node.getId()];
+			else
+				flagProcess = flagProcessMintree[node.getId()];
+			if(!flagProcess){
+				
+				if(tree.isMaxtree)
+					flagProcess = flagProcessMaxtree[node.getId()] = true;
+				else
+					flagProcess = flagProcessMintree[node.getId()] = true;
+				
 				if(tree.isMaxtree){
-					while(node.flagPruning && imgMarcador.getPixel(p) < node.level){
-						node = node.parent;
+					while(flagPruningMaxtree[node.getId()] && imgMarcador.getPixel(p) < node.getLevel()){
+						node = node.getParent();
 					}
 					//Invariante (neste ponto): imgMarcador.getPixel(p) >= node.level ==>ou seja, este node eh preservado na arvore
 				}else{
-					while(node.flagPruning && imgMarcador.getPixel(p) > node.level){
-						node = node.parent;
+					while(flagPruningMintree[node.getId()] && imgMarcador.getPixel(p) > node.getLevel()){
+						node = node.getParent();
 					}
 					
 				}
 				
-				node.flagPruning = false;
-				while(node.parent != null && node.parent.flagPruning){
-					node.parent.flagPruning = false;
-					node = node.parent;
+				if(tree.isMaxtree) {
+					flagPruningMaxtree[node.getId()] = false;
+					while(node.getParent() != null && flagPruningMaxtree[node.getParent().getId()]){
+						flagPruningMaxtree[node.getParent().getId()] = false;
+						node = node.getParent();
+					}
 				}
+				else {
+					flagPruningMintree[node.getId()] = false;
+					while(node.getParent() != null && flagPruningMintree[node.getParent().getId()]){
+						flagPruningMintree[node.getParent().getId()] = false;
+						node = node.getParent();
+					}
+				}
+				
+				
+				
 			}
 		}
 		
@@ -310,7 +360,6 @@ public class ReconstructionMorphological {
 		
 		PriorityQueue<Integer> queue = new PriorityQueue<Integer>(255);
 		boolean[] selected = new boolean[tree.getNumNode()];
-		
 		for(int raio=1; raio <= raioMax; raio += step){
 			
 			imgMarcador = MorphologicalOperatorsBasedOnSE.opening(imgMarcador, AdjacencyRelation.getCircular(raio));
@@ -320,17 +369,22 @@ public class ReconstructionMorphological {
 					if(imgMarcador.getPixel(p) <= imgInput.getPixel(p)){
 						queue.add(p, imgMarcador.getPixel(p));
 					}
+					flagProcessMaxtree[ tree.map[p].getId() ] = false;
 				}else{
 					if(imgMarcador.getPixel(p) >= imgInput.getPixel(p)){
 						queue.add(p, imgMarcador.getPixel(p));
 					}
+					flagProcessMintree[ tree.map[p].getId() ] = false;
 				}
-				tree.map[p].flagProcess = false;
+				
 			}
 			
 			
-			for(NodeCT node: tree.listNode){
-				node.flagPruning = true;
+			for(NodeLevelSets node: tree.listNode){
+				if(tree.isMaxtree)
+					flagPruningMaxtree[ node.getId() ] = true;
+				else
+					flagPruningMintree[ node.getId() ] = true;
 			}
 			
 			int p;
@@ -340,44 +394,62 @@ public class ReconstructionMorphological {
 				else
 					p = queue.remove();
 				
-				NodeCT node = tree.map[p]; 
-				if(!node.flagProcess){
-					node.flagProcess = true;
-					if(tree.isMaxtree){
-						while(node.flagPruning && imgMarcador.getPixel(p) < node.level){
-							node = node.parent;
+				NodeLevelSets node = tree.map[p];
+				boolean flagProcess;
+				if(tree.isMaxtree)
+					flagProcess = flagProcessMaxtree[ node.getId() ];
+				else
+					flagProcess = flagProcessMintree[ node.getId() ];
+				
+				if(!flagProcess){
+					
+					if(tree.isMaxtree) {
+						flagProcess = flagProcessMaxtree[ node.getId() ] = true;
+						while(flagPruningMaxtree[ node.getId() ] && imgMarcador.getPixel(p) < node.getLevel()){
+							node = node.getParent();
 						}
 						//Invariante (neste ponto): imgMarcador.getPixel(p) >= node.level ==>ou seja, este node eh preservado na arvore
-					}else{
-						while(node.flagPruning && imgMarcador.getPixel(p) > node.level){
-							node = node.parent;
+						flagPruningMaxtree[ node.getId() ] = true;
+						while(node.getParent() != null && flagPruningMaxtree[node.getParent().getId()]){
+							flagPruningMaxtree[node.getParent().getId()] = false;
+							node = node.getParent();
 						}
-						
+					}
+					else {
+						flagProcess = flagProcessMintree[ node.getId() ] = true;
+						while(flagPruningMintree[ node.getId() ] && imgMarcador.getPixel(p) > node.getLevel()){
+							node = node.getParent();
+							
+						}
+						flagPruningMintree[ node.getId() ] = true;
+						while(node.getParent() != null && flagPruningMintree[node.getParent().getId()]){
+							flagPruningMintree[node.getParent().getId()] = false;
+							node = node.getParent();
+						}
 					}
 					
-					node.flagPruning = false;
-					while(node.parent != null && node.parent.flagPruning){
-						node.parent.flagPruning = false;
-						node = node.parent;
-					}
+					
 				}
 			}
 			//////////
-			Queue<NodeCT> fifo = new Queue<NodeCT>();
+			boolean flagPruning[] = null;
+			if(tree.isMaxtree())
+				flagPruning = flagPruningMaxtree;
+			else
+				flagPruning = flagPruningMintree;
+			Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 			fifo.enqueue(tree.root);
 			while(!fifo.isEmpty()){
-				NodeCT no = fifo.dequeue();
-				if(no.flagPruning){ //poda
+				NodeLevelSets no = fifo.dequeue();
+				if(flagPruning[no.getId()]){ //poda
 					selected[no.getId()] = true;
-					Queue<NodeCT> fifoPruning = new Queue<NodeCT>();
+					Queue<NodeLevelSets> fifoPruning = new Queue<NodeLevelSets>();
 					fifoPruning.enqueue(no);	
-					int levelPropagation = no.parent == null ? no.level : no.parent.level;
+					int levelPropagation = no.getParent() == null ? no.getLevel() : no.getParent().getLevel();
 					while(!fifoPruning.isEmpty()){
-						NodeCT nodePruning = fifoPruning.dequeue();
-						if(nodePruning.children != null){ 
-							for(NodeCT song: nodePruning.children){ 
-								fifoPruning.enqueue(song);
-							}
+						NodeLevelSets nodePruning = fifoPruning.dequeue();
+						for(NodeLevelSets song: nodePruning.getChildren()){ 
+							fifoPruning.enqueue(song);
 						}
 						for(Integer pixel: nodePruning.getCanonicalPixels()){
 							imgMarcador.setPixel(pixel, levelPropagation);
@@ -385,10 +457,8 @@ public class ReconstructionMorphological {
 					}
 
 				}else{
-					if(no.children != null){
-						for(NodeCT son: no.children){
-							fifo.enqueue(son);	 
-						}
+					for(NodeLevelSets son: no.getChildren()){
+						fifo.enqueue(son);	 
 					}
 				}
 			}	

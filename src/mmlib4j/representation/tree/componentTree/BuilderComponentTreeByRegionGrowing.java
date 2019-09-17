@@ -6,6 +6,7 @@ import java.util.Iterator;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
@@ -36,9 +37,9 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 	Queue<Integer> hQueue[]; 
 	int levRoot[];
 	
-	SimpleLinkedList<NodeCT> listNode;
-    NodeCT root;
-    NodeCT nodesMap[];
+	SimpleLinkedList<NodeLevelSets> listNode;
+	NodeLevelSets root;
+	NodeLevelSets nodesMap[];
     
     
     
@@ -93,7 +94,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
     	}
 	}
 	
-	public NodeCT[] getMap(){
+	public NodeLevelSets[] getMap(){
 		return nodesMap;
 	}
 
@@ -102,7 +103,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 		this.limiteSup = sup;
 	}
 	
-	public SimpleLinkedList<NodeCT> getListNodes(){
+	public SimpleLinkedList<NodeLevelSets> getListNodes(){
 		return listNode;
 	}
 	
@@ -218,8 +219,8 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 	 */
 	public void createTreeStructure( ){
 		this.numNode = 0;
-		this.nodesMap = new NodeCT[parent.length];
-		this.listNode = new SimpleLinkedList<NodeCT>();
+		this.nodesMap = new NodeLevelSets[parent.length];
+		this.listNode = new SimpleLinkedList<NodeLevelSets>();
 		for(int i=0; i < this.imgR.length; i++){
 			int p = this.imgR[i];
 			int pai = this.parent[p];
@@ -234,8 +235,8 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 						this.nodesMap[p] = new NodeCT(isMaxtree, numNode++, img, p);
 						this.listNode.add(nodesMap[p]);
 					}
-					this.nodesMap[p].parent = nodesMap[pai];
-					this.nodesMap[pai].children.add(nodesMap[p]);
+					this.nodesMap[p].setParent( nodesMap[pai] );
+					this.nodesMap[pai].getChildren().add(nodesMap[p]);
 					this.nodesMap[p].addPixel( p );
 				}
 				else if (img.getPixel(pai) == img.getPixel(p)){ 
@@ -251,12 +252,12 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 	}
 		
 		
-	public static void printTree(NodeCT no, PrintStream out, String s){
-		out.printf(s + "[%3d; %d]\n", no.level, no.getCanonicalPixels().size());
-		if(no.children != null)
-			for(NodeCT son: no.children){
-				printTree(son, out, s + "------");
-			}
+	public static void printTree(NodeLevelSets no, PrintStream out, String s){
+		out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCanonicalPixels().size());
+		for(NodeLevelSets son: no.getChildren()){
+			printTree(son, out, s + "------");
+		}
+			
 	}
 	
 	
@@ -270,7 +271,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 	 * 
 	 * @return raiz da arvore de componentes
 	 */
-	public NodeCT getRoot( ){
+	public NodeLevelSets getRoot( ){
 		return root;
 	}
 	
@@ -332,7 +333,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 		
 		//builder.img = ImageBuilder.openGrayImage();
 		//builder.reFloogind(78, img.convertToIndex(140, 165));
-		NodeCT root = builder.getRoot();
+		NodeLevelSets root = builder.getRoot();
 		
 		/*
 		IGrayScaleImage g = new GrayScaleImage(pixels2, width, height);

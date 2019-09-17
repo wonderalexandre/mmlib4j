@@ -131,15 +131,13 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			if(nodesMapTmp[pai] == null) {
 				nodesMapTmp[pai] = new NodeToS(numNode++, imgU[pai], img, p);
 			}
-			if(nodesMapTmp[pai].children == null)	
-				nodesMapTmp[pai].children = new SimpleLinkedList<NodeToS>();
 			 
 			if(imgU[p] != imgU[pai]){ //novo no
 				if(nodesMapTmp[p] == null){
 					nodesMapTmp[p] = new NodeToS(numNode++, imgU[p], img, p);
 				}
-				nodesMapTmp[p].parent = nodesMapTmp[pai];
-				nodesMapTmp[pai].children.add(nodesMapTmp[p]);	
+				nodesMapTmp[p].setParent( nodesMapTmp[pai] );
+				nodesMapTmp[pai].addChildren(nodesMapTmp[p]);	
 			}else{ 
 				//mesmo no
 				nodesMapTmp[p] = nodesMapTmp[pai];
@@ -187,15 +185,13 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			if(nodesMapTmp[pai] == null) {
 				nodesMapTmp[pai] = new NodeToS(numNode++, imgU[pai], img, pixelUnterpolate);
 			}
-			if(nodesMapTmp[pai].children == null)	
-				nodesMapTmp[pai].children = new SimpleLinkedList<NodeToS>();
 			 
 			if(imgU[p] != imgU[pai]){ //novo no
 				if(nodesMapTmp[p] == null){
 					nodesMapTmp[p] = new NodeToS(numNode++, imgU[p], img, pixelUnterpolate);
 				}
-				nodesMapTmp[p].parent = nodesMapTmp[pai];
-				nodesMapTmp[pai].children.add(nodesMapTmp[p]);	
+				nodesMapTmp[p].setParent( nodesMapTmp[pai] );
+				nodesMapTmp[pai].addChildren(nodesMapTmp[p]);	
 			}else{ 
 				//mesmo no
 				nodesMapTmp[p] = nodesMapTmp[pai];

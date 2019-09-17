@@ -99,6 +99,42 @@ public class MatlabAdapter {
 		}
 	}
 
+	public static Object fromImagesToMatlab(GrayScaleImage image[]) {
+		int width = image[0].getWidth();
+		int height = image[0].getHeight();
+		GrayScaleImage img[] = (GrayScaleImage[]) image;
+		if(img[0].getDepth() == ImageFactory.DEPTH_8BITS){
+			byte[][][] mat = new byte[height][width][image.length];
+			for(int band = 0; band < image.length; band++) {
+				for(int x=0; x < img[band].getWidth(); x++){
+					for(int y=0; y < img[band].getHeight(); y++){
+						mat[y][x][band] = (byte) (img[band].getPixel(x, y) & 0xFF);
+					}
+				}
+			}
+			return mat;
+		}else if(img[0].getDepth() == ImageFactory.DEPTH_16BITS){
+			short[][][] mat = new short[height][width][image.length];
+			for(int band = 0; band < image.length; band++) 
+				for(int x=0; x < img[band].getWidth(); x++){
+					for(int y=0; y < img[band].getHeight(); y++){
+						mat[y][x][band] = (short) img[band].getPixel(x, y);
+					}
+				}
+			return mat;
+		}
+		else{
+			int[][][] mat = new int[height][width][image.length];
+			for(int band = 0; band < image.length; band++)
+				for(int x=0; x < img[band].getWidth(); x++){
+					for(int y=0; y < img[band].getHeight(); y++){
+						mat[y][x][band] = (int) img[band].getPixel(x, y);
+					}
+				}
+			return mat;
+		}
+	}
+	
 	/**
 	 * Create a new image in ImageJ from a Matlab variable.
 	 * 

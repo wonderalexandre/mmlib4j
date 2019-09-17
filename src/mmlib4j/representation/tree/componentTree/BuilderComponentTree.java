@@ -1,6 +1,7 @@
 package mmlib4j.representation.tree.componentTree;
 
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.representation.tree.NodeLevelSets;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -11,11 +12,11 @@ public interface BuilderComponentTree {
 
 	public void build( );
 		
-	public NodeCT getRoot( );
+	public NodeLevelSets getRoot( );
 	
-	public NodeCT[] getMap( );
+	public NodeLevelSets[] getMap( );
 	
-	public SimpleLinkedList<NodeCT> getListNodes();
+	public SimpleLinkedList<NodeLevelSets> getListNodes();
 	
 	public int getNunNode();
 	

@@ -4,6 +4,7 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
+import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
 
 
@@ -67,6 +68,8 @@ public class InfoPrunedTree {
 	public MorphologicalTreeFiltering getTree(){
 		return tree;
 	}
+	
+	
 	
 	public boolean wasPruned(NodeLevelSets node){
 		return map[node.hashCode()] == null;

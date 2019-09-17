@@ -42,7 +42,7 @@ public class ComputerFunctionalAttribute {
 		volumeR = new double[ numNode ];
 		mumfordShaEnergy = new Attribute[numNode];
 		
-		for(NodeCT node : tree.getListNodes()) {
+		for(NodeLevelSets node : tree.getListNodes()) {
 			
 			NodeLevelSets parent = node.getParent();
 			mapNodes[node.getId()] = node;
@@ -171,13 +171,13 @@ public class ComputerFunctionalAttribute {
 		
 	}
 	
-	public void addAttributeInNodesCT( SimpleLinkedList<NodeCT> list ) {
-		for( NodeCT node: list ) {
+	public void addAttributeInNodesCT( SimpleLinkedList<NodeLevelSets> list ) {
+		for( NodeLevelSets node: list ) {
 			addAttributeInNodes( node );
 		}		
 	}
 	
-	public void addAttributeInNodesToS( SimpleLinkedList<NodeToS> hashSet ) {
+	public void addAttributeInNodesToS( SimpleLinkedList<NodeLevelSets> hashSet ) {
 		for( NodeLevelSets node: hashSet ) {
 			addAttributeInNodes(node);
 		}
@@ -199,12 +199,12 @@ public class ComputerFunctionalAttribute {
 																input.getWidth(), 
 																input.getHeight());
 		
-		SimpleLinkedList<NodeCT> nodes = new SimpleLinkedList<NodeCT>();
-		for(NodeCT leaf : connectedFilteringByComponentTree.getLeaves()) {			
+		SimpleLinkedList<NodeLevelSets> nodes = new SimpleLinkedList<NodeLevelSets>();
+		for(NodeLevelSets leaf : connectedFilteringByComponentTree.getLeaves()) {			
 			if(leaf.getLevel() == 100) {
 				double bestv = Double.MIN_VALUE;
-				NodeCT bestNode = leaf;
-				for(NodeCT n : leaf.getPathToRoot())
+				NodeLevelSets bestNode = leaf;
+				for(NodeLevelSets n : leaf.getPathToRoot())
 					if(bestv < n.getAttributeValue(Attribute.FUNCTIONAL_ATTRIBUTE)) {
 						bestv = n.getAttributeValue(Attribute.FUNCTIONAL_ATTRIBUTE);
 						bestNode = n;
@@ -213,7 +213,7 @@ public class ComputerFunctionalAttribute {
 			}			
 		}		
 		
-		for(NodeCT n : nodes) {
+		for(NodeLevelSets n : nodes) {
 			for(int p : n.getPixelsOfCC())
 				imout.setPixel(p, n.getLevel());
 		}

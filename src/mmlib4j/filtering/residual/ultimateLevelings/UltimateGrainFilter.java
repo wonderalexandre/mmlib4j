@@ -7,9 +7,8 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
-import mmlib4j.representation.tree.pruningStrategy.MappingStrategyOfPruning;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedAttribute;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
 
@@ -25,7 +24,7 @@ public class UltimateGrainFilter {
 	private boolean selectedForPruning[] = null;
 	private boolean selectedForFiltering[] = null;
 	private GrayScaleImage imgInput;
-	private NodeToS root;
+	private NodeLevelSets root;
 
 	private int[] residuesNodePos;
 	private int[] associatedNodePos;
@@ -41,8 +40,8 @@ public class UltimateGrainFilter {
 	private int maxCriterion;
 	
 	private boolean computerDistribution = false; 
-	private ArrayList<NodeToS> nodeDistribution[];
-	private NodeToS[] mapNodes;
+	private ArrayList<NodeLevelSets> nodeDistribution[];
+	private NodeLevelSets[] mapNodes;
 	
 	private int typeResiduo;
 	public final static int RESIDUES_POS_MAX_MAX = 1;
@@ -79,7 +78,7 @@ public class UltimateGrainFilter {
 		if(computerDistribution){
 			nodeDistribution = new ArrayList[maxCriterion+1];
 		}
-		mapNodes = new NodeToS[tree.getNumNode()];
+		mapNodes = new NodeLevelSets[tree.getNumNode()];
 		this.residuesNodePos = new int[tree.getNumNode()];
 		this.associatedNodePos = new int[tree.getNumNode()];
 		this.residuesNodeNeg = new int[tree.getNumNode()];
@@ -88,7 +87,7 @@ public class UltimateGrainFilter {
 		nodesWithMaxResiduesNeg = new boolean[tree.getNumNode()];
 		
 		if (root.getChildren() != null) {
-			for(NodeToS no: root.getChildren()){
+			for(NodeLevelSets no: root.getChildren()){
 				computeUGF(no, false, false, false, null, root);
 			}
 		}
@@ -99,12 +98,12 @@ public class UltimateGrainFilter {
 	}
 	
 
-	private void computeUGF(NodeToS currentNode, boolean qPropag, boolean flagInit, boolean isCalculateResidue, NodeToS firstNodeInNR, NodeToS firstNodeNotInNR){
+	private void computeUGF(NodeLevelSets currentNode, boolean qPropag, boolean flagInit, boolean isCalculateResidue, NodeLevelSets firstNodeInNR, NodeLevelSets firstNodeNotInNR){
 		boolean flagResido = false;
 		boolean flagPropag = false;
-		NodeToS parentNode = currentNode.getParent();
+		NodeLevelSets parentNode = currentNode.getParent();
 		
-		NodeToS associatedNode;
+		NodeLevelSets associatedNode;
 		int maxContrastPos;
 		int linkedAttributesPos;
 		int maxContrastNeg;
@@ -205,12 +204,12 @@ public class UltimateGrainFilter {
 			
 			if(computerDistribution == true && linkedAttributesPos+linkedAttributesNeg != 0 && isCalculateResidue){
 				if(nodeDistribution[id] == null)
-					nodeDistribution[id] = new ArrayList<NodeToS>();
+					nodeDistribution[id] = new ArrayList<NodeLevelSets>();
 				nodeDistribution[id].add(currentNode); //computer granulometries
 			}
 		}
 		
-		for(NodeToS no: currentNode.getChildren()){
+		for(NodeLevelSets no: currentNode.getChildren()){
 			computeUGF(no, flagPropag, flagInit, isCalculateResidue, firstNodeInNR, firstNodeNotInNR);
 		}
 	}
@@ -224,7 +223,7 @@ public class UltimateGrainFilter {
 	}
 	
 
-	public ArrayList<NodeToS>[] getNodeDistribuition(){
+	public ArrayList<NodeLevelSets>[] getNodeDistribuition(){
 		return nodeDistribution;
 	}
 	
@@ -237,15 +236,15 @@ public class UltimateGrainFilter {
 	}
 	
 	/*
-	public boolean hasNodeSelectedInPrimitive_OLD(NodeToS currentNode){
+	public boolean hasNodeSelectedInPrimitive_OLD(NodeLevelSets currentNode){
 		if(selectedForFiltering == null) return true;
 		
 		boolean result = selectedForPruning[currentNode.getId()];
 		
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(currentNode);
 		while(!fifo.isEmpty()){
-			NodeToS node = fifo.dequeue();
+			NodeLevelSets node = fifo.dequeue();
 			
 			if(selectedForPruning[node.getId()] == result){
 				
@@ -253,7 +252,7 @@ public class UltimateGrainFilter {
 					return true;
 				}
 				
-				for(NodeToS n: node.getChildren()){
+				for(NodeLevelSets n: node.getChildren()){
 					if(selectedForPruning[n.getId()] != result)
 						fifo.enqueue(n);
 				}
@@ -267,19 +266,19 @@ public class UltimateGrainFilter {
 		return false;
 	}
 	*/
-	public boolean hasNodeSelectedInPrimitive(NodeToS currentNode){
+	public boolean hasNodeSelectedInPrimitive(NodeLevelSets currentNode){
 		if(selectedForFiltering == null) return true;
 		
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(currentNode);
 		while(!fifo.isEmpty()){
-			NodeToS node = fifo.dequeue();
+			NodeLevelSets node = fifo.dequeue();
 			
 			if(selectedForFiltering[node.getId()]){ 
 				return true;
 			}
 				
-			for(NodeToS n: node.getChildren()){
+			for(NodeLevelSets n: node.getChildren()){
 				if(selectedForPruning[n.getId()] == false)
 					fifo.enqueue(n);
 			}
@@ -290,15 +289,15 @@ public class UltimateGrainFilter {
 	
 	public GrayScaleImage getResiduesPos(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, residuesNodePos[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -313,15 +312,15 @@ public class UltimateGrainFilter {
 	
 	public GrayScaleImage getResiduesNeg(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, residuesNodeNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -336,15 +335,15 @@ public class UltimateGrainFilter {
 	
 	public GrayScaleImage getResidues(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, Math.max(residuesNodePos[no.getId()], residuesNodeNeg[no.getId()]));
 			}
 			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -354,7 +353,7 @@ public class UltimateGrainFilter {
 	public GrayScaleImage getAttributeResidues(int attr){
 		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		boolean map[] = getNodesMapWithMaximumResidues();
-		for(NodeToS node: tree.getListNodes()){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(map[node.getId()]){
 				int value = (int) node.getAttributeValue(attr);
 				for(int p: node.getPixelsOfCC()){
@@ -369,15 +368,15 @@ public class UltimateGrainFilter {
 	
 	public GrayScaleImage getAssociateImagePos(){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedNodePos[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -387,10 +386,10 @@ public class UltimateGrainFilter {
 	
 	public GrayScaleImage getAssociateImage(){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				if(residuesNodePos[no.getId()] > residuesNodeNeg[no.getId()])
 					associateImg.setPixel(p, associatedNodePos[no.getId()]);
@@ -398,7 +397,7 @@ public class UltimateGrainFilter {
 					associateImg.setPixel(p, associatedNodeNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -408,15 +407,15 @@ public class UltimateGrainFilter {
 	
 	public GrayScaleImage getAssociateImageNeg(){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedNodeNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -426,15 +425,15 @@ public class UltimateGrainFilter {
 	
 	public GrayScaleImage getAssociateImageByType( ){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedNodeType[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -445,15 +444,15 @@ public class UltimateGrainFilter {
 	
 	public GrayScaleImage getResiduesByType( ){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, residuesNodeType[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeToS son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}

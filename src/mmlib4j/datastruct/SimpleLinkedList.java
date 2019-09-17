@@ -1,6 +1,7 @@
 package mmlib4j.datastruct;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -32,6 +33,11 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 	
 	public T getFisrtElement(){
 		return first.value;
+	}
+	
+
+	public T getLastElement(){
+		return last.value;
 	}
 	
 	public T removeFirstElement(){
@@ -79,6 +85,29 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 		while(!isEmpty())
 			remove();
 		
+	}
+	
+	public Iterable<T> reverse() {
+		return new Iterable<T>() {
+			public Iterator<T> iterator() {
+				return new Iterator<T>() {
+					NodeLL<T> iter = last;
+					NodeLL<T> iterPrev = null;
+					public boolean hasNext() {
+						return iter != null;
+					}
+					public T next() {
+						T v = iter.value;
+						iterPrev = iter;
+						iter = iter.prev;
+						return v;
+					}
+					public void remove() {
+						SimpleLinkedList.this.remove(iterPrev);
+					}
+				};
+			}			
+		};
 	}
 	
 	public Iterator<T> iterator() {
@@ -191,6 +220,11 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     	 for(int i : l2){
     		 System.out.println("L2 =>"+i);
     	 }
+    	 
+    	 for(int i: l2.reverse()) {
+    		 System.out.println("L2[reverse] =>"+i);
+    	 }
+    	 
     	 
     	 l.addAll(l2);
     	 

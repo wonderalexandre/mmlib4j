@@ -8,8 +8,8 @@ import mmlib4j.filtering.LinearFilters;
 import mmlib4j.filtering.MorphologicalOperatorsBasedOnSE;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.segmentation.Labeling;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageAlgebra;
@@ -75,6 +75,9 @@ public class UltimateLevelingByReconstruction {
 		PriorityQueue<Integer> queue = new PriorityQueue<Integer>(255);
 		boolean[] selected = new boolean[tree.getNumNode()];
 		indexNodes = new int[tree.getNumNode()];
+		boolean[] flagProcess = new boolean[tree.getNumNode()];
+		boolean[] flagPruning = new boolean[tree.getNumNode()];
+		
 		GrayScaleImage imgMarcador = this.imgInput;
 		GrayScaleImage img ;
 		
@@ -118,11 +121,11 @@ public class UltimateLevelingByReconstruction {
 						queue.add(p, imgMarcador.getPixel(p));
 					}
 				}
-				tree.getSC(p).flagProcess = false;
+				flagProcess[tree.getSC(p).getId()] = false;
 			}
 
-			for (NodeCT node : tree.getListNodes()) {
-				node.flagPruning = true;
+			for (NodeLevelSets node : tree.getListNodes()) {
+				flagPruning[node.getId()] = true;
 			}
 
 			int p;
@@ -132,47 +135,47 @@ public class UltimateLevelingByReconstruction {
 				else
 					p = queue.remove();
 
-				NodeCT node = tree.getSC(p);
-				if (!node.flagProcess) {
-					node.flagProcess = true;
+				NodeLevelSets node = tree.getSC(p);
+				if (!flagProcess[node.getId()]) {
+					flagProcess[node.getId()] = true;
 					if (tree.isMaxtree()) {
-						while (node.flagPruning	&& imgMarcador.getPixel(p) < node.getLevel()) {
+						while (flagPruning[node.getId()]	&& imgMarcador.getPixel(p) < node.getLevel()) {
 							node = node.getParent();
 						}
 						// Invariante (neste ponto): imgMarcador.getPixel(p) >=
 						// node.level ==>ou seja, este node eh preservado na
 						// arvore
 					} else {
-						while (node.flagPruning && imgMarcador.getPixel(p) > node.getLevel()) {
+						while (flagPruning[node.getId()] && imgMarcador.getPixel(p) > node.getLevel()) {
 							node = node.getParent();
 						}
 
 					}
 
-					node.flagPruning = false;
-					while (node.getParent() != null && node.getParent().flagPruning) {
-						node.getParent().flagPruning = false;
+					flagPruning[node.getId()] = false;
+					while (node.getParent() != null && flagPruning[node.getParent().getId()]) {
+						flagPruning[node.getParent().getId()] = false;
 						node = node.getParent();
 					}
 				}
 			}
 			// ////////
-			Queue<NodeCT> fifo = new Queue<NodeCT>();
+			Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 			fifo.enqueue(tree.getRoot());
 			while (!fifo.isEmpty()) {
-				NodeCT no = fifo.dequeue();
-				if (no.flagPruning) { // poda
+				NodeLevelSets no = fifo.dequeue();
+				if (flagPruning[no.getId()]) { // poda
 					selected[no.getId()] = true;
 					indexNodes[no.getId()] = raio;
-					Queue<NodeCT> fifoPruning = new Queue<NodeCT>();
+					Queue<NodeLevelSets> fifoPruning = new Queue<NodeLevelSets>();
 					
 					fifoPruning.enqueue(no);
 					int levelPropagation = no.getParent() == null ? no.getLevel(): no.getParent().getLevel();
 					while (!fifoPruning.isEmpty()) {
-						NodeCT nodePruning = fifoPruning.dequeue();
+						NodeLevelSets nodePruning = fifoPruning.dequeue();
 						indexNodes[nodePruning.getId()] = raio;
 						if (nodePruning.getChildren() != null) {
-							for (NodeCT song : nodePruning.getChildren()) {
+							for (NodeLevelSets song : nodePruning.getChildren()) {
 								fifoPruning.enqueue(song);
 							}
 						}
@@ -184,7 +187,7 @@ public class UltimateLevelingByReconstruction {
 					tree.prunning(no);
 				} else {
 					if (no.getChildren() != null) {
-						for (NodeCT son : no.getChildren()) {
+						for (NodeLevelSets son : no.getChildren()) {
 							fifo.enqueue(son);
 						}
 					}
@@ -213,7 +216,7 @@ public class UltimateLevelingByReconstruction {
 	private int maxCriterion;
 	private boolean computerDistribution = false; 
 	
-	private ArrayList<NodeCT> nodeDistribution[];
+	private ArrayList<NodeLevelSets> nodeDistribution[];
 	
 	public int[] getMaxContrastLUTPos() {
 		return this.maxContrastLUTPos;
@@ -242,7 +245,7 @@ public class UltimateLevelingByReconstruction {
 		
 		this.selectedForPruning = selectedForPruning;
 		this.selectedForFiltering = selectedShape;
-		NodeCT root = tree.getRoot();
+		NodeLevelSets root = tree.getRoot();
 		
 		maxContrastLUT = new int[tree.getNumNode()];
 		associatedIndexLUT = new int[tree.getNumNode()];
@@ -252,7 +255,7 @@ public class UltimateLevelingByReconstruction {
 		associatedIndexLUT[root.getId()] = 0;
 		
 		if (root.getChildren() != null) {
-			for(NodeCT no: root.getChildren()){
+			for(NodeLevelSets no: root.getChildren()){
 				computeUAO(no, false, false, false, null, root);
 			}
 		}
@@ -300,19 +303,19 @@ public class UltimateLevelingByReconstruction {
 	}
 
 	
-	public boolean hasNodeSelectedInPrimitive(NodeCT currentNode){
+	public boolean hasNodeSelectedInPrimitive(NodeLevelSets currentNode){
 		if(selectedForFiltering == null) return true;
 		
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(currentNode);
 		while(!fifo.isEmpty()){
-			NodeCT node = fifo.dequeue();
+			NodeLevelSets node = fifo.dequeue();
 			
 			if(selectedForFiltering[node.getId()]){ 
 				return true;
 			}
 				
-			for(NodeCT n: node.getChildren()){
+			for(NodeLevelSets n: node.getChildren()){
 				if(selectedForPruning[n.getId()] == false)
 					fifo.enqueue(n);
 			}
@@ -321,11 +324,11 @@ public class UltimateLevelingByReconstruction {
 		return false;
 	}
 
-	private void computeUAO(NodeCT currentNode, boolean qPropag, boolean flagInit, boolean isCalculateResidue, NodeCT firstNodeInNR, NodeCT firstNodeNotInNR){
+	private void computeUAO(NodeLevelSets currentNode, boolean qPropag, boolean flagInit, boolean isCalculateResidue, NodeLevelSets firstNodeInNR, NodeLevelSets firstNodeNotInNR){
 		int contrast = 0;
 		boolean flagResido = false;
 		boolean flagPropag = false;
-		NodeCT parentNode = currentNode.getParent();
+		NodeLevelSets parentNode = currentNode.getParent();
 	
 		if(selectedForPruning[currentNode.getId()]){
 			flagInit = true;
@@ -374,18 +377,18 @@ public class UltimateLevelingByReconstruction {
 			
 			if(computerDistribution == true && associatedIndex != 0 && isCalculateResidue){
 				if(nodeDistribution[id] == null)
-					nodeDistribution[id] = new ArrayList<NodeCT>();
+					nodeDistribution[id] = new ArrayList<NodeLevelSets>();
 				nodeDistribution[id].add(currentNode); //computer granulometries
 			}
 
 		}
 		
-		for(NodeCT no: currentNode.getChildren()){
+		for(NodeLevelSets no: currentNode.getChildren()){
 			computeUAO(no, flagPropag, flagInit, isCalculateResidue, firstNodeInNR, firstNodeNotInNR);
 		}
 	}
 	
-	public ArrayList<NodeCT>[] getNodeDistribuition(){
+	public ArrayList<NodeLevelSets>[] getNodeDistribuition(){
 		return nodeDistribution;
 	}
 	
@@ -409,15 +412,15 @@ public class UltimateLevelingByReconstruction {
 	
 	public GrayScaleImage getResiduesPos(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, maxContrastLUTPos[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -427,15 +430,15 @@ public class UltimateLevelingByReconstruction {
 	
 	public GrayScaleImage getResiduesNeg(){
 		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				transformImg.setPixel(p, maxContrastLUTNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -455,15 +458,15 @@ public class UltimateLevelingByReconstruction {
 			
 		}else{
 
-			Queue<NodeCT> fifo = new Queue<NodeCT>();
+			Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 			fifo.enqueue(tree.getRoot());
 			while(!fifo.isEmpty()){
-				NodeCT no = fifo.dequeue();
+				NodeLevelSets no = fifo.dequeue();
 				for(Integer p: no.getCanonicalPixels()){
 					transformImg.setPixel(p, maxContrastLUT[no.getId()]);
 				}
 				if(no.getChildren() != null){
-					for(NodeCT son: no.getChildren()){
+					for(NodeLevelSets son: no.getChildren()){
 						fifo.enqueue(son);	 
 					}
 				}
@@ -477,15 +480,15 @@ public class UltimateLevelingByReconstruction {
 	
 	public GrayScaleImage getAssociateIndexImagePos(){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedIndexLUTPos[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -494,15 +497,15 @@ public class UltimateLevelingByReconstruction {
 	}
 	public GrayScaleImage getAssociateIndexImageNeg(){
 		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				associateImg.setPixel(p, associatedIndexLUTNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}
@@ -525,15 +528,15 @@ public class UltimateLevelingByReconstruction {
 				}
 			}
 		}else{
-			Queue<NodeCT> fifo = new Queue<NodeCT>();
+			Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 			fifo.enqueue(tree.getRoot());
 			while(!fifo.isEmpty()){
-				NodeCT no = fifo.dequeue();
+				NodeLevelSets no = fifo.dequeue();
 				for(Integer p: no.getCanonicalPixels()){
 					associateImg.setPixel(p, associatedIndexLUT[no.getId()]);
 				}
 				if(no.getChildren() != null){
-					for(NodeCT son: no.getChildren()){
+					for(NodeLevelSets son: no.getChildren()){
 						fifo.enqueue(son);	 
 					}
 				}

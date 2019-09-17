@@ -37,7 +37,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 		if(inputTree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) inputTree;
 			selected = new boolean[tree.getNumNode()];
-			for(NodeCT node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getParent() != null){
 					if ( node.getParent().getAttribute(typeParam).getValue() - node.getAttribute(typeParam).getValue()  > delta) {
 						selected[node.getId()] = true;
@@ -48,7 +48,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 		}else{
 			TreeOfShape tree = (TreeOfShape) inputTree;
 			selected = new boolean[tree.getNumNode()];
-			for(NodeToS node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getParent() != null){
 					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
 						selected[node.getId()] = true;
@@ -66,7 +66,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 		if(inputTree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) inputTree;
 			selected = new boolean[tree.getNumNode()];
-			for(NodeCT node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getParent() != null && !prunedTree.wasPruned(node)){
 					if ( node.getParent().getAttribute(typeParam).getValue() - node.getAttribute(typeParam).getValue()  > delta) {
 						selected[node.getId()] = true;
@@ -77,7 +77,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 		}else{
 			TreeOfShape tree = (TreeOfShape) inputTree;
 			selected = new boolean[tree.getNumNode()];
-			for(NodeToS node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getParent() != null && !prunedTree.wasPruned(node)){
 					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
 						selected[node.getId()] = true;
@@ -98,7 +98,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<NodeLevelSets>();
 		if(inputTree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) inputTree;
-			for(NodeCT node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getParent() != null){
 					if ( node.getParent().getAttribute(typeParam).getValue() - node.getAttribute(typeParam).getValue()  > delta) {
 						list.add(node.getParent());
@@ -107,7 +107,7 @@ public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 			}
 		}else{
 			TreeOfShape tree = (TreeOfShape) inputTree;
-			for(NodeToS node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(node.getParent() != null){
 					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
 						list.add(node.getParent());

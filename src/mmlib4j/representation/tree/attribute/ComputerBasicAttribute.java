@@ -37,13 +37,13 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		return attr;
 	}
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> hashSet){
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}
 	} 
 	
-	public void addAttributeInNodesToS(SimpleLinkedList<NodeToS> hashSet){
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
 		}

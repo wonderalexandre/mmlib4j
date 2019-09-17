@@ -81,7 +81,7 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 		boolean selectedNodesCircles[] = new boolean[tree.getNumNode()];
 		if(tree instanceof ComponentTree){
 			ComponentTree tree = (ComponentTree) this.tree;
-			for(NodeCT node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if( (selectedNodes == null && isNodeCircle(node) ) || (selectedNodes != null && selectedNodes[node.getId()] && isNodeCircle(node) ) ){
 					selectedNodesCircles[node.getId()] = true;
 				}
@@ -90,7 +90,7 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 		}
 		else if(tree instanceof TreeOfShape){
 			TreeOfShape tree = (TreeOfShape) this.tree;
-			for(NodeToS node: tree.getListNodes()){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if( (selectedNodes == null && isNodeCircle(node) ) || (selectedNodes != null && selectedNodes[node.getId()] && isNodeCircle(node) ) ){
 					selectedNodesCircles[node.getId()] = true;
 				}

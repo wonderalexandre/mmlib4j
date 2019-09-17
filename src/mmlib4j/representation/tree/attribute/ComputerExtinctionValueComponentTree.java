@@ -12,6 +12,7 @@ import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
@@ -50,22 +51,20 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		//reconstrucao
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(4); 
 		ColorImage imgOut = ImageFactory.createColorImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				imgOut.setGray(p, no.getLevel());
 			}
-			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
-					fifo.enqueue(son);	 
-				}
+			for(NodeLevelSets son: no.getChildren()){
+				fifo.enqueue(son);	 
 			}	
 		}
 		for(ExtinctionValueNode ev: extincaoPorNode){
 			if(attributeValue1 < ev.extinctionValue &&  ev.extinctionValue < attributeValue2){
-				NodeCT no = ev.node;
+				NodeLevelSets no = ev.node;
 				for(int i: adj.getAdjacencyPixels(imgOut, no.getCanonicalPixels().getFisrtElement())){
 					imgOut.setPixel(i, Color.RED.getRGB());
 				}
@@ -84,7 +83,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		for(ExtinctionValueNode ev: extincaoPorNode){
 			if(attValue1 < ev.extinctionValue && ev.extinctionValue < attValue2){
 				i++;
-				NodeCT node = ev.node;
+				NodeLevelSets node = ev.node;
 				while(node != null && visitado[node.getId()] == false){
 					visitado[node.getId()] = true;
 					partition[node.getId()] = i;
@@ -101,8 +100,8 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		for(ExtinctionValueNode ev: extincaoPorNode){
 			if(attValue1 < ev.extinctionValue && ev.extinctionValue < attValue2){
 				i++;
-				NodeCT node = ev.node;
-				NodeCT nodeA = null;
+				NodeLevelSets node = ev.node;
+				NodeLevelSets nodeA = null;
 				while (node != null && partition[node.getId()] == i){
 					nodeA = node;
 					node = node.getParent();
@@ -110,17 +109,15 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 				
 				//reconstruir imagem da particao i => a raiz da particao esta enraizada em nodeA
 				if(nodeA != null){ 
-					Queue<NodeCT> fifo = new Queue<NodeCT>();
+					Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 					fifo.enqueue(nodeA);
 					while(!fifo.isEmpty()){
-						NodeCT no = fifo.dequeue();
+						NodeLevelSets no = fifo.dequeue();
 						for(Integer p: no.getCanonicalPixels()){
 							imgOut.setPixel(p, i);
 						}
-						if(no.getChildren() != null){
-							for(NodeCT son: no.getChildren()){
-								fifo.enqueue(son);	 
-							}
+						for(NodeLevelSets son: no.getChildren()){
+							fifo.enqueue(son);	 
 						}	
 					}
 				}
@@ -137,7 +134,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		extincaoPorNode.sort(getComparator());
 		if(kmax > extincaoPorNode.size()) kmax = extincaoPorNode.size();
 		for(int i=1; i <= kmax; i++){
-			NodeCT node = extincaoPorNode.get(i-1).node;
+			NodeLevelSets node = extincaoPorNode.get(i-1).node;
 			while(node != null && visitado[node.getId()] == false){
 				visitado[node.getId()] = true;
 				partition[node.getId()] = i;
@@ -150,8 +147,8 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 			}
 		}
 		for(int i=1; i <= kmax; i++){
-			NodeCT node = extincaoPorNode.get(i-1).node;
-			NodeCT nodeA = null;
+			NodeLevelSets node = extincaoPorNode.get(i-1).node;
+			NodeLevelSets nodeA = null;
 			while (node != null && partition[node.getId()] == i){
 				nodeA = node;
 				node = node.getParent();
@@ -159,15 +156,15 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 			
 			//reconstruir imagem da particao i => a raiz da particao esta enraizada em nodeA
 			if(nodeA != null){ 
-				Queue<NodeCT> fifo = new Queue<NodeCT>();
+				Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 				fifo.enqueue(nodeA);
 				while(!fifo.isEmpty()){
-					NodeCT no = fifo.dequeue();
+					NodeLevelSets no = fifo.dequeue();
 					for(Integer p: no.getCanonicalPixels()){
 						imgOut.setPixel(p, i);
 					}
 					if(no.getChildren() != null){
-						for(NodeCT son: no.getChildren()){
+						for(NodeLevelSets son: no.getChildren()){
 							fifo.enqueue(son);	 
 						}
 					}	
@@ -188,23 +185,23 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		//reconstrucao
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(4); 
 		ColorImage imgOut = ImageFactory.createColorImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		if(kmax > extincaoPorNode.size()) kmax = extincaoPorNode.size();
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
 				imgOut.setGray(p, no.getLevel());
 			}
 			if(no.getChildren() != null){
-				for(NodeCT son: no.getChildren()){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);	 
 				}
 			}	
 		}
 		extincaoPorNode.sort(getComparator());
 		for(int k=0; k < kmax; k++){
-			NodeCT no = extincaoPorNode.get(k).node;
+			NodeLevelSets no = extincaoPorNode.get(k).node;
 			//System.out.println(no.getId() + "=> " + extincaoPorNode.get(k).extinctionValue);
 			for(int i: adj.getAdjacencyPixels(imgOut, no.getCanonicalPixels().getFisrtElement())){
 				imgOut.setPixel(i, Color.RED.getRGB());
@@ -236,10 +233,10 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		int extincao;
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();		
-		SimpleLinkedList<NodeCT> folhas = tree.getLeaves();
-		for(NodeCT folha: folhas){
+		SimpleLinkedList<NodeLevelSets> folhas = tree.getLeaves();
+		for(NodeLevelSets folha: folhas){
 			extincao = (int) tree.getRoot().getAttribute(Attribute.ALTITUDE).getValue();
-			NodeCT pai = folha.getParent();
+			NodeLevelSets pai = folha.getParent();
 			while (pai != null &&  pai.getAttribute(Attribute.ALTITUDE).getValue() <= Math.abs(folha.getLevel() - pai.getLevel())) {
 				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttribute(Attribute.ALTITUDE).getValue() == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
 					break;
@@ -292,7 +289,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		//ArrayList<NodeCT> list = new ArrayList<NodeCT>();
 		boolean flag[] = new boolean[tree.getNumNode()];
 		for(ExtinctionValueNode nodeEV: extincaoPorNode){
-			NodeCT node = nodeEV.nodeAncestral;
+			NodeLevelSets node = nodeEV.nodeAncestral;
 			if(!flag[node.getId()]){
 				flag[node.getId()] = true;
 				//list.add(node);
@@ -314,7 +311,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		//ArrayList<NodeCT> list = new ArrayList<NodeCT>();
 		boolean flag[] = new boolean[tree.getNumNode()];
 		for(ExtinctionValueNode nodeEV: extincaoPorNode){
-			NodeCT node = nodeEV.nodeAncestral;
+			NodeLevelSets node = nodeEV.nodeAncestral;
 			if(!flag[node.getId()] && nodeEV.extinctionValue > value){
 				flag[node.getId()] = true;
 				//list.add(node);
@@ -336,7 +333,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		//ArrayList<NodeCT> list = new ArrayList<NodeCT>();
 		boolean flag[] = new boolean[tree.getNumNode()];
 		for(ExtinctionValueNode nodeEV: extincaoPorNode){
-			NodeCT node = nodeEV.nodeAncestral;
+			NodeLevelSets node = nodeEV.nodeAncestral;
 			if(!flag[node.getId()]){
 				flag[node.getId()] = true;
 				//list.add(node);
@@ -360,7 +357,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		for(Object obj: folhas){
 			NodeCT folha = (NodeCT) obj;
 			extincao = (int)tree.getRoot().getAttribute(Attribute.ALTITUDE).getValue();
-			NodeCT pai = folha.getParent();
+			NodeLevelSets pai = folha.getParent();
 			while (pai != null &&  pai.getAttribute(Attribute.ALTITUDE).getValue() <= Math.abs(folha.getLevel() - pai.getLevel())) {
 				if (visitado[pai.getId()]  &&  pai.getNumChildren() > 1  &&  pai.getAttribute(Attribute.ALTITUDE).getValue() == Math.abs(folha.getLevel() - pai.getLevel())) {  //EMPATE Grimaud,92
 					break;
@@ -390,15 +387,15 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		int extinction;
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();
-		SimpleLinkedList<NodeCT> folhas = tree.getLeaves();
-		for(NodeCT folha: folhas){
+		SimpleLinkedList<NodeLevelSets> folhas = tree.getLeaves();
+		for(NodeLevelSets folha: folhas){
 			extinction = (int) tree.getRoot().getAttribute(type).getValue();
-			NodeCT aux = folha;
-			NodeCT pai = aux.getParent();
+			NodeLevelSets aux = folha;
+			NodeLevelSets pai = aux.getParent();
 			boolean flag = true;
 			while (flag  &&  pai != null) {
 				if (pai.getNumChildren() > 1) {
-					for(NodeCT filho: pai.getChildren()){  // verifica se possui irmao com area maior
+					for(NodeLevelSets filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
 							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttribute(type) == aux.getAttribute(type)) { //EMPATE Grimaud,92
 								flag = false;
@@ -427,19 +424,18 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 	
 
 	
-	private SimpleArrayList<ExtinctionValueNode> getExtinctionCutByAttribute(int type, SimpleLinkedList folhas){
+	private SimpleArrayList<ExtinctionValueNode> getExtinctionCutByAttribute(int type, SimpleLinkedList<NodeLevelSets> folhas){
 		int extinction;
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();
-		for(Object obj: folhas){
-			NodeCT folha = (NodeCT) obj;
+		for(NodeLevelSets folha: folhas){
 			extinction = (int)tree.getRoot().getAttribute(type).getValue();
-			NodeCT aux = folha;
-			NodeCT pai = aux.getParent();
+			NodeLevelSets aux = folha;
+			NodeLevelSets pai = aux.getParent();
 			boolean flag = true;
 			while (flag  &&  pai != null) {
 				if (pai.getNumChildren() > 1) {
-					for(NodeCT filho: pai.getChildren()){  // verifica se possui irmao com area maior
+					for(NodeLevelSets filho: pai.getChildren()){  // verifica se possui irmao com area maior
 						if(flag){
 							if (visitado[filho.getId()]  &&  filho != aux  &&  filho.getAttribute(type) == aux.getAttribute(type)) { //EMPATE Grimaud,92
 								flag = false;
@@ -477,11 +473,11 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 	}
 	
 	public class ExtinctionValueNode implements Comparable<ExtinctionValueNode>{
-		public NodeCT node;
-		public NodeCT nodeAncestral;
+		public NodeLevelSets node;
+		public NodeLevelSets nodeAncestral;
 		public int extinctionValue;
 		
-		public ExtinctionValueNode(NodeCT node, NodeCT nodeAncestral, int value){
+		public ExtinctionValueNode(NodeLevelSets node, NodeLevelSets nodeAncestral, int value){
 			this.node = node;
 			this.nodeAncestral = nodeAncestral;
 			extinctionValue = value;

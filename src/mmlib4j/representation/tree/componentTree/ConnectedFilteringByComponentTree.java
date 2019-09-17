@@ -1,6 +1,8 @@
 package mmlib4j.representation.tree.componentTree;
 
 
+import java.util.Iterator;
+
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
@@ -177,26 +179,26 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		
 	
 	public void simplificationByCriterion(int alpha){
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
-			if(no != this.root && Math.abs(no.level - no.parent.level) <= alpha){ //poda
+			NodeLevelSets no = fifo.dequeue();
+			if(no != this.root && Math.abs(no.getLevel() - no.getParent().getLevel()) <= alpha){ //poda
 				//merge
-				NodeCT parent = no.parent; 
-				for(int p: no.pixels)
+				NodeLevelSets parent = no.getParent(); 
+				for(int p: no.getCanonicalPixels())
 					parent.addPixel(p);
 				
 				
-				parent.children.remove(no);
-				for(NodeCT son: no.children){
-					parent.children.add(son);
-					son.parent = parent;
+				parent.getChildren().remove(no);
+				for(NodeLevelSets son: no.getChildren()){
+					parent.getChildren().add(son);
+					son.setParent( parent );
 					fifo.enqueue(son);
 				}
 				
 			}else{
-				for(NodeCT son: no.children){
+				for(NodeLevelSets son: no.getChildren()){
 					fifo.enqueue(son);
 				}
 			}
@@ -238,11 +240,11 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	}
 	
 	public GrayScaleImage filteringByPruningMin(double attributeValue, int type){
-		return null;
+		return getInfoPrunedTreeByMin(attributeValue, type).reconstruction();
 	}
 	
 	public GrayScaleImage filteringByPruningMax(double attributeValue, int type){
-		return null;
+		return getInfoPrunedTreeByMax(attributeValue, type).reconstruction();
 	}
 	
 	public GrayScaleImage filteringByPruningViterbi(double attributeValue, int type){
@@ -271,12 +273,50 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		throw new RuntimeException("type filtering invalid");
 	}
 	
+	
+	/*
+	 * Minimum decision: A node Nk is preserved if M(Nk) ≥ λ and if all its ancestors also satisfy this condition. 
+	 * The node is removed otherwise.
+	 */
 	public InfoPrunedTree getInfoPrunedTreeByMin(double attributeValue, int type){
-		return null;
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
+		fifo.enqueue(getRoot());
+		while(!fifo.isEmpty()) {
+			NodeLevelSets node = fifo.dequeue();
+			if(getAttribute(node, type) >= attributeValue){ //not pruning <=> preserve			
+				prunedTree.addNodeNotPruned(node);
+				for(NodeLevelSets son: node.getChildren()) {
+					fifo.enqueue(son);
+				}
+			}
+		}
+		return prunedTree;
 	}
 	
+	/*
+	 * Maximum decision: A node is removed if M(Nk) < λ and if all its descendant nodes satisfy the same relation.
+	 * The node Nk is preserved otherwise.
+	 */
 	public InfoPrunedTree getInfoPrunedTreeByMax(double attributeValue, int type){
-		return null;
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
+		boolean criterion[] = new boolean[numNode]; 
+		for(NodeLevelSets node: this.getListNodes().reverse()) { //reverse order: when a node is computed, means that all its descendants nodes also was computed
+			boolean prunedDescendants = false;
+			
+			if(getAttribute(node, type) < attributeValue)
+				criterion[node.getId()] = true;
+			
+			for(NodeLevelSets son: node.getChildren()) {
+				criterion[node.getId()] = criterion[node.getId()] | criterion[son.getId()];
+				prunedDescendants = prunedDescendants | criterion[son.getId()];
+			}
+				
+			if(prunedDescendants || !criterion[node.getId()])		
+				prunedTree.addNodeNotPruned(node);
+					
+		}
+		return prunedTree;
 	}
 	
 	public InfoPrunedTree getInfoPrunedTreeByViterbi(double attributeValue, int type){
@@ -300,6 +340,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	}
 	
 	public void simplificationTreeByPruningMin(double attributeValue, int type){
+		
 		
 	}
 	
@@ -332,33 +373,32 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(type);
 		
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
-				imgOut.setPixel(p, no.level);
+				imgOut.setPixel(p, no.getLevel());
 			}
-			for(NodeCT son: no.children){
+			for(NodeLevelSets son: no.getChildren()){
 				fifo.enqueue(son);	 
 			}	
 		}
 		boolean flags[] = new boolean[this.getNumNode()];
 		for(int k=extincaoPorNode.size()-1; k >= 0 ; k--){
-			NodeCT no = extincaoPorNode.get(k).node;
+			NodeLevelSets no = extincaoPorNode.get(k).node;
 
 			if(extincaoPorNode.get(k).extinctionValue <= attributeValue && !flags[no.getId()]){ //poda
-				int levelPropagation = no.level;
+				int levelPropagation = no.getLevel();
 				//propagacao do nivel do pai para os filhos 
-				Queue<NodeCT> fifoPruning = new Queue<NodeCT>();
+				Queue<NodeLevelSets> fifoPruning = new Queue<NodeLevelSets>();
 				fifoPruning.enqueue(no);	
 				while(!fifoPruning.isEmpty()){
-					NodeCT nodePruning = fifoPruning.dequeue();
+					NodeLevelSets nodePruning = fifoPruning.dequeue();
 					flags[nodePruning.getId()] = true;
-					if(nodePruning.children != null){ 
-						for(NodeCT song: nodePruning.children){ 
-							fifoPruning.enqueue(song);	 
-						}
+					 
+					for(NodeLevelSets song: nodePruning.getChildren()){ 
+						fifoPruning.enqueue(song);	 
 					}
 					for(Integer p: nodePruning.getCanonicalPixels())
 						imgOut.setPixel(p, levelPropagation);
@@ -374,7 +414,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		return imgOut;
 	}
 	
-	private double getAttribute(NodeCT node, int type){
+	private double getAttribute(NodeLevelSets node, int type){
 		loadAttribute(type);
 		return node.getAttributeValue(type);	
 	}
@@ -388,10 +428,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * @return imagem filtrada
 	 */
 	public GrayScaleImage filteringByPruning(double attributeValue, int type){
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
-		fifo.enqueue(this.root);
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
-		for(NodeCT no: listNode){
+		for(NodeLevelSets no: listNode){
 			if( !(getAttribute(no, type) <= attributeValue) ){ //nao poda			
 				prunedTree.addNodeNotPruned(no);
 			}
@@ -413,17 +451,17 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		for(ExtinctionValueNode nodeEV: extincaoPorNode){
 			
 			if(getAttribute(nodeEV.nodeAncestral, type) < attributeValue){ //poda				
-				NodeCT node = nodeEV.nodeAncestral;	
-				for(NodeCT song: node.children){
+				NodeLevelSets node = nodeEV.nodeAncestral;	
+				for(NodeLevelSets song: node.getChildren()){
 					if(!resultPruning[song.getId()])
-						for(NodeCT n: song.getNodesDescendants())
+						for(NodeLevelSets n: song.getNodesDescendants())
 							resultPruning[n.getId()] = true;	 
 				}
 				
 			}
 		}
 		
-		for(NodeCT no: listNode){
+		for(NodeLevelSets no: listNode){
 			if( ! resultPruning[no.getId()]  ){ //nao poda
 				prunedTree.addNodeNotPruned(no);
 			}
@@ -443,8 +481,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){
 			InfoPrunedTree.NodePrunedTree node_ = fifo.dequeue();
-			NodeCT node = (NodeCT) node_.getInfo();
-			for(NodeCT son: node.getChildren()){
+			NodeLevelSets node = node_.getInfo();
+			for(NodeLevelSets son: node.getChildren()){
 				if(prunedTree.wasPruned(son)){
 					for(int p: son.getPixelsOfCC()){
 						imgOut.setPixel(p, node.getLevel());
@@ -471,7 +509,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 */
 	public InfoPrunedTree getPrunedTree(double attributeValue, int type){
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
-		for(NodeCT no: listNode){
+		for(NodeLevelSets no: listNode){
 			if( !(getAttribute(no, type) <= attributeValue) ){ //nao poda
 				prunedTree.addNodeNotPruned(no);
 			}
@@ -484,17 +522,17 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
 		ComputerMserComponentTree mser = new ComputerMserComponentTree(this);
 		boolean resultPruning[] = new boolean[this.getNumNode()];
-		SimpleLinkedList<NodeCT> list = mser.getNodesByMSER(delta);
-		for(NodeCT node: list){
+		SimpleLinkedList<NodeLevelSets> list = mser.getNodesByMSER(delta);
+		for(NodeLevelSets node: list){
 			if(getAttribute(node, type) <= attributeValue){ //poda				
-				for(NodeCT song: node.children){
-					for(NodeCT n: song.getNodesDescendants())
+				for(NodeLevelSets song: node.getChildren()){
+					for(NodeLevelSets n: song.getNodesDescendants())
 						resultPruning[n.getId()] = true;	 
 				}
 			}
 		}
 		
-		for(NodeCT no: listNode){
+		for(NodeLevelSets no: listNode){
 			if( ! resultPruning[no.getId()]  ){ //nao poda
 				prunedTree.addNodeNotPruned(no);
 			}
@@ -518,16 +556,16 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		boolean resultPruning[] = gt.getMappingSelectedNodes( );
 		SimpleLinkedList<NodeLevelSets> list = gt.getListOfSelectedNodes( );
 		for(NodeLevelSets obj: list){
-			NodeCT node = (NodeCT) obj;
+			NodeLevelSets node = (NodeCT) obj;
 			if(getAttribute(node, type) <= attributeValue){ //poda				
-				for(NodeCT song: node.children){
-					for(NodeCT n: song.getNodesDescendants())
+				for(NodeLevelSets song: node.getChildren()){
+					for(NodeLevelSets n: song.getNodesDescendants())
 						resultPruning[n.getId()] = true;	 
 				}
 			}
 		}
 		
-		for(NodeCT no: listNode){
+		for(NodeLevelSets no: listNode){
 			if( ! resultPruning[no.getId()]  ){ //nao poda
 				prunedTree.addNodeNotPruned(no);
 			}
@@ -549,16 +587,16 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		ComputerTbmrComponentTree tbmr = new ComputerTbmrComponentTree(this);
 		boolean resultPruning[] = new boolean[this.getNumNode()];
 		boolean result[] = tbmr.getSelectedNode(tMin, tMax);
-		for(NodeCT node: listNode){
+		for(NodeLevelSets node: listNode){
 			if(getAttribute(node, type) <= attributeValue && result[node.getId()]){ //poda				
-				for(NodeCT song: node.children){
-					for(NodeCT n: song.getNodesDescendants())
+				for(NodeLevelSets song: node.getChildren()){
+					for(NodeLevelSets n: song.getNodesDescendants())
 						resultPruning[n.getId()] = true;	 
 				}
 			}
 		}
 		
-		for(NodeCT no: listNode){
+		for(NodeLevelSets no: listNode){
 			if( ! resultPruning[no.getId()]  ){ //nao poda
 				prunedTree.addNodeNotPruned(no);
 			}

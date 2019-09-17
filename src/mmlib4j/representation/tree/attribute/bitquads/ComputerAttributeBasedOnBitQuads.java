@@ -100,9 +100,9 @@ public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrement
 		quadAttributes[nodeId].nPD -= quadAttributes[nodeId].nPDT;
 	}
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeCT> list)
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list)
 	{
-		for (NodeCT node : list)
+		for (NodeLevelSets node : list)
 			addAttributeInNodes(node);
 	}
 	

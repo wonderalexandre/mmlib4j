@@ -7,6 +7,7 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
@@ -45,7 +46,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		computerBasicAttribute();
 	}
 	
-	public SimpleLinkedList<NodeToS> getListNodes(){
+	public SimpleLinkedList<NodeLevelSets> getListNodes(){
 		return listNode; 
 	}
 	
@@ -121,7 +122,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	}
 	
 	
-	private double getAttribute(NodeToS node, int type){
+	private double getAttribute(NodeLevelSets node, int type){
 		loadAttribute(type);
 		return node.getAttributeValue(type);
 	}
@@ -132,8 +133,8 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){
 			InfoPrunedTree.NodePrunedTree node_ = fifo.dequeue();
-			NodeToS node = (NodeToS) node_.getInfo();
-			for(NodeToS son: node.getChildren()){
+			NodeLevelSets node = (NodeToS) node_.getInfo();
+			for(NodeLevelSets son: node.getChildren()){
 				if(prunedTree.wasPruned(son)){
 					for(int p: son.getPixelsOfCC()){
 						imgOut.setPixel(p, node.getLevel());
@@ -154,7 +155,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	public InfoPrunedTree getPrunedTree(double attributeValue, int type, int typePruning){
 		long ti = System.currentTimeMillis();
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
-		for(NodeToS no: getListNodes()){
+		for(NodeLevelSets no: getListNodes()){
 			if(! (getAttribute(no, type) <= attributeValue) ){ //poda
 				prunedTree.addNodeNotPruned(no);
 			}
@@ -176,19 +177,19 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	public GrayScaleImage filteringByPruning(double attributeValue, int type){
 		long ti = System.currentTimeMillis();
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			//double bb = no.getArea() / ((double) no.getWidthNode() * no.getHeightNode());
 			if(getAttribute(no, type) <= attributeValue){// && bb > 0.85){ // ){ //poda
-				int levelPropagation = no.parent == null ? no.level : no.parent.level;
+				int levelPropagation = no.getParent() == null ? no.getLevel() : no.getParent().getLevel();
 				//propagacao do nivel do pai para os filhos 
-				Queue<NodeToS> fifoPruning = new Queue<NodeToS>();
+				Queue<NodeLevelSets> fifoPruning = new Queue<NodeLevelSets>();
 				fifoPruning.enqueue(no);	
 				while(!fifoPruning.isEmpty()){
-					NodeToS nodePruning = fifoPruning.dequeue();
-					for(NodeToS song: nodePruning.children){
+					NodeLevelSets nodePruning = fifoPruning.dequeue();
+					for(NodeLevelSets song: nodePruning.getChildren()){
 						fifoPruning.enqueue(song);
 					}
 					for(Integer p: nodePruning.getCanonicalPixels())
@@ -197,13 +198,12 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			}
 			else{
 				for(Integer p: no.getCanonicalPixels()){
-					imgOut.setPixel(p, no.level);
+					imgOut.setPixel(p, no.getLevel());
 				}
 				
-				if(no.children != null){
-					for(NodeToS son: no.children){
-						fifo.enqueue(son);	 
-					}
+				
+				for(NodeLevelSets son: no.getChildren()){
+					fifo.enqueue(son);	 
 				}	
 			}
 		}
@@ -224,9 +224,9 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	 * @return imagem filtrada
 	 */
 	public GrayScaleImage filtering(double attributeValue, int type, int typePruning){
-		if(typePruning == MorphologicalTreeFiltering.PRUNING_EXTINCTION_VALUE)
+		/*if(typePruning == MorphologicalTreeFiltering.PRUNING_EXTINCTION_VALUE)
 			return filteringExtinctionValue(attributeValue, type);
-		else	
+		else	*/
 			return filteringByPruning(attributeValue, type);
 	}
 	
@@ -244,34 +244,30 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(attributeValue, type);
 		
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
-		Queue<NodeToS> fifo = new Queue<NodeToS>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){
-			NodeToS no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(Integer p: no.getCanonicalPixels()){
-				imgOut.setPixel(p, no.level);
+				imgOut.setPixel(p, no.getLevel());
 			}
-			if(no.children != null){
-				for(NodeToS son: no.children){
-					fifo.enqueue(son);	 
-				}
+			for(NodeLevelSets son: no.getChildren()){
+				fifo.enqueue(son);	 
 			}	
 		}
 		
 		for(int k=extincaoPorNode.size()-1; k >= 0 ; k--){
-			NodeToS no = extincaoPorNode.get(k).node;
+			NodeLevelSets no = extincaoPorNode.get(k).node;
 
 			if(extincaoPorNode.get(k).extinctionValue <= attributeValue){ //poda
-				int levelPropagation = no.level;
+				int levelPropagation = no.getLevel();
 				//propagacao do nivel do pai para os filhos 
-				Queue<NodeToS> fifoPruning = new Queue<NodeToS>();
+				Queue<NodeLevelSets> fifoPruning = new Queue<NodeLevelSets>();
 				fifoPruning.enqueue(no);	
 				while(!fifoPruning.isEmpty()){
-					NodeToS nodePruning = fifoPruning.dequeue();
-					if(nodePruning.children != null){ 
-						for(NodeToS song: nodePruning.children){ 
-							fifoPruning.enqueue(song);	 
-						}
+					NodeLevelSets nodePruning = fifoPruning.dequeue(); 
+					for(NodeLevelSets song: nodePruning.getChildren()){ 
+						fifoPruning.enqueue(song);	 
 					}
 					for(Integer p: nodePruning.getCanonicalPixels()){
 						imgOut.setPixel(p, levelPropagation);
@@ -286,6 +282,24 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			System.out.println("Tempo de execucao [tree of shape - extinction value - direct]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 		return imgOut;
+	}
+
+	@Override
+	public GrayScaleImage getImageFiltered(double attributeValue, int attributeType, int typeSimplification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InfoPrunedTree getInfoPrunedTree(double attributeValue, int attributeType, int typeSimplification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void simplificationTree(double attributeValue, int attributeType, int typeSimplification) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

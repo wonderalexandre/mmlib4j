@@ -21,10 +21,10 @@ import mmlib4j.utils.Utils;
  *
  */
 public class ComponentTree {
-	protected NodeCT root;
-	protected NodeCT[] map;
-	protected SimpleLinkedList<NodeCT> listNode;
-	protected SimpleLinkedList<NodeCT> listLeaves;
+	protected NodeLevelSets root;
+	protected NodeLevelSets[] map;
+	protected SimpleLinkedList<NodeLevelSets> listNode;
+	protected SimpleLinkedList<NodeLevelSets> listLeaves;
 	
 	protected int numNode;
 	protected int numNodeIdMax;
@@ -94,8 +94,9 @@ public class ComponentTree {
 		c.isExtendedTree = this.isExtendedTree;
 		c.sup = this.sup;
 		c.inf = this.inf;
-		for(NodeCT node: c.getListNodes()){
-			node.attributes =  (HashMap<Integer, Attribute>) this.getSC( node.getCanonicalPixel() ).attributes.clone();
+		
+		for(NodeLevelSets node: c.getListNodes()){
+			node.setAttributes(  (HashMap<Integer, Attribute>) node.getAttributes().clone() );
 		}
 		if(this.isExtendedTree){
 			c.extendedTree();
@@ -120,14 +121,10 @@ public class ComponentTree {
 	public void computerAdjcencyNodes(){
 		long ti = System.currentTimeMillis();
 		
-		for(NodeCT node: this.listNode){
-			node.adjcencyNodes = new SimpleLinkedList<NodeCT>();
-		}
-		
 		int flags[] = new int[listNode.size()];
 		Arrays.fill(flags, -1);
 		
-		for(NodeCT node: listNode){
+		for(NodeLevelSets node: listNode){
 			for(int p: node.getCanonicalPixels()){
 				for(int q: adj.getAdjacencyPixels(imgInput, p)){
 					if(map[p] != map[q]){
@@ -146,12 +143,12 @@ public class ComponentTree {
 	}
 	
 	
-	public void prunning(NodeCT node){
+	public void prunning(NodeLevelSets node){
 		if(node != root && map[node.getCanonicalPixel()] == node){
-			NodeCT parent = node.parent;
-			parent.children.remove(node);
+			NodeLevelSets parent = node.getParent();
+			parent.getChildren().remove(node);
 			listLeaves = null;
-			for(NodeCT no: node.getNodesDescendants()){
+			for(NodeLevelSets no: node.getNodesDescendants()){
 				listNode.remove(no);
 				numNode--;
 				for(int p: no.getCanonicalPixels()){
@@ -163,13 +160,13 @@ public class ComponentTree {
 	}
 	
 
-	public static void prunning(ComponentTree tree, NodeCT node){
+	public static void prunning(ComponentTree tree, NodeLevelSets node){
 		if(node != tree.root){
-			NodeCT parent = node.parent;
-			parent.children.remove(node);
+			NodeLevelSets parent = node.getParent();
+			parent.getChildren().remove(node);
 			tree.listLeaves = null;
 			
-			for(NodeCT no: node.getNodesDescendants()){
+			for(NodeLevelSets no: node.getNodesDescendants()){
 				tree.listNode.remove(no);
 				tree.numNode--;
 				for(int p: no.getCanonicalPixels()){
@@ -181,7 +178,7 @@ public class ComponentTree {
 			tree.numNode = 1;
 			tree.listNode.clear();
 			tree.listNode.add(node);
-			node.children = new SimpleLinkedList<NodeCT>();
+			node.setChildren( new SimpleLinkedList<NodeLevelSets>() );
 			for(int p=0; p < tree.getInputImage().getSize(); p++){
 				tree.map[p] = node;
 				node.addPixel(p);
@@ -195,16 +192,16 @@ public class ComponentTree {
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){
 			InfoPrunedTree.NodePrunedTree node_ = fifo.dequeue();
-			NodeCT node = (NodeCT) node_.getInfo();
-			for(NodeCT son: node.children){
+			NodeLevelSets node = node_.getInfo();
+			for(NodeLevelSets son: node.getChildren()){
 				if(prunedTree.wasPruned(son)){
 					for(int p: son.getPixelsOfCC()){
-						imgOut.setPixel(p, node.level);
+						imgOut.setPixel(p, node.getLevel());
 					}
 				}
 			}
 			for(int p: node.getCanonicalPixels()){
-				imgOut.setPixel(p, node.level);
+				imgOut.setPixel(p, node.getLevel());
 			}
 			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){
 				fifo.enqueue( son );	
@@ -216,17 +213,17 @@ public class ComponentTree {
 	
 	/* Add by gobber */	
 	public void mergeFather( NodeLevelSets nodeG ) {
-		NodeCT node = (NodeCT) nodeG;		
+		NodeLevelSets node = nodeG;		
 		if( node != root ) {						
-			NodeCT parent = node.parent;
-			parent.children.remove( node );			
+			NodeLevelSets parent = node.getParent();
+			parent.getChildren().remove( node );			
 			listNode.remove( node );
 			numNode--;			
 			for( int p: node.getCanonicalPixels() ) {				
 				parent.addPixel(p);				
 				map[p] = parent;				
 			}			
-			for(NodeCT child : node.getChildren()) {							
+			for(NodeLevelSets child : node.getChildren()) {							
 				parent.addChildren(child);				
 				child.setParent(parent);			
 			}			
@@ -237,15 +234,15 @@ public class ComponentTree {
 	
 	public GrayScaleImage reconstruction(){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			for(int p: no.getCanonicalPixels()){
-				imgOut.setPixel(p, no.level);
+				imgOut.setPixel(p, no.getLevel());
 			}
 			
-			for(NodeCT son: no.children){
+			for(NodeLevelSets son: no.getChildren()){
 				fifo.enqueue(son);	 
 			}
 			
@@ -261,30 +258,30 @@ public class ComponentTree {
 	public void extendedTree(int inf, int sup){
 		
 		long ti = System.currentTimeMillis();
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		
-		for(NodeCT son: this.root.children){
+		for(NodeLevelSets son: this.root.getChildren()){
 			fifo.enqueue(son);
 		}
 		
-		if(isMaxtree && root.level > inf){
-			this.root = getExtendedBranchOfMaxtree(this.root, inf, this.root.level);
+		if(isMaxtree && root.getLevel() > inf){
+			this.root = getExtendedBranchOfMaxtree(this.root, inf, this.root.getLevel());
 		}
-		else if(!isMaxtree && root.level < sup){
-			this.root = getExtendedBranchOfMintree(this.root, sup, this.root.level);
+		else if(!isMaxtree && root.getLevel() < sup){
+			this.root = getExtendedBranchOfMintree(this.root, sup, this.root.getLevel());
 		}
 		
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 		
-			for(NodeCT son: no.children){
+			for(NodeLevelSets son: no.getChildren()){
 				fifo.enqueue(son);
 			}
 			
 			if(isMaxtree){
-				getExtendedBranchOfMaxtree(no, no.parent.level+1, no.level);
+				getExtendedBranchOfMaxtree(no, no.getParent().getLevel()+1, no.getLevel());
 			}else{
-				getExtendedBranchOfMintree(no, no.parent.level-1, no.level);
+				getExtendedBranchOfMintree(no, no.getParent().getLevel()-1, no.getLevel());
 			}
 		}
 		long tf = System.currentTimeMillis();
@@ -293,67 +290,67 @@ public class ComponentTree {
 		this.isExtendedTree = true;
 	}
 	
-	private NodeCT getExtendedBranchOfMaxtree(NodeCT no, int inicio, int fim){
+	private NodeLevelSets getExtendedBranchOfMaxtree(NodeLevelSets no, int inicio, int fim){
 		if(inicio >= fim) return null;
-		NodeCT ramoInicio = no.getClone();
-		NodeCT ramoFim = ramoInicio;
+		NodeLevelSets ramoInicio = no.getClone();
+		NodeLevelSets ramoFim = ramoInicio;
 		
-		ramoFim.parent = no.parent;
-		if(ramoFim.parent != null){
-			ramoFim.parent.children.remove(no);
-			ramoFim.parent.children.add(ramoFim);
+		ramoFim.setParent( no.getParent() );
+		if(ramoFim.getParent() != null){
+			ramoFim.getParent().getChildren().remove(no);
+			ramoFim.getParent().getChildren().add(ramoFim);
 		}
-		ramoFim.level = inicio;
-		ramoFim.id = numNode++;
+		ramoFim.setLevel( inicio );
+		ramoFim.setId( numNode++ );
 		for(int i=inicio+1; i < fim; i++){
-			NodeCT noAtual = no.getClone();
+			NodeLevelSets noAtual = no.getClone();
 			
-			noAtual.parent = ramoFim;
-			noAtual.level = i;
-			noAtual.id = numNode++;
+			noAtual.setParent( ramoFim );
+			noAtual.setLevel( i );
+			noAtual.setId( numNode++ );
 			
-			ramoFim.children.add(noAtual);
+			ramoFim.addChildren(noAtual);
 			ramoFim = noAtual;
 			
 			
 		}
-		ramoFim.children.add(no);
-		no.parent = ramoFim;
+		ramoFim.addChildren(no);
+		no.setParent( ramoFim );
 		
 		return ramoInicio;
 	}
 	
-	private NodeCT getExtendedBranchOfMintree(NodeCT no, int inicio, int fim){
+	private NodeLevelSets getExtendedBranchOfMintree(NodeLevelSets no, int inicio, int fim){
 		if(inicio <= fim) return null;
-		NodeCT ramoInicio = no.getClone();
-		NodeCT ramoFim = ramoInicio;
+		NodeLevelSets ramoInicio = no.getClone();
+		NodeLevelSets ramoFim = ramoInicio;
 		
-		ramoFim.parent = no.parent;
-		if(ramoFim.parent != null){
-			ramoFim.parent.children.remove(no);
-			ramoFim.parent.children.add(ramoFim);
+		ramoFim.setParent( no.getParent() );
+		if(ramoFim.getParent() != null){
+			ramoFim.getParent().getChildren().remove(no);
+			ramoFim.getParent().addChildren(ramoFim);
 		}
-		ramoFim.level = inicio;
-		ramoFim.id = numNode++;
+		ramoFim.setLevel( inicio );
+		ramoFim.setId( numNode++ );
 		for(int i=inicio-1; i > fim; i--){
-			NodeCT noAtual = no.getClone();
+			NodeLevelSets noAtual = no.getClone();
 			
-			noAtual.parent = ramoFim;
-			noAtual.level = i;
-			noAtual.id = numNode++;
-			ramoFim.children.add(noAtual);
+			noAtual.setParent( ramoFim );
+			noAtual.setLevel( i ); 
+			noAtual.setId( numNode++ );
+			ramoFim.addChildren(noAtual);
 			ramoFim = noAtual;
 			
 			
 		}
-		ramoFim.children.add(no);
-		no.parent = ramoFim;
+		ramoFim.addChildren(no);
+		no.setParent( ramoFim );
 		
 		return ramoInicio;
 	}
 	
 		
-	public NodeCT getSC(int p){
+	public NodeLevelSets getSC(int p){
 		return map[p];
 	}
 	
@@ -368,63 +365,60 @@ public class ComponentTree {
 	protected void createNodesMap(){
 		if(map == null)
 			map = new NodeCT[imgInput.getSize()];
-		listNode = new SimpleLinkedList<NodeCT>();
-		listLeaves = new SimpleLinkedList<NodeCT>();
-		Queue<NodeCT> fifo = new Queue<NodeCT>();
+		listNode = new SimpleLinkedList<NodeLevelSets>();
+		listLeaves = new SimpleLinkedList<NodeLevelSets>();
+		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
-			NodeCT no = fifo.dequeue();
+			NodeLevelSets no = fifo.dequeue();
 			listNode.add(no);
 			for(Integer p: no.getCanonicalPixels()){
 				map[p] = no;
 			}
-			for(NodeCT son: no.children){
+			for(NodeLevelSets son: no.getChildren()){
 				fifo.enqueue(son);	 
 			}
-			if(no.children.isEmpty())
+			if(no.getChildren().isEmpty())
 				listLeaves.add(no);	
 		}
 		
 	}
 	
-	public NodeCT[] getNodesMap(){
+	public NodeLevelSets[] getNodesMap(){
 		return map;
 	}
 	
-	public void computerInforTree(NodeCT node, int height){
-		node.isNodeMaxtree = isMaxtree;
-		node.heightNode = height;
+	public void computerInforTree(NodeLevelSets node, int height){
+		node.setNodeType( isMaxtree );
+		node.setHeightNode( height );
 		if(height > heightTree)
 			heightTree = height;
 		
-		if(node != root){
-			node.numSiblings = node.parent.children.size();
+		for(NodeLevelSets son: node.getChildren()){
+			computerInforTree(son, height + 1);
+			if(son.isLeaf())
+				node.setNumDescendentLeaf(node.getNumDescendentLeaf() + 1); 
+			node.setNumDescendent(node.getNumDescendent() + son.getNumDescendent());
+			node.setNumDescendentLeaf(node.getNumDescendentLeaf() + son.getNumDescendentLeaf());
+			node.setArea(node.getArea() + son.getArea());
+			node.setSumX(node.getSumX() + son.getSumX());
+			node.setSumY(node.getSumY() + son.getSumY());
+			
 		}
 		
-		for(NodeCT son: node.children){
-			computerInforTree(son, height + 1);
-			
-			if(son.isLeaf())
-				node.numDescendentLeaf += 1; 
-			node.numDescendent += son.numDescendent;
-			node.numDescendentLeaf += son.numDescendentLeaf;
-			node.area += son.area;
-			node.sumX += son.sumX;
-			node.sumY += son.sumY;
-			
-		}
+		
 	}
 	
 	
-	public SimpleLinkedList<NodeCT> getListNodes(){
+	public SimpleLinkedList<NodeLevelSets> getListNodes(){
 		return listNode;
 	}
 	
-	public SimpleLinkedList<NodeCT> getLeaves(){
+	public SimpleLinkedList<NodeLevelSets> getLeaves(){
 		if(listLeaves == null){
-			listLeaves = new SimpleLinkedList<NodeCT>();
-			for(NodeCT node: listNode){
-				if(node.children.isEmpty())
+			listLeaves = new SimpleLinkedList<NodeLevelSets>();
+			for(NodeLevelSets node: listNode){
+				if(node.getChildren().isEmpty())
 					listLeaves.add(node);	
 			}
 		}
@@ -439,15 +433,15 @@ public class ComponentTree {
 	 * @param level
 	 * @return
 	 */
-	public NodeCT findNode(int pixel, int level){
-		NodeCT node = map[pixel];
+	public NodeLevelSets findNode(int pixel, int level){
+		NodeLevelSets node = map[pixel];
 		if(isMaxtree){
-			while(node.level > level){
-				node = node.parent;
+			while(node.getLevel() > level){
+				node = node.getParent();
 			}
 		}else{
-			while(node.level < level){
-				node = node.parent;
+			while(node.getLevel() < level){
+				node = node.getParent();
 			}
 		}
 		return node;
@@ -455,7 +449,7 @@ public class ComponentTree {
 	
 	
 	
-	public NodeCT getRoot() {
+	public NodeLevelSets getRoot() {
 		return root;
 	}
 
