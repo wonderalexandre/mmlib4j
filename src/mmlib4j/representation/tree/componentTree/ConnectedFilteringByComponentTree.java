@@ -186,7 +186,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			if(no != this.root && Math.abs(no.getLevel() - no.getParent().getLevel()) <= alpha){ //poda
 				//merge
 				NodeLevelSets parent = no.getParent(); 
-				for(int p: no.getCanonicalPixels())
+				for(int p: no.getCompactNodePixels())
 					parent.addPixel(p);
 				
 				
@@ -377,7 +377,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				imgOut.setPixel(p, no.getLevel());
 			}
 			for(NodeLevelSets son: no.getChildren()){
@@ -400,7 +400,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 					for(NodeLevelSets song: nodePruning.getChildren()){ 
 						fifoPruning.enqueue(song);	 
 					}
-					for(Integer p: nodePruning.getCanonicalPixels())
+					for(Integer p: nodePruning.getCompactNodePixels())
 						imgOut.setPixel(p, levelPropagation);
 				}
 			}
@@ -489,7 +489,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 					}
 				}
 			}
-			for(int p: node.getCanonicalPixels()){
+			for(int p: node.getCompactNodePixels()){
 				imgOut.setPixel(p, node.getLevel());
 			}
 			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){

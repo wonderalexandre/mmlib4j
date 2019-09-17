@@ -55,7 +55,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				imgOut.setGray(p, no.getLevel());
 			}
 			for(NodeLevelSets son: no.getChildren()){
@@ -65,7 +65,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		for(ExtinctionValueNode ev: extincaoPorNode){
 			if(attributeValue1 < ev.extinctionValue &&  ev.extinctionValue < attributeValue2){
 				NodeLevelSets no = ev.node;
-				for(int i: adj.getAdjacencyPixels(imgOut, no.getCanonicalPixels().getFisrtElement())){
+				for(int i: adj.getAdjacencyPixels(imgOut, no.getCompactNodePixels().getFisrtElement())){
 					imgOut.setPixel(i, Color.RED.getRGB());
 				}
 			}
@@ -113,7 +113,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 					fifo.enqueue(nodeA);
 					while(!fifo.isEmpty()){
 						NodeLevelSets no = fifo.dequeue();
-						for(Integer p: no.getCanonicalPixels()){
+						for(Integer p: no.getCompactNodePixels()){
 							imgOut.setPixel(p, i);
 						}
 						for(NodeLevelSets son: no.getChildren()){
@@ -160,7 +160,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 				fifo.enqueue(nodeA);
 				while(!fifo.isEmpty()){
 					NodeLevelSets no = fifo.dequeue();
-					for(Integer p: no.getCanonicalPixels()){
+					for(Integer p: no.getCompactNodePixels()){
 						imgOut.setPixel(p, i);
 					}
 					if(no.getChildren() != null){
@@ -190,7 +190,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		if(kmax > extincaoPorNode.size()) kmax = extincaoPorNode.size();
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				imgOut.setGray(p, no.getLevel());
 			}
 			if(no.getChildren() != null){
@@ -203,7 +203,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		for(int k=0; k < kmax; k++){
 			NodeLevelSets no = extincaoPorNode.get(k).node;
 			//System.out.println(no.getId() + "=> " + extincaoPorNode.get(k).extinctionValue);
-			for(int i: adj.getAdjacencyPixels(imgOut, no.getCanonicalPixels().getFisrtElement())){
+			for(int i: adj.getAdjacencyPixels(imgOut, no.getCompactNodePixels().getFisrtElement())){
 				imgOut.setPixel(i, Color.RED.getRGB());
 			}
 		}

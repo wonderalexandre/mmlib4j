@@ -66,8 +66,8 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 	public void preProcessing(NodeLevelSets node) {
 		attr[node.getId()] = new BasicAttribute();
 		//area e volume
-		attr[node.getId()].area.value = node.getCanonicalPixels().size();
-		attr[node.getId()].volume.value = node.getCanonicalPixels().size() * node.getLevel();
+		attr[node.getId()].area.value = node.getCompactNodePixels().size();
+		attr[node.getId()].volume.value = node.getCompactNodePixels().size() * node.getLevel();
 		attr[node.getId()].highest = attr[node.getId()].lowest = node.getLevel(); 
 		
 		//largura e altura

@@ -55,7 +55,7 @@ public class ComputerFunctionalVariational {
 		
 		for(NodeLevelSets node : tree.getListNodes()) {			
 			mapNodes[node.getId()] = node;
-			areaR[node.getId()] = node.getCanonicalPixels().size();
+			areaR[node.getId()] = node.getCompactNodePixels().size();
 			volumeR[node.getId()] = areaR[node.getId()] * node.getLevel();
 			functionalVariational[node.getId()] = new Attribute(Attribute.FUNCTIONAL_VARIATIONAL, 0);			
 			mapNodes[node.getId()] = node;			

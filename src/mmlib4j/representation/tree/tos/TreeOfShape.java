@@ -90,7 +90,7 @@ public class TreeOfShape{
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				map[p] = no;
 			}
 			listNode.add(no);
@@ -320,7 +320,7 @@ public class TreeOfShape{
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(int p: no.getCanonicalPixels()){
+			for(int p: no.getCompactNodePixels()){
 				imgOut.setPixel(p, no.getLevel());
 			}
 			
@@ -339,7 +339,7 @@ public class TreeOfShape{
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(int p: no.getCanonicalPixels()){
+			for(int p: no.getCompactNodePixels()){
 				imgOut.setPixel(p, no.getHeightNode());
 			}
 			
@@ -363,7 +363,7 @@ public class TreeOfShape{
 			for(NodeLevelSets no: node.getNodesDescendants()){
 				tree.listNode.remove(no);
 				tree.numNode--;
-				for(int p: no.getCanonicalPixels()){
+				for(int p: no.getCompactNodePixels()){
 					parent.addPixel(p);
 					tree.map[p] = parent;	
 				}

@@ -141,7 +141,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 					}
 				}
 			}
-			for(int p: node.getCanonicalPixels()){
+			for(int p: node.getCompactNodePixels()){
 				imgOut.setPixel(p, node.getLevel());
 			}
 			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){
@@ -192,12 +192,12 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 					for(NodeLevelSets song: nodePruning.getChildren()){
 						fifoPruning.enqueue(song);
 					}
-					for(Integer p: nodePruning.getCanonicalPixels())
+					for(Integer p: nodePruning.getCompactNodePixels())
 						imgOut.setPixel(p, levelPropagation);
 				}
 			}
 			else{
-				for(Integer p: no.getCanonicalPixels()){
+				for(Integer p: no.getCompactNodePixels()){
 					imgOut.setPixel(p, no.getLevel());
 				}
 				
@@ -248,7 +248,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				imgOut.setPixel(p, no.getLevel());
 			}
 			for(NodeLevelSets son: no.getChildren()){
@@ -269,7 +269,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 					for(NodeLevelSets song: nodePruning.getChildren()){ 
 						fifoPruning.enqueue(song);	 
 					}
-					for(Integer p: nodePruning.getCanonicalPixels()){
+					for(Integer p: nodePruning.getCompactNodePixels()){
 						imgOut.setPixel(p, levelPropagation);
 					}
 				}

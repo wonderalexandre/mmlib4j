@@ -179,7 +179,7 @@ public class UltimateLevelingByReconstruction {
 								fifoPruning.enqueue(song);
 							}
 						}
-						for (Integer pixel : nodePruning.getCanonicalPixels()) {
+						for (Integer pixel : nodePruning.getCompactNodePixels()) {
 							imgMarcador.setPixel(pixel, levelPropagation);
 						}
 					}
@@ -416,7 +416,7 @@ public class UltimateLevelingByReconstruction {
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				transformImg.setPixel(p, maxContrastLUTPos[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -434,7 +434,7 @@ public class UltimateLevelingByReconstruction {
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				transformImg.setPixel(p, maxContrastLUTNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -462,7 +462,7 @@ public class UltimateLevelingByReconstruction {
 			fifo.enqueue(tree.getRoot());
 			while(!fifo.isEmpty()){
 				NodeLevelSets no = fifo.dequeue();
-				for(Integer p: no.getCanonicalPixels()){
+				for(Integer p: no.getCompactNodePixels()){
 					transformImg.setPixel(p, maxContrastLUT[no.getId()]);
 				}
 				if(no.getChildren() != null){
@@ -484,7 +484,7 @@ public class UltimateLevelingByReconstruction {
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				associateImg.setPixel(p, associatedIndexLUTPos[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -501,7 +501,7 @@ public class UltimateLevelingByReconstruction {
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				associateImg.setPixel(p, associatedIndexLUTNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -532,7 +532,7 @@ public class UltimateLevelingByReconstruction {
 			fifo.enqueue(tree.getRoot());
 			while(!fifo.isEmpty()){
 				NodeLevelSets no = fifo.dequeue();
-				for(Integer p: no.getCanonicalPixels()){
+				for(Integer p: no.getCompactNodePixels()){
 					associateImg.setPixel(p, associatedIndexLUT[no.getId()]);
 				}
 				if(no.getChildren() != null){

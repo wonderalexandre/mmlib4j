@@ -38,7 +38,7 @@ public abstract class NodeLevelSets {
 	protected SimpleLinkedList<NodeLevelSets> children = new SimpleLinkedList<NodeLevelSets>();
 	protected SimpleLinkedList<Integer> pixels = new SimpleLinkedList<Integer>();
 	protected HashMap<Integer, Attribute> attributes = new HashMap<Integer, Attribute>();
-	protected SimpleLinkedList<NodeLevelSets> adjcencyNodes = new SimpleLinkedList<NodeLevelSets>();
+	//protected SimpleLinkedList<NodeLevelSets> adjcencyNodes = new SimpleLinkedList<NodeLevelSets>();
 	protected boolean isClone = false;
 	protected int countPixelInFrame;
 	
@@ -82,13 +82,13 @@ public abstract class NodeLevelSets {
 		this.isNodeMaxtree = isNodeMaxtree;
 	}
 	
-	public SimpleLinkedList<NodeLevelSets> getAdjacencyNodes(){
+	/*public SimpleLinkedList<NodeLevelSets> getAdjacencyNodes(){
 		return adjcencyNodes;
 	}
 	
 	public void addAdjacencyNode(NodeLevelSets node){
 		adjcencyNodes.add(node);
-	}
+	}*/
 	
 	public int getCanonicalPixel(){
 		return canonicalPixel;
@@ -294,9 +294,9 @@ public abstract class NodeLevelSets {
 	}
 
 
-	public SimpleLinkedList<NodeLevelSets> getAdjcencyNodes() {
+	/*public SimpleLinkedList<NodeLevelSets> getAdjcencyNodes() {
 		return adjcencyNodes;
-	}
+	}*/
 
 
 	public void addChildren(NodeLevelSets son) {
@@ -362,11 +362,11 @@ public abstract class NodeLevelSets {
 		return isDescendant(node) || isAncestral(node);
 	}
 	
-	public SimpleLinkedList<Integer> getCanonicalPixels(){
+	public SimpleLinkedList<Integer> getCompactNodePixels(){
 		return pixels;
 	}
 	
-	public int getNumCanonicalPixel(){
+	public int getNumCompactNodePixels(){
 		return pixels.size();
 	}
 	
@@ -456,7 +456,7 @@ public abstract class NodeLevelSets {
 							for(NodeLevelSets son: no.getChildren()){
 								fifo.enqueue(son);
 							}
-							return pixelNode = no.getCanonicalPixels().iterator();
+							return pixelNode = no.getCompactNodePixels().iterator();
 						}
 						return null;
 					}
@@ -481,7 +481,7 @@ public abstract class NodeLevelSets {
 				}
 			}
 			
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				if(img.getPixel(p) == level)
 					imgOut.setPixel(p, 255);
 				else
@@ -510,7 +510,7 @@ public abstract class NodeLevelSets {
 				}
 			}
 			
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				img.setPixel(p, true);
 			}
 			

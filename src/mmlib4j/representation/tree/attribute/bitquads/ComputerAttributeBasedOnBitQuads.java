@@ -57,7 +57,7 @@ public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrement
 	
 	@Override
 	public void preProcessing(NodeLevelSets node) {
-		SimpleLinkedList<Integer> pixels = node.getCanonicalPixels();
+		SimpleLinkedList<Integer> pixels = node.getCompactNodePixels();
 		int nodeId = node.getId();
 		quadAttributes[nodeId] = new AttributeBasedOnBitQuads();
 		

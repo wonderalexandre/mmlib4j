@@ -118,14 +118,15 @@ public class ComponentTree {
 	}
 	protected ComponentTree(){}
 	
-	public void computerAdjcencyNodes(){
+	/*
+	public SimpleLinkedList<NodeLevelSets> computerAdjcencyNodesX(){
 		long ti = System.currentTimeMillis();
 		
 		int flags[] = new int[listNode.size()];
 		Arrays.fill(flags, -1);
 		
 		for(NodeLevelSets node: listNode){
-			for(int p: node.getCanonicalPixels()){
+			for(int p: node.getCompactNodePixels()){
 				for(int q: adj.getAdjacencyPixels(imgInput, p)){
 					if(map[p] != map[q]){
 						if(flags[map[q].getId()] != map[p].getId()){
@@ -140,7 +141,7 @@ public class ComponentTree {
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
 			System.out.println("Tempo de execucao [computerAdjcencyNodes] "+ ((tf - ti) /1000.0)  + "s");
-	}
+	}*/
 	
 	
 	public void prunning(NodeLevelSets node){
@@ -151,7 +152,7 @@ public class ComponentTree {
 			for(NodeLevelSets no: node.getNodesDescendants()){
 				listNode.remove(no);
 				numNode--;
-				for(int p: no.getCanonicalPixels()){
+				for(int p: no.getCompactNodePixels()){
 					parent.addPixel(p);
 					map[p] = parent;	
 				}
@@ -169,7 +170,7 @@ public class ComponentTree {
 			for(NodeLevelSets no: node.getNodesDescendants()){
 				tree.listNode.remove(no);
 				tree.numNode--;
-				for(int p: no.getCanonicalPixels()){
+				for(int p: no.getCompactNodePixels()){
 					parent.addPixel(p);
 					tree.map[p] = parent;	
 				}
@@ -200,7 +201,7 @@ public class ComponentTree {
 					}
 				}
 			}
-			for(int p: node.getCanonicalPixels()){
+			for(int p: node.getCompactNodePixels()){
 				imgOut.setPixel(p, node.getLevel());
 			}
 			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){
@@ -219,7 +220,7 @@ public class ComponentTree {
 			parent.getChildren().remove( node );			
 			listNode.remove( node );
 			numNode--;			
-			for( int p: node.getCanonicalPixels() ) {				
+			for( int p: node.getCompactNodePixels() ) {				
 				parent.addPixel(p);				
 				map[p] = parent;				
 			}			
@@ -238,7 +239,7 @@ public class ComponentTree {
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(int p: no.getCanonicalPixels()){
+			for(int p: no.getCompactNodePixels()){
 				imgOut.setPixel(p, no.getLevel());
 			}
 			
@@ -372,7 +373,7 @@ public class ComponentTree {
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
 			listNode.add(no);
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				map[p] = no;
 			}
 			for(NodeLevelSets son: no.getChildren()){

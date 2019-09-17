@@ -69,7 +69,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		attr[node.getId()] = new CentralMomentsAttribute(node, withImg);
 		//area e volume
 		
-		for(int pixel: node.getCanonicalPixels()){
+		for(int pixel: node.getCompactNodePixels()){
 			int x = pixel % withImg;
 			int y = pixel / withImg;
 			

@@ -63,14 +63,14 @@ public class ComputerAttributeBasedPerimeterExternal {
 			if(node.getArea() < 3){
 				perimeters[node.getId()].value = node.getArea();
 				double sumgrad = 0;
-				for( int pixel : node.getCanonicalPixels()) {					
+				for( int pixel : node.getCompactNodePixels()) {					
 					sumgrad += imgGrad.getPixel( pixel );					
 				}				
 				sumGradContour[ node.getId() ].value = sumgrad/perimeters[ node.getId() ].value;
 			}else if(node.getParent().getArea() - node.getArea() < 3){
 				perimeters[node.getId()].value = perimeters[node.getParent().getId()].value - 1;
 				double sumgrad = 0;
-				for( int pixel : node.getCanonicalPixels() ) {					
+				for( int pixel : node.getCompactNodePixels() ) {					
 					sumgrad += imgGrad.getPixel( pixel );					
 				}				
 				sumGradContour[ node.getId() ].value = sumgrad/perimeters[ node.getId() ].value;

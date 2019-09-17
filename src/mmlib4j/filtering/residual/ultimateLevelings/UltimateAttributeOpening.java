@@ -226,7 +226,7 @@ public class UltimateAttributeOpening {
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				transformImg.setPixel(p, maxContrastLUT[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -250,7 +250,7 @@ public class UltimateAttributeOpening {
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				map[p] = mapNodes[no.getId()];
 			}
 			if(no.getChildren() != null){
@@ -268,7 +268,7 @@ public class UltimateAttributeOpening {
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				associateImg.setPixel(p, associatedIndexLUT[no.getId()]);
 			}
 			if(no.getChildren() != null){

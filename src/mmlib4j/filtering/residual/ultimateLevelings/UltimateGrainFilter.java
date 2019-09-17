@@ -293,7 +293,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				transformImg.setPixel(p, residuesNodePos[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -316,7 +316,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				transformImg.setPixel(p, residuesNodeNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -339,7 +339,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				transformImg.setPixel(p, Math.max(residuesNodePos[no.getId()], residuesNodeNeg[no.getId()]));
 			}
 			if(no.getChildren() != null){
@@ -372,7 +372,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				associateImg.setPixel(p, associatedNodePos[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -390,7 +390,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				if(residuesNodePos[no.getId()] > residuesNodeNeg[no.getId()])
 					associateImg.setPixel(p, associatedNodePos[no.getId()]);
 				else
@@ -411,7 +411,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				associateImg.setPixel(p, associatedNodeNeg[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -429,7 +429,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				associateImg.setPixel(p, associatedNodeType[no.getId()]);
 			}
 			if(no.getChildren() != null){
@@ -448,7 +448,7 @@ public class UltimateGrainFilter {
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
 			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCanonicalPixels()){
+			for(Integer p: no.getCompactNodePixels()){
 				associateImg.setPixel(p, residuesNodeType[no.getId()]);
 			}
 			if(no.getChildren() != null){
