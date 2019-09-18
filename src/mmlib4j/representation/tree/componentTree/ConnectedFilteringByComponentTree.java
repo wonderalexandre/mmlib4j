@@ -1,8 +1,6 @@
 package mmlib4j.representation.tree.componentTree;
 
 
-import java.util.Iterator;
-
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
@@ -22,6 +20,7 @@ import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
+import mmlib4j.representation.tree.attribute.ComputerViterbi;
 import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
@@ -247,8 +246,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		return getInfoPrunedTreeByMax(attributeValue, type).reconstruction();
 	}
 	
-	public GrayScaleImage filteringByPruningViterbi(double attributeValue, int type){
-		return null;
+	public GrayScaleImage filteringByPruningViterbi(double attributeValue, int type){				
+		return getInfoPrunedTreeByViterbi(attributeValue, type).reconstruction();
 	}
 	
 	public GrayScaleImage filteringByDirectRule(double attributeValue, int type){
@@ -319,8 +318,21 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		return prunedTree;
 	}
 	
+	/*
+	 * Viterbi rule: A node is removed based on the optimum trellis path. 
+	 * The node is preserved if it is preserved in trellis path, and it is removed
+	 * otherwise. the optimum trellis path is obtained by the Viterbi Algorithm.
+	 * 
+	 */
 	public InfoPrunedTree getInfoPrunedTreeByViterbi(double attributeValue, int type){
-		return null;
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
+		boolean criterion[] = new ComputerViterbi(getRoot(), getNumNode(), attributeValue, type).getNodesByViterbi();		
+		for(NodeLevelSets node : listNode) {
+			if(!criterion[node.getId()]) {
+				prunedTree.addNodeNotPruned(node);
+			}
+		}
+		return prunedTree;
 	}
 	
 	public void simplificationTree(double attributeValue, int attributeType, int typeSimplification) {
@@ -334,9 +346,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			simplificationTreeByDirectRule(attributeValue, attributeType);
 		else if(typeSimplification == MorphologicalTreeFiltering.RULE_SUBTRACTIVE)
 			simplificationTreeBySubstractiveRule(attributeValue, attributeType);
-		
-		
-		throw new RuntimeException("type filtering invalid");
+		else
+			throw new RuntimeException("type filtering invalid");
 	}
 	
 	public void simplificationTreeByPruningMin(double attributeValue, int type){
