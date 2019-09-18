@@ -64,7 +64,7 @@ public class Attribute {
 	public static final int MOMENT_LENGTH_MAJOR_AXES = 27;
 	public static final int MOMENT_LENGTH_MINOR_AXES = 28;
 	public static final int MOMENT_ASPECT_RATIO = 29;
-	
+	public static final int MOMENT_OF_INERTIA = 30;
 	
 	//attribute based on bit quads
 	//public static final int NUM_HOLES = 30;
@@ -106,6 +106,7 @@ public class Attribute {
 			case MOMENT_COMPACTNESS: return "MOMENT_COMPACTNESS";
 			case MOMENT_ECCENTRICITY: return "MOMENT_ECCENTRICITY";
 			case MOMENT_ELONGATION: return "MOMENT_ELONGATION";
+			case MOMENT_OF_INERTIA: return "MOMENT_OF_INERTIA";
 			case MOMENT_LENGTH_MAJOR_AXES: return "MOMENT_LENGTH_MAJOR_AXES";
 			case MOMENT_LENGTH_MINOR_AXES: return "MOMENT_LENGTH_MINOR_AXES";
 			case MOMENT_ORIENTATION: return "MOMENT_ORIENTATION";

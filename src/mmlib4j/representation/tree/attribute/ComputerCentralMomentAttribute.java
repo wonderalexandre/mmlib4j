@@ -63,6 +63,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		node.addAttribute(Attribute.MOMENT_LENGTH_MINOR_AXES, new Attribute(Attribute.MOMENT_LENGTH_MINOR_AXES, attr[ node.getId() ].getLengthMinorAxes()));
 		node.addAttribute(Attribute.MOMENT_ORIENTATION, new Attribute(Attribute.MOMENT_ORIENTATION, attr[ node.getId() ].getMomentOrientation()));
 		node.addAttribute(Attribute.MOMENT_ASPECT_RATIO, new Attribute(Attribute.MOMENT_ASPECT_RATIO, attr[ node.getId() ].getLengthMinorAxes() /  attr[ node.getId() ].getLengthMajorAxes() ));
+		node.addAttribute(Attribute.MOMENT_OF_INERTIA, new Attribute(Attribute.MOMENT_OF_INERTIA, attr[ node.getId() ].getMomentOfInertia()) );
 	}
 	
 	public void preProcessing(NodeLevelSets node) {
@@ -92,7 +93,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 
 	public void posProcessing(NodeLevelSets node) {
 		//pos-processing root
-		attr[node.getId()].variance.value = attr[node.getId()].variance.value / (double) node.getArea();
+		attr[node.getId()].variance.value = attr[node.getId()].variance.value / (double) node.getArea(); 
 	}
 	
 	public static CentralMomentsAttribute getInstance(NodeLevelSets node, int widthImg){
@@ -124,6 +125,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		
 		
 		public CentralMomentsAttribute(){}
+		
 		public CentralMomentsAttribute(NodeLevelSets node, int width){
 			this.area = (double) node.getArea();
 			this.xCentroid = node.getCentroid() % width;
@@ -138,6 +140,11 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		public double getFatorNormalized(int p, int q){
 			final double norm = Math.pow( area, (p + q + 2.0) / 2.0);
 			return norm; 
+		}
+		
+		
+		public double getMomentOfInertia() {
+			return (moment20.value / getFatorNormalized(2,0)) + (moment02.value / getFatorNormalized(0,2)); 
 		}
 		
 		/**
@@ -155,8 +162,8 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		 *  0 <= eccentricity() ≤ 1 is normalised feature of eccentricity 
 		 */
 		public double eccentricity(){
-			double a = moment20.value + moment02.value + Math.sqrt( Math.pow(moment20.value - moment02.value, 2) + 4 * Math.pow(moment11.value, 2));
-			double b = moment20.value + moment02.value - Math.sqrt( Math.pow(moment20.value - moment02.value, 2) + 4 * Math.pow(moment11.value, 2));
+			double a = getLengthMajorAxes();
+			double b = getLengthMinorAxes();
 			return a / b;
 			
 		}
