@@ -15,14 +15,15 @@ import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
  */
 public class InfoPrunedTree {
 	
-	private NodePrunedTree root;
-	private NodePrunedTree map[];
 	private int numNode;
+	private int attributeType;
+	private double attributeValue;
+	
+	private NodePrunedTree root;
+	private NodePrunedTree map[]; //mapping from id to Node. If map[id] = null then Node:ID was pruned 
 	private MorphologicalTreeFiltering tree;
 	private SimpleLinkedList<NodeLevelSets> listLeaves;
 
-	private int attributeType;
-	private double attributeValue;
 	
 	
 	public int getAttributeType() {

@@ -24,6 +24,7 @@ import mmlib4j.representation.tree.attribute.ComputerViterbi;
 import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
+import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
 
@@ -223,9 +224,9 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			return filteringByPruningMax(attributeValue, type);
 		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
 			return filteringByPruningViterbi(attributeValue, type);
-		else if(typeSimplification == MorphologicalTreeFiltering.RULE_DIRECT)
+		else if(typeSimplification == MorphologicalTreeFiltering.DIRECT_RULE)
 			return filteringByDirectRule(attributeValue, type);
-		else if(typeSimplification == MorphologicalTreeFiltering.RULE_SUBTRACTIVE)
+		else if(typeSimplification == MorphologicalTreeFiltering.SUBTRACTIVE_RULE)
 			return filteringBySubtractiveRule(attributeValue, type);
 		/*
 		if(typeSimplification == MorphologicalTreeFiltering.PRUNING_EXTINCTION_VALUE)
@@ -249,6 +250,12 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public GrayScaleImage filteringByPruningViterbi(double attributeValue, int type){				
 		return getInfoPrunedTreeByViterbi(attributeValue, type).reconstruction();
 	}
+	public static void main(String args[]) {
+		GrayScaleImage img = ImageBuilder.openGrayImage();
+		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), true);
+		tree.filteringByPruningMin(1000, Attribute.MOMENT_ASPECT_RATIO);
+	}
+	
 	
 	public GrayScaleImage filteringByDirectRule(double attributeValue, int type){
 		return null;
@@ -342,9 +349,9 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			simplificationTreeByPruningMax(attributeValue, attributeType);
 		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
 			simplificationTreeByPruningViterbi(attributeValue, attributeType);
-		else if(typeSimplification == MorphologicalTreeFiltering.RULE_DIRECT)
+		else if(typeSimplification == MorphologicalTreeFiltering.DIRECT_RULE)
 			simplificationTreeByDirectRule(attributeValue, attributeType);
-		else if(typeSimplification == MorphologicalTreeFiltering.RULE_SUBTRACTIVE)
+		else if(typeSimplification == MorphologicalTreeFiltering.SUBTRACTIVE_RULE)
 			simplificationTreeBySubstractiveRule(attributeValue, attributeType);
 		else
 			throw new RuntimeException("type filtering invalid");
