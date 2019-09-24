@@ -46,6 +46,7 @@ public class Attribute {
 	//public static final int PERIMETER = 10;
 	public static final int VARIANCE_LEVEL = 11;
 	public static final int LEVEL_MEAN = 12;
+	public static final int STD_LEVEL = 13;
 	
 	public static final int PERIMETER_EXTERNAL = 14;
 	public static final int CIRCULARITY = 15;
@@ -117,6 +118,7 @@ public class Attribute {
 		case RECTANGULARITY: return "RECTANGULARITY";
 		case RATIO_WIDTH_HEIGHT: return "RATIO_WIDTH_HEIGHT";
 		case VARIANCE_LEVEL: return "VARIANCE_LEVEL";
+		case STD_LEVEL: return "STD_LEVEL";
 		case LEVEL_MEAN: return "LEVEL_MEAN";
 		case VOLUME: return "VOLUME";
 		case WIDTH: return "WIDTH";
@@ -192,7 +194,7 @@ public class Attribute {
 
 	public String getValueFormat(){
 		if(df == null){
-			 df = new DecimalFormat("0.0000000", new DecimalFormatSymbols(Locale.ENGLISH));
+			 df = new DecimalFormat("0.0000", new DecimalFormatSymbols(Locale.ENGLISH));
 		}
 		return df.format(value);
 	}

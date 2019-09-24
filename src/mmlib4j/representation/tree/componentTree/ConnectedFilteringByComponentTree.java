@@ -4,6 +4,7 @@ package mmlib4j.representation.tree.componentTree;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
@@ -81,6 +82,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.MOMENT_LENGTH_MINOR_AXES:
 			case Attribute.MOMENT_ORIENTATION:
 			case Attribute.MOMENT_ASPECT_RATIO:
+			case Attribute.MOMENT_OF_INERTIA:
 				computerCentralMomentAttribute();
 				break;
 			
@@ -250,11 +252,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public GrayScaleImage filteringByPruningViterbi(double attributeValue, int type){				
 		return getInfoPrunedTreeByViterbi(attributeValue, type).reconstruction();
 	}
-	public static void main(String args[]) {
-		GrayScaleImage img = ImageBuilder.openGrayImage();
-		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), true);
-		tree.filteringByPruningMin(1000, Attribute.MOMENT_ASPECT_RATIO);
-	}
+	
 	
 	
 	public GrayScaleImage filteringByDirectRule(double attributeValue, int type){
@@ -629,4 +627,16 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		return prunedTree;
 	}
 	
+	
+	public static void main(String args[]) {
+		GrayScaleImage img = ImageBuilder.openGrayImage();
+		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), true);
+		GrayScaleImage imgOut = tree.filteringByPruningMin(3, Attribute.MOMENT_OF_INERTIA);
+		
+		
+		
+		WindowImages.show(img, imgOut);
+		
+		
+	}
 }

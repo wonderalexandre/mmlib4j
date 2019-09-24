@@ -4,8 +4,6 @@ import java.util.Iterator;
 
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.Utils;
 
 
@@ -56,6 +54,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		node.addAttribute(Attribute.MOMENT_CENTRAL_11, attr[ node.getId() ].moment11);
 		node.addAttribute(Attribute.VARIANCE_LEVEL, attr[ node.getId() ].variance);
 		node.addAttribute(Attribute.LEVEL_MEAN, attr[ node.getId() ].levelMean);
+		node.addAttribute(Attribute.STD_LEVEL, new Attribute(Attribute.STD_LEVEL, Math.sqrt( attr[ node.getId() ].variance.value) ));
 		node.addAttribute(Attribute.MOMENT_COMPACTNESS, new Attribute(Attribute.MOMENT_COMPACTNESS, attr[ node.getId() ].compactness()));
 		node.addAttribute(Attribute.MOMENT_ECCENTRICITY, new Attribute(Attribute.MOMENT_ECCENTRICITY, attr[ node.getId() ].eccentricity()));
 		node.addAttribute(Attribute.MOMENT_ELONGATION, new Attribute(Attribute.MOMENT_ELONGATION, attr[ node.getId() ].elongation()));
@@ -118,7 +117,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		Attribute variance = new Attribute(Attribute.VARIANCE_LEVEL);
 		Attribute levelMean = new Attribute(Attribute.LEVEL_MEAN);
 		
-		double area; 
+		double area; //moment00
 		double xCentroid;
 		double yCentroid;
 		int width;
@@ -138,13 +137,13 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		
 		//=> moment[p][q] / norm;
 		public double getFatorNormalized(int p, int q){
-			final double norm = Math.pow( area, (p + q + 2.0) / 2.0);
-			return norm; 
+			return Math.pow(area, (p + q + 2.0) / 2.0);
 		}
 		
 		
 		public double getMomentOfInertia() {
-			return (moment20.value / getFatorNormalized(2,0)) + (moment02.value / getFatorNormalized(0,2)); 
+			return (moment20.value / getFatorNormalized(2,0)) + 
+					(moment02.value / getFatorNormalized(0,2)); 
 		}
 		
 		/**
