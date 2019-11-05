@@ -26,6 +26,7 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
         this.height = height;
         this.pixels = new int[width * height];
         setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
+        
     }
 
 	IntegerImage(int pixels[], int width, int height) {
