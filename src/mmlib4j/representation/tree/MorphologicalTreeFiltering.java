@@ -14,8 +14,8 @@ public interface MorphologicalTreeFiltering {
 	public final static int PRUNING_MIN = 1;
 	public final static int PRUNING_MAX = 2;
 	public final static int PRUNING_VITERBI = 3;
-	public final static int RULE_DIRECT = 4;
-	public final static int RULE_SUBTRACTIVE = 5;
+	public final static int DIRECT_RULE = 4;
+	public final static int SUBTRACTIVE_RULE = 5;
 	
 	/*public final static int PRUNING_EXTINCTION_VALUE = 1;
 	public final static int PRUNING_MSER = 5;

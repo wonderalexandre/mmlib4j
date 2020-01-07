@@ -46,6 +46,7 @@ public class Attribute {
 	//public static final int PERIMETER = 10;
 	public static final int VARIANCE_LEVEL = 11;
 	public static final int LEVEL_MEAN = 12;
+	public static final int STD_LEVEL = 13;
 	
 	public static final int PERIMETER_EXTERNAL = 14;
 	public static final int CIRCULARITY = 15;
@@ -64,7 +65,7 @@ public class Attribute {
 	public static final int MOMENT_LENGTH_MAJOR_AXES = 27;
 	public static final int MOMENT_LENGTH_MINOR_AXES = 28;
 	public static final int MOMENT_ASPECT_RATIO = 29;
-	
+	public static final int MOMENT_OF_INERTIA = 30;
 	
 	//attribute based on bit quads
 	//public static final int NUM_HOLES = 30;
@@ -90,54 +91,60 @@ public class Attribute {
 	public static final int FUNCTIONAL_ATTRIBUTE = 53;
 	public static final int FUNCTIONAL_VARIATIONAL = 54;
 	
-	public String getHeader(){
+	public static String getNameAttribute(int type) {
 		switch(type){
-			case ALTITUDE: return "ALTITUDE";	
-			case AREA: return "AREA";
-			case CIRCULARITY: return "CIRCULARITY";
-			case COMPACTNESS: return "COMPACTNESS";
-			case ELONGATION: return "ELONGATION";
-			case HEIGHT: return "HEIGHT";
-			case LEVEL: return "LEVEL";
-			case MOMENT_ASPECT_RATIO: return "MOMENT_ASPECT_RATIO";
-			case MOMENT_CENTRAL_02: return "MOMENT_CENTRAL_02";
-			case MOMENT_CENTRAL_11: return "MOMENT_CENTRAL_11";
-			case MOMENT_CENTRAL_20: return "MOMENT_CENTRAL_20";
-			case MOMENT_COMPACTNESS: return "MOMENT_COMPACTNESS";
-			case MOMENT_ECCENTRICITY: return "MOMENT_ECCENTRICITY";
-			case MOMENT_ELONGATION: return "MOMENT_ELONGATION";
-			case MOMENT_LENGTH_MAJOR_AXES: return "MOMENT_LENGTH_MAJOR_AXES";
-			case MOMENT_LENGTH_MINOR_AXES: return "MOMENT_LENGTH_MINOR_AXES";
-			case MOMENT_ORIENTATION: return "MOMENT_ORIENTATION";
-			case MSER: return "MSER";
-			//case NUM_HOLES: return "NUM_HOLES";
-			//case PERIMETER: return "PERIMETER";
-			case PERIMETER_EXTERNAL: return "PERIMETER_EXTERNAL";
-			case RECTANGULARITY: return "RECTANGULARITY";
-			case RATIO_WIDTH_HEIGHT: return "RATIO_WIDTH_HEIGHT";
-			case VARIANCE_LEVEL: return "VARIANCE_LEVEL";
-			case LEVEL_MEAN: return "LEVEL_MEAN";
-			case VOLUME: return "VOLUME";
-			case WIDTH: return "WIDTH";
-			
-			case BIT_QUADS_PERIMETER: return "PERIMETERS_QUAD";
-			case BIT_QUADS_EULER_NUMBER: return "BIT_QUADS_NUMBER_EULER";
-			case BIT_QUADS_HOLE_NUMBER: return "BIT_QUADS_NUMBER_HOLES";
-			case BIT_QUADS_PERIMETER_CONTINUOUS: return "BIT_QUADS_PERIMETER_CONTINUOUS";
-			case BIT_QUADS_CIRCULARITY: return "BIT_QUADS_CIRCULARITY";
-			case BIT_QUADS_AVERAGE_AREA: return "BIT_QUADS_AREA_AVERAGE";
-			case BIT_QUADS_AVERAGE_LENGTH: return "BIT_QUADS_LENGTH_AVERAGE";
-			case BIT_QUADS_AVERAGE_WIDTH: return "BIT_QUADS_WIDTH_AVERAGE";
-			case BIT_QUADS_AREA: return "BIT_QUADS_AREA";
-			case BIT_QUADS_AREA_DUDA: return "BIT_QUADS_AREA_DUDA";
-			
-			// energy
-			case SUM_GRAD_CONTOUR: return "SUM_GRAD_CONTOUR";
-			case FUNCTIONAL_ATTRIBUTE: return "FUNCTIONAL_ATTRIBUTE";
-			case FUNCTIONAL_VARIATIONAL: return "FUNCTIONAL_VARIATIONAL";
-			
-			default: return "UNDEFINED";
-		}
+		case ALTITUDE: return "ALTITUDE";	
+		case AREA: return "AREA";
+		case CIRCULARITY: return "CIRCULARITY";
+		case COMPACTNESS: return "COMPACTNESS";
+		case ELONGATION: return "ELONGATION";
+		case HEIGHT: return "HEIGHT";
+		case LEVEL: return "LEVEL";
+		case MOMENT_ASPECT_RATIO: return "MOMENT_ASPECT_RATIO";
+		case MOMENT_CENTRAL_02: return "MOMENT_CENTRAL_02";
+		case MOMENT_CENTRAL_11: return "MOMENT_CENTRAL_11";
+		case MOMENT_CENTRAL_20: return "MOMENT_CENTRAL_20";
+		case MOMENT_COMPACTNESS: return "MOMENT_COMPACTNESS";
+		case MOMENT_ECCENTRICITY: return "MOMENT_ECCENTRICITY";
+		case MOMENT_ELONGATION: return "MOMENT_ELONGATION";
+		case MOMENT_OF_INERTIA: return "MOMENT_OF_INERTIA";
+		case MOMENT_LENGTH_MAJOR_AXES: return "MOMENT_LENGTH_MAJOR_AXES";
+		case MOMENT_LENGTH_MINOR_AXES: return "MOMENT_LENGTH_MINOR_AXES";
+		case MOMENT_ORIENTATION: return "MOMENT_ORIENTATION";
+		case MSER: return "MSER";
+		//case NUM_HOLES: return "NUM_HOLES";
+		//case PERIMETER: return "PERIMETER";
+		case PERIMETER_EXTERNAL: return "PERIMETER_EXTERNAL";
+		case RECTANGULARITY: return "RECTANGULARITY";
+		case RATIO_WIDTH_HEIGHT: return "RATIO_WIDTH_HEIGHT";
+		case VARIANCE_LEVEL: return "VARIANCE_LEVEL";
+		case STD_LEVEL: return "STD_LEVEL";
+		case LEVEL_MEAN: return "LEVEL_MEAN";
+		case VOLUME: return "VOLUME";
+		case WIDTH: return "WIDTH";
+		
+		case BIT_QUADS_PERIMETER: return "PERIMETERS_QUAD";
+		case BIT_QUADS_EULER_NUMBER: return "BIT_QUADS_NUMBER_EULER";
+		case BIT_QUADS_HOLE_NUMBER: return "BIT_QUADS_NUMBER_HOLES";
+		case BIT_QUADS_PERIMETER_CONTINUOUS: return "BIT_QUADS_PERIMETER_CONTINUOUS";
+		case BIT_QUADS_CIRCULARITY: return "BIT_QUADS_CIRCULARITY";
+		case BIT_QUADS_AVERAGE_AREA: return "BIT_QUADS_AREA_AVERAGE";
+		case BIT_QUADS_AVERAGE_LENGTH: return "BIT_QUADS_LENGTH_AVERAGE";
+		case BIT_QUADS_AVERAGE_WIDTH: return "BIT_QUADS_WIDTH_AVERAGE";
+		case BIT_QUADS_AREA: return "BIT_QUADS_AREA";
+		case BIT_QUADS_AREA_DUDA: return "BIT_QUADS_AREA_DUDA";
+		
+		// energy
+		case SUM_GRAD_CONTOUR: return "SUM_GRAD_CONTOUR";
+		case FUNCTIONAL_ATTRIBUTE: return "FUNCTIONAL_ATTRIBUTE";
+		case FUNCTIONAL_VARIATIONAL: return "FUNCTIONAL_VARIATIONAL";
+		
+		default: return "UNDEFINED";
+	}
+	}
+	
+	public String getHeader(){
+		return getNameAttribute(type);
 	}
 	
 	public static String printWithHeader(HashMap<Integer, Attribute> hashMap){
@@ -187,7 +194,7 @@ public class Attribute {
 
 	public String getValueFormat(){
 		if(df == null){
-			 df = new DecimalFormat("0.0000000", new DecimalFormatSymbols(Locale.ENGLISH));
+			 df = new DecimalFormat("0.0000", new DecimalFormatSymbols(Locale.ENGLISH));
 		}
 		return df.format(value);
 	}

@@ -4,6 +4,7 @@ package mmlib4j.representation.tree.componentTree;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
@@ -24,6 +25,7 @@ import mmlib4j.representation.tree.attribute.ComputerViterbi;
 import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
+import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
 
@@ -80,6 +82,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.MOMENT_LENGTH_MINOR_AXES:
 			case Attribute.MOMENT_ORIENTATION:
 			case Attribute.MOMENT_ASPECT_RATIO:
+			case Attribute.MOMENT_OF_INERTIA:
 				computerCentralMomentAttribute();
 				break;
 			
@@ -223,9 +226,9 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			return filteringByPruningMax(attributeValue, type);
 		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
 			return filteringByPruningViterbi(attributeValue, type);
-		else if(typeSimplification == MorphologicalTreeFiltering.RULE_DIRECT)
+		else if(typeSimplification == MorphologicalTreeFiltering.DIRECT_RULE)
 			return filteringByDirectRule(attributeValue, type);
-		else if(typeSimplification == MorphologicalTreeFiltering.RULE_SUBTRACTIVE)
+		else if(typeSimplification == MorphologicalTreeFiltering.SUBTRACTIVE_RULE)
 			return filteringBySubtractiveRule(attributeValue, type);
 		/*
 		if(typeSimplification == MorphologicalTreeFiltering.PRUNING_EXTINCTION_VALUE)
@@ -253,6 +256,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	/*
 	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
 	 * */
+
 	public GrayScaleImage filteringByDirectRule(double attributeValue, int type){
 		simplificationTreeByDirectRule(attributeValue, type);
 		return reconstruction();
@@ -348,9 +352,9 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			simplificationTreeByPruningMax(attributeValue, attributeType);
 		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
 			simplificationTreeByPruningViterbi(attributeValue, attributeType);
-		else if(typeSimplification == MorphologicalTreeFiltering.RULE_DIRECT)
+		else if(typeSimplification == MorphologicalTreeFiltering.DIRECT_RULE)
 			simplificationTreeByDirectRule(attributeValue, attributeType);
-		else if(typeSimplification == MorphologicalTreeFiltering.RULE_SUBTRACTIVE)
+		else if(typeSimplification == MorphologicalTreeFiltering.SUBTRACTIVE_RULE)
 			simplificationTreeBySubstractiveRule(attributeValue, attributeType);
 		else
 			throw new RuntimeException("type filtering invalid");
@@ -671,4 +675,16 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		return prunedTree;
 	}
 	
+	
+	public static void main(String args[]) {
+		GrayScaleImage img = ImageBuilder.openGrayImage();
+		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), true);
+		GrayScaleImage imgOut = tree.filteringByPruningMin(3, Attribute.MOMENT_OF_INERTIA);
+		
+		
+		
+		WindowImages.show(img, imgOut);
+		
+		
+	}
 }
