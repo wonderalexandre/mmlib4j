@@ -164,8 +164,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		
 		return prunedTree;
 	}
-	
-	
 
 	/**
 	 * Cria uma imagem filtrada. 
@@ -212,9 +210,6 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 
 		return imgOut;//paintEdges(imgOut);
 	}
-	
-	
-	
 	
 	/**
 	 * Cria uma imagem filtrada. 

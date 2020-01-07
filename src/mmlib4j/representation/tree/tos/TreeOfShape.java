@@ -350,9 +350,27 @@ public class TreeOfShape{
 		}
 		return imgOut;
 	}
-	
-	
-	
+		
+	/* Add by gobber */	
+	public void mergeFather( NodeLevelSets nodeG ) {
+		NodeLevelSets node = nodeG;		
+		if( node != root ) {						
+			NodeLevelSets parent = node.getParent();
+			parent.getChildren().remove( node );			
+			listNode.remove( node );
+			numNode--;			
+			for( int p: node.getCompactNodePixels() ) {				
+				parent.addPixel(p);				
+				map[p] = parent;				
+			}			
+			for(NodeLevelSets child : node.getChildren()) {							
+				parent.addChildren(child);				
+				child.setParent(parent);			
+			}			
+			/* update attributes */									
+			node = null;			
+		}
+	}
 	
 	public static void prunning(TreeOfShape tree, NodeLevelSets node){
 		if(node != tree.root){

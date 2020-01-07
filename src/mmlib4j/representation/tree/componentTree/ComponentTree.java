@@ -229,7 +229,7 @@ public class ComponentTree {
 				child.setParent(parent);			
 			}			
 			/* update attributes */									
-			node = null;			
+			//node = null;			
 		}
 	}
 	

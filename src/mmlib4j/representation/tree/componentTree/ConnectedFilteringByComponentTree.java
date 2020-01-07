@@ -250,15 +250,22 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		return getInfoPrunedTreeByViterbi(attributeValue, type).reconstruction();
 	}
 	
+	/*
+	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
+	 * */
 	public GrayScaleImage filteringByDirectRule(double attributeValue, int type){
-		return null;
+		simplificationTreeByDirectRule(attributeValue, type);
+		return reconstruction();
 	}
 	
-	public GrayScaleImage filteringBySubtractiveRule(double attributeValue, int type){
-		return null;
+	/*
+	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
+	 * */
+	public GrayScaleImage filteringBySubtractiveRule(double attributeValue, int type) {		
+		simplificationTreeBySubstractiveRule(attributeValue, type);
+		return reconstruction();
 	}
-	
-	
+		
 	public InfoPrunedTree getInfoPrunedTree(double attributeValue, int attributeType, int typeSimplification){
 		
 		if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MIN)
@@ -321,8 +328,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	/*
 	 * Viterbi rule: A node is removed based on the optimum trellis path. 
 	 * The node is preserved if it is preserved in trellis path, and it is removed
-	 * otherwise. the optimum trellis path is obtained by the Viterbi Algorithm.
-	 * 
+	 * otherwise. The optimum trellis path is obtained by the Viterbi Algorithm.
 	 */
 	public InfoPrunedTree getInfoPrunedTreeByViterbi(double attributeValue, int type){
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
@@ -359,15 +365,58 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		
 	}
 	
+	/*
+	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
+	 * */
 	public void simplificationTreeByPruningViterbi(double attributeValue, int type){
-		
+		boolean criterion[] = new ComputerViterbi(getRoot(), getNumNode(), attributeValue, type).getNodesByViterbi();
+		for(NodeLevelSets node : listNode) {
+			if(criterion[node.getId()]) {
+				prunning(node);
+			}
+		}
 	}
 	
+	/*
+	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
+	 * */
 	public void simplificationTreeByDirectRule(double attributeValue, int type){
-		
+		for(NodeLevelSets node : listNode) {
+			if(node.getAttributeValue(type) <= attributeValue) {
+				mergeFather(node);
+				node = null;
+			}
+		}
 	}
 	
+	/*
+	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
+	 * */
 	public void simplificationTreeBySubstractiveRule(double attributeValue, int type){
+		boolean removed[] = new boolean[numNode];
+		int oldNumNode = numNode;
+		NodeLevelSets mapNodes[] = new NodeLevelSets[numNode];
+		for(NodeLevelSets node : listNode) {
+			mapNodes[node.getId()] = node;
+			if(node.getAttributeValue(type) <= attributeValue) {
+				removed[node.getId()] = true;
+				mergeFather(node);
+			}
+		}
+		// Offset
+		int offset[] = new int[oldNumNode];
+		for(int i = 1 ; i < oldNumNode ; i++) {
+			NodeLevelSets node = mapNodes[i];
+			NodeLevelSets parent = node.getParent();
+			offset[node.getId()] = offset[parent.getId()];
+			if(removed[node.getId()]) {
+				offset[node.getId()] -= node.getLevel() + parent.getLevel();
+			}
+		}
+		// Propagate differences
+		for(NodeLevelSets node : listNode) {
+			node.setLevel(node.getLevel() + offset[node.getId()]);
+		}
 		
 	}
 	

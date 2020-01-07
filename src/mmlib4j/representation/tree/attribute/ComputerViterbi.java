@@ -137,12 +137,19 @@ public class ComputerViterbi extends AttributeComputedIncrementally{
 		
 		GrayScaleImage input = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));
 		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(input, AdjacencyRelation.getAdjacency8(), true);
-		GrayScaleImage output = tree.filteringByPruningViterbi(3000, Attribute.AREA);
+		
+		//tree.simplificationTreeByDirectRule(3000, Attribute.AREA);
+		tree.computerFunctionalAttribute();
+		tree.simplificationTreeBySubstractiveRule(3000, Attribute.FUNCTIONAL_ATTRIBUTE);
+		GrayScaleImage output = tree.reconstruction();
+		//GrayScaleImage output = tree.filteringByPruningViterbi(3000, Attribute.AREA);
 		
 		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(input, AdjacencyRelation.getAdjacency8(), true);
 		GrayScaleImage img2 = tree2.filteringByPruning(3000, Attribute.AREA);
 		
-		System.out.println(ImageAlgebra.equals(output, img2));
+		//System.out.println(ImageAlgebra.equals(output, img2));
+		System.out.println(ImageAlgebra.isLessOrEqual(output, input));
+		ImageBuilder.saveImage(output, new File("/Users/gobber/Desktop/output.png"));
 		
 	}
 
