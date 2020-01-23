@@ -1,10 +1,9 @@
 package mmlib4j.representation.tree.attribute;
 
+
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.Utils;
 
 
@@ -13,7 +12,7 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ComputerBasicAttribute extends AttributeComputedIncrementally{
+public class ComputerBasicAttribute extends AttributeComputedIncrementally {
 	
 	BasicAttribute attr[];
 	int numNode;
@@ -37,6 +36,13 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		return attr;
 	}
 	
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> hashSet, boolean[] mapCorrection){
+		for(NodeLevelSets node: hashSet){
+			if(mapCorrection[node.getId()])
+				addAttributeInNodes(node);
+		}
+	} 
+	
 	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> hashSet){
 		for(NodeLevelSets node: hashSet){
 			addAttributeInNodes(node);
@@ -59,9 +65,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		node.addAttribute(Attribute.LEVEL, new Attribute(Attribute.LEVEL, node.getLevel()));
 		node.addAttribute(Attribute.RECTANGULARITY, attr[ node.getId() ].rect);
 		node.addAttribute(Attribute.RATIO_WIDTH_HEIGHT, attr[ node.getId() ].ratioWH);
-	} 
-	
-	
+	} 	
 	
 	public void preProcessing(NodeLevelSets node) {
 		attr[node.getId()] = new BasicAttribute();
@@ -103,11 +107,10 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 				}
 			}
 		}*/
-	}
+	}	
 	
-	
-	
-	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
+	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {	
+		
 		attr[node.getId()].area.value = attr[node.getId()].area.value + attr[son.getId()].area.value;
 		attr[node.getId()].volume.value = attr[node.getId()].volume.value + attr[son.getId()].volume.value;
 		
@@ -160,6 +163,10 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 		root.setPixelWithXmin( attr[ root.getId() ].pixelXmin );
 		root.setPixelWithYmin( attr[ root.getId() ].pixelYmin );
 		
+		// Where was setVolume before?
+		root.setVolume( (int) attr[ root.getId() ].volume.value );
+		//
+		
 		attr[root.getId()].rect.value = root.getArea() / (attr[root.getId()].width.value * attr[root.getId()].height.value);
 		attr[root.getId()].ratioWH.value =  Math.max(attr[root.getId()].width.value, attr[root.getId()].height.value) / Math.min(attr[root.getId()].width.value, attr[root.getId()].height.value);
 		
@@ -170,8 +177,6 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally{
 			attr[root.getId()].altitude.value = root.getLevel() - attr[root.getId()].lowest + 1;
 		}
 	}
-	
-
 
 	public class BasicAttribute {
 		

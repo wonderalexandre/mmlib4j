@@ -1,5 +1,6 @@
 package mmlib4j.representation.tree.attribute;
 
+
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.representation.tree.NodeLevelSets;
 

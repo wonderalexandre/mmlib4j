@@ -11,8 +11,6 @@ import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
@@ -27,6 +25,8 @@ public class ComputerFunctionalAttribute {
 	private NodeLevelSets [] mapParent;
 	private int numNode;
 	private NodeLevelSets root;
+	private double minEnergy = Double.MAX_VALUE;
+	private double maxEnergy = Double.MIN_VALUE;
 	
 	public ComputerFunctionalAttribute(ComponentTree tree, boolean useHeuristic) {
 		
@@ -66,6 +66,13 @@ public class ComputerFunctionalAttribute {
 			calculateEnergyByHeuristic();
 		else
 			calculateEnergy();
+		
+		for(NodeLevelSets node : tree.getListNodes()) {		
+			if(mumfordShaEnergy[node.getId()].value > maxEnergy)
+				maxEnergy = mumfordShaEnergy[node.getId()].value;		
+			if(mumfordShaEnergy[node.getId()].value < minEnergy)
+				minEnergy = mumfordShaEnergy[node.getId()].value;		
+		}
 		
 		mapChildren = null;
 		mapNodes = null;
@@ -107,7 +114,7 @@ public class ComputerFunctionalAttribute {
 			
 			if( mumfordShaEnergyTmp > mumfordShaEnergy[node.getId()].value ) {
 				mumfordShaEnergy[node.getId()].value = mumfordShaEnergyTmp;
-			}														
+			}				
 			mapChildren[parent.getId()].removeElement(node.getId());
 			if( mapChildren[node.getId()] != null ) {
 				for( int childId : mapChildren[node.getId()]) {											
@@ -148,7 +155,7 @@ public class ComputerFunctionalAttribute {
 			//merge: node and its parent
 			mapChildren[parent.getId()].removeElement(node.getId());
 			if(mapChildren[node.getId()] != null)
-				for(Integer id: mapChildren[ node.getId() ]) {
+				for(Integer id: mapChildren[node.getId()]) {
 					mapParent[id] = parent;
 					mapChildren[parent.getId()].add(id);
 				}
@@ -172,18 +179,19 @@ public class ComputerFunctionalAttribute {
 	}
 	
 	public void addAttributeInNodesCT( SimpleLinkedList<NodeLevelSets> list ) {
-		for( NodeLevelSets node: list ) {
+		for( NodeLevelSets node : list ) {
 			addAttributeInNodes( node );
 		}		
 	}
 	
 	public void addAttributeInNodesToS( SimpleLinkedList<NodeLevelSets> hashSet ) {
-		for( NodeLevelSets node: hashSet ) {
+		for( NodeLevelSets node : hashSet ) {
 			addAttributeInNodes(node);
 		}
 	} 
 	
 	public void addAttributeInNodes(NodeLevelSets node) {
+		mumfordShaEnergy[node.getId()].value = (mumfordShaEnergy[node.getId()].value - minEnergy) / (maxEnergy - minEnergy);
 		node.addAttribute(Attribute.FUNCTIONAL_ATTRIBUTE, mumfordShaEnergy[node.getId()]);
 	}
 	

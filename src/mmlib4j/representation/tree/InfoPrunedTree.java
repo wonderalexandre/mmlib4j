@@ -4,7 +4,6 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
 
 
@@ -23,8 +22,6 @@ public class InfoPrunedTree {
 	private NodePrunedTree map[]; //mapping from id to Node. If map[id] = null then Node:ID was pruned 
 	private MorphologicalTreeFiltering tree;
 	private SimpleLinkedList<NodeLevelSets> listLeaves;
-
-	
 	
 	public int getAttributeType() {
 		return attributeType;

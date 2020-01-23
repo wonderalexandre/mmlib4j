@@ -1,5 +1,6 @@
 package mmlib4j.representation.tree;
 
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 
 
@@ -38,5 +39,11 @@ public interface MorphologicalTreeFiltering {
 	public int getNumNode();
 	
 	public void loadAttribute(int attr);
+	
+	// Added by Gobber
+	
+	public void mergeParent(NodeLevelSets node);
+	
+	public SimpleLinkedList<NodeLevelSets> getListNodes();
 		
 }

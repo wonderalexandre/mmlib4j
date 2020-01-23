@@ -39,9 +39,7 @@ public class ShortImage extends AbstractGrayScale implements GrayScaleImage{
 	
 	public static short toShort(int b){
 		return (short) (b & 0xFFFF);
-	}
-	
-    
+	}	    
     
     /**
      * Cria uma copia da imagem original

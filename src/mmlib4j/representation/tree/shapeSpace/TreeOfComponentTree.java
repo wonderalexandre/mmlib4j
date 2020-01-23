@@ -46,7 +46,7 @@ public class TreeOfComponentTree {
 			// Merge in original tree (it does not modify the Shape Space Tree)
 			if(node.getLevel() <= value) {				
 				NodeLevelSets nodeM = tree.getNodesMap()[node.getCanonicalPixel()];
-				tree.mergeFather(nodeM);
+				tree.mergeParent(nodeM);
 			}
 		}
 		

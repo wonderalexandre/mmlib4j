@@ -4,6 +4,8 @@ import mmlib4j.images.BinaryImage;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.RealImage;
+import mmlib4j.images.impl.unsafe.ByteImageUnsafe;
+import mmlib4j.images.impl.unsafe.ShortImageUnsafe;
 
 
 /**
@@ -17,17 +19,24 @@ public class ImageFactory {
 	public static final int DEPTH_16BITS = 16;
 	public static final int DEPTH_8BITS = 8;
 	
+	// Adaptation
+	public static final int UNSAFE_8BITS = 9;
+	public static final int UNSAFE_16BITS = 17;
+	
 	//////////////////////////////////////////////////////////
 	//                   create news images
 	////////////////////////////////////////////////////////
 	public static GrayScaleImage createGrayScaleImage(int depth, int width, int height){
 		if(depth == DEPTH_8BITS)
 			return new ByteImage(width, height);
-		if(depth == DEPTH_16BITS)
+		else if(depth == DEPTH_16BITS)
 			return new ShortImage(width, height);
-		else if(depth == DEPTH_32BITS){
+		else if(depth == DEPTH_32BITS)
 			return new IntegerImage(width, height);
-		}
+		else if(depth == UNSAFE_8BITS)
+			return new ByteImageUnsafe(width, height);
+		else if(depth == UNSAFE_16BITS)
+			return new ShortImageUnsafe(width, height);
 		return  null;
 	}
 	/*

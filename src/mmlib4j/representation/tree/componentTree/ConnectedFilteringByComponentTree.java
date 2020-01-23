@@ -4,7 +4,6 @@ package mmlib4j.representation.tree.componentTree;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
-import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
@@ -13,19 +12,19 @@ import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
+import mmlib4j.representation.tree.attribute.ComputerBasicAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
+import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
-import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerViterbi;
 import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
-import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
 
@@ -42,8 +41,6 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	private boolean hasComputerAttributeBasedBitQuads = false;
 	private boolean hasComputerDistanceTransform = false;
 	private boolean hasComputerFunctionalAttribute = false;
-	private boolean hasComputerFuncitonalVariational = false;
-	private ComputerFunctionalVariational fv = null;
 	private ComputerDistanceTransform dt = null;
 	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
@@ -75,6 +72,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			case Attribute.MOMENT_CENTRAL_11:
 			case Attribute.VARIANCE_LEVEL:
 			case Attribute.LEVEL_MEAN:
+			case Attribute.STD_LEVEL:
 			case Attribute.MOMENT_COMPACTNESS:
 			case Attribute.MOMENT_ECCENTRICITY:
 			case Attribute.MOMENT_ELONGATION:
@@ -133,15 +131,6 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			}
 		}
 	}*/
-	
-	public ComputerFunctionalVariational computerFunctionalVariational(double scale) {
-		if(!hasComputerFuncitonalVariational) {
-			computerAttributeBasedPerimeterExternal();
-			fv = new ComputerFunctionalVariational(this, scale);
-			fv.addAttributeInNodesCT(getListNodes());
-		}
-		return fv;
-	} 
 	
 	public void computerFunctionalAttribute(){		
 		if(!hasComputerFunctionalAttribute){
@@ -360,68 +349,102 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			throw new RuntimeException("type filtering invalid");
 	}
 	
-	public void simplificationTreeByPruningMin(double attributeValue, int type){
-		
-		
-	}
+	public void simplificationTreeByPruningMin(double attributeValue, int type){}
 	
-	public void simplificationTreeByPruningMax(double attributeValue, int type){
-		
-	}
+	public void simplificationTreeByPruningMax(double attributeValue, int type){}
+	
+	public void simplificationTreeByPruningViterbi(double attributeValue, int type){}
 	
 	/*
-	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
-	 * */
-	public void simplificationTreeByPruningViterbi(double attributeValue, int type){
-		boolean criterion[] = new ComputerViterbi(getRoot(), getNumNode(), attributeValue, type).getNodesByViterbi();
-		for(NodeLevelSets node : listNode) {
-			if(criterion[node.getId()]) {
-				prunning(node);
+	 * Take care! This operation modifies the original tree structure. (root is not removed)
+	 * */			
+	public void simplificationTreeByDirectRule(double attributeValue, int type){			
+		boolean[] mapCorrection = new boolean[numNodeIdMax];
+		int newNumNodeIdMax = 1;
+		NodeLevelSets parent;
+		
+		for(NodeLevelSets node : listNode.reverse()) {
+			if(node == getRoot())
+				continue;								
+			parent = node.getParent();								
+			if(node.getAttributeValue(type) <= attributeValue) {						
+				mergeParent(node);
+				mapCorrection[parent.getId()] = true;			
+			} else { 
+				// This helps to decrease the size of auxiliary structures
+				if(node.getId() > newNumNodeIdMax)
+					newNumNodeIdMax = node.getId();
+				// Pass the mapCorrection to all ancestors
+				if(mapCorrection[node.getId()])
+					mapCorrection[parent.getId()] = true;
 			}
 		}
-	}
-	
-	/*
-	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
-	 * */
-	public void simplificationTreeByDirectRule(double attributeValue, int type){
-		for(NodeLevelSets node : listNode) {
-			if(node.getAttributeValue(type) <= attributeValue) {
-				mergeFather(node);
-				node = null;
-			}
+		
+		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
+
+		// Verify each attribute that was computed before
+		if(hasComputerCentralMomentAttribute) {
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
 		}
+
+		// Modify maxID to optimize memory		
+		numNodeIdMax = newNumNodeIdMax + 1;
 	}
 	
 	/*
-	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
-	 * */
+	 * Take care! This operation modifies the original tree structure. (root is not removed)
+	 * */	
 	public void simplificationTreeBySubstractiveRule(double attributeValue, int type){
-		boolean removed[] = new boolean[numNode];
-		int oldNumNode = numNode;
-		NodeLevelSets mapNodes[] = new NodeLevelSets[numNode];
+		boolean[] mapCorrection = new boolean[numNodeIdMax];		
+		int offset[] = new int[numNodeIdMax];
+		int newNumNodeIdMax = 1;				
+		NodeLevelSets parent;
+		
+		// Compute offsets
 		for(NodeLevelSets node : listNode) {
-			mapNodes[node.getId()] = node;
+			if(node == getRoot())
+				continue;
+			parent = node.getParent();						
 			if(node.getAttributeValue(type) <= attributeValue) {
-				removed[node.getId()] = true;
-				mergeFather(node);
+				offset[node.getId()] = offset[parent.getId()] - node.getLevel() + parent.getLevel();				
+			} else {
+				// This helps to decrease the size of auxiliary structures
+				if(node.getId() > newNumNodeIdMax){
+					newNumNodeIdMax = node.getId();
+				}				
+				offset[node.getId()] = offset[parent.getId()];
 			}
-		}
-		// Offset
-		int offset[] = new int[oldNumNode];
-		for(int i = 1 ; i < oldNumNode ; i++) {
-			NodeLevelSets node = mapNodes[i];
-			NodeLevelSets parent = node.getParent();
-			offset[node.getId()] = offset[parent.getId()];
-			if(removed[node.getId()]) {
-				offset[node.getId()] -= node.getLevel() + parent.getLevel();
-			}
-		}
+		}		
+		
 		// Propagate differences
-		for(NodeLevelSets node : listNode) {
-			node.setLevel(node.getLevel() + offset[node.getId()]);
+		for(NodeLevelSets node : listNode.reverse()) {
+			if(node == getRoot())
+				continue;
+			parent = node.getParent();			
+			if(node.getAttributeValue(type) <= attributeValue) {
+				mergeParent(node);			
+		 		mapCorrection[parent.getId()] = true;							
+			} else {				
+			 	node.setLevel(node.getLevel() + offset[node.getId()]);
+			 	// This node was changed by offset
+			 	if(offset[node.getId()] != 0)			 		
+			 		mapCorrection[node.getId()] = true;
+				// Pass the mapCorrection to all ancestors
+			 	if(mapCorrection[node.getId()])
+					mapCorrection[parent.getId()] = true;
+			}
+		}			
+		
+		// Always computed
+		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
+		
+		// Verify each attribute that was computed before
+		if(hasComputerCentralMomentAttribute) {
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
 		}
 		
+		// Modify maxID to optimize memory		
+		numNodeIdMax = newNumNodeIdMax + 1; 		
 	}
 	
 	SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
@@ -674,17 +697,5 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		
 		return prunedTree;
 	}
-	
-	
-	public static void main(String args[]) {
-		GrayScaleImage img = ImageBuilder.openGrayImage();
-		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), true);
-		GrayScaleImage imgOut = tree.filteringByPruningMin(3, Attribute.MOMENT_OF_INERTIA);
-		
-		
-		
-		WindowImages.show(img, imgOut);
-		
-		
-	}
+
 }

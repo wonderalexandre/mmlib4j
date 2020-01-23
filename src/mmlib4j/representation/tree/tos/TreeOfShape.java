@@ -352,7 +352,7 @@ public class TreeOfShape{
 	}
 		
 	/* Add by gobber */	
-	public void mergeFather( NodeLevelSets nodeG ) {
+	public void mergeParent( NodeLevelSets nodeG ) {
 		NodeLevelSets node = nodeG;		
 		if( node != root ) {						
 			NodeLevelSets parent = node.getParent();

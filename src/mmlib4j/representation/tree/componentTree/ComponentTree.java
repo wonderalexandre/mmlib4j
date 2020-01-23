@@ -1,6 +1,5 @@
 package mmlib4j.representation.tree.componentTree;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -57,6 +56,7 @@ public class ComponentTree {
 		this.numNode = builder.getNunNode();
 		this.map = builder.getMap();
 		this.listNode = builder.getListNodes();
+		this.numNodeIdMax = builder.getNumNodeIdMax();
 		computerInforTree(this.root, 0);
 		
 		//computerAdjcencyNodes();
@@ -212,24 +212,53 @@ public class ComponentTree {
 		return imgOut;
 	}
 	
-	/* Add by gobber */	
-	public void mergeFather( NodeLevelSets nodeG ) {
-		NodeLevelSets node = nodeG;		
+	/*NodeLevelSets parent = node.getParent();
+	parent.getChildren().remove(node);
+	tree.listLeaves = null;
+	
+	for(NodeLevelSets no: node.getNodesDescendants()){
+		tree.listNode.remove(no);
+		tree.numNode--;
+		for(int p: no.getCompactNodePixels()){
+			parent.addPixel(p);
+			tree.map[p] = parent;	
+		}
+	}
+	
+	/* Add by gobber */		
+	public void mergeParent( NodeLevelSets node ) {
 		if( node != root ) {						
 			NodeLevelSets parent = node.getParent();
 			parent.getChildren().remove( node );			
 			listNode.remove( node );
-			numNode--;			
+			numNode--;									
 			for( int p: node.getCompactNodePixels() ) {				
-				parent.addPixel(p);				
+				parent.getCompactNodePixels().add(p);
 				map[p] = parent;				
 			}			
 			for(NodeLevelSets child : node.getChildren()) {							
 				parent.addChildren(child);				
 				child.setParent(parent);			
 			}			
-			/* update attributes */									
-			//node = null;			
+			/* Update Node Attributes */	
+			parent.setNumDescendent(parent.getNumDescendent()-1);
+			if(node.isLeaf())
+				parent.setNumDescendentLeaf(parent.getNumDescendentLeaf()-1);
+			parent.setNumNodeInSameBranch(parent.getNumNodeInSameBranch()-1);
+		} else { // Remove root?
+			numNode = 1;
+			listNode.clear();
+			listNode.add(node);
+			node.setChildren( new SimpleLinkedList<NodeLevelSets>() );
+			for(int p=0; p < getInputImage().getSize(); p++){
+				map[p] = node;
+				node.addPixel(p);
+			}
+			/* Update Root Attributes? */	
+			//node.setNumDescendent(0);
+			//node.setNumDescendentLeaf(0);
+			//node.setVolume(getInputImage().getSize() * node.getLevel());
+			//node.setNumNodeInSameBranch(1);
 		}
 	}
 	
@@ -403,13 +432,9 @@ public class ComponentTree {
 			node.setNumDescendentLeaf(node.getNumDescendentLeaf() + son.getNumDescendentLeaf());
 			node.setArea(node.getArea() + son.getArea());
 			node.setSumX(node.getSumX() + son.getSumX());
-			node.setSumY(node.getSumY() + son.getSumY());
-			
-		}
-		
-		
-	}
-	
+			node.setSumY(node.getSumY() + son.getSumY());			
+		}				
+	}	
 	
 	public SimpleLinkedList<NodeLevelSets> getListNodes(){
 		return listNode;

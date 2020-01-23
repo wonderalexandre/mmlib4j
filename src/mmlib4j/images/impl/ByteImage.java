@@ -38,10 +38,6 @@ public class ByteImage extends AbstractGrayScale implements GrayScaleImage{
 	public static byte toByte(int b){
 		return (byte) (b & 0xFF);
 	}
-	
-    
-    
-	
     
     /**
      * Cria uma copia da imagem original

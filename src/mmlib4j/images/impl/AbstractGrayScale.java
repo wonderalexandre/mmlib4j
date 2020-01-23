@@ -215,9 +215,7 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
         	imgOut.setBlue(i, b[this.getPixel(i)]);
         }
         return imgOut;
-    }
-    
-    
+    }        
 
     /**
      * Pega o valor do maior pixel da imagem
@@ -249,11 +247,7 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
     	}
         return stats.mean;
     }
-    
-    
-    
-    
-
+               
     /**
      * Pega o valor menor pixel da imagem
      */

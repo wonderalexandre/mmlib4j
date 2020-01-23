@@ -181,7 +181,7 @@ public abstract class NodeLevelSets {
 	}
 	public int getYmax(){
 		return ymax;
-	}
+	}		
 	
 	public void addPixel(int p){		
 		int x = p % img.getWidth();
@@ -232,10 +232,13 @@ public abstract class NodeLevelSets {
 		return area;
 	}
 	
+	public void setVolume(int volume) {
+		this.volume = volume;
+	}
+	
 	public int getVolume(){
 		return volume;
 	}
-
 	
 	public void setXmin(int p) {
 		xmin = p;
@@ -375,6 +378,14 @@ public abstract class NodeLevelSets {
 			return getParent().getChildren().size();
 		else
 			return 0;
+	}
+	
+	public int getNumNodeInSameBranch() {
+		return numNodeInSameBranch;		
+	}
+	
+	public void setNumNodeInSameBranch(int numNodeInSameBranch) {
+		this.numNodeInSameBranch = numNodeInSameBranch;		
 	}
 	
 	public int getNumNodesInBranch(){

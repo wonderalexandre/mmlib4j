@@ -38,8 +38,6 @@ public class NodeCT extends NodeLevelSets implements Cloneable{
 		xmax = ymax = Integer.MIN_VALUE;
 	}
 	
-	
-	
 	public NodeLevelSets getClone(){
 		try {
 			NodeCT no = (NodeCT) this.clone();

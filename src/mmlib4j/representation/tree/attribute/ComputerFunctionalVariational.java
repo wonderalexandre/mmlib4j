@@ -135,7 +135,7 @@ public class ComputerFunctionalVariational {
 						
 			NodeLevelSets node = queue.removeMin();							
 			NodeLevelSets parent = node.getParent();						
-			tree.mergeFather(node);
+			tree.mergeParent(node);
 				
 			/* Update parameters */									
 			areaR[parent.getId()] += areaR[node.getId()];				
@@ -183,7 +183,7 @@ public class ComputerFunctionalVariational {
 				if(functionalVariational[node.getId()].value <= 0) { 									
 					repeat = true;
 					explored[node.getId()] = true;
-					tree.mergeFather(node);				
+					tree.mergeParent(node);				
 					areaR[parent.getId()] += areaR[node.getId()];					
 					volumeR[parent.getId()] += volumeR[node.getId()];
 				}
@@ -227,7 +227,7 @@ public class ComputerFunctionalVariational {
 	
 	public static void main( String args[] ) {
 		
-		GrayScaleImage image = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/Screen Shot 2019-08-15 at 18.14.16.png"));
+		GrayScaleImage image = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));
 								
 		// 50
 		Utils.debug = true;

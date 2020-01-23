@@ -12,7 +12,7 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ComputerCentralMomentAttribute extends AttributeComputedIncrementally{
+public class ComputerCentralMomentAttribute extends AttributeComputedIncrementally {
 	
 	CentralMomentsAttribute attr[];
 	int numNode;
@@ -34,6 +34,13 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	
 	public CentralMomentsAttribute[] getAttribute(){
 		return attr;
+	}
+	
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list, boolean[] mapCorrection){
+		for(NodeLevelSets node: list){
+			if(mapCorrection[node.getId()])
+				addAttributeInNodes(node);
+		}
 	}
 	
 	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list){
@@ -67,32 +74,32 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	
 	public void preProcessing(NodeLevelSets node) {
 		attr[node.getId()] = new CentralMomentsAttribute(node, withImg);
-		//area e volume
-		
+		//area e volume		
 		for(int pixel: node.getCompactNodePixels()){
 			int x = pixel % withImg;
-			int y = pixel / withImg;
-			
-			attr[node.getId()].variance.value += Math.pow(node.getLevel() - attr[node.getId()].levelMean.value, 2);
-			attr[node.getId()].moment11.value += Math.pow(x - attr[node.getId()].xCentroid, 1) * Math.pow(y - attr[node.getId()].yCentroid, 1);
-			attr[node.getId()].moment20.value += Math.pow(x - attr[node.getId()].xCentroid, 2) * Math.pow(y - attr[node.getId()].yCentroid, 0);
-			attr[node.getId()].moment02.value += Math.pow(x - attr[node.getId()].xCentroid, 0) * Math.pow(y - attr[node.getId()].yCentroid, 2);
-		
-		}
-		
-		
+			int y = pixel / withImg;			
+			// Note that, this is optimization is only for p=2 and q=2			
+			attr[node.getId()].sumX2 += x*x;
+			attr[node.getId()].sumY2 += y*y;
+		}		
+		attr[node.getId()].sumLevel2 += Math.pow(node.getLevel(), 2) * node.getCompactNodePixels().size();
 	}
 	
 	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
-		attr[node.getId()].moment11.value += attr[son.getId()].moment11.value;
-		attr[node.getId()].moment02.value +=  attr[son.getId()].moment02.value;
-		attr[node.getId()].moment20.value += attr[son.getId()].moment20.value;
-		attr[node.getId()].variance.value += attr[son.getId()].variance.value;
+		attr[node.getId()].sumX2 += attr[son.getId()].sumX2;
+		attr[node.getId()].sumY2 += attr[son.getId()].sumY2;
+		attr[node.getId()].sumLevel2 += attr[son.getId()].sumLevel2; 
 	}
 
-	public void posProcessing(NodeLevelSets node) {
-		//pos-processing root
-		attr[node.getId()].variance.value = attr[node.getId()].variance.value / (double) node.getArea(); 
+	public void posProcessing(NodeLevelSets node) {				
+		//pos-processing root		
+		double SumSq = attr[node.getId()].sumLevel2;
+		double Sum = node.getAttributeValue(Attribute.VOLUME);
+		double n = node.getAttributeValue(Attribute.AREA);				
+		attr[node.getId()].variance.value = (SumSq - Math.pow(Sum, 2)/n)/n; 		
+		// update		
+		attr[node.getId()].moment02.value = attr[node.getId()].sumY2 - Math.pow(node.getSumY(), 2) / n;
+		attr[node.getId()].moment20.value = attr[node.getId()].sumX2 - Math.pow(node.getSumX(), 2) / n;		
 	}
 	
 	public static CentralMomentsAttribute getInstance(NodeLevelSets node, int widthImg){
@@ -102,8 +109,12 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		c.yCentroid = node.getCentroid() / widthImg;
 		c.width = widthImg;
 		c.moment02 = node.getAttribute(Attribute.MOMENT_CENTRAL_02);
-		c.moment20 = node.getAttribute(Attribute.MOMENT_CENTRAL_20);
-		c.moment11 = node.getAttribute(Attribute.MOMENT_CENTRAL_11);
+		c.moment20 = node.getAttribute(Attribute.MOMENT_CENTRAL_20);		
+		//
+		// Is it not the zero-sum mean property?
+		// https://stats.stackexchange.com/questions/287718/zero-sum-property-of-the-difference-between-the-data-and-the-mean
+		//
+		c.moment11 = node.getAttribute(Attribute.MOMENT_CENTRAL_11);		
 		c.variance = node.getAttribute(Attribute.VARIANCE_LEVEL);
 		return c;
 	}
@@ -112,7 +123,11 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	public class CentralMomentsAttribute {
 
 		Attribute moment20 = new Attribute(Attribute.MOMENT_CENTRAL_20);
-		Attribute moment02 = new Attribute(Attribute.MOMENT_CENTRAL_02);
+		Attribute moment02 = new Attribute(Attribute.MOMENT_CENTRAL_02);		
+		//
+		// Is it not the zero-sum mean property?
+		// https://stats.stackexchange.com/questions/287718/zero-sum-property-of-the-difference-between-the-data-and-the-mean
+		//
 		Attribute moment11 = new Attribute(Attribute.MOMENT_CENTRAL_11);
 		Attribute variance = new Attribute(Attribute.VARIANCE_LEVEL);
 		Attribute levelMean = new Attribute(Attribute.LEVEL_MEAN);
@@ -121,6 +136,11 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		double xCentroid;
 		double yCentroid;
 		int width;
+		
+		// To compute moments and variance
+		double sumLevel2;
+		double sumX2;
+		double sumY2;
 		
 		
 		public CentralMomentsAttribute(){}
@@ -133,8 +153,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 			this.levelMean = new Attribute(Attribute.LEVEL_MEAN,  node.getVolume() / (double) node.getArea());
 
 		}
-				
-		
+						
 		//=> moment[p][q] / norm;
 		public double getFatorNormalized(int p, int q){
 			return Math.pow(area, (p + q + 2.0) / 2.0);
@@ -278,8 +297,6 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 			return pixels;
 			*/
 		}
-		
-		
 		
 		
 	}
