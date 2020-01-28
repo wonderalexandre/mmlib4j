@@ -2,6 +2,7 @@ package mmlib4j.filtering;
 
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 
 /**
@@ -50,7 +51,7 @@ public class EdgeOperators {
 	}
 	
 	public static GrayScaleImage sobel( GrayScaleImage img ) {
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage( img.getDepth(), 
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage( img.getDepth(), 
 					   img.getWidth(), 
 					   img.getHeight() );
 		
@@ -62,7 +63,7 @@ public class EdgeOperators {
 	}
 	
 	public static GrayScaleImage prewitt( GrayScaleImage img ) {
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage( img.getDepth(), 
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage( img.getDepth(), 
 				   img.getWidth(), 
 				   img.getHeight() );
 		

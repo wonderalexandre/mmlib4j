@@ -8,6 +8,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -381,7 +382,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		}
 		
 		
-		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
+		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
 		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageBuilder.openGrayImage(), AdjacencyRelation.getCircular(1.5), false);
 		NodeLevelSets root = builder.getRoot();
 		
@@ -392,7 +393,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");
 		
-		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
+		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(ImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
 		tree.filteringByExtinctionValue(10, 0);
 		
 
@@ -400,7 +401,8 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	
 	
 	public static void printTree(NodeLevelSets no, PrintStream out, String s){
-		out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCompactNodePixels().size());
+		//out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCompactNodePixels().size());
+		out.printf(s + "[%d], [%3f]\n",  no.getId(), no.getAttributeValue(Attribute.MOMENT_OF_INERTIA));
 		for(NodeLevelSets son: no.getChildren()){
 			printTree(son, out, s + "------");
 		}

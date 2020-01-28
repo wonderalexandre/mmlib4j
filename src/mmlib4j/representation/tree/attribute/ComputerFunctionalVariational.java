@@ -5,10 +5,11 @@ import java.io.File;
 import mmlib4j.datastruct.PriorityQueueHeap;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.mergetree.InfoMergedTree;
+import mmlib4j.representation.mergetree.InfoMergedTreeLevelOrder;
+import mmlib4j.representation.mergetree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
@@ -31,34 +32,30 @@ import mmlib4j.utils.Utils;
 public class ComputerFunctionalVariational {
 	
 	private int numNode;
-	private NodeLevelSets rootTree;	
-	private double scale = 1;		
-	private NodeLevelSets mapNodes[]; 
+	private double scale = 1;		 
 	private Attribute functionalVariational [];	
 	private double areaR[];	
 	private double volumeR[];	
 	private GrayScaleImage simplifiedImage;	
 	private ComponentTree tree;
+	private InfoMergedTree mTree;
 	
 	public ComputerFunctionalVariational(ComponentTree tree, double scale, boolean useHeuristic) {
 	
 		long ti = System.currentTimeMillis();	
-		this.tree = tree;
-		this.rootTree = tree.getRoot();		
+		this.tree = tree;		
 		this.numNode = tree.getNumNode();		
-		this.scale = scale;	
-				
-		mapNodes = new NodeLevelSets[ numNode ];						
-		areaR = new double[ numNode ];
-		volumeR = new double[ numNode ];
-		functionalVariational = new Attribute[numNode];
+		this.scale = scale;										
+		this.areaR = new double[ numNode ];
+		this.volumeR = new double[ numNode ];
+		this.functionalVariational = new Attribute[numNode];
+		this.mTree = new InfoMergedTreeLevelOrder(tree.getRoot(), tree.getNumNode(), tree.getInputImage());
 		
-		for(NodeLevelSets node : tree.getListNodes()) {			
-			mapNodes[node.getId()] = node;
+		for(NodeLevelSets node : tree.getListNodes()) {		
+			mTree.addNodeNotMerge(node);
 			areaR[node.getId()] = node.getCompactNodePixels().size();
 			volumeR[node.getId()] = areaR[node.getId()] * node.getLevel();
-			functionalVariational[node.getId()] = new Attribute(Attribute.FUNCTIONAL_VARIATIONAL, 0);			
-			mapNodes[node.getId()] = node;			
+			functionalVariational[node.getId()] = new Attribute(Attribute.FUNCTIONAL_VARIATIONAL, 0);						
 		}
 		
 		if(useHeuristic)
@@ -67,7 +64,7 @@ public class ComputerFunctionalVariational {
 			calculateEnergy();
 		
 		/* Reconstruct simplified image */		
-		simplifiedImage = tree.reconstruction();			
+		simplifiedImage = mTree.reconstruction();			
 		
 		if( Utils.debug ) {			
 			long tf = System.currentTimeMillis();			
@@ -89,14 +86,14 @@ public class ComputerFunctionalVariational {
 	}
 	
 	/* Calculate inverse energy */	
-	private double calculateVariational( NodeLevelSets node ) {
+	private double calculateVariational(NodeMergedTree node) {
 		double t1 = pow2( volumeR[ node.getId() ] ) / areaR[ node.getId() ];		
 		double t2 = pow2( volumeR[ node.getParent().getId() ] ) / areaR[ node.getParent().getId() ];		
 		double t3 = pow2( volumeR[ node.getId() ] + volumeR[ node.getParent().getId() ] ) / ( areaR[ node.getId() ] + areaR[ node.getParent().getId() ] );		
 		return -(( t3 - t1 - t2 ) + (scale * node.getAttributeValue(Attribute.PERIMETER_EXTERNAL)));		
 	}
 		
-	private void updateEnergy(PriorityQueueHeap<NodeLevelSets> queue, NodeLevelSets node) {
+	private void updateEnergy(PriorityQueueHeap<NodeMergedTree> queue, NodeMergedTree node) {
 				
 		double newEnergy = calculateVariational(node);
 		
@@ -122,33 +119,35 @@ public class ComputerFunctionalVariational {
 	private void calculateEnergy() {
 		
 		/* Initializing heap */			
-		PriorityQueueHeap<NodeLevelSets> queue = new PriorityQueueHeap<NodeLevelSets>(numNode);		
+		PriorityQueueHeap<NodeMergedTree> queue = new PriorityQueueHeap<NodeMergedTree>(numNode);		
 		for( int i = 1 ; i < numNode ; i++ ) {
-			functionalVariational[i].value = calculateVariational(mapNodes[i]);
+			functionalVariational[i].value = calculateVariational(mTree.getMap()[i]);
 			if(functionalVariational[i].value <= 0) {
-				queue.add(mapNodes[i], functionalVariational[i].value);
+				queue.add(mTree.getMap()[i], functionalVariational[i].value);
 			}
 		}
 		
 		/* Greedy */
 		while(!queue.isEmpty()) {
 						
-			NodeLevelSets node = queue.removeMin();							
-			NodeLevelSets parent = node.getParent();						
-			tree.mergeParent(node);
+			NodeMergedTree node_ = queue.removeMin();							
+			NodeMergedTree parent_ = node_.getParent();						
+			//tree.mergeParent(node);
+			mTree.updateNodeToMerge(node_.getInfo());
 				
 			/* Update parameters */									
-			areaR[parent.getId()] += areaR[node.getId()];				
-			volumeR[parent.getId()] += volumeR[node.getId()];						
+			areaR[parent_.getId()] += areaR[node_.getId()];				
+			volumeR[parent_.getId()] += volumeR[node_.getId()];						
 				
 			/* Update parent energy (if it is not the root) */			
-			if(parent != rootTree) {	
-				updateEnergy(queue, parent);
+			if(parent_ != mTree.getRoot()) {	
+				//System.out.println(parent.getParent().getId());
+				updateEnergy(queue, parent_);
 			}
 				
 			/* Update for children of parent */			
-			SimpleLinkedList<NodeLevelSets> list = parent.getChildren();				
-			for(NodeLevelSets child : list) {			
+			SimpleLinkedList<NodeMergedTree> list = parent_.getChildren();				
+			for(NodeMergedTree child : list) {			
 				updateEnergy(queue, child);					
 			}			
 			
@@ -158,13 +157,13 @@ public class ComputerFunctionalVariational {
 	
 	private void calculateEnergyByHeuristic() {
 		
-		PriorityQueueHeap<NodeLevelSets> queue = new PriorityQueueHeap<NodeLevelSets>(numNode); 
+		PriorityQueueHeap<NodeMergedTree> queue = new PriorityQueueHeap<NodeMergedTree>(numNode); 
 		for( int i = 1 ; i < numNode ; i++ ) {
-			functionalVariational[i].value = calculateVariational(mapNodes[i]);
-			queue.add(mapNodes[i], mapNodes[i].getAttributeValue(Attribute.SUM_GRAD_CONTOUR));		
+			functionalVariational[i].value = calculateVariational(mTree.getMap()[i]);
+			queue.add(mTree.getMap()[i], mTree.getMap()[i].getAttributeValue(Attribute.SUM_GRAD_CONTOUR));		
 		}
 		
-		NodeLevelSets[] rt = new NodeLevelSets[numNode];
+		NodeMergedTree[] rt = new NodeMergedTree[numNode];
 		boolean explored[] = new boolean[numNode];
 		boolean repeat = true;
 		for(int i = 1 ; i < numNode ;i++) {
@@ -173,17 +172,17 @@ public class ComputerFunctionalVariational {
 		
 		while(repeat) {			
 			repeat = false;
-			for(NodeLevelSets node: rt) {	
+			for(NodeMergedTree node: rt) {	
 
 				if(node == null || explored[node.getId()])
 					continue;
 				
-				NodeLevelSets parent = node.getParent();	
+				NodeMergedTree parent = node.getParent();	
 				functionalVariational[node.getId()].value = calculateVariational(node);
 				if(functionalVariational[node.getId()].value <= 0) { 									
 					repeat = true;
 					explored[node.getId()] = true;
-					tree.mergeParent(node);				
+					mTree.updateNodeToMerge(node.getInfo());
 					areaR[parent.getId()] += areaR[node.getId()];					
 					volumeR[parent.getId()] += volumeR[node.getId()];
 				}
@@ -233,15 +232,15 @@ public class ComputerFunctionalVariational {
 		Utils.debug = true;
 		ComponentTree tree = new ComponentTree(image, AdjacencyRelation.getAdjacency8(), false);	
 		new ComputerBasicAttribute(tree.getNumNode(), 
-													tree.getRoot(), 
-													image).addAttributeInNodesCT(tree.getListNodes());
+								   tree.getRoot(), 
+								   image).addAttributeInNodesCT(tree.getListNodes());
 		new ComputerAttributeBasedPerimeterExternal(tree.getNumNode(), 
 													tree.getRoot(), 
 													tree.getInputImage()).addAttributeInNodesCT(tree.getListNodes());		
 		
-		ComputerFunctionalVariational fattr = new ComputerFunctionalVariational(tree, 1000, true);
+		ComputerFunctionalVariational fattr = new ComputerFunctionalVariational(tree, 1000, false);
 		
-		ImageBuilder.saveImage(fattr.getSimplifiedImage(), new File("/Users/gobber/Desktop/reconstructed.png"));	
+		ImageBuilder.saveImage(fattr.getSimplifiedImage(), new File("/Users/gobber/Desktop/reconstructed2.png"));	
 		System.err.println("Finished");	
 		
 	}

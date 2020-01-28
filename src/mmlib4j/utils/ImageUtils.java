@@ -40,7 +40,7 @@ public class ImageUtils {
      * @return IGrayScaleImage
      */
     public static GrayScaleImage normalizedPixels(GrayScaleImage img){
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         int tmp = 0;
         for(int x = 0 ; x < img.getWidth() ; x++){
             for(int y = 0 ; y < img.getHeight(); y++){
@@ -73,7 +73,7 @@ public class ImageUtils {
      * @return IGrayScaleImage
      */
     public static GrayScaleImage reduceDepth(GrayScaleImage img, int depth){
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         
         double maxIn = img.maxValue();
         double ratio = depth / Math.pow(2, img.getDepth());
@@ -105,7 +105,7 @@ public class ImageUtils {
      * @return
      */
     public static GrayScaleImage reduce(GrayScaleImage img){
-        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         int hist[] = img.getHistogram();
         int lut[] = new int[hist.length];
         int cont = 0;

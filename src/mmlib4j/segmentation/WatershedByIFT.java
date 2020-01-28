@@ -17,9 +17,9 @@ public class WatershedByIFT {
 	
 	public static GrayScaleImage watershedByMarker(GrayScaleImage img, GrayScaleImage marked){
 		long ti = System.currentTimeMillis();	
-		 GrayScaleImage imgMapaPredecessores = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgMapaCusto = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgLabel = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaPredecessores = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaCusto = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgLabel = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 int NIL = -1;
 		 boolean NO_PROCESSED = false;//GRAY
 		 boolean PROCESSED = true; //BLACK 
@@ -77,9 +77,9 @@ public class WatershedByIFT {
 	
 	public static GrayScaleImage watershedByHBasin(GrayScaleImage img, int k){
 		long ti = System.currentTimeMillis();	
-		 GrayScaleImage imgMapaPredecessores = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgMapaCusto = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgLabel = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaPredecessores = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaCusto = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgLabel = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 int NIL = -1;
 		 boolean NO_PROCESSED = false;//GRAY
 		 boolean PROCESSED = true; //BLACK 

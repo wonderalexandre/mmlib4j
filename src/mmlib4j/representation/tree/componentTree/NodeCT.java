@@ -1,18 +1,10 @@
 package mmlib4j.representation.tree.componentTree;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.filtering.binary.Contour;
 import mmlib4j.filtering.binary.ContourTracer;
-import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.BitImage;
-import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.attribute.Attribute;
 
 
 /**
@@ -49,11 +41,7 @@ public class NodeCT extends NodeLevelSets implements Cloneable{
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	
-	
-	
+	}	
 
 	public NodeLevelSets getAncestral(int level){
 		NodeLevelSets node = this;
@@ -69,10 +57,6 @@ public class NodeCT extends NodeLevelSets implements Cloneable{
 		return node;
 	}
 	
-
-	
-
-	
 	public Contour getContour() {
 		if(contourE == null){
 			ContourTracer c = new ContourTracer(true, isNodeMaxtree, img, level);
@@ -82,7 +66,6 @@ public class NodeCT extends NodeLevelSets implements Cloneable{
 		}
 		return contourE;
 	}
-	
 	
 	
 }

@@ -129,7 +129,7 @@ public class ShortImage extends AbstractGrayScale implements GrayScaleImage{
     
     
     public int getDepth(){
-    	return ImageFactory.DEPTH_16BITS;
+    	return MmlibImageFactory.DEPTH_16BITS;
     }
 
 	

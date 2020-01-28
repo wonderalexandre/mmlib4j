@@ -167,7 +167,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		this.root = null;
 		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
 		boolean flags[] = new boolean[parent.length];
-		//WindowImages.show(ImageFactory.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight));
+		//WindowImages.show(AbstractImageFactory.instance.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight));
 		
 		int p = imgR[0];
 		int pai = parent[p];
@@ -252,8 +252,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	public void unInterpolateTree2( int parent[]  ){
 		this.numNode = 0;
 		NodeToS nodesMap[] = new NodeToS[parent.length];
-		//WindowImages.show(ImageFactory.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight));
-		img = ImageFactory.createGrayScaleImage(8, interpWidth, interpHeight);
+		//WindowImages.show(AbstractImageFactory.instance.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight));
+		img = ImageFactory.instance.createGrayScaleImage(8, interpWidth, interpHeight);
 		
 		for (int p = 0; p < imgU.length; p++) {
 			img.setPixel(p, imgU[p]);
@@ -733,7 +733,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			}
 			System.out.println();
 		}
-		GrayScaleImage img = ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height);
+		GrayScaleImage img = ImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height);
 		
 		BuilderTreeOfShapeByUnionFindParallel builder = new BuilderTreeOfShapeByUnionFindParallel(ImageBuilder.openGrayImage());
 		if(true) return;

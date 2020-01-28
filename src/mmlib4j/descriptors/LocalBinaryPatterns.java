@@ -46,7 +46,7 @@ public class LocalBinaryPatterns {
 	}
 	
 	public GrayScaleImage computerLBP(GrayScaleImage img, int threshold) {
-		GrayScaleImage imgLBP = ImageFactory.createGrayScaleImage(8, img.getWidth(), img.getHeight());
+		GrayScaleImage imgLBP = ImageFactory.instance.createGrayScaleImage(8, img.getWidth(), img.getHeight());
 		/* Calculate the lbp */
 		for (int x = (int) (0 + radius); x < img.getWidth() - radius; ++x) {
 			for (int y = (int)(0 + radius); y < img.getHeight() - radius; ++y) {

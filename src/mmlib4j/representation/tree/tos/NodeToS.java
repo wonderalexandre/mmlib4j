@@ -9,7 +9,7 @@ import mmlib4j.filtering.binary.Contour;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 

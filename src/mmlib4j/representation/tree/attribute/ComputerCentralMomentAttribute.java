@@ -150,7 +150,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 			this.xCentroid = node.getCentroid() % width;
 			this.yCentroid = node.getCentroid() / width;
 			this.width = width;
-			this.levelMean = new Attribute(Attribute.LEVEL_MEAN,  node.getVolume() / (double) node.getArea());
+			this.levelMean = new Attribute(Attribute.LEVEL_MEAN,  node.getAttributeValue(Attribute.VOLUME) / node.getAttributeValue(Attribute.AREA));
 
 		}
 						

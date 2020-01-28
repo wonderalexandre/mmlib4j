@@ -6,6 +6,12 @@ import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.mergetree.ComputerBasicAttributeMergeTree;
+import mmlib4j.representation.mergetree.ComputerCentralMomentAttributeMergeTree;
+import mmlib4j.representation.mergetree.InfoMergedTree;
+import mmlib4j.representation.mergetree.InfoMergedTreeLevelOrder;
+import mmlib4j.representation.mergetree.InfoMergedTreeReverseLevelOrder;
+import mmlib4j.representation.mergetree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
@@ -42,6 +48,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	private boolean hasComputerDistanceTransform = false;
 	private boolean hasComputerFunctionalAttribute = false;
 	private ComputerDistanceTransform dt = null;
+	private InfoMergedTree mTree = null;
 	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		super(img, adj, isMaxtree);
@@ -267,8 +274,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			return getInfoPrunedTreeByMax(attributeValue, typeSimplification);
 		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
 			return getInfoPrunedTreeByViterbi(attributeValue, typeSimplification);
-		
-		
+				
 		throw new RuntimeException("type filtering invalid");
 	}
 	
@@ -412,7 +418,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 				if(node.getId() > newNumNodeIdMax){
 					newNumNodeIdMax = node.getId();
 				}				
-				offset[node.getId()] = offset[parent.getId()];
+				offset[node.getId()] = offset[parent.getId()];									
 			}
 		}		
 		
@@ -447,6 +453,160 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		numNodeIdMax = newNumNodeIdMax + 1; 		
 	}
 	
+	/*
+	 * This only exists if one of the following two methods was called before.
+	 **/	
+	public InfoMergedTree getMtree() {
+		return mTree;
+	}
+	
+	/*
+	 * This operation keeps the original tree structure unchanged.
+	 **/		
+	public GrayScaleImage simplificationTreeByDirectRuleMtree(double attributeValue, int type){			
+		
+		boolean[] mapCorrection = new boolean[numNodeIdMax];
+		NodeLevelSets parent;		
+		int newNumNodeIdMax = 1;
+		
+		if(mTree == null) {			
+			mTree = new InfoMergedTreeReverseLevelOrder(getRoot(), numNodeIdMax, imgInput);
+			for(NodeLevelSets node : listNode.reverse()) {
+				if(node == getRoot())
+					continue;								
+				parent = node.getParent();								
+				if(node.getAttributeValue(type) <= attributeValue) {						
+					// Merge
+					mTree.addNodeToMerge(node);
+					mapCorrection[parent.getId()] = true;			
+				} else { 
+					// Not merge
+					mTree.addNodeNotMerge(node);
+					// This helps to decrease the size of auxiliary structures
+					if(node.getId() > newNumNodeIdMax)
+						newNumNodeIdMax = node.getId();
+					// Pass the mapCorrection to all ancestors
+					if(mapCorrection[node.getId()])
+						mapCorrection[parent.getId()] = true;
+				}
+			}
+		} else {
+			for(NodeMergedTree node_ : mTree.skipRoot()) {						
+				if(node_.getAttributeValue(type) <= attributeValue) {	
+					mTree.updateNodeToMerge(node_);	
+					for(NodeMergedTree n : node_.getParent().getPathToRoot()) {
+						if(mapCorrection[n.getId()])
+							break;
+						mapCorrection[n.getId()] = true;	
+					}
+				} else {
+					if(node_.getId() > newNumNodeIdMax)
+						newNumNodeIdMax = node_.getId();
+				}			
+			}
+		}
+		
+		// Correct attributes
+		new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		
+		if(hasComputerCentralMomentAttribute)
+			new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+			
+		// Modify maxID to optimize memory		
+		numNodeIdMax = newNumNodeIdMax + 1;
+		return mTree.reconstruction();
+	}
+	
+	/*
+	 * This operation keeps the original tree structure unchanged.
+	 **/		
+	public GrayScaleImage simplificationTreeBySubstractiveRuleMtree(double attributeValue, int type){			
+		
+		int[] offset = new int[numNodeIdMax];
+		boolean[] mapCorrection = new boolean[numNodeIdMax];
+		NodeLevelSets parent;		
+		int newNumNodeIdMax = 1;
+		
+		if(mTree == null) {			
+			mTree = new InfoMergedTreeLevelOrder(getRoot(), numNodeIdMax, imgInput);
+			for(NodeLevelSets node : listNode) {
+				if(node == getRoot())
+					continue;								
+				parent = node.getParent();								
+				if(node.getAttributeValue(type) <= attributeValue) {						
+					// Merge
+					mTree.addNodeToMerge(node);
+					// Compute offsets
+					offset[node.getId()] = offset[parent.getId()] - node.getLevel() + parent.getLevel();					
+					mapCorrection[parent.getId()] = true;		
+					for(NodeLevelSets n : parent.getPathToRoot()) {
+						if(mapCorrection[n.getId()])
+							break;
+						mapCorrection[n.getId()] = true;	
+					}
+				} else { 
+					// Not merge
+					mTree.addNodeNotMerge(node);
+					// This helps to decrease the size of auxiliary structures
+					if(node.getId() > newNumNodeIdMax)
+						newNumNodeIdMax = node.getId();
+					// Propagate offset
+					offset[node.getId()] = offset[parent.getId()];
+					// Pass the mapCorrection to all ancestors
+					if(offset[node.getId()] != 0) {
+						for(NodeLevelSets n : node.getPathToRoot()) {
+							if(mapCorrection[n.getId()])
+								break;
+							mapCorrection[n.getId()] = true;	
+						}
+					}
+				}
+			}
+		} else {
+			// First compute offsets and mapCorrection	
+			SimpleLinkedList<NodeLevelSets> nodesToMerge = new SimpleLinkedList<>();
+			for(NodeMergedTree node_ : mTree.skipRoot()) {						
+				parent = node_.getParent().getInfo();
+				if(node_.getAttributeValue(type) <= attributeValue) {	
+					offset[node_.getId()] = offset[parent.getId()] - node_.getInfo().getLevel() + parent.getLevel();				
+					for(NodeMergedTree n : node_.getParent().getPathToRoot()) {
+						if(mapCorrection[n.getId()])
+							break;
+						mapCorrection[n.getId()] = true;	
+					}
+					nodesToMerge.add(node_.getInfo());
+				} else {
+					offset[node_.getId()] = offset[parent.getId()];					
+					if(node_.getId() > newNumNodeIdMax)
+						newNumNodeIdMax = node_.getId();
+					// When offset != null this node changed the level value
+					if(offset[node_.getId()] != 0) {
+						for(NodeMergedTree n : node_.getPathToRoot()) {
+							if(mapCorrection[n.getId()])
+								break;
+							mapCorrection[n.getId()] = true;	
+						}
+					}
+				}
+			}
+			// Make merges 
+			mTree.updateNodeToMergeAll(nodesToMerge);
+		}
+		
+		// Correct offsets
+		mTree.updateLevels(offset);
+		
+		// Correct attributes
+		new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		
+		if(hasComputerCentralMomentAttribute)
+			new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		
+		// Modify maxID to optimize memory		
+		numNodeIdMax = newNumNodeIdMax + 1;
+		return mTree.reconstruction();
+	}
+	
 	SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
 	ComputerExtinctionValueComponentTree extinctionValue;
 	public GrayScaleImage filteringByExtinctionValue(double attributeValue, int type){
@@ -459,7 +619,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		if(extinctionValue.getType() != type)
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(type);
 		
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){
@@ -563,7 +723,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){

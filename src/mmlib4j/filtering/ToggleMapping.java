@@ -41,7 +41,7 @@ public class ToggleMapping {
 	
 	
 	public static GrayScaleImage toggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		toggleMapping(img, adj, 15, 80, imgOut);
 		return imgOut;
 	}	
@@ -63,7 +63,7 @@ public class ToggleMapping {
 	}
 	
 	public static GrayScaleImage toggleMappingResidue (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		toggleMappingResidue(img, adj, imgOut);
 		return imgOut;
 	}
@@ -86,7 +86,7 @@ public class ToggleMapping {
 	}	
 
 	public static GrayScaleImage toggleMapping (GrayScaleImage img, GrayScaleImage extensive, GrayScaleImage antiExtensive){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		int contrast1 = 15;
 		int percentage = 80;
 		toggleMapping(img, extensive, antiExtensive, contrast1, percentage, imgOut);
@@ -130,8 +130,8 @@ public class ToggleMapping {
 	}
 	
 	public static GrayScaleImage[] doubleToggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgOut1 = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-		GrayScaleImage imgOut2 = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut1 = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut2 = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		
 		int contrast1 = 50;
 		int contrast2 = 16;	

@@ -203,7 +203,7 @@ public class ComputerFunctionalAttribute {
 		ConnectedFilteringByComponentTree connectedFilteringByComponentTree = new ConnectedFilteringByComponentTree( input, AdjacencyRelation.getCircular( 1 ), false );
 		connectedFilteringByComponentTree.computerAttributeBasedPerimeterExternal();
 		new ComputerFunctionalAttribute(connectedFilteringByComponentTree, false).addAttributeInNodesCT(connectedFilteringByComponentTree.getListNodes());
-		GrayScaleImage imout = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, 
+		GrayScaleImage imout = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, 
 																input.getWidth(), 
 																input.getHeight());
 		

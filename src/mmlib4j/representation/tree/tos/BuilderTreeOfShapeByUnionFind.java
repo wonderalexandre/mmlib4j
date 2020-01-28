@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.PriorityQueueToS;
-import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
@@ -107,7 +106,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	}
 	
 	public GrayScaleImage getImageInterpolated(){
-		return ImageFactory.createReferenceGrayScaleImage(8, imgU, interpWidth, interpHeight);
+		return ImageFactory.instance.createReferenceGrayScaleImage(8, imgU, interpWidth, interpHeight);
 	}
 	
 	/**
@@ -165,7 +164,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		long ti = System.currentTimeMillis();
 		this.numNode = 0;
 		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
-		//WindowImages.show(ImageFactory.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight)); 
+		//WindowImages.show(AbstractImageFactory.instance.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight)); 
 		for (int i = 0; i < imgR.length; i++) {
 			int p = imgR[i];
 			int pai = parent[p];
@@ -503,7 +502,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	public static void main( String args [] ) {
 		
 		
-		/*GrayScaleImage input = ImageFactory.createGrayScaleImage( ImageFactory.DEPTH_8BITS, 
+		/*GrayScaleImage input = AbstractImageFactory.instance.createGrayScaleImage( AbstractImageFactory.instance.DEPTH_8BITS, 
 																  4, 3 );
 																  		
 		// First example of Thierry
@@ -539,7 +538,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		// Second example of Thierry
 		
-		GrayScaleImage input = ImageFactory.createGrayScaleImage( ImageFactory.DEPTH_8BITS, 
+		GrayScaleImage input = ImageFactory.instance.createGrayScaleImage( ImageFactory.DEPTH_8BITS, 
 				  												  5, 5 );
 		
 		input.setPixel( 0, 0, 128 );

@@ -129,7 +129,7 @@ public class IntegerImage extends AbstractGrayScale implements GrayScaleImage{
     }
     
     public int getDepth(){
-    	return ImageFactory.DEPTH_32BITS;
+    	return MmlibImageFactory.DEPTH_32BITS;
     }
 
     public ColorImage labeling(AdjacencyRelation adj){

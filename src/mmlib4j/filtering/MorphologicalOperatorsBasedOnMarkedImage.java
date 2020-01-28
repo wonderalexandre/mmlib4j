@@ -8,6 +8,7 @@ import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.Image2D;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
@@ -188,7 +189,7 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
      */
     public static GrayScaleImage closingOfHoles(GrayScaleImage imgInput, int back){
         //criando o marcador
-        GrayScaleImage imgMarker = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+        GrayScaleImage imgMarker = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
         imgMarker.initImage(back);     
         int fore = (back == 255? 0: 255);
         //marcando as bordas com 1-pixel de espessura
@@ -208,7 +209,7 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
     	double raio = 1;
     	AdjacencyRelation adj;
     	AdjacencyRelation adj8 = AdjacencyRelation.getCircular(1.5);
-    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	GrayScaleImage uniao = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
     	GrayScaleImage imgErosion = img.duplicate();
     	for(int i=0; i < 110; i++){
     		adj = AdjacencyRelation.getCircular(raio);
@@ -232,7 +233,7 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
     	double raio = 1;
     	AdjacencyRelation adj;
     	AdjacencyRelation adj8 = AdjacencyRelation.getCircular(4);
-    	GrayScaleImage uniao = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	GrayScaleImage uniao = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
     	GrayScaleImage imgErosion = img.duplicate();
     	for(int i=0; i < 100; i++){
     		adj = AdjacencyRelation.getCircular(raio);
@@ -257,7 +258,7 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
 
 	public static GrayScaleImage erosionByReconstructionIFT(GrayScaleImage img, GrayScaleImage marked){
 		long ti = System.currentTimeMillis();	
-		 GrayScaleImage imgMapaCusto = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaCusto = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 boolean NO_PROCESSED = false;//GRAY
 		 boolean PROCESSED = true; //BLACK 
 		 boolean states[] = new boolean[img.getSize()];
@@ -295,7 +296,7 @@ public class MorphologicalOperatorsBasedOnMarkedImage {
 	
 	public static GrayScaleImage dilationByReconstructionIFT(GrayScaleImage img, GrayScaleImage marked){
 		long ti = System.currentTimeMillis();	
-		 GrayScaleImage imgMapaCusto = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaCusto = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 boolean NO_PROCESSED = false;//GRAY
 		 boolean PROCESSED = true; //BLACK 
 		 boolean states[] = new boolean[img.getSize()];

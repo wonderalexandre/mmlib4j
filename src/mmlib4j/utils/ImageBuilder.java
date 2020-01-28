@@ -192,7 +192,7 @@ public class ImageBuilder {
 	}
 
 	public static GrayScaleImage getConvertColorSpaceRGBtoChong(ColorImage img){
-		GrayScaleImage imgG = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgG = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		for(int p=0; p < img.getSize(); p++){
 			int r = img.getRed(p);
 			int g = img.getGreen(p);
@@ -274,7 +274,7 @@ public class ImageBuilder {
 	public static GrayScaleImage convertToGrayImage(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-		GrayScaleImage img = ImageFactory.createGrayScaleImage(8, width, height);
+		GrayScaleImage img = ImageFactory.instance.createGrayScaleImage(8, width, height);
 		if (image.getType() == BufferedImage.TYPE_BYTE_GRAY || image.getType() == BufferedImage.TYPE_BYTE_BINARY) {
 			for (int w = 0; w < width; w++) {
 				for (int h = 0; h < height; h++) {
@@ -307,7 +307,7 @@ public class ImageBuilder {
 	public static ColorImage convertToRGBImage(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-		ColorImage img = ImageFactory.createColorImage(width, height);
+		ColorImage img = ImageFactory.instance.createColorImage(width, height);
 		for (int w = 0; w < width; w++) {
 			for (int h = 0; h < height; h++) {
 				img.setPixel(w, h, image.getRGB(w, h));				

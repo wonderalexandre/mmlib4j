@@ -96,7 +96,7 @@ public class ComponentTree {
 		c.inf = this.inf;
 		
 		for(NodeLevelSets node: c.getListNodes()){
-			node.setAttributes(  (HashMap<Integer, Attribute>) node.getAttributes().clone() );
+			node.setAttributes((HashMap<Integer, Attribute>) node.getAttributes().clone());
 		}
 		if(this.isExtendedTree){
 			c.extendedTree();
@@ -188,7 +188,7 @@ public class ComponentTree {
 	}
 	
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){
@@ -263,7 +263,7 @@ public class ComponentTree {
 	}
 	
 	public GrayScaleImage reconstruction(){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){

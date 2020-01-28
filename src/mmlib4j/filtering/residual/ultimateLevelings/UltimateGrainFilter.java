@@ -288,7 +288,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getResiduesPos(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -311,7 +311,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getResiduesNeg(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -334,7 +334,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -351,7 +351,7 @@ public class UltimateGrainFilter {
 		return transformImg;
 	}
 	public GrayScaleImage getAttributeResidues(int attr){
-		GrayScaleImage imgA = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgA = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		boolean map[] = getNodesMapWithMaximumResidues();
 		for(NodeLevelSets node: tree.getListNodes()){
 			if(map[node.getId()]){
@@ -367,7 +367,7 @@ public class UltimateGrainFilter {
 	
 	
 	public GrayScaleImage getAssociateImagePos(){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -385,7 +385,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getAssociateImage(){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -406,7 +406,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getAssociateImageNeg(){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -424,7 +424,7 @@ public class UltimateGrainFilter {
 	}
 	
 	public GrayScaleImage getAssociateImageByType( ){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){
@@ -443,7 +443,7 @@ public class UltimateGrainFilter {
 	
 	
 	public GrayScaleImage getResiduesByType( ){
-		GrayScaleImage associateImg = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(root);
 		while(!fifo.isEmpty()){

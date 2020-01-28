@@ -1,7 +1,6 @@
 package mmlib4j.datastruct;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -9,12 +8,17 @@ import java.util.LinkedList;
  *
  */
 public class SimpleLinkedList<T> implements Iterable<T> {
+	
 	private NodeLL<T> first;
 	private NodeLL<T> last;
 	private int length = 0; 
 	private int policy = 0; //0 = FIFO; 1 = LIFO
 	
-	public SimpleLinkedList( ){
+	public SimpleLinkedList(int policy){
+		this.policy = policy;
+	}
+	
+	public SimpleLinkedList(){
 		this.policy = 0;
 	}
 	
@@ -39,7 +43,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 	public T getLastElement(){
 		return last.value;
 	}
-	
+
 	public T removeFirstElement(){
 		NodeLL<T> node = null;
 		node = this.first;
@@ -49,8 +53,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 		}
 		if (this.length == 0) {
 			this.last = null;
-		}
-		
+		}	
 		this.length--;
 		node.prev = node.next = null;
 		return node.value;
@@ -69,6 +72,16 @@ public class SimpleLinkedList<T> implements Iterable<T> {
         }
 		
 		length += l.size() ;
+	}
+	
+	public boolean contains(T e){
+		Iterator<T> it = iterator();
+		while(it.hasNext()){
+			if(e.equals(it.next())){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void remove(T e){
@@ -136,8 +149,18 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 		};
 	}
 	
+	public SimpleLinkedList<T> copy(){
+		SimpleLinkedList<T> copy = new SimpleLinkedList<>();		
+		NodeLL<T> iter = first;				
+		while(iter != null) {
+			T v = iter.value;
+			iter = iter.next;
+			copy.add(v);
+		}		
+		return copy;
+	}
 	
-	 void add(NodeLL<T> node){
+	void add(NodeLL<T> node){
 		if (this.length == 0) { //lista vazia?
             this.first = node;
             this.last = node;
@@ -191,18 +214,15 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 			this.length--;
 		}
 		node.prev = node.next = null;
-	}    	
-    	
-	  
- 
+	}    	    		  
      
-     public static void main(String args[]){
-    	 SimpleLinkedList<Integer> l = new SimpleLinkedList<Integer>();
-    	 l.add(1);
-    	 l.add(2);
-    	 l.add(3);
-    	 l.add(4);
-    	 l.add(5);
+    public static void main(String args[]){
+    	 Stack<Integer> l = new Stack<>();
+    	 l.push(1);
+    	 l.push(2);
+    	 l.push(3);
+    	 l.push(4);
+    	 l.push(5);
     	 
     	 SimpleLinkedList<Integer> l2 = new SimpleLinkedList<Integer>();
     	 l2.add(2);
@@ -211,11 +231,13 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     	 l2.add(5);
     	 l2.add(3);
     	 l2.add(4);
-    	 
-    	 
-    	 l2.remove(0);
-    	 
-    	 
+    	     	 
+    	 //l2.remove(0);
+    	 System.out.println();
+    	 while(!l.isEmpty()) {
+    		 System.out.println(l.pop());
+    	 }
+    	 System.out.println();
     	 
     	 for(int i : l2){
     		 System.out.println("L2 =>"+i);
@@ -226,30 +248,29 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     	 }
     	 
     	 
-    	 l.addAll(l2);
+    	 //l.addAll(l2);
     	 
-    	 for(int i : l){
-    		  System.out.println(i);
-    	 }
+    	 //for(int i : l){
+    	//	  System.out.println(i);
+    	 //}
+    	 
     	 System.out.println("size:" + l.size());
     	 l.clear();
     	 System.out.println("list after cleared, size:" + l.size());
     	 
      }
 
-	
-
-
 }
 
 /**
  * Classe que representa um node da lista duplamente ligada
  */
-class NodeLL<T>{
+class NodeLL<T> {
 	T value;
 	NodeLL<T> next;
 	NodeLL<T> prev;
 	NodeLL(T p){ 
 		this.value = p; 
 	}
+	
 }

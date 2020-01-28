@@ -365,6 +365,10 @@ public abstract class NodeLevelSets {
 		return isDescendant(node) || isAncestral(node);
 	}
 	
+	public void setCompactNodePixels(SimpleLinkedList<Integer> pixels){
+		this.pixels = pixels;
+	}
+	
 	public SimpleLinkedList<Integer> getCompactNodePixels(){
 		return pixels;
 	}
@@ -480,7 +484,7 @@ public abstract class NodeLevelSets {
 
 
 	public GrayScaleImage createImageSC(int levelNotSC){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());;
+		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());;
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this);
 		while(!fifo.isEmpty()){

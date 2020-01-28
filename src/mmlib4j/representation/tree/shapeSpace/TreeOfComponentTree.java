@@ -28,7 +28,7 @@ public class TreeOfComponentTree {
 		this.input = tree.getInputImage();
 		
 		// Image of attr		
-		imgAttr = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_32BITS, input.getWidth(), input.getHeight());
+		imgAttr = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, input.getWidth(), input.getHeight());
 		
 		for(NodeLevelSets node : tree.getListNodes()) {			
 			for(int p : node.getCompactNodePixels()) {

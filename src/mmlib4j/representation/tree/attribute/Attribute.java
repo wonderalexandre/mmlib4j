@@ -13,7 +13,7 @@ import java.util.Locale;
  */
 public class Attribute {
 	
-	double value;
+	public double value;
 	int type;
 	private static DecimalFormat df;
 	

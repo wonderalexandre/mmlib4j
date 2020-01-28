@@ -33,13 +33,13 @@ public class ColorConstancy {
 	}
 	
 	public static ColorImage whitePatch(ColorImage imgIn){
-		ColorImage imgOut = ImageFactory.createColorImage(imgIn.getWidth(), imgIn.getHeight());
+		ColorImage imgOut = ImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
 		whitePatch(imgIn, imgOut);
 		return imgOut;
 	}
 
 	public static ColorImage greyWorld(ColorImage imgIn){
-		ColorImage imgOut = ImageFactory.createColorImage(imgIn.getWidth(), imgIn.getHeight());
+		ColorImage imgOut = ImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
 		greyWorld(imgIn, imgOut);
 		return imgOut;
 	}
@@ -84,7 +84,7 @@ public class ColorConstancy {
 	}
 
 	public static ColorImage toChromaticityColorSpace(ColorImage imgIn){
-		ColorImage imgOut = ImageFactory.createColorImage(imgIn.getWidth(), imgIn.getHeight());
+		ColorImage imgOut = ImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
 		toChromaticityColorSpace(imgIn, imgOut);
 		return imgOut;
 	}

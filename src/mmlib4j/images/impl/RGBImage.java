@@ -364,7 +364,7 @@ public class RGBImage extends AbstractImage2D implements ColorImage{
     }
     
     public int getDepth(){
-    	return ImageFactory.DEPTH_32BITS;
+    	return MmlibImageFactory.DEPTH_32BITS;
     }
 
 	public void setPixel(int x, int y, int r, int g, int b) {

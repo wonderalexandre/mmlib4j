@@ -14,7 +14,7 @@ public class PriorityQueueToS  {
     protected ArrayList<Integer> buckets[] = null;
     protected int currentPriority;
     
-    public PriorityQueueToS( ) {
+    public PriorityQueueToS() {
 		this.buckets = new ArrayList[256];
 		for(int i=0; i < buckets.length; i++){
 			this.buckets[i] = new ArrayList<Integer>();

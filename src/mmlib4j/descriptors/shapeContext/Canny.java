@@ -4,6 +4,7 @@ import mmlib4j.gui.WindowImages;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.segmentation.ThresholdGlobal;
 import mmlib4j.utils.ImageBuilder;
 
@@ -49,7 +50,7 @@ public class Canny {
         this.imgOut = img.duplicate();
         
         /* Cria estrutura de armazenamento das magnitudes */
-        this.imgMag =  ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
+        this.imgMag =  ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
         
         /* Convolucao da imagem com a gaussiana nas direcoes X e Y */
         smx = new float[this.width][this.height];

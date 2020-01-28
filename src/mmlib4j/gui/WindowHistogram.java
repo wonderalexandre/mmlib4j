@@ -32,7 +32,7 @@ public class WindowHistogram {
      * @return
      */
     public ColorImage drawHistogram(GrayScaleImage img){
-        ColorImage imgOut = ImageFactory.createColorImage(WIN_WIDTH, WIN_HEIGHT);
+        ColorImage imgOut = ImageFactory.instance.createColorImage(WIN_WIDTH, WIN_HEIGHT);
         imgOut.initImage(Color.WHITE.getRGB());
         Histogram histogram = new Histogram(img);
         int h[] = histogram.getHistogram();

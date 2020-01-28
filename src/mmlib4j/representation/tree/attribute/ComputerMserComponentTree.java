@@ -259,7 +259,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	
 	public ColorImage getImageMSER(int delta){
-		ColorImage img = ImageFactory.createCopyColorImage(tree.getInputImage());
+		ColorImage img = ImageFactory.instance.createCopyColorImage(tree.getInputImage());
 		boolean b[] = getMappingNodesByMSER(delta);
 		for(NodeLevelSets node: tree.getListNodes()){
 			if(b[node.getId()])
@@ -271,7 +271,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 	}
 
 	public ColorImage getPointImageMSER(int delta){
-		ColorImage img = ImageFactory.createCopyColorImage(tree.getInputImage());
+		ColorImage img = ImageFactory.instance.createCopyColorImage(tree.getInputImage());
 		for(NodeLevelSets node: getNodesByMSER(delta)){
 			for(int p: node.getCompactNodePixels()){
 				img.setPixel(p, Color.RED.getRGB());
