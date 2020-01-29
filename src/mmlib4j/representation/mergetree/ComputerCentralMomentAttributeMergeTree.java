@@ -44,18 +44,18 @@ public class ComputerCentralMomentAttributeMergeTree extends AttributeUpdatedInc
 		node_.addAttribute(Attribute.STD_LEVEL, new Attribute(Attribute.STD_LEVEL, Math.sqrt( attr[ node_.getId() ].variance.value) ));		
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void preProcessing(NodeMergedTree node_) {		
 		if(!node_.isAttrCloned) {
-			node_.attributes = (HashMap<Integer, Attribute>) node_.attributes.clone();
+			//node_.attributes = (HashMap<Integer, Attribute>) node_.attributes.clone();
+			node_.attributes = new HashMap<Integer, Attribute>();
 			node_.isAttrCloned = true;
 		}		
 		attr[node_.getId()] = new CentralMomentsAttribute(node_);
-		attr[node_.getId()].sumLevel2 += Math.pow(node_.info.getLevel(), 2) * node_.info.getCompactNodePixels().size();
+		attr[node_.getId()].sumLevel2 += Math.pow(node_.getLevel(), 2) * node_.getCompactNodePixels().size();
 	}
 	
 	public void mergeChildrenUpdate(NodeMergedTree node_, NodeMergedTree son_) {	
-		double sumLevel2 = son_.getAttributeValue(Attribute.VARIANCE_LEVEL) + (Math.pow(son_.getAttributeValue(Attribute.VOLUME), 2) / son_.getAttributeValue(Attribute.AREA));
+		double sumLevel2 = son_.getAttributeValue(Attribute.VARIANCE_LEVEL) + (Math.pow(son_.getAttributeValue(Attribute.VOLUME), 2) / son_.info.getAttributeValue(Attribute.AREA));
 		attr[node_.getId()].sumLevel2 += sumLevel2;
 	}
 	
@@ -66,7 +66,7 @@ public class ComputerCentralMomentAttributeMergeTree extends AttributeUpdatedInc
 	public void posProcessing(NodeMergedTree node_) {
 		double SumSq = attr[node_.getId()].sumLevel2;
 		double Sum = node_.getAttributeValue(Attribute.VOLUME);
-		double n = node_.getAttributeValue(Attribute.AREA);		
+		double n = node_.info.getAttributeValue(Attribute.AREA);		
 		attr[node_.getId()].variance.value = (SumSq - (Sum * Sum)/n)/(n-1);				
 	}
 	
@@ -75,7 +75,9 @@ public class ComputerCentralMomentAttributeMergeTree extends AttributeUpdatedInc
 		Attribute levelMean = new Attribute(Attribute.LEVEL_MEAN);			
 		double sumLevel2;						
 		public CentralMomentsAttribute(NodeMergedTree node_){
-			this.levelMean = new Attribute(Attribute.LEVEL_MEAN, node_.getAttributeValue(Attribute.VOLUME) / node_.getAttributeValue(Attribute.AREA));
+			//System.out.println(node_.getAttributeValue(Attribute.VOLUME));
+			//System.out.println(node_.info.getAttributeValue(Attribute.AREA));
+			this.levelMean = new Attribute(Attribute.LEVEL_MEAN, node_.getAttributeValue(Attribute.VOLUME) / node_.info.getAttributeValue(Attribute.AREA));
 		}										
 	}
 

@@ -4,7 +4,6 @@ package mmlib4j.representation.mergetree;
 import java.util.HashMap;
 
 import mmlib4j.representation.mergetree.InfoMergedTree.NodeMergedTree;
-import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.Utils;
 
@@ -45,35 +44,29 @@ public class ComputerBasicAttributeMergeTree extends AttributeUpdatedIncremental
 		node_.addAttribute(Attribute.ALTITUDE, attr[node_.getId()].altitude);
 	} 		
 	
-	@SuppressWarnings("unchecked")
-	public void preProcessing(NodeMergedTree node_) {		
-		NodeLevelSets node = node_.info;
-		
+	public void preProcessing(NodeMergedTree node_) {				
 		if(!node_.isAttrCloned) {
-			node_.attributes = (HashMap<Integer, Attribute>) node_.attributes.clone();
+			//node_.attributes = (HashMap<Integer, Attribute>) node_.attributes.clone();
+			node_.attributes = new HashMap<Integer, Attribute>();
 			node_.isAttrCloned = true;
 		}
 		
-		attr[node.getId()] = new BasicAttribute();
+		attr[node_.getId()] = new BasicAttribute();
 		//area e volume
-		attr[node.getId()].volume.value = node.getCompactNodePixels().size() * node.getLevel();
-		attr[node.getId()].highest = attr[node.getId()].lowest = node.getLevel(); 
+		attr[node_.getId()].volume.value = node_.getCompactNodePixels().size() * node_.getLevel();
+		attr[node_.getId()].highest = attr[node_.getId()].lowest = node_.getLevel(); 
 	}	
 	
-	public void mergeChildrenUpdate(NodeMergedTree node_, NodeMergedTree son_) {
-		NodeLevelSets node = node_.info;		
-		NodeLevelSets son = son_.info;		
-		
-		attr[node.getId()].volume.value = attr[node.getId()].volume.value + son_.getAttributeValue(Attribute.VOLUME);
-		
+	public void mergeChildrenUpdate(NodeMergedTree node_, NodeMergedTree son_) {					
+		attr[node_.getId()].volume.value = attr[node_.getId()].volume.value + son_.getAttributeValue(Attribute.VOLUME);		
 		// How to compute them?
-		if(son.isNodeMaxtree()) {			
-			int highest = (int) (son_.getAttributeValue(Attribute.ALTITUDE) + son.getLevel() - 1);
-			attr[node.getId()].highest = Math.max(attr[node.getId()].highest, highest);
+		if(son_.info.isNodeMaxtree()) {			
+			int highest = (int) (son_.getAttributeValue(Attribute.ALTITUDE) + son_.getLevel() - 1);
+			attr[node_.getId()].highest = Math.max(attr[node_.getId()].highest, highest);
 		}
 		else{
-			int lowest = (int) (son.getLevel() - son_.getAttributeValue(Attribute.ALTITUDE) + 1);			
-			attr[node.getId()].lowest = Math.min(attr[node.getId()].lowest, lowest);
+			int lowest = (int) (son_.getLevel() - son_.getAttributeValue(Attribute.ALTITUDE) + 1);			
+			attr[node_.getId()].lowest = Math.min(attr[node_.getId()].lowest, lowest);
 		}
 		
 	}
@@ -85,13 +78,12 @@ public class ComputerBasicAttributeMergeTree extends AttributeUpdatedIncremental
 	}
 
 	public void posProcessing(NodeMergedTree root_) {		
-		NodeLevelSets root= root_.info;
-		root.setVolume( (int) attr[root.getId()].volume.value );		
-		if(root.isNodeMaxtree()){
-			attr[root.getId()].altitude.value = attr[root.getId()].highest - root.getLevel() + 1; 
+		//root.setVolume( (int) attr[root.getId()].volume.value );		
+		if(root_.info.isNodeMaxtree()){
+			attr[root_.getId()].altitude.value = attr[root_.getId()].highest - root_.getLevel() + 1; 
 		}
 		else{
-			attr[root.getId()].altitude.value = root.getLevel() - attr[root.getId()].lowest + 1;
+			attr[root_.getId()].altitude.value = root_.getLevel() - attr[root_.getId()].lowest + 1;
 		}
 	}
 

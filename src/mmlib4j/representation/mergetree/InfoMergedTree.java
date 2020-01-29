@@ -9,7 +9,6 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 
 /*
  * This tree is useful to perform merges keeping the original tree unchanged.  
@@ -37,13 +36,12 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 		return numNode;
 	}
 	
-	NodeLevelSets allocateNewNode(NodeMergedTree node_, NodeLevelSets node) {
-		NodeLevelSets newNode = new NodeCT(node.isNodeMaxtree(), node.getId(), img, node.getCanonicalPixel()); 								
-		newNode.setCompactNodePixels(node_.info.getCompactNodePixels().copy());
-		map[node.getId()].info = newNode;
+	public void allocateCompactNodePixels(NodeMergedTree node_, NodeLevelSets node) {
+		map[node.getId()].info = node;
+		map[node.getId()].pixels = map[node.getId()].pixels.copy();
+		//map[node.getId()].pixels = map[node.getId()].pixels;
 		map[node.getId()].fakeNode = false;
-		map[node.getId()].attributes = node.getAttributes();
-		return newNode;
+		map[node.getId()].attributes = node.getAttributes();	
 	}		
 	
 	public void updateNodeToMergeAll(SimpleLinkedList<NodeLevelSets> nodes) {
@@ -64,7 +62,7 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 		
 		// When the parent is fake it must be copied to preserve it in original tree
 		if(parentM.fakeNode) {	
-			allocateNewNode(parentM, parent);			
+			allocateCompactNodePixels(parentM, parent);			
 		}								
 		
 		// Remove it from parentM
@@ -72,9 +70,9 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 		
 		// Join compact node pixels	
 		if(map[node.getId()].fakeNode)
-			parentM.info.getCompactNodePixels().addAll(map[node.getId()].info.getCompactNodePixels().copy());
+			parentM.getCompactNodePixels().addAll(map[node.getId()].getCompactNodePixels().copy());
 		else
-			parentM.info.getCompactNodePixels().addAll(map[node.getId()].info.getCompactNodePixels());
+			parentM.getCompactNodePixels().addAll(map[node.getId()].getCompactNodePixels());
 		
 		// Pass the children to parentM
 		for(NodeMergedTree child_ : map[node.getId()].getChildren()) {
@@ -89,30 +87,24 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	public GrayScaleImage reconstruction() {		
 		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());		
 		//int cont = 0;
-		//int numWrongNodes = 0;				
-		
-		for(NodeMergedTree node_ : this) {			
-			NodeLevelSets node = node_.getInfo();						
-			for(int p: node.getCompactNodePixels()){
-				imgOut.setPixel(p, node.getLevel());
+		//int numWrongNodes = 0;						
+		for(NodeMergedTree node_ : this) {							
+			for(int p: node_.getCompactNodePixels()){
+				imgOut.setPixel(p, node_.getLevel());
 			}			
-			/*if(isMerged[node.getId()]) 
-				numWrongNodes++;			
-			cont++;*/
-		}
-		
-		/*System.out.println("numNodes: " + cont);
-		System.out.println("Real numNode: " + numNode);
-		System.out.println("Wrong nodes: " + numWrongNodes);*/
-	
+			//if(isMerged[node_.getId()]) 
+			//	numWrongNodes++;			
+			//cont++;
+		}		
+		//System.out.println("numNodes: " + cont);
+		//System.out.println("Real numNode: " + numNode);
+		//System.out.println("Wrong nodes: " + numWrongNodes);		
 		return imgOut;		
 	}
 	
 	public void updateLevels(int[] offset) {				
 		for(NodeMergedTree node_ : skipRoot()) {
-			NodeLevelSets node = node_.getInfo();						
-			NodeLevelSets newNode = node_.fakeNode ? allocateNewNode(node_, node) : node;
-			newNode.setLevel(node.getLevel() + offset[node.getId()]);
+			node_.addOffset(offset[node_.getId()]);
 		}
 	}
 	
@@ -177,8 +169,9 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	public class NodeMergedTree {		
 				
 		SimpleLinkedList<NodeMergedTree> children = new SimpleLinkedList<NodeMergedTree>();
-		//SimpleLinkedList<Integer> pixels;
+		SimpleLinkedList<Integer> pixels;
 		HashMap<Integer, Attribute> attributes;
+		int offset = 0;
 		boolean fakeNode = false;	
 		boolean isAttrCloned = false;
 		NodeMergedTree parent;
@@ -188,12 +181,12 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 			this.info = info;
 			this.fakeNode = fakeNode;
 			this.attributes = info.getAttributes();
-			//this.pixels = info.getCompactNodePixels();
+			this.pixels = info.getCompactNodePixels();
 		}
 		
-		/*public SimpleLinkedList<Integer> getCompactNodePixels(){
+		public SimpleLinkedList<Integer> getCompactNodePixels(){
 			return pixels;
-		}*/
+		}
 		
 		public HashMap<Integer, Attribute> getAttributes(){
 			return attributes;
@@ -217,6 +210,14 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 			
 		public int hashCode() {
 			return info.getId();
+		}
+		
+		public void addOffset(int offset) {
+			this.offset += offset;
+		}
+		
+		public int getLevel() {
+			return info.getLevel() + offset;
 		}
 		
 		public int getId() {

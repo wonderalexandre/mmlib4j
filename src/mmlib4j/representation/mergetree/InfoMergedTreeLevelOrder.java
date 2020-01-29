@@ -37,7 +37,7 @@ public class InfoMergedTreeLevelOrder extends InfoMergedTree {
 		
 		// When a node is "fake" it must be copied to preserve it in original tree
 		if(parentM.fakeNode) {			
-			allocateNewNode(parentM, parent);
+			allocateCompactNodePixels(parentM, parent);
 		}
 		
 		// If node != null, it was entered before, during the children propagation below
@@ -45,7 +45,7 @@ public class InfoMergedTreeLevelOrder extends InfoMergedTree {
 			parentM.children.remove(map[node.getId()]);		
 		
 		// Copy and join compact node pixels	
-		parentM.info.getCompactNodePixels().addAll(node.getCompactNodePixels().copy());
+		parentM.getCompactNodePixels().addAll(node.getCompactNodePixels().copy());
 		
 		// Add new fake children 
 		for(NodeLevelSets child : node.getChildren()) {					

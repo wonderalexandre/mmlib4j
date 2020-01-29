@@ -132,6 +132,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 			@Override
 			public boolean hasNext() {
 				return iter != null;
+				//return iterPrev != last;
 			}
 
 			@Override

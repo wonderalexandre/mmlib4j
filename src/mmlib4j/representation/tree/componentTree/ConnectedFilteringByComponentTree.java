@@ -6,8 +6,6 @@ import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.mergetree.ComputerBasicAttributeMergeTree;
-import mmlib4j.representation.mergetree.ComputerCentralMomentAttributeMergeTree;
 import mmlib4j.representation.mergetree.InfoMergedTree;
 import mmlib4j.representation.mergetree.InfoMergedTreeLevelOrder;
 import mmlib4j.representation.mergetree.InfoMergedTreeReverseLevelOrder;
@@ -492,7 +490,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			}
 		} else {
 			for(NodeMergedTree node_ : mTree.skipRoot()) {						
-				if(node_.getAttributeValue(type) <= attributeValue) {	
+				if(node_.getInfo().getAttributeValue(type) <= attributeValue) {	
 					mTree.updateNodeToMerge(node_);	
 					for(NodeMergedTree n : node_.getParent().getPathToRoot()) {
 						if(mapCorrection[n.getId()])
@@ -507,10 +505,10 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 		
 		// Correct attributes
-		new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		//new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
 		
-		if(hasComputerCentralMomentAttribute)
-			new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		//if(hasComputerCentralMomentAttribute)
+		//	new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
 			
 		// Modify maxID to optimize memory		
 		numNodeIdMax = newNumNodeIdMax + 1;
@@ -566,9 +564,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			// First compute offsets and mapCorrection	
 			SimpleLinkedList<NodeLevelSets> nodesToMerge = new SimpleLinkedList<>();
 			for(NodeMergedTree node_ : mTree.skipRoot()) {						
-				parent = node_.getParent().getInfo();
-				if(node_.getAttributeValue(type) <= attributeValue) {	
-					offset[node_.getId()] = offset[parent.getId()] - node_.getInfo().getLevel() + parent.getLevel();				
+				if(node_.getInfo().getAttributeValue(type) <= attributeValue) {	
+					offset[node_.getId()] = offset[node_.getParent().getId()] - node_.getLevel() + node_.getParent().getLevel();				
 					for(NodeMergedTree n : node_.getParent().getPathToRoot()) {
 						if(mapCorrection[n.getId()])
 							break;
@@ -576,7 +573,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 					}
 					nodesToMerge.add(node_.getInfo());
 				} else {
-					offset[node_.getId()] = offset[parent.getId()];					
+					offset[node_.getId()] = offset[node_.getParent().getId()];					
 					if(node_.getId() > newNumNodeIdMax)
 						newNumNodeIdMax = node_.getId();
 					// When offset != null this node changed the level value
@@ -597,10 +594,10 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		mTree.updateLevels(offset);
 		
 		// Correct attributes
-		new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		//new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
 		
-		if(hasComputerCentralMomentAttribute)
-			new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		//if(hasComputerCentralMomentAttribute)
+		//	new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();		
 		
 		// Modify maxID to optimize memory		
 		numNodeIdMax = newNumNodeIdMax + 1;

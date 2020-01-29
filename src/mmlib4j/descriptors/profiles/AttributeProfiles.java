@@ -78,7 +78,7 @@ public class AttributeProfiles {
 																		 Attribute.MOMENT_OF_INERTIA, 
 																		 new double[] {0.4, 0.7, 0.9},
 																		 //new double[] {100, 1000},
-																		 MorphologicalTreeFiltering.DIRECT_RULE);
+																		 MorphologicalTreeFiltering.SUBTRACTIVE_RULE);
 		
 		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(profiles[profiles.length-1], 
 																						AdjacencyRelation.getAdjacency4(), 
