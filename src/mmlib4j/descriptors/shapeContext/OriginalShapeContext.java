@@ -3,7 +3,7 @@ package mmlib4j.descriptors.shapeContext;
 import java.util.List;
 
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.utils.Resampling;
 
@@ -64,7 +64,7 @@ public class OriginalShapeContext extends ShapeContext {
 		double max = 0;
 		int width = 12;
 		int height = 5;
-		GrayScaleImage sc = ImageFactory.instance.createGrayScaleImage(8, width, height);
+		GrayScaleImage sc = AbstractImageFactory.instance.createGrayScaleImage(8, width, height);
 
 		for (i = 0; i < height; i++) {
 			for (j = 0; j < width; j++) {

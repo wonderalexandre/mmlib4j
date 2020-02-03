@@ -1,13 +1,13 @@
-package mmlib4j.representation.mergetree;
+package mmlib4j.representation.tree;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
+import mmlib4j.datastruct.FlattenList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
 
 /*
@@ -27,7 +27,7 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	public InfoMergedTree(NodeLevelSets root, int numNodes, GrayScaleImage img) {				
 		this.map = new NodeMergedTree[numNodes];
 		this.numNode = 1;
-		this.map[root.getId()] = new NodeMergedTree(root, true);
+		this.map[root.getId()] = new NodeMergedTree(root);
 		this.img = img;
 		this.isMerged = new boolean[numNodes];		
 	}
@@ -35,14 +35,6 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	public int getNumNode() {
 		return numNode;
 	}
-	
-	public void allocateCompactNodePixels(NodeMergedTree node_, NodeLevelSets node) {
-		map[node.getId()].info = node;
-		map[node.getId()].pixels = map[node.getId()].pixels.copy();
-		//map[node.getId()].pixels = map[node.getId()].pixels;
-		map[node.getId()].fakeNode = false;
-		map[node.getId()].attributes = node.getAttributes();	
-	}		
 	
 	public void updateNodeToMergeAll(SimpleLinkedList<NodeLevelSets> nodes) {
 		for(NodeLevelSets node : nodes) {
@@ -60,19 +52,11 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 		NodeMergedTree parentM = map[parent.getId()];
 		isMerged[node.getId()] = true;			
 		
-		// When the parent is fake it must be copied to preserve it in original tree
-		if(parentM.fakeNode) {	
-			allocateCompactNodePixels(parentM, parent);			
-		}								
-		
 		// Remove it from parentM
 		parentM.getChildren().remove(map[node.getId()]);
 		
-		// Join compact node pixels	
-		if(map[node.getId()].fakeNode)
-			parentM.getCompactNodePixels().addAll(map[node.getId()].getCompactNodePixels().copy());
-		else
-			parentM.getCompactNodePixels().addAll(map[node.getId()].getCompactNodePixels());
+		// Join compact node pixels		
+		parentM.getCompactNodePixels().addAll(map[node.getId()].getCompactNodePixels());
 		
 		// Pass the children to parentM
 		for(NodeMergedTree child_ : map[node.getId()].getChildren()) {
@@ -85,20 +69,20 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	}
 	
 	public GrayScaleImage reconstruction() {		
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());		
-		//int cont = 0;
-		//int numWrongNodes = 0;						
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());		
+		/*int cont = 0;
+		int numWrongNodes = 0;*/						
 		for(NodeMergedTree node_ : this) {							
 			for(int p: node_.getCompactNodePixels()){
 				imgOut.setPixel(p, node_.getLevel());
 			}			
-			//if(isMerged[node_.getId()]) 
-			//	numWrongNodes++;			
-			//cont++;
+			/*if(isMerged[node_.getId()]) 
+				numWrongNodes++;			
+			cont++;*/
 		}		
-		//System.out.println("numNodes: " + cont);
-		//System.out.println("Real numNode: " + numNode);
-		//System.out.println("Wrong nodes: " + numWrongNodes);		
+		/*System.out.println("numNodes: " + cont);
+		System.out.println("Real numNode: " + numNode);
+		System.out.println("Wrong nodes: " + numWrongNodes);*/		
 		return imgOut;		
 	}
 	
@@ -158,6 +142,13 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 		};
 	}
 	
+	public double getAttribute(NodeMergedTree node_, int type) {
+		if(node_.getAttributes().containsKey(type))
+			return node_.getAttributeValue(type);
+		else
+			return node_.getInfo().getAttributeValue(type);
+	}
+	
 	public NodeMergedTree[] getMap() {
 		return map;
 	}
@@ -168,24 +159,26 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	
 	public class NodeMergedTree {		
 				
-		SimpleLinkedList<NodeMergedTree> children = new SimpleLinkedList<NodeMergedTree>();
-		SimpleLinkedList<Integer> pixels;
+		SimpleLinkedList<NodeMergedTree> children = new SimpleLinkedList<NodeMergedTree>();		
+		FlattenList<Integer> pixels = new FlattenList<>();				
 		HashMap<Integer, Attribute> attributes;
-		int offset = 0;
-		boolean fakeNode = false;	
-		boolean isAttrCloned = false;
+		boolean isAttrModified = false;
 		NodeMergedTree parent;
 		NodeLevelSets info;		
+		int offset = 0;
 		
-		public NodeMergedTree(NodeLevelSets info, boolean fakeNode) {
+		public NodeMergedTree(NodeLevelSets info) {
 			this.info = info;
-			this.fakeNode = fakeNode;
 			this.attributes = info.getAttributes();
-			this.pixels = info.getCompactNodePixels();
+			this.pixels.add(info.getCompactNodePixels());
 		}
 		
-		public SimpleLinkedList<Integer> getCompactNodePixels(){
+		public FlattenList<Integer> getCompactNodePixels(){
 			return pixels;
+		}
+		
+		public void setAttributes(HashMap<Integer, Attribute> attributes) {
+			this.attributes = attributes;
 		}
 		
 		public HashMap<Integer, Attribute> getAttributes(){
@@ -200,12 +193,12 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 			return attributes.get(key).value;
 		}
 		
-		public boolean isFakeNode() {
-			return fakeNode;
+		public void setIsAttrModified(boolean isAttrModified) {
+			this.isAttrModified = isAttrModified;
 		}
 		
-		public boolean isAttrCloned() {
-			return isAttrCloned;
+		public boolean isAttrModified() {
+			return isAttrModified;
 		}
 			
 		public int hashCode() {
@@ -257,7 +250,40 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 					};
 				}
 			};
-		}		
+		}
+		
+		public Iterable<NodeMergedTree> getNodesDescendants(){
+			final Queue<NodeMergedTree> fifo = new Queue<>();
+			fifo.enqueue(this);
+			
+			return new Iterable<NodeMergedTree>() {
+				public Iterator<NodeMergedTree> iterator() {
+					return new Iterator<NodeMergedTree>() {
+						private NodeMergedTree currentNode = nextNode(); 
+						public boolean hasNext() {
+							return currentNode != null;
+						}
+						public NodeMergedTree next() {
+							NodeMergedTree tmp = currentNode;
+							currentNode = nextNode(); 
+							return tmp;
+						}
+						public void remove() {}
+						private NodeMergedTree nextNode(){
+							if(!fifo.isEmpty()){
+								NodeMergedTree no = fifo.dequeue();
+								for(NodeMergedTree son: no.getChildren()){
+									fifo.enqueue(son);
+								}
+								return no;
+							}
+							return null;
+						}
+					};
+				}
+			};
+			
+		}
 		
 	}
 	

@@ -2,7 +2,7 @@ package mmlib4j.filtering;
 
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.segmentation.Labeling;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
@@ -41,7 +41,7 @@ public class ToggleMapping {
 	
 	
 	public static GrayScaleImage toggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		toggleMapping(img, adj, 15, 80, imgOut);
 		return imgOut;
 	}	
@@ -63,7 +63,7 @@ public class ToggleMapping {
 	}
 	
 	public static GrayScaleImage toggleMappingResidue (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		toggleMappingResidue(img, adj, imgOut);
 		return imgOut;
 	}
@@ -86,7 +86,7 @@ public class ToggleMapping {
 	}	
 
 	public static GrayScaleImage toggleMapping (GrayScaleImage img, GrayScaleImage extensive, GrayScaleImage antiExtensive){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		int contrast1 = 15;
 		int percentage = 80;
 		toggleMapping(img, extensive, antiExtensive, contrast1, percentage, imgOut);
@@ -130,8 +130,8 @@ public class ToggleMapping {
 	}
 	
 	public static GrayScaleImage[] doubleToggleMapping (GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgOut1 = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-		GrayScaleImage imgOut2 = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut1 = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut2 = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		
 		int contrast1 = 50;
 		int contrast2 = 16;	

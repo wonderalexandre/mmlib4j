@@ -7,7 +7,7 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.filtering.LinearFilters;
 import mmlib4j.filtering.MorphologicalOperatorsBasedOnSE;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.segmentation.Labeling;
@@ -411,7 +411,7 @@ public class UltimateLevelingByReconstruction {
 	
 	
 	public GrayScaleImage getResiduesPos(){
-		GrayScaleImage transformImg = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
@@ -429,7 +429,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getResiduesNeg(){
-		GrayScaleImage transformImg = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
@@ -447,7 +447,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		if(maxtree != null && mintree != null){
 			GrayScaleImage pos = getResiduesPos();
 			GrayScaleImage neg = getResiduesNeg();
@@ -479,7 +479,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getAssociateIndexImagePos(){
-		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(maxtree.getRoot());
 		while(!fifo.isEmpty()){
@@ -496,7 +496,7 @@ public class UltimateLevelingByReconstruction {
 		return associateImg;
 	}
 	public GrayScaleImage getAssociateIndexImageNeg(){
-		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(mintree.getRoot());
 		while(!fifo.isEmpty()){
@@ -514,7 +514,7 @@ public class UltimateLevelingByReconstruction {
 	}
 	
 	public GrayScaleImage getAssociateIndexImage(){
-		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		if(maxtree != null && mintree != null){
 			GrayScaleImage pos = getResiduesPos();
 			GrayScaleImage neg = getResiduesNeg();

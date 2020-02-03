@@ -8,7 +8,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 
@@ -484,7 +484,7 @@ public abstract class NodeLevelSets {
 
 
 	public GrayScaleImage createImageSC(int levelNotSC){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());;
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());;
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this);
 		while(!fifo.isEmpty()){

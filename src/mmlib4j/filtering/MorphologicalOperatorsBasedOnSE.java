@@ -3,7 +3,7 @@ package mmlib4j.filtering;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageAlgebra;
@@ -31,7 +31,7 @@ public class MorphologicalOperatorsBasedOnSE {
 	}
 	
 	public static GrayScaleImage closing(GrayScaleImage img, AdjacencyRelation adjEE){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		closing(img, adjEE, imgOut);
 		return imgOut;
 	}
@@ -46,7 +46,7 @@ public class MorphologicalOperatorsBasedOnSE {
 		
 	}
 	public static GrayScaleImage opening(GrayScaleImage img, AdjacencyRelation adjEE){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		opening(img, adjEE, imgOut);
 		return imgOut;
 	} 
@@ -61,7 +61,7 @@ public class MorphologicalOperatorsBasedOnSE {
 	}
 	
 	public static GrayScaleImage dilation(GrayScaleImage img, AdjacencyRelation adjEE){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		dilation(img, adjEE, imgOut);
 		return imgOut;
 		
@@ -76,7 +76,7 @@ public class MorphologicalOperatorsBasedOnSE {
 	}
 	
 	public static GrayScaleImage erosion(GrayScaleImage img, AdjacencyRelation adjEE){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		erosion(img, adjEE, imgOut);
 		return imgOut;
 	}
@@ -96,7 +96,7 @@ public class MorphologicalOperatorsBasedOnSE {
 	}
 
 	public static GrayScaleImage gradient(GrayScaleImage img, AdjacencyRelation adjB){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		gradient(img, adjB, imgOut);
 		return imgOut;
 		
@@ -115,7 +115,7 @@ public class MorphologicalOperatorsBasedOnSE {
 	}
 	
 	public static GrayScaleImage gradientInternal(GrayScaleImage img, AdjacencyRelation adjB){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		gradientInternal(img, adjB, imgOut);
 		return imgOut;
 	}
@@ -133,7 +133,7 @@ public class MorphologicalOperatorsBasedOnSE {
 
 	
 	public static GrayScaleImage gradientExternal(GrayScaleImage img, AdjacencyRelation adjB){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		gradientExternal(img, adjB, imgOut);
 		return imgOut;
 	}
@@ -149,7 +149,7 @@ public class MorphologicalOperatorsBasedOnSE {
     public static void asfCloseOpen(GrayScaleImage img, SimpleLinkedList<AdjacencyRelation> ses, GrayScaleImage imgOut){
     	long ti = System.currentTimeMillis();
     	GrayScaleImage imgTmp = img.duplicate();
-    	GrayScaleImage imgTmp2 = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	GrayScaleImage imgTmp2 = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         for(AdjacencyRelation se: ses){
         
         	//closing
@@ -188,7 +188,7 @@ public class MorphologicalOperatorsBasedOnSE {
     public static void asfOpenClose(GrayScaleImage img, SimpleLinkedList<AdjacencyRelation> ses, GrayScaleImage imgOut){
     	long ti = System.currentTimeMillis();
     	GrayScaleImage imgTmp = img.duplicate();
-    	GrayScaleImage imgTmp2 = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	GrayScaleImage imgTmp2 = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         for(AdjacencyRelation se: ses){
         
         	//closing
@@ -229,7 +229,7 @@ public class MorphologicalOperatorsBasedOnSE {
     }
     
     public static GrayScaleImage openingTopHat(GrayScaleImage img, AdjacencyRelation se){
-    	GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
     	openingTopHat(img, se, imgOut);
     	return imgOut;
     }
@@ -245,7 +245,7 @@ public class MorphologicalOperatorsBasedOnSE {
     }
 
     public static GrayScaleImage selfTopHat(GrayScaleImage img, AdjacencyRelation se){
-        GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         selfTopHat(img, se, imgOut);
         return imgOut;
     }
@@ -267,7 +267,7 @@ public class MorphologicalOperatorsBasedOnSE {
     }
     
     public static GrayScaleImage realceTopHat(GrayScaleImage img, AdjacencyRelation se){
-        GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         realceTopHat(img, se, imgOut);
         return imgOut;
     }
@@ -307,13 +307,13 @@ public class MorphologicalOperatorsBasedOnSE {
     }
     
     public static GrayScaleImage closingTopHat(GrayScaleImage img, AdjacencyRelation se){
-    	GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
     	closingTopHat(img, se, imgOut);
         return imgOut;
     }
     
     public static GrayScaleImage closingTopHat(GrayScaleImage img, AdjacencyRelation ses[]){
-    	GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+    	GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
     	closingTopHat(img, ses, imgOut);
         return imgOut;
     }
@@ -348,8 +348,8 @@ public class MorphologicalOperatorsBasedOnSE {
     }
     
     public static GrayScaleImage[] ultimateOpening(GrayScaleImage img, int maxCriterion){
-        GrayScaleImage imgOutR = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
-        GrayScaleImage imgOutIndex = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, img.getWidth(), img.getHeight());
+        GrayScaleImage imgOutR = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_8BITS, img.getWidth(), img.getHeight());
+        GrayScaleImage imgOutIndex = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, img.getWidth(), img.getHeight());
         ultimateOpening(img, maxCriterion, imgOutR, imgOutIndex);
         return new GrayScaleImage[]{imgOutR, imgOutIndex};
     }
@@ -382,8 +382,8 @@ public class MorphologicalOperatorsBasedOnSE {
     }
   
     public static GrayScaleImage[] ultimateClosing(GrayScaleImage img, int maxCriterion){
-        GrayScaleImage imgR = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-        GrayScaleImage imgQ = ImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgR = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgQ = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         ultimateClosing(img, maxCriterion, imgR, imgQ);
         return new GrayScaleImage[]{imgR, imgQ};
     }

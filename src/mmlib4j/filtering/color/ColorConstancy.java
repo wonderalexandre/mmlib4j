@@ -2,7 +2,7 @@ package mmlib4j.filtering.color;
 
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.utils.ImageBuilder;
 
 public class ColorConstancy {
@@ -33,13 +33,13 @@ public class ColorConstancy {
 	}
 	
 	public static ColorImage whitePatch(ColorImage imgIn){
-		ColorImage imgOut = ImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
+		ColorImage imgOut = AbstractImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
 		whitePatch(imgIn, imgOut);
 		return imgOut;
 	}
 
 	public static ColorImage greyWorld(ColorImage imgIn){
-		ColorImage imgOut = ImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
+		ColorImage imgOut = AbstractImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
 		greyWorld(imgIn, imgOut);
 		return imgOut;
 	}
@@ -84,7 +84,7 @@ public class ColorConstancy {
 	}
 
 	public static ColorImage toChromaticityColorSpace(ColorImage imgIn){
-		ColorImage imgOut = ImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
+		ColorImage imgOut = AbstractImageFactory.instance.createColorImage(imgIn.getWidth(), imgIn.getHeight());
 		toChromaticityColorSpace(imgIn, imgOut);
 		return imgOut;
 	}

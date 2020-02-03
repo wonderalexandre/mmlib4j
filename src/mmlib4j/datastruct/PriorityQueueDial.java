@@ -83,8 +83,6 @@ public class PriorityQueueDial  {
     		numElements--;
     	}
     	
-    	
-    	
     }
 
     public Integer remove() {
@@ -116,7 +114,6 @@ public class PriorityQueueDial  {
     	return (numElements == 0);
     }
 
-     
     public int size() {
     	return numElements;
     }

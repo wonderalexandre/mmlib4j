@@ -6,7 +6,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -259,7 +259,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	
 	public ColorImage getImageMSER(int delta){
-		ColorImage img = ImageFactory.instance.createCopyColorImage(tree.getInputImage());
+		ColorImage img = AbstractImageFactory.instance.createCopyColorImage(tree.getInputImage());
 		boolean b[] = getMappingNodesByMSER(delta);
 		for(NodeLevelSets node: tree.getListNodes()){
 			if(b[node.getId()])
@@ -271,7 +271,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 	}
 
 	public ColorImage getPointImageMSER(int delta){
-		ColorImage img = ImageFactory.instance.createCopyColorImage(tree.getInputImage());
+		ColorImage img = AbstractImageFactory.instance.createCopyColorImage(tree.getInputImage());
 		for(NodeLevelSets node: getNodesByMSER(delta)){
 			for(int p: node.getCompactNodePixels()){
 				img.setPixel(p, Color.RED.getRGB());

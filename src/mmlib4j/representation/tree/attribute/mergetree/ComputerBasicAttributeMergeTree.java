@@ -1,9 +1,10 @@
-package mmlib4j.representation.mergetree;
+package mmlib4j.representation.tree.attribute.mergetree;
 
 
 import java.util.HashMap;
 
-import mmlib4j.representation.mergetree.InfoMergedTree.NodeMergedTree;
+import mmlib4j.representation.tree.InfoMergedTree;
+import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.Utils;
 
@@ -45,10 +46,10 @@ public class ComputerBasicAttributeMergeTree extends AttributeUpdatedIncremental
 	} 		
 	
 	public void preProcessing(NodeMergedTree node_) {				
-		if(!node_.isAttrCloned) {
+		if(!node_.isAttrModified()) {
 			//node_.attributes = (HashMap<Integer, Attribute>) node_.attributes.clone();
-			node_.attributes = new HashMap<Integer, Attribute>();
-			node_.isAttrCloned = true;
+			node_.setAttributes(new HashMap<Integer, Attribute>());
+			node_.setIsAttrModified(true);
 		}
 		
 		attr[node_.getId()] = new BasicAttribute();
@@ -60,7 +61,7 @@ public class ComputerBasicAttributeMergeTree extends AttributeUpdatedIncremental
 	public void mergeChildrenUpdate(NodeMergedTree node_, NodeMergedTree son_) {					
 		attr[node_.getId()].volume.value = attr[node_.getId()].volume.value + son_.getAttributeValue(Attribute.VOLUME);		
 		// How to compute them?
-		if(son_.info.isNodeMaxtree()) {			
+		if(son_.getInfo().isNodeMaxtree()) {			
 			int highest = (int) (son_.getAttributeValue(Attribute.ALTITUDE) + son_.getLevel() - 1);
 			attr[node_.getId()].highest = Math.max(attr[node_.getId()].highest, highest);
 		}
@@ -79,7 +80,7 @@ public class ComputerBasicAttributeMergeTree extends AttributeUpdatedIncremental
 
 	public void posProcessing(NodeMergedTree root_) {		
 		//root.setVolume( (int) attr[root.getId()].volume.value );		
-		if(root_.info.isNodeMaxtree()){
+		if(root_.getInfo().isNodeMaxtree()){
 			attr[root_.getId()].altitude.value = attr[root_.getId()].highest - root_.getLevel() + 1; 
 		}
 		else{

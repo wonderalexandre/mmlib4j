@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.ColorImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.tos.TreeOfShape;
@@ -261,7 +261,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	*/
 	
 	public ColorImage getImageMSER(int delta){
-		ColorImage img = ImageFactory.instance.createCopyColorImage(tree.getInputImage());
+		ColorImage img = AbstractImageFactory.instance.createCopyColorImage(tree.getInputImage());
 		for(NodeLevelSets node: getNodesByMSER(delta)){
 			for(int p: node.getPixelsOfCC()){
 				img.setPixel(p, Color.RED.getRGB());
@@ -271,7 +271,7 @@ public class ComputerMserTreeOfShapes implements ComputerMser{
 	}
 
 	public ColorImage getPointImageMSER(int delta){
-		ColorImage img = ImageFactory.instance.createCopyColorImage(tree.getInputImage());
+		ColorImage img = AbstractImageFactory.instance.createCopyColorImage(tree.getInputImage());
 		for(NodeLevelSets node: getNodesByMSER(delta)){
 			for(int p: node.getCompactNodePixels()){
 				img.setPixel(p, Color.RED.getRGB());

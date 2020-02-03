@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class SimpleArrayList<T> implements Iterable<T> {
+public class SimpleArrayList<T> implements Iterable<T>, Flatten<T> {
 
 	T elementData[];
 	int capacity;
@@ -106,8 +106,6 @@ public class SimpleArrayList<T> implements Iterable<T> {
         if (index >= size)
         		throw new IndexOutOfBoundsException("Index: "+index+", Size: "+size);
     }
-	
-	
 	
 	public Iterator<T> iterator() {
 		return new Iterator<T>() {

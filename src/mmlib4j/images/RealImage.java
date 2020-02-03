@@ -27,8 +27,7 @@ public interface RealImage extends Image2D{
     public void setPixel(int i, float level);
     
     public float getPixel(int i);
-    
-    
+        
     public float getValue(int x, int y);
 	
 	public float getValue(int p);

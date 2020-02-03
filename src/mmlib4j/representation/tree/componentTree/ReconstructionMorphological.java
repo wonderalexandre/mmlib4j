@@ -5,7 +5,7 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.filtering.MorphologicalOperatorsBasedOnSE;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageAlgebra;
@@ -214,8 +214,8 @@ public class ReconstructionMorphological {
 
 	public GrayScaleImage selfReconstruction(final GrayScaleImage imgMarcador){
 		long ti = System.currentTimeMillis();
-		final GrayScaleImage recO = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_8BITS, 0, 0);
-		final GrayScaleImage recC = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_8BITS, 0, 0);
+		final GrayScaleImage recO = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_8BITS, 0, 0);
+		final GrayScaleImage recC = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_8BITS, 0, 0);
 
 		//paralelisa
         final Thread[] threads = new Thread[2]; 
@@ -243,7 +243,7 @@ public class ReconstructionMorphological {
 		}
 		
 		
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		for(int p: imgOut.scanForward()){
 			//if(mintree.getSC(p).flagPruning && maxtree.getSC(p).flagPruning){
 			//	System.out.println("ops...");

@@ -9,7 +9,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -49,7 +49,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 	private ColorImage reconstruction(SimpleArrayList<ExtinctionValueNode> extincaoPorNode, int attributeValue1, int attributeValue2){
 		//reconstrucao
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(4); 
-		ColorImage imgOut = ImageFactory.instance.createColorImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight());
+		ColorImage imgOut = AbstractImageFactory.instance.createColorImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()){
@@ -73,7 +73,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 	}
 	
 	public GrayScaleImage segmentationByAttribute(int attValue1, int attValue2, int type){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(tree.getInputImage().getDepth(), tree.getInputImage().getWidth(), tree.getInputImage().getHeight());; 
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(tree.getInputImage().getDepth(), tree.getInputImage().getWidth(), tree.getInputImage().getHeight());; 
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
@@ -126,7 +126,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 	}
 	
 	public GrayScaleImage segmentationByKmax(int kmax, int type){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(tree.getInputImage().getDepth(), tree.getInputImage().getWidth(), tree.getInputImage().getHeight());; 
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(tree.getInputImage().getDepth(), tree.getInputImage().getWidth(), tree.getInputImage().getHeight());; 
 		int partition[] = new int[tree.getNumNode()];
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionByAttribute(type);
@@ -183,7 +183,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 	private ColorImage reconstructionKmax(SimpleArrayList<ExtinctionValueNode> extincaoPorNode, int kmax){
 		//reconstrucao
 		AdjacencyRelation adj = AdjacencyRelation.getCircular(4); 
-		ColorImage imgOut = ImageFactory.instance.createColorImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight());
+		ColorImage imgOut = AbstractImageFactory.instance.createColorImage(tree.getInputImage().getWidth(), tree.getInputImage().getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		if(kmax > extincaoPorNode.size()) kmax = extincaoPorNode.size();

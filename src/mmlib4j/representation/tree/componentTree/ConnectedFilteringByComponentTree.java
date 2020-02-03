@@ -5,14 +5,14 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.mergetree.InfoMergedTree;
-import mmlib4j.representation.mergetree.InfoMergedTreeLevelOrder;
-import mmlib4j.representation.mergetree.InfoMergedTreeReverseLevelOrder;
-import mmlib4j.representation.mergetree.InfoMergedTree.NodeMergedTree;
+import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.representation.tree.InfoMergedTree;
+import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
+import mmlib4j.representation.tree.InfoMergedTreeReverseLevelOrder;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
@@ -23,10 +23,13 @@ import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
+import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerViterbi;
 import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
+import mmlib4j.representation.tree.attribute.mergetree.ComputerBasicAttributeMergeTree;
+import mmlib4j.representation.tree.attribute.mergetree.ComputerCentralMomentAttributeMergeTree;
 import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -140,7 +143,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public void computerFunctionalAttribute(){		
 		if(!hasComputerFunctionalAttribute){
 			computerAttributeBasedPerimeterExternal();
-			new ComputerFunctionalAttribute(this).addAttributeInNodesCT(getListNodes());
+			new ComputerFunctionalAttribute(this, imgInput).addAttributeInNodesCT(getListNodes());
 			hasComputerFunctionalAttribute = true;
 		}
 	}
@@ -246,33 +249,21 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public GrayScaleImage filteringByPruningViterbi(double attributeValue, int type){				
 		return getInfoPrunedTreeByViterbi(attributeValue, type).reconstruction();
 	}
-	
-	/*
-	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
-	 * */
 
 	public GrayScaleImage filteringByDirectRule(double attributeValue, int type){
-		simplificationTreeByDirectRule(attributeValue, type);
-		return reconstruction();
+		return getInfoMergedTreeByDirectRule(attributeValue, type).reconstruction();
 	}
-	
-	/*
-	 * Take care! This operation modifies the original tree structure, but it keeps the attributes unchanged.
-	 * */
 	public GrayScaleImage filteringBySubtractiveRule(double attributeValue, int type) {		
-		simplificationTreeBySubstractiveRule(attributeValue, type);
-		return reconstruction();
+		return getInfoMergedTreeBySubstractiveRule(attributeValue, type).reconstruction();
 	}
 		
-	public InfoPrunedTree getInfoPrunedTree(double attributeValue, int attributeType, int typeSimplification){
-		
+	public InfoPrunedTree getInfoPrunedTree(double attributeValue, int attributeType, int typeSimplification){		
 		if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MIN)
 			return getInfoPrunedTreeByMin(attributeValue, typeSimplification);
 		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_MAX)
 			return getInfoPrunedTreeByMax(attributeValue, typeSimplification);
 		else if(typeSimplification == MorphologicalTreeFiltering.PRUNING_VITERBI)
-			return getInfoPrunedTreeByViterbi(attributeValue, typeSimplification);
-				
+			return getInfoPrunedTreeByViterbi(attributeValue, typeSimplification);						
 		throw new RuntimeException("type filtering invalid");
 	}
 	
@@ -461,7 +452,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	/*
 	 * This operation keeps the original tree structure unchanged.
 	 **/		
-	public GrayScaleImage simplificationTreeByDirectRuleMtree(double attributeValue, int type){			
+	public InfoMergedTree getInfoMergedTreeByDirectRule(double attributeValue, int type){			
 		
 		boolean[] mapCorrection = new boolean[numNodeIdMax];
 		NodeLevelSets parent;		
@@ -490,7 +481,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			}
 		} else {
 			for(NodeMergedTree node_ : mTree.skipRoot()) {						
-				if(node_.getInfo().getAttributeValue(type) <= attributeValue) {	
+				if(mTree.getAttribute(node_, type) <= attributeValue) {	
 					mTree.updateNodeToMerge(node_);	
 					for(NodeMergedTree n : node_.getParent().getPathToRoot()) {
 						if(mapCorrection[n.getId()])
@@ -505,20 +496,23 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 		
 		// Correct attributes
-		//new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
 		
-		//if(hasComputerCentralMomentAttribute)
-		//	new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
-			
+		if(hasComputerCentralMomentAttribute)
+			new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		
+		//if(hasComputerFunctionalAttribute)
+		//	new ComputerFunctionalAttribute(mTree, numNodeIdMax, true, mapCorrection).addAttributeInNodesMtree(mapCorrection);
+		
 		// Modify maxID to optimize memory		
 		numNodeIdMax = newNumNodeIdMax + 1;
-		return mTree.reconstruction();
+		return mTree;
 	}
 	
 	/*
 	 * This operation keeps the original tree structure unchanged.
 	 **/		
-	public GrayScaleImage simplificationTreeBySubstractiveRuleMtree(double attributeValue, int type){			
+	public InfoMergedTree getInfoMergedTreeBySubstractiveRule(double attributeValue, int type){			
 		
 		int[] offset = new int[numNodeIdMax];
 		boolean[] mapCorrection = new boolean[numNodeIdMax];
@@ -564,7 +558,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			// First compute offsets and mapCorrection	
 			SimpleLinkedList<NodeLevelSets> nodesToMerge = new SimpleLinkedList<>();
 			for(NodeMergedTree node_ : mTree.skipRoot()) {						
-				if(node_.getInfo().getAttributeValue(type) <= attributeValue) {	
+				if(mTree.getAttribute(node_, type) <= attributeValue) {	
 					offset[node_.getId()] = offset[node_.getParent().getId()] - node_.getLevel() + node_.getParent().getLevel();				
 					for(NodeMergedTree n : node_.getParent().getPathToRoot()) {
 						if(mapCorrection[n.getId()])
@@ -594,14 +588,14 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		mTree.updateLevels(offset);
 		
 		// Correct attributes
-		//new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
+		new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
 		
-		//if(hasComputerCentralMomentAttribute)
-		//	new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();		
+		if(hasComputerCentralMomentAttribute)
+			new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();		
 		
 		// Modify maxID to optimize memory		
 		numNodeIdMax = newNumNodeIdMax + 1;
-		return mTree.reconstruction();
+		return mTree;
 	}
 	
 	SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
@@ -616,7 +610,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		if(extinctionValue.getType() != type)
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(type);
 		
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){
@@ -720,15 +714,15 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
-		fifo.enqueue( prunedTree.getRoot() );
+		fifo.enqueue(prunedTree.getRoot());
 		while(!fifo.isEmpty()){
 			InfoPrunedTree.NodePrunedTree node_ = fifo.dequeue();
 			NodeLevelSets node = node_.getInfo();
-			for(NodeLevelSets son: node.getChildren()){
+			for(NodeLevelSets son: node.getChildren()){				
 				if(prunedTree.wasPruned(son)){
-					for(int p: son.getPixelsOfCC()){
+					for(int p: son.getPixelsOfCC()){						
 						imgOut.setPixel(p, node.getLevel());
 					}
 				}
@@ -736,7 +730,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			for(int p: node.getCompactNodePixels()){
 				imgOut.setPixel(p, node.getLevel());
 			}
-			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){
+			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){			
 				fifo.enqueue( son );	
 			}
 			

@@ -5,46 +5,84 @@ import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.RealImage;
 
-public abstract class ImageFactory {
+public class ImageFactory {
 	
 	public static final int DEPTH_32BITS = 32;
 	public static final int DEPTH_16BITS = 16;
 	public static final int DEPTH_8BITS = 8;
 	
-	public static ImageFactory instance = MmlibImageFactory.instance;
+	//////////////////////////////////////////////////////////
+	//                   create news images
+	////////////////////////////////////////////////////////
+	public static GrayScaleImage createGrayScaleImage(int depth, int width, int height){
+		return MmlibImageFactory.instance.createGrayScaleImage(depth, width, height);
+	}
+	/*
+	public static GrayScaleImage createGrayScaleImage(int width, int height) {
+		return createGrayScaleImage(DEPTH_8BITS, width, height);
+	}
+	*/
 	
-	public abstract GrayScaleImage createGrayScaleImage(int depth, int width, int height);
+	public static BinaryImage createBinaryImage(int width, int height){
+		return MmlibImageFactory.instance.createBinaryImage(width, height);
+	}
 	
-	public abstract BinaryImage createBinaryImage(int width, int height);
 
-	public abstract ColorImage createColorImage(int width, int height);
+	public static ColorImage createColorImage(int width, int height){
+		return  MmlibImageFactory.instance.createColorImage(width, height);
+	}
+	
 
-	public abstract RealImage createRealImage(int width, int height);	
+	public static RealImage createRealImage(int width, int height){
+		return  MmlibImageFactory.instance.createRealImage(width, height);
+	}
+	
 	
 	//////////////////////////////////////////////////////////
 	//      create copy for the object pixels[] ///
 	/////////////////////////////////////////////////////////	
-	public abstract ColorImage createCopyColorImage(GrayScaleImage img);
+	public static ColorImage createCopyColorImage(GrayScaleImage img){
+		return  MmlibImageFactory.instance.createCopyColorImage(img);
+	}
 	
-	public abstract ColorImage createCopyColorImage(BinaryImage img);
+	public static ColorImage createCopyColorImage(BinaryImage img){
+		return  MmlibImageFactory.instance.createCopyColorImage(img);
+	}
 	
-	public abstract ColorImage createCopyColorImage(ColorImage img);
+	public static ColorImage createCopyColorImage(ColorImage img){
+		return  MmlibImageFactory.instance.createCopyColorImage(img);
+	}
 	
-	public abstract GrayScaleImage createCopyGrayScaleImage(GrayScaleImage img);
+	public static GrayScaleImage createCopyGrayScaleImage(GrayScaleImage img) {
+		return  MmlibImageFactory.instance.createCopyGrayScaleImage(img);
+	}
 	
-	public abstract BinaryImage createCopyBinaryImage(BinaryImage img);
+	public static BinaryImage createCopyBinaryImage(BinaryImage img) {
+		return  MmlibImageFactory.instance.createCopyBinaryImage(img);
+	}
+
 	
-	public abstract RealImage createCopyRealImage(RealImage img);
-		
+	public static RealImage createCopyRealImage(RealImage img) {
+		return MmlibImageFactory.instance.createCopyRealImage(img);
+	}
+	
 	//////////////////////////////////////////////////////////
 	//      create new references for the object pixels[] ///
 	/////////////////////////////////////////////////////////
-	public abstract ColorImage createReferenceColorImage(int pixels[], int width, int height);
+	public static ColorImage createReferenceColorImage(int pixels[], int width, int height){
+		return MmlibImageFactory.instance.createReferenceColorImage(pixels, width, height);		
+	}
 	
-	public abstract RealImage createReferenceRealImage(float pixels[], int width, int height);
+	public static RealImage createReferenceRealImage(float pixels[], int width, int height){
+		return MmlibImageFactory.instance.createReferenceRealImage(pixels, width, height);
+	}
 
-	public abstract BinaryImage createReferenceBinaryImage(boolean pixels[], int width, int height);
+	public static BinaryImage createReferenceBinaryImage(boolean pixels[], int width, int height){
+		return MmlibImageFactory.instance.createReferenceBinaryImage(pixels, width, height);
+	}
 
-	public abstract GrayScaleImage createReferenceGrayScaleImage(int depth, Object pixels, int width, int height);
-
+	public static GrayScaleImage createReferenceGrayScaleImage(int depth, Object pixels, int width, int height) {
+		return  MmlibImageFactory.instance.createReferenceGrayScaleImage(depth, pixels, width, height);
+	}
+	
 }

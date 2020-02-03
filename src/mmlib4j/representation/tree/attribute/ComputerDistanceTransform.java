@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.RealImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.Utils;
 
@@ -54,7 +54,7 @@ public class ComputerDistanceTransform {
 			computerDT(son);
 		}
 		if(imgsDT[root.getLevel()] == null){
-			imgsDT[root.getLevel()] = ImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+			imgsDT[root.getLevel()] = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
 			pool.execute(new ThreadNode(root, img, imgsDT[root.getLevel()]));
 		}
 	}

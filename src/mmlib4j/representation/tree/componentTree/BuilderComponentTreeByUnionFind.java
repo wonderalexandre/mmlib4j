@@ -6,7 +6,7 @@ import java.util.Iterator;
 import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.AdjacencyRelation;
@@ -382,7 +382,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		}
 		
 		
-		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
+		BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(AbstractImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
 		//BuilderComponentTreeByUnionFind builder = new BuilderComponentTreeByUnionFind(ImageBuilder.openGrayImage(), AdjacencyRelation.getCircular(1.5), false);
 		NodeLevelSets root = builder.getRoot();
 		
@@ -393,7 +393,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");
 		
-		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(ImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
+		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(AbstractImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
 		tree.filteringByExtinctionValue(10, 0);
 		
 

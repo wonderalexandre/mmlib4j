@@ -7,10 +7,10 @@ import java.util.Iterator;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class SimpleLinkedList<T> implements Iterable<T> {
+public class SimpleLinkedList<T> implements Iterable<T>, Flatten<T> {
 	
-	private NodeLL<T> first;
-	private NodeLL<T> last;
+	private NodeLL<T> first = null;
+	private NodeLL<T> last = null;
 	private int length = 0; 
 	private int policy = 0; //0 = FIFO; 1 = LIFO
 	
@@ -71,7 +71,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
         	this.last = l.last;	
         }
 		
-		length += l.size() ;
+		length += l.size();
 	}
 	
 	public boolean contains(T e){
@@ -246,8 +246,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     	 
     	 for(int i: l2.reverse()) {
     		 System.out.println("L2[reverse] =>"+i);
-    	 }
-    	 
+    	 }    	 
     	 
     	 //l.addAll(l2);
     	 

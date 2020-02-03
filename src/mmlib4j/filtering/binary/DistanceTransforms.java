@@ -2,7 +2,7 @@ package mmlib4j.filtering.binary;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.RealImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.MmlibImageFactory;
 
 /**
@@ -13,7 +13,7 @@ import mmlib4j.images.impl.MmlibImageFactory;
 public class DistanceTransforms {
   
 	public RealImage euclideanDistance(BinaryImage img){
-		return ImageFactory.instance.createReferenceRealImage(euclideanDistanceMap(img), img.getWidth(), img.getHeight());
+		return AbstractImageFactory.instance.createReferenceRealImage(euclideanDistanceMap(img), img.getWidth(), img.getHeight());
 	}
 	
 	public float[] euclideanDistanceMap(BinaryImage img){
@@ -41,20 +41,20 @@ public class DistanceTransforms {
 	}
 	
 	public GrayScaleImage chessbordDistance(BinaryImage img){
-		return ImageFactory.instance.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, chessbordDistanceMap(img), img.getWidth(), img.getHeight());
+		return AbstractImageFactory.instance.createReferenceGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, chessbordDistanceMap(img), img.getWidth(), img.getHeight());
 	}
 	
 	
 	public GrayScaleImage cityBlockDistance(BinaryImage img){
-		return ImageFactory.instance.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, cityBlockDistanceMap(img), img.getWidth(), img.getHeight());
+		return AbstractImageFactory.instance.createReferenceGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, cityBlockDistanceMap(img), img.getWidth(), img.getHeight());
 	}
 	
 	public GrayScaleImage euclideanDistanceDiscrete(BinaryImage img){
-		return ImageFactory.instance.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, euclideanDistanceMapDiscrete(img), img.getWidth(), img.getHeight());
+		return AbstractImageFactory.instance.createReferenceGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, euclideanDistanceMapDiscrete(img), img.getWidth(), img.getHeight());
 	}
 	
 	public GrayScaleImage dtChamfer(BinaryImage img, int k1, int k2){
-		return ImageFactory.instance.createReferenceGrayScaleImage(ImageFactory.DEPTH_32BITS, distanceTransform(img, k1, k2), img.getWidth(), img.getHeight());
+		return AbstractImageFactory.instance.createReferenceGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, distanceTransform(img, k1, k2), img.getWidth(), img.getHeight());
 	}
 	
 	public int[] distanceTransform(BinaryImage img, int k1, int k2){
@@ -205,7 +205,7 @@ public class DistanceTransforms {
     
 	
     public static void main(String args[]){
-    	BinaryImage img = ImageFactory.instance.createBinaryImage(20, 20);
+    	BinaryImage img = AbstractImageFactory.instance.createBinaryImage(20, 20);
     	for(int h=1; h < 5; h++){
     		for(int w=1; w < 5; w++){
     			img.setPixel(w, h, true);

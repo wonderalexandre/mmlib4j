@@ -5,10 +5,10 @@ import java.io.File;
 import mmlib4j.datastruct.PriorityQueueHeap;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.representation.mergetree.InfoMergedTree;
-import mmlib4j.representation.mergetree.InfoMergedTreeLevelOrder;
-import mmlib4j.representation.mergetree.InfoMergedTree.NodeMergedTree;
+import mmlib4j.representation.tree.InfoMergedTree;
+import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
@@ -93,8 +93,7 @@ public class ComputerFunctionalVariational {
 		return -(( t3 - t1 - t2 ) + (scale * node.getAttributeValue(Attribute.PERIMETER_EXTERNAL)));		
 	}
 		
-	private void updateEnergy(PriorityQueueHeap<NodeMergedTree> queue, NodeMergedTree node) {
-				
+	private void updateEnergy(PriorityQueueHeap<NodeMergedTree> queue, NodeMergedTree node) {				
 		double newEnergy = calculateVariational(node);
 		
 		if(queue.contains(node)) {		
@@ -105,8 +104,7 @@ public class ComputerFunctionalVariational {
 			queue.add(node, newEnergy);			
 		}
 		
-		functionalVariational[node.getId()].value = newEnergy;
-		
+		functionalVariational[node.getId()].value = newEnergy;		
 	}
 	
 	/**
@@ -132,7 +130,6 @@ public class ComputerFunctionalVariational {
 						
 			NodeMergedTree node_ = queue.removeMin();							
 			NodeMergedTree parent_ = node_.getParent();						
-			//tree.mergeParent(node);
 			mTree.updateNodeToMerge(node_.getInfo());
 				
 			/* Update parameters */									
@@ -238,7 +235,7 @@ public class ComputerFunctionalVariational {
 													tree.getRoot(), 
 													tree.getInputImage()).addAttributeInNodesCT(tree.getListNodes());		
 		
-		ComputerFunctionalVariational fattr = new ComputerFunctionalVariational(tree, 1000, false);
+		ComputerFunctionalVariational fattr = new ComputerFunctionalVariational(tree, 100, false);
 		
 		ImageBuilder.saveImage(fattr.getSimplifiedImage(), new File("/Users/gobber/Desktop/reconstructed2.png"));	
 		System.err.println("Finished");	

@@ -9,7 +9,7 @@ import java.text.NumberFormat;
 import mmlib4j.filtering.Histogram;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.utils.ImageBuilder;
 
 /**
@@ -32,7 +32,7 @@ public class WindowHistogram {
      * @return
      */
     public ColorImage drawHistogram(GrayScaleImage img){
-        ColorImage imgOut = ImageFactory.instance.createColorImage(WIN_WIDTH, WIN_HEIGHT);
+        ColorImage imgOut = AbstractImageFactory.instance.createColorImage(WIN_WIDTH, WIN_HEIGHT);
         imgOut.initImage(Color.WHITE.getRGB());
         Histogram histogram = new Histogram(img);
         int h[] = histogram.getHistogram();

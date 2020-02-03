@@ -67,7 +67,9 @@ public class InfoPrunedTree {
 		return tree;
 	}
 	
-	
+	public NodePrunedTree[] getMap() {
+		return map;
+	}
 	
 	public boolean wasPruned(NodeLevelSets node){
 		return map[node.hashCode()] == null;
@@ -120,8 +122,7 @@ public class InfoPrunedTree {
 		}
 	}
 	
-
-	public class NodePrunedTree{
+	public class NodePrunedTree {
 		NodeLevelSets info;
 		NodePrunedTree parent;
 	    SimpleLinkedList<NodePrunedTree> children = new SimpleLinkedList<NodePrunedTree>();

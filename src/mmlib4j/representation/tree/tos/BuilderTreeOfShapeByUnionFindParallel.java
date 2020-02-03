@@ -7,7 +7,7 @@ import java.util.Iterator;
 import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
@@ -253,7 +253,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		this.numNode = 0;
 		NodeToS nodesMap[] = new NodeToS[parent.length];
 		//WindowImages.show(AbstractImageFactory.instance.createGrayScaleImage(32, sumGradBoundary, interpWidth, interpHeight));
-		img = ImageFactory.instance.createGrayScaleImage(8, interpWidth, interpHeight);
+		img = AbstractImageFactory.instance.createGrayScaleImage(8, interpWidth, interpHeight);
 		
 		for (int p = 0; p < imgU.length; p++) {
 			img.setPixel(p, imgU[p]);
@@ -733,7 +733,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			}
 			System.out.println();
 		}
-		GrayScaleImage img = ImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height);
+		GrayScaleImage img = AbstractImageFactory.instance.createReferenceGrayScaleImage(32, pixels5, width, height);
 		
 		BuilderTreeOfShapeByUnionFindParallel builder = new BuilderTreeOfShapeByUnionFindParallel(ImageBuilder.openGrayImage());
 		if(true) return;

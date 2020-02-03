@@ -5,7 +5,7 @@ import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.Image2D;
 import mmlib4j.images.RealImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -33,7 +33,7 @@ public class MatlabAdapter {
 
 		if(image instanceof GrayScaleImage){
 			GrayScaleImage img = (GrayScaleImage) image;
-			if(img.getDepth() == ImageFactory.DEPTH_8BITS){
+			if(img.getDepth() == AbstractImageFactory.DEPTH_8BITS){
 				byte[][] mat = new byte[height][width];
 				for(int x=0; x < img.getWidth(); x++){
 					for(int y=0; y < img.getHeight(); y++){
@@ -41,7 +41,7 @@ public class MatlabAdapter {
 					}
 				}
 				return mat;
-			}else if(img.getDepth() == ImageFactory.DEPTH_16BITS){
+			}else if(img.getDepth() == AbstractImageFactory.DEPTH_16BITS){
 				short[][] mat = new short[height][width];
 				for(int x=0; x < img.getWidth(); x++){
 					for(int y=0; y < img.getHeight(); y++){
@@ -103,7 +103,7 @@ public class MatlabAdapter {
 		int width = image[0].getWidth();
 		int height = image[0].getHeight();
 		GrayScaleImage img[] = (GrayScaleImage[]) image;
-		if(img[0].getDepth() == ImageFactory.DEPTH_8BITS){
+		if(img[0].getDepth() == AbstractImageFactory.DEPTH_8BITS){
 			byte[][][] mat = new byte[height][width][image.length];
 			for(int band = 0; band < image.length; band++) {
 				for(int x=0; x < img[band].getWidth(); x++){
@@ -113,7 +113,7 @@ public class MatlabAdapter {
 				}
 			}
 			return mat;
-		}else if(img[0].getDepth() == ImageFactory.DEPTH_16BITS){
+		}else if(img[0].getDepth() == AbstractImageFactory.DEPTH_16BITS){
 			short[][][] mat = new short[height][width][image.length];
 			for(int band = 0; band < image.length; band++) 
 				for(int x=0; x < img[band].getWidth(); x++){
@@ -150,7 +150,7 @@ public class MatlabAdapter {
 		GrayScaleImage img = null;
 		if (object instanceof byte[][]) {
 			byte pixels[][] = (byte[][]) object;
-			img = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_8BITS, pixels[0].length, pixels.length);
+			img = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_8BITS, pixels[0].length, pixels.length);
 			for(int x = 0; x < img.getWidth(); x++){
 				for(int y = 0; y < img.getHeight(); y++){
 					img.setPixel(x,  y, pixels[y][x]);
@@ -159,7 +159,7 @@ public class MatlabAdapter {
 		}
 		else if (object instanceof short[][]){
 			short pixels[][] = (short[][]) object;
-			img = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_16BITS, pixels[0].length, pixels.length);
+			img = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_16BITS, pixels[0].length, pixels.length);
 			for(int x = 0; x < img.getWidth(); x++){
 				for(int y = 0; y < img.getHeight(); y++){
 					img.setPixel(x,  y, pixels[y][x]);
@@ -168,7 +168,7 @@ public class MatlabAdapter {
 		}
 		else if (object instanceof int[][]){
 			int pixels[][] = (int[][]) object;
-			img = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, pixels[0].length, pixels.length);
+			img = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, pixels[0].length, pixels.length);
 			for(int x = 0; x < img.getWidth(); x++){
 				for(int y = 0; y < img.getHeight(); y++){
 					img.setPixel(x,  y, pixels[y][x]);
@@ -183,7 +183,7 @@ public class MatlabAdapter {
 		ColorImage img = null;
 		if(object instanceof int[][][]){
 			int pixels[][][] = (int[][][]) object;
-			img = ImageFactory.instance.createColorImage(pixels[0].length, pixels.length);
+			img = AbstractImageFactory.instance.createColorImage(pixels[0].length, pixels.length);
 			for(int x = 0; x < img.getWidth(); x++){
 				for(int y = 0; y < img.getHeight(); y++){
 					img.setRed(x,  y, pixels[y][x][0] );
@@ -194,7 +194,7 @@ public class MatlabAdapter {
 		}
 		else if(object instanceof short[][][]){
 			short pixels[][][] = (short[][][]) object;
-			img = ImageFactory.instance.createColorImage(pixels[0].length, pixels.length);
+			img = AbstractImageFactory.instance.createColorImage(pixels[0].length, pixels.length);
 			for(int x = 0; x < img.getWidth(); x++){
 				for(int y = 0; y < img.getHeight(); y++){
 					img.setRed(x,  y, pixels[y][x][0]);
@@ -205,7 +205,7 @@ public class MatlabAdapter {
 		}
 		else if(object instanceof int[][][]){
 			byte pixels[][][] = (byte[][][]) object;
-			img = ImageFactory.instance.createColorImage(pixels[0].length, pixels.length);
+			img = AbstractImageFactory.instance.createColorImage(pixels[0].length, pixels.length);
 			for(int x = 0; x < img.getWidth(); x++){
 				for(int y = 0; y < img.getHeight(); y++){
 					img.setRed(x,  y, pixels[y][x][0] & 0xFF);

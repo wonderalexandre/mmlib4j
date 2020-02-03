@@ -1,7 +1,6 @@
-package mmlib4j.representation.mergetree;
+package mmlib4j.representation.tree;
 
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.representation.tree.NodeLevelSets;
 
 /**
 *  Must be built in level order traversal
@@ -18,10 +17,10 @@ public class InfoMergedTreeLevelOrder extends InfoMergedTree {
 			this.numNode++;										
 			
 			if(map[parent.getId()] == null)
-				map[parent.getId()] = new NodeMergedTree(node.getParent(), true);			
+				map[parent.getId()] = new NodeMergedTree(node.getParent());			
 			
 			if(map[node.getId()] == null) {
-				map[node.getId()] = new NodeMergedTree(node, true);
+				map[node.getId()] = new NodeMergedTree(node);
 				map[parent.getId()].children.add(map[node.getId()]);
 			}	
 			
@@ -35,21 +34,16 @@ public class InfoMergedTreeLevelOrder extends InfoMergedTree {
 		NodeMergedTree parentM = map[parent.getId()];
 		isMerged[node.getId()] = true;
 		
-		// When a node is "fake" it must be copied to preserve it in original tree
-		if(parentM.fakeNode) {			
-			allocateCompactNodePixels(parentM, parent);
-		}
-		
 		// If node != null, it was entered before, during the children propagation below
 		if(map[node.getId()] != null) 
 			parentM.children.remove(map[node.getId()]);		
 		
-		// Copy and join compact node pixels	
-		parentM.getCompactNodePixels().addAll(node.getCompactNodePixels().copy());
+		// Join compact node pixels	
+		parentM.getCompactNodePixels().add(node.getCompactNodePixels());
 		
 		// Add new fake children 
 		for(NodeLevelSets child : node.getChildren()) {					
-			NodeMergedTree child_ = new NodeMergedTree(child, true);
+			NodeMergedTree child_ = new NodeMergedTree(child);
 			map[child.getId()] = child_;
 			parentM.children.add(child_);
 			map[child.getId()].parent = map[parent.getId()];

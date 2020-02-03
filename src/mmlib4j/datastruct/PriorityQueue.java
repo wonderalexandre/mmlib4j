@@ -72,8 +72,6 @@ public class PriorityQueue<T> {
     	}
     	return false;
     }
-
-    
         
     public void add(T element, int priority) {
         if (priority < priorityLowerBound) {

@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
@@ -188,7 +188,7 @@ public class ComponentTree {
 	}
 	
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
 		fifo.enqueue( prunedTree.getRoot() );
 		while(!fifo.isEmpty()){
@@ -263,7 +263,7 @@ public class ComponentTree {
 	}
 	
 	public GrayScaleImage reconstruction(){
-		GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){

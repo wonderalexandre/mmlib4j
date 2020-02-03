@@ -2,7 +2,7 @@ package mmlib4j.segmentation;
 
 import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 
 
@@ -17,9 +17,9 @@ public class WatershedByIFT {
 	
 	public static GrayScaleImage watershedByMarker(GrayScaleImage img, GrayScaleImage marked){
 		long ti = System.currentTimeMillis();	
-		 GrayScaleImage imgMapaPredecessores = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgMapaCusto = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgLabel = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaPredecessores = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaCusto = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgLabel = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 int NIL = -1;
 		 boolean NO_PROCESSED = false;//GRAY
 		 boolean PROCESSED = true; //BLACK 
@@ -77,9 +77,9 @@ public class WatershedByIFT {
 	
 	public static GrayScaleImage watershedByHBasin(GrayScaleImage img, int k){
 		long ti = System.currentTimeMillis();	
-		 GrayScaleImage imgMapaPredecessores = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgMapaCusto = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgLabel = ImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaPredecessores = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaCusto = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgLabel = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 int NIL = -1;
 		 boolean NO_PROCESSED = false;//GRAY
 		 boolean PROCESSED = true; //BLACK 

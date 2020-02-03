@@ -2,7 +2,7 @@ package mmlib4j.utils;
 
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 
 public class HillShade {
 
@@ -35,7 +35,7 @@ public class HillShade {
 	    public static GrayScaleImage makeHillshade(GrayScaleImage imgIn, double xPixelSize, double yPixelSize, double elevation, double azimuth, double nonlinContrast, boolean halfBrightFlat) {
 	        int width = imgIn.getWidth();
 	        int height = imgIn.getHeight();
-	        GrayScaleImage imgOut = ImageFactory.instance.createGrayScaleImage(8, width, height);
+	        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(8, width, height);
 	        elevation *= Math.PI/180;               //to radians
 	        azimuth  *= Math.PI/180;
 	        double xSun = Math.sin(azimuth)*Math.cos(elevation);

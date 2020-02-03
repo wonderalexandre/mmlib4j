@@ -2,7 +2,7 @@ package mmlib4j.filtering.residual.ultimateLevelings;
 
 
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -132,7 +132,7 @@ public class UltimateAttributeOpenClose{
 	}
 	
 	public GrayScaleImage getResidues(){
-		GrayScaleImage transformImg = ImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage transformImg = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		GrayScaleImage res1 = processMaxtree.uao.getResidues();
 		GrayScaleImage res2 = processMintree.uao.getResidues();
 		for(int p=0; p < transformImg.getSize(); p++){
@@ -147,7 +147,7 @@ public class UltimateAttributeOpenClose{
 	}
 	
 	public GrayScaleImage getAssociateIndexImage(){
-		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(ImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
 		
 		GrayScaleImage res1 = processMaxtree.uao.getResidues();
 		GrayScaleImage res2 = processMintree.uao.getResidues();
@@ -202,7 +202,7 @@ public class UltimateAttributeOpenClose{
 	}
 	
 	public GrayScaleImage getAttributeResidues(int attr){
-		GrayScaleImage associateImg = ImageFactory.instance.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage associateImg = AbstractImageFactory.instance.createGrayScaleImage(32, imgInput.getWidth(), imgInput.getHeight());
 		
 		GrayScaleImage res1 = processMaxtree.uao.getResidues();
 		GrayScaleImage res2 = processMintree.uao.getResidues();

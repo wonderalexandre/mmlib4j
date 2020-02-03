@@ -84,11 +84,6 @@ public class PriorityQueueToS  {
 		}
 		numElements--;
 		return buckets[currentPriority].remove(buckets[currentPriority].size()-1);
-	}
-	
-	
-   
-    
-    
+	}   
     
  }

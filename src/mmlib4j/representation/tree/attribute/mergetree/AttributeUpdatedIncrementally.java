@@ -1,7 +1,7 @@
-package mmlib4j.representation.mergetree;
+package mmlib4j.representation.tree.attribute.mergetree;
 
 import mmlib4j.datastruct.SimpleLinkedList;
-import mmlib4j.representation.mergetree.InfoMergedTree.NodeMergedTree;
+import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 
 public abstract class AttributeUpdatedIncrementally {
 	

@@ -11,9 +11,9 @@ import mmlib4j.images.RealImage;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class MmlibImageFactory extends ImageFactory {
+public class MmlibImageFactory extends AbstractImageFactory {
 	
-	public static final ImageFactory instance = new MmlibImageFactory();
+	public static final AbstractImageFactory instance = new MmlibImageFactory();
 	
 	//////////////////////////////////////////////////////////
 	//                   create news images

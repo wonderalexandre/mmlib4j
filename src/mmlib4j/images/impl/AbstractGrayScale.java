@@ -80,8 +80,6 @@ public abstract class AbstractGrayScale extends AbstractImage2D implements GrayS
 		return getPixel( getPixelIndexer().getIndex(p) );
 		
 	}
-
-
  
     /**
      * Pega um histograma da imagem

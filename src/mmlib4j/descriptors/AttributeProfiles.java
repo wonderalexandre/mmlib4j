@@ -1,57 +1,90 @@
-package mmlib4j.descriptors.profiles;
+package mmlib4j.descriptors;
 
 import java.io.File;
 
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.Image2D;
-import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.MmlibImageFactory;
-import mmlib4j.representation.mergetree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
 public class AttributeProfiles {
-	
-	public static ConnectedFilteringByComponentTree tree;
-	
+			
+	public final static int ENERGY = 10; 
+	public static ConnectedFilteringByComponentTree tree;	
 	public static FilteringStrategy strategy;
 	
-	public static GrayScaleImage[] getAttributeProfile(ImageFactory factory, GrayScaleImage img, int attributeType, double thresholds[]) {
+	public static GrayScaleImage[] getAttributeProfile(AbstractImageFactory factory, GrayScaleImage img, int attributeType, double thresholds[]) {
 		return getAttributeProfile(factory, img, attributeType, thresholds, MorphologicalTreeFiltering.PRUNING_MIN);
 	}
 	
 	private static FilteringStrategy getStrategy(int typeStrategy) {
 		switch (typeStrategy) {
 		case MorphologicalTreeFiltering.PRUNING_MIN:
-			return PruningByMin.instance;
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					return tree.filteringByPruningMin(threshold, attributeType);
+				}
+			};
 		case MorphologicalTreeFiltering.PRUNING_MAX:
-			return PruningByMax.instance;
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					return tree.filteringByPruningMax(threshold, attributeType);
+				}
+			};
 		case MorphologicalTreeFiltering.PRUNING_VITERBI:
-			return PruningByViterbi.instance;
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					return tree.filteringByPruningViterbi(threshold, attributeType);
+				}
+			};
 		case MorphologicalTreeFiltering.DIRECT_RULE:
-			return DirectRule.instance;
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					return tree.filteringByDirectRule(threshold, attributeType);
+				}
+			};
 		case MorphologicalTreeFiltering.SUBTRACTIVE_RULE:
-			return SubtractiveRule.instance;	
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					return tree.filteringBySubtractiveRule(threshold, attributeType);
+				}
+			};	
+		case ENERGY:
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					ComputerFunctionalVariational compFV = new ComputerFunctionalVariational(tree, threshold, true);
+					return compFV.getSimplifiedImage();
+				}
+			};
 		default:			
 			return null;
 		}	
 	}
 	
-	public static GrayScaleImage[] getAttributeProfile(ImageFactory factory, GrayScaleImage img, int attributeType, double thresholds[], int typeStrategy) {
+	public static GrayScaleImage[] getAttributeProfile(AbstractImageFactory factory, GrayScaleImage img, int attributeType, double thresholds[], int typeStrategy) {
 		
-		ImageFactory.instance = factory;
+		AbstractImageFactory.instance = factory;
 		int lambdas = thresholds.length;
 		GrayScaleImage[] profiles = new GrayScaleImage[2 * lambdas + 1];
-				
-		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency4(), false);
-		tree.loadAttribute(attributeType);
+		strategy = getStrategy(typeStrategy);		
 		
-		strategy = getStrategy(typeStrategy);
+		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency4(), false);
+		tree.loadAttribute(attributeType);				
 		
 		for (int i = 0; i < lambdas; i++) {
 			profiles[lambdas-i-1] = strategy.filterBy(tree, thresholds[i], attributeType);								
@@ -69,6 +102,10 @@ public class AttributeProfiles {
 		
 	}
 	
+	public interface FilteringStrategy {	
+		public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType);
+	}
+	
 	public static void main(String args[]) {
 		
 		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));		
@@ -78,7 +115,7 @@ public class AttributeProfiles {
 																		 Attribute.MOMENT_OF_INERTIA, 
 																		 new double[] {0.4, 0.7, 0.9},
 																		 //new double[] {100, 1000},
-																		 MorphologicalTreeFiltering.SUBTRACTIVE_RULE);
+																		 MorphologicalTreeFiltering.DIRECT_RULE);
 		
 		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(profiles[profiles.length-1], 
 																						AdjacencyRelation.getAdjacency4(), 
@@ -95,8 +132,8 @@ public class AttributeProfiles {
 		int i = 0;
 		
 		for(NodeMergedTree child_ : AttributeProfiles.tree.getMtree()) {			
-			for(Integer att: child_.getAttributes().keySet()) {
-				System.out.print(Attribute.getNameAttribute(att) + ": " + child_.getAttributeValue(att)+" ");
+			for(Integer att: child_.getInfo().getAttributes().keySet()) {
+				System.out.print(Attribute.getNameAttribute(att) + ": " + AttributeProfiles.tree.getMtree().getAttribute(child_, att)+" ");
 			}
 			System.out.println();
 			if (i > 20)
