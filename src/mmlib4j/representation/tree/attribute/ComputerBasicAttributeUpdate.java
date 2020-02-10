@@ -4,7 +4,6 @@ package mmlib4j.representation.tree.attribute;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.attribute.AttributeComputedIncrementallyUpdate;
 import mmlib4j.utils.Utils;
 
 
@@ -30,7 +29,7 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 			System.out.println("Tempo de execucao [extraction of attribute - basics]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 	}
-
+	
 	public BasicAttribute[] getAttribute(){
 		return attr;
 	}
@@ -66,7 +65,7 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 		attr[node.getId()].highest = attr[node.getId()].lowest = node.getLevel(); 
 	}	
 	
-	public void mergeChildrenUpdate(NodeLevelSets node, NodeLevelSets son) {
+	/*public void mergeChildrenUpdate(NodeLevelSets node, NodeLevelSets son) {
 		
 		attr[node.getId()].volume.value = attr[node.getId()].volume.value + son.getAttributeValue(Attribute.VOLUME);
 		
@@ -86,7 +85,19 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 		attr[node.getId()].volume.value = attr[node.getId()].volume.value + attr[son.getId()].volume.value;
 		attr[node.getId()].highest = Math.max(attr[node.getId()].highest, attr[son.getId()].highest);
 		attr[node.getId()].lowest = Math.min(attr[node.getId()].lowest, attr[son.getId()].lowest);		
+	}*/
+	
+	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {				
+		attr[node.getId()].volume.value = attr[node.getId()].volume.value + son.getAttributeValue(Attribute.VOLUME);
+		
+		int highest = (int) (son.getAttributeValue(Attribute.ALTITUDE) + son.getLevel() - 1);
+		attr[node.getId()].highest = Math.max(attr[node.getId()].highest, highest);
+	
+		int lowest = (int) (son.getLevel() - son.getAttributeValue(Attribute.ALTITUDE) + 1);			
+		attr[node.getId()].lowest = Math.min(attr[node.getId()].lowest, lowest);
+				
 	}
+	
 
 	public void posProcessing(NodeLevelSets root) {
 		
@@ -98,6 +109,11 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 		else{
 			attr[root.getId()].altitude.value = root.getLevel() - attr[root.getId()].lowest + 1;
 		}
+		
+		
+		root.addAttribute(Attribute.VOLUME, attr[ root.getId() ].volume);
+		root.addAttribute(Attribute.ALTITUDE, attr[ root.getId() ].altitude);
+		
 	}
 
 	public class BasicAttribute {		

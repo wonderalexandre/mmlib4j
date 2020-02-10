@@ -386,6 +386,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		numNodeIdMax = newNumNodeIdMax + 1;
 	}
 	
+	
 	/*
 	 * Take care! This operation modifies the original tree structure. (root is not removed)
 	 * */	
