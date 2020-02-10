@@ -5,7 +5,7 @@ import mmlib4j.representation.tree.NodeLevelSets;
 
 public abstract class AttributeComputedIncrementallyUpdate extends AttributeComputedIncrementally{	
 	
-	public abstract void mergeChildrenUpdate(NodeLevelSets parent, NodeLevelSets son);
+	/*public abstract void mergeChildrenUpdate(NodeLevelSets parent, NodeLevelSets son);
 	
 	public void computerAttribute(NodeLevelSets root, boolean[] mapCorrection){
 		preProcessing(root);
@@ -19,6 +19,22 @@ public abstract class AttributeComputedIncrementallyUpdate extends AttributeComp
 			}	
 		}
 		posProcessing(root);
+	}*/
+
+	
+	public void computerAttribute(NodeLevelSets root, boolean[] mapCorrection){
+		if(mapCorrection[root.getId()]) {
+			preProcessing(root);
+			SimpleLinkedList<NodeLevelSets> children = root.getChildren();		
+			for(NodeLevelSets son: children){			
+				computerAttribute(son, mapCorrection);
+				mergeChildren(root, son);			
+				 	
+			}
+			posProcessing(root);
+		}
+			
 	}
+
 	
 }
