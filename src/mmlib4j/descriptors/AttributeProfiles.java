@@ -2,9 +2,7 @@ package mmlib4j.descriptors;
 
 import java.io.File;
 
-import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.Image2D;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
@@ -19,6 +17,8 @@ import mmlib4j.utils.ImageBuilder;
 public class AttributeProfiles {
 			
 	public final static int ENERGY = 10; 
+	public final static int SIMPLIFY_DIRECT_RULE = 11;
+	public final static int SIMPLIFY_SUBTRACTIVE_RULE = 12;
 	public static ConnectedFilteringByComponentTree tree;	
 	public static FilteringStrategy strategy;
 	
@@ -71,6 +71,22 @@ public class AttributeProfiles {
 					return compFV.getSimplifiedImage();
 				}
 			};
+		case SIMPLIFY_DIRECT_RULE:
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					tree.simplificationTreeByDirectRule(threshold, attributeType);
+					return tree.reconstruction();
+				}
+			};
+		case SIMPLIFY_SUBTRACTIVE_RULE:
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					tree.simplificationTreeBySubstractiveRule(threshold, attributeType);
+					return tree.reconstruction();
+				}
+			};						
 		default:			
 			return null;
 		}	
@@ -91,7 +107,7 @@ public class AttributeProfiles {
 		}
 
 		profiles[lambdas] = img;
-		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency4(), true);
+		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency4(), true);		
 		tree.loadAttribute(attributeType);				
 		
 		for (int i = 0; i < lambdas; i++) {
@@ -108,29 +124,36 @@ public class AttributeProfiles {
 	
 	public static void main(String args[]) {
 		
-		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));		
+		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/img_teste_2.png"));
+		int type = Attribute.MOMENT_OF_INERTIA;
 		
 		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(MmlibImageFactory.instance, 
 																		 imgInput, 
-																		 Attribute.MOMENT_OF_INERTIA, 
-																		 new double[] {0.4, 0.7, 0.9},
-																		 //new double[] {100, 1000},
-																		 MorphologicalTreeFiltering.DIRECT_RULE);
+																		 type, 
+																		 new double[] {0.4},
+																		 SIMPLIFY_SUBTRACTIVE_RULE);
 		
 		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(profiles[profiles.length-1], 
 																						AdjacencyRelation.getAdjacency4(), 
 																						true);
+		tree2.loadAttribute(type);
 		
-		WindowImages.show(new Image2D[]{profiles[profiles.length-1], AttributeProfiles.tree.reconstruction()});		
+		//WindowImages.show(new Image2D[]{profiles[profiles.length-1], AttributeProfiles.tree.reconstruction()});		
 		
-		tree2.loadAttribute(Attribute.MOMENT_OF_INERTIA);		
-		System.out.println(AttributeProfiles.tree.getMtree().getNumNode());
-		//System.out.println(AttributeProfile.tree.getNumNode());
-		System.out.println(tree2.getNumNode());						
+		System.out.println("Nós árvore original: " + AttributeProfiles.tree.getNumNode());
+		System.out.println("Nós nova árvore: " + tree2.getNumNode());
 		
-		System.out.println();		
-		int i = 0;
+		for(NodeLevelSets node : AttributeProfiles.tree.getListNodes()) {
+			NodeLevelSets node2 = tree2.getMap()[node.getCanonicalPixel()];
+			for(Integer att: node.getAttributes().keySet()) {
+				if(node.getAttributeValue(att) != node2.getAttributeValue(att)) {
+					System.out.println(Attribute.getNameAttribute(att));
+				}
+			}
+		}
 		
+		/*System.out.println();		
+		int i = 0;		
 		for(NodeMergedTree child_ : AttributeProfiles.tree.getMtree()) {			
 			for(Integer att: child_.getInfo().getAttributes().keySet()) {
 				System.out.print(Attribute.getNameAttribute(att) + ": " + AttributeProfiles.tree.getMtree().getAttribute(child_, att)+" ");
@@ -141,19 +164,9 @@ public class AttributeProfiles {
 			i++;
 		}
 		
-		/*for(NodeLevelSets child_ : AttributeProfiles.tree.getListNodes()) {			
-			for(Integer att: child_.getAttributes().keySet()) {
-				System.out.print(Attribute.getNameAttribute(att) + ": " + child_.getAttributeValue(att)+" ");
-			}
-			System.out.println();
-			if (i > 20)
-				break;
-			i++;
-		}*/
-		
 		System.out.println();
-		System.out.println();
-		 i = 0;
+		tree2.loadAttribute(type);
+		i = 0;
 		for(NodeLevelSets child : tree2.getListNodes()) {
 			for(Integer att: child.getAttributes().keySet()) {
 				System.out.print(Attribute.getNameAttribute(att) + ": " + child.getAttributeValue(att)+" ");
@@ -163,6 +176,40 @@ public class AttributeProfiles {
 				break;
 			i++;
 		}	
+		
+		/*int numEquals = 0;
+		int attToCompare[] = {Attribute.AREA, 
+							  Attribute.VOLUME, 
+							  Attribute.LEVEL_MEAN,
+							  Attribute.LEVEL,
+							  Attribute.RECTANGULARITY,
+							  Attribute.VARIANCE_LEVEL,
+							  Attribute.STD_LEVEL,
+							  Attribute.MOMENT_OF_INERTIA,
+							  Attribute.MOMENT_CENTRAL_02,
+							  Attribute.MOMENT_CENTRAL_11,
+							  Attribute.MOMENT_CENTRAL_20};
+		
+		boolean[] nodesMarked = new boolean[AttributeProfiles.tree.getNumNodeIdMax()];
+		for(NodeLevelSets node : tree2.getListNodes()) {			
+			int equal;
+			for(NodeMergedTree node_ : AttributeProfiles.tree.getMtree()) {
+				equal = 0;
+				if(nodesMarked[node_.getId()])
+					continue;
+				for(Integer att: node.getAttributes().keySet()) {
+					if(node.getAttributeValue(att) == AttributeProfiles.tree.getMtree().getAttribute(node_, att)) {						
+						equal++;
+					}
+				}
+				if(equal == node.getAttributes().keySet().size()) {
+					nodesMarked[node_.getId()] = true;
+					numEquals++;
+				}
+			}			
+		}
+		System.out.println();
+		System.out.println("Equals attributes? : " + (numEquals == tree2.getNumNode()));*/
 		
 	}
 	

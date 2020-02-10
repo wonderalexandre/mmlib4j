@@ -484,6 +484,10 @@ public class ComponentTree {
 		return imgInput;
 	}
 	
+	public int getNumNodeIdMax() {
+		return numNodeIdMax;
+	}
+	
 	public int getNumNode() {
 		return numNode;
 	}
@@ -504,5 +508,8 @@ public class ComponentTree {
 		return imgInput.maxValue();
 	}
 
+	public NodeLevelSets[] getMap() {
+		return map;
+	}
 	
 }

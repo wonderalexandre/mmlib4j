@@ -11,7 +11,7 @@ public abstract class AttributeComputedIncrementallyUpdate extends AttributeComp
 		preProcessing(root);
 		SimpleLinkedList<NodeLevelSets> children = root.getChildren();		
 		for(NodeLevelSets son: children){			
-			if(mapCorrection[root.getId()]) {
+			if(mapCorrection[son.getId()]) {
 				computerAttribute(son, mapCorrection);
 				mergeChildren(root, son);			
 			} else {

@@ -51,43 +51,5 @@ public class FlattenList<T> implements Flatten<T> {
 			}					
 		};
 	}
-	
-	public static void main(String args[]) {
 		
-		SimpleLinkedList<Integer> a = new SimpleLinkedList<>();
-		a.add(10);
-		a.add(20);
-		a.add(100);
-		a.add(8);
-		
-		SimpleLinkedList<Integer> b = new SimpleLinkedList<>();
-		b.add(56);
-		b.add(78);
-		b.add(17);
-		b.add(99);		
-		
-		FlattenList<Integer> c = new FlattenList<>();
-		c.add(a);
-		c.add(b);
-		
-		FlattenList<Integer> h = new FlattenList<>();
-		h.add(a);
-		h.add(b);
-		
-		for(int p : c) {
-			System.out.println(p);
-		}
-		
-		System.out.println();
-		for(int p : c) {
-			System.out.println(p);
-		}
-		
-		System.out.println();
-		//c.add(d);
-		c.addAll(h);
-		System.out.println(c.size());
-		//System.out.println(c.iterators.iterator().hasNext());
-		
-	}	
 }

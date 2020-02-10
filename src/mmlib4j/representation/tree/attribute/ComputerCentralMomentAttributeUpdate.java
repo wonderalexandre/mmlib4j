@@ -57,7 +57,10 @@ public class ComputerCentralMomentAttributeUpdate extends AttributeComputedIncre
 	}
 	
 	public void mergeChildrenUpdate(NodeLevelSets node, NodeLevelSets son) {	
-		double sumLevel2 = son.getAttributeValue(Attribute.VARIANCE_LEVEL) + (Math.pow(son.getAttributeValue(Attribute.VOLUME), 2) / son.getAttributeValue(Attribute.AREA));
+		double Sum = son.getAttributeValue(Attribute.VOLUME);
+		double n = son.getAttributeValue(Attribute.AREA);
+		double variance = son.getAttributeValue(Attribute.VARIANCE_LEVEL);
+		double sumLevel2 = (n*variance) + (Math.pow(Sum, 2) / n);
 		attr[node.getId()].sumLevel2 += sumLevel2;
 	}
 	
@@ -69,7 +72,7 @@ public class ComputerCentralMomentAttributeUpdate extends AttributeComputedIncre
 		double SumSq = attr[node.getId()].sumLevel2;
 		double Sum = node.getAttributeValue(Attribute.VOLUME);
 		double n = node.getAttributeValue(Attribute.AREA);		
-		attr[node.getId()].variance.value = (SumSq - (Sum * Sum)/n)/(n-1);				
+		attr[node.getId()].variance.value = (SumSq - (Sum * Sum)/n)/(n);				
 	}
 	
 	public class CentralMomentsAttribute {		

@@ -36,13 +36,6 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		return attr;
 	}
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list, boolean[] mapCorrection){
-		for(NodeLevelSets node: list){
-			if(mapCorrection[node.getId()])
-				addAttributeInNodes(node);
-		}
-	}
-	
 	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list){
 		for(NodeLevelSets node: list){
 			addAttributeInNodes(node);
@@ -78,7 +71,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		for(int pixel: node.getCompactNodePixels()){
 			int x = pixel % withImg;
 			int y = pixel / withImg;			
-			// Note that, this is optimization is only for p=2 and q=2			
+			// Note that, this optimization is only for p=2 and q=2			
 			attr[node.getId()].sumX2 += x*x;
 			attr[node.getId()].sumY2 += y*y;
 		}		

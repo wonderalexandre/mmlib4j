@@ -82,7 +82,6 @@ public class Attribute {
 	public static final int BIT_QUADS_AREA = 50;
 	public static final int BIT_QUADS_AREA_DUDA = 51;
 	
-	
 	//mser
 	public static final int MSER = 40;
 	

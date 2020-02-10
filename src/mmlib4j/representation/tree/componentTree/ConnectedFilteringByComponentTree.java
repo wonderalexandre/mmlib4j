@@ -462,7 +462,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			mTree = new InfoMergedTreeReverseLevelOrder(getRoot(), numNodeIdMax, imgInput);
 			for(NodeLevelSets node : listNode.reverse()) {
 				if(node == getRoot())
-					continue;								
+					continue;							
 				parent = node.getParent();								
 				if(node.getAttributeValue(type) <= attributeValue) {						
 					// Merge
@@ -493,16 +493,20 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 						newNumNodeIdMax = node_.getId();
 				}			
 			}
-		}
+		}	
 		
-		// Correct attributes
+		// Correct attributes		
+		/*long ti = System.currentTimeMillis();
+		ComputerBasicAttributeMergeTree cbasic = new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection);
+		cbasic.addAttributeInNodes();
+		long tf = System.currentTimeMillis();
+		timeInSec = (tf - ti) /1000.0;
+		numberOfCalls = cbasic.numberOfCalls;*/
+		
 		new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
 		
 		if(hasComputerCentralMomentAttribute)
-			new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
-		
-		//if(hasComputerFunctionalAttribute)
-		//	new ComputerFunctionalAttribute(mTree, numNodeIdMax, true, mapCorrection).addAttributeInNodesMtree(mapCorrection);
+			new ComputerCentralMomentAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();		
 		
 		// Modify maxID to optimize memory		
 		numNodeIdMax = newNumNodeIdMax + 1;
@@ -511,7 +515,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	/*
 	 * This operation keeps the original tree structure unchanged.
-	 **/		
+	 **/			
 	public InfoMergedTree getInfoMergedTreeBySubstractiveRule(double attributeValue, int type){			
 		
 		int[] offset = new int[numNodeIdMax];
@@ -588,6 +592,13 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		mTree.updateLevels(offset);
 		
 		// Correct attributes
+		/*long ti = System.currentTimeMillis();
+		ComputerBasicAttributeMergeTree cbasic = new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection);
+		cbasic.addAttributeInNodes();
+		long tf = System.currentTimeMillis();
+		timeInSec = (tf - ti) /1000.0;
+		numberOfCalls = cbasic.numberOfCalls;*/
+		
 		new ComputerBasicAttributeMergeTree(numNodeIdMax, mTree, mapCorrection).addAttributeInNodes();
 		
 		if(hasComputerCentralMomentAttribute)
