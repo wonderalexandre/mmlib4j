@@ -6,6 +6,7 @@ import java.util.Iterator;
 import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
+import mmlib4j.utils.Utils;
 import mmlib4j.images.impl.AbstractImageFactory;
 
 
@@ -31,6 +32,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	private byte imgU[];
 	private int parent[];
 	private int numNode; 
+	private int numNodeIdMax;
 	private boolean isLog = true;
 	private int xInfinito;
 	private int yInfinito;
@@ -39,8 +41,6 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	private NodeToS root;
 	
 	protected BuilderTreeOfShapeByUnionFind(){ }
-	
-		
 	
 	public BuilderTreeOfShapeByUnionFind getClone(){
 		BuilderTreeOfShapeByUnionFind b = new BuilderTreeOfShapeByUnionFind();
@@ -58,10 +58,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		b.unInterpolateAndCreateTree( b.parent );
 		return b;
-	}
-	
-	
-	
+	}			
 	
 	public BuilderTreeOfShapeByUnionFind(GrayScaleImage img, boolean isInter){
 		this(img, -1, -1, isInter);
@@ -72,9 +69,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		this.imgHeight = img.getHeight();
 		this.img = img;
 		this.xInfinito = xInfinito;
-		this.yInfinito = yInfinito;
-		
-		sort( interpolateImage( ) );
+		this.yInfinito = yInfinito;		
+		sort(interpolateImage());
 		this.parent = createTreeByUnionFind();
 		if(isInter)
 			unInterpolateAndCreateTree( parent );
@@ -101,6 +97,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		return numNode;
 	}
 
+	public int getNumNodeIdMax() {
+		return numNodeIdMax;
+	}
+
+	public void setNumNodeIdMax(int numNodeIdMax) {
+		this.numNodeIdMax = numNodeIdMax;
+	}
+	
 	public GrayScaleImage getInputImage(){
 		return img;
 	}
@@ -141,7 +145,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				//mesmo no
 				nodesMapTmp[p] = nodesMapTmp[pai];
 			}
-			nodesMapTmp[p].addPixel( p );
+			nodesMapTmp[p].addPixel(p);
 			
 		}
 		
@@ -149,10 +153,10 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		//parent = null;
 		//imgU = null;
 		//imgR = null;
-		
+		this.numNodeIdMax = numNode;
 		long tf = System.currentTimeMillis();
-        if(isLog)
-        	System.out.println("Tempo de execucao [unInterpolate2] "+ ((tf - ti) /1000.0)  + "s");
+        if(Utils.debug)
+        	System.out.println("Tempo de execucao [unInterpolate] "+ ((tf - ti) /1000.0)  + "s");
 		
 	}
 	
@@ -160,7 +164,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	 * Desinterpolacao da arvore e a transforma em uma arvore de estrutura ligada. 
 	 * @return raiz da arvore
 	 */
-	public void unInterpolateAndCreateTree( int parent[]  ){
+	public void unInterpolateAndCreateTree(int parent[]){
 		long ti = System.currentTimeMillis();
 		this.numNode = 0;
 		NodeToS nodesMapTmp[] = new NodeToS[parent.length];
@@ -175,8 +179,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			if(p == pai){ //Note que:  p = pInfinito
 				this.root = nodesMapTmp[p] = new NodeToS(numNode++, imgU[p], img, pixelUnterpolate);
 				if(x % 2 == 1 && y % 2 == 1){
-					nodesMapTmp[p].addPixel( pixelUnterpolate );
-					
+					nodesMapTmp[p].addPixel(pixelUnterpolate);					
 				}
 				continue;
 			}
@@ -197,8 +200,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			}
 			
 			if(x % 2 == 1 && y % 2 == 1){
-				nodesMapTmp[p].addPixel( pixelUnterpolate );
-				
+				nodesMapTmp[p].addPixel(pixelUnterpolate);				
 			}
 		}
 		
@@ -206,9 +208,9 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		//parent = null;
 		//imgU = null;
 		//imgR = null;
-		
+		this.numNodeIdMax = numNode;
 		long tf = System.currentTimeMillis();
-        if(isLog)
+        if(Utils.debug)
         	System.out.println("Tempo de execucao [unInterpolate2] "+ ((tf - ti) /1000.0)  + "s");
 		
 	}

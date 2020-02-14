@@ -46,9 +46,9 @@ public class ComputerCentralMomentAttributeUpdate extends AttributeComputedIncre
 	} 
 	
 	public void addAttributeInNodes(NodeLevelSets node){	
-		node.addAttribute(Attribute.VARIANCE_LEVEL, attr[ node.getId() ].variance);
-		node.addAttribute(Attribute.LEVEL_MEAN, attr[ node.getId() ].levelMean);
-		node.addAttribute(Attribute.STD_LEVEL, new Attribute(Attribute.STD_LEVEL, Math.sqrt( attr[ node.getId() ].variance.value) ));		
+		node.addAttribute(Attribute.VARIANCE_LEVEL, attr[node.getId()].variance);
+		node.addAttribute(Attribute.LEVEL_MEAN, attr[node.getId()].levelMean);
+		node.addAttribute(Attribute.STD_LEVEL, new Attribute(Attribute.STD_LEVEL, Math.sqrt(attr[node.getId()].variance.value)));		
 	}
 	
 	public void preProcessing(NodeLevelSets node) {
@@ -56,23 +56,20 @@ public class ComputerCentralMomentAttributeUpdate extends AttributeComputedIncre
 		attr[node.getId()].sumLevel2 += Math.pow(node.getLevel(), 2) * node.getCompactNodePixels().size();
 	}
 	
-	public void mergeChildrenUpdate(NodeLevelSets node, NodeLevelSets son) {	
+	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
 		double Sum = son.getAttributeValue(Attribute.VOLUME);
 		double n = son.getAttributeValue(Attribute.AREA);
 		double variance = son.getAttributeValue(Attribute.VARIANCE_LEVEL);
 		double sumLevel2 = (n*variance) + (Math.pow(Sum, 2) / n);
-		attr[node.getId()].sumLevel2 += sumLevel2;
-	}
-	
-	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {
-		attr[node.getId()].sumLevel2 += attr[son.getId()].sumLevel2; 
+		attr[node.getId()].sumLevel2 += sumLevel2; 
 	}
 
 	public void posProcessing(NodeLevelSets node) {
 		double SumSq = attr[node.getId()].sumLevel2;
 		double Sum = node.getAttributeValue(Attribute.VOLUME);
 		double n = node.getAttributeValue(Attribute.AREA);		
-		attr[node.getId()].variance.value = (SumSq - (Sum * Sum)/n)/(n);				
+		attr[node.getId()].variance.value = (SumSq - (Sum * Sum)/n)/(n);
+		node.addAttribute(Attribute.VARIANCE_LEVEL, attr[node.getId()].variance);
 	}
 	
 	public class CentralMomentsAttribute {		

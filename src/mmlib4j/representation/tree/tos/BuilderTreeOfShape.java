@@ -12,6 +12,7 @@ public interface BuilderTreeOfShape {
 
 	public NodeToS getRoot();
 	public int getNumNode();
+	public int getNumNodeIdMax();
 	public BuilderTreeOfShape getClone();
 	public GrayScaleImage getInputImage();
 	

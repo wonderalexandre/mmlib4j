@@ -58,15 +58,12 @@ public class ComputerBasicAttributeMergeTree extends AttributeUpdatedIncremental
 	
 	public void mergeChildrenUpdate(NodeMergedTree node_, NodeMergedTree son_) {					
 		attr[node_.getId()].volume.value = attr[node_.getId()].volume.value + son_.getInfo().getAttributeValue(Attribute.VOLUME);		
-		// How to compute them?
-		if(son_.getInfo().isNodeMaxtree()) {			
-			int highest = (int) (son_.getInfo().getAttributeValue(Attribute.ALTITUDE) + son_.getLevel() - 1);
-			attr[node_.getId()].highest = Math.max(attr[node_.getId()].highest, highest);
-		}
-		else{
-			int lowest = (int) (son_.getLevel() - son_.getInfo().getAttributeValue(Attribute.ALTITUDE) + 1);			
-			attr[node_.getId()].lowest = Math.min(attr[node_.getId()].lowest, lowest);
-		}
+		// How to compute them?			
+		int highest = (int) (son_.getInfo().getAttributeValue(Attribute.ALTITUDE) + son_.getLevel() - 1);
+		attr[node_.getId()].highest = Math.max(attr[node_.getId()].highest, highest);
+		
+		int lowest = (int) (son_.getLevel() - son_.getInfo().getAttributeValue(Attribute.ALTITUDE) + 1);			
+		attr[node_.getId()].lowest = Math.min(attr[node_.getId()].lowest, lowest);	
 		
 	}
 	

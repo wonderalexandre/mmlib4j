@@ -2,6 +2,7 @@ package mmlib4j.descriptors;
 
 import java.io.File;
 
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.MmlibImageFactory;
@@ -10,6 +11,8 @@ import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
+import mmlib4j.representation.tree.componentTree.BuilderComponentTree;
+import mmlib4j.representation.tree.componentTree.BuilderComponentTreeByUnionFind;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
@@ -26,7 +29,7 @@ public class AttributeProfiles {
 		return getAttributeProfile(factory, img, attributeType, thresholds, MorphologicalTreeFiltering.PRUNING_MIN);
 	}
 	
-	private static FilteringStrategy getStrategy(int typeStrategy) {
+	public static FilteringStrategy getStrategy(int typeStrategy) {
 		switch (typeStrategy) {
 		case MorphologicalTreeFiltering.PRUNING_MIN:
 			return new FilteringStrategy() {				
@@ -124,7 +127,7 @@ public class AttributeProfiles {
 	
 	public static void main(String args[]) {
 		
-		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/img_teste_2.png"));
+		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));
 		int type = Attribute.MOMENT_OF_INERTIA;
 		
 		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(MmlibImageFactory.instance, 
@@ -136,81 +139,20 @@ public class AttributeProfiles {
 		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(profiles[profiles.length-1], 
 																						AdjacencyRelation.getAdjacency4(), 
 																						true);
-		tree2.loadAttribute(type);
-		
-		//WindowImages.show(new Image2D[]{profiles[profiles.length-1], AttributeProfiles.tree.reconstruction()});		
-		
+		tree2.loadAttribute(type);		
 		System.out.println("Nós árvore original: " + AttributeProfiles.tree.getNumNode());
 		System.out.println("Nós nova árvore: " + tree2.getNumNode());
 		
 		for(NodeLevelSets node : AttributeProfiles.tree.getListNodes()) {
-			NodeLevelSets node2 = tree2.getMap()[node.getCanonicalPixel()];
+			NodeLevelSets node2 = tree2.getNodesMap()[node.getCanonicalPixel()];
 			for(Integer att: node.getAttributes().keySet()) {
 				if(node.getAttributeValue(att) != node2.getAttributeValue(att)) {
 					System.out.println(Attribute.getNameAttribute(att));
-				}
+				}				
 			}
 		}
 		
-		/*System.out.println();		
-		int i = 0;		
-		for(NodeMergedTree child_ : AttributeProfiles.tree.getMtree()) {			
-			for(Integer att: child_.getInfo().getAttributes().keySet()) {
-				System.out.print(Attribute.getNameAttribute(att) + ": " + AttributeProfiles.tree.getMtree().getAttribute(child_, att)+" ");
-			}
-			System.out.println();
-			if (i > 20)
-				break;
-			i++;
-		}
-		
-		System.out.println();
-		tree2.loadAttribute(type);
-		i = 0;
-		for(NodeLevelSets child : tree2.getListNodes()) {
-			for(Integer att: child.getAttributes().keySet()) {
-				System.out.print(Attribute.getNameAttribute(att) + ": " + child.getAttributeValue(att)+" ");
-			}
-			System.out.println();
-			if (i > 20)
-				break;
-			i++;
-		}	
-		
-		/*int numEquals = 0;
-		int attToCompare[] = {Attribute.AREA, 
-							  Attribute.VOLUME, 
-							  Attribute.LEVEL_MEAN,
-							  Attribute.LEVEL,
-							  Attribute.RECTANGULARITY,
-							  Attribute.VARIANCE_LEVEL,
-							  Attribute.STD_LEVEL,
-							  Attribute.MOMENT_OF_INERTIA,
-							  Attribute.MOMENT_CENTRAL_02,
-							  Attribute.MOMENT_CENTRAL_11,
-							  Attribute.MOMENT_CENTRAL_20};
-		
-		boolean[] nodesMarked = new boolean[AttributeProfiles.tree.getNumNodeIdMax()];
-		for(NodeLevelSets node : tree2.getListNodes()) {			
-			int equal;
-			for(NodeMergedTree node_ : AttributeProfiles.tree.getMtree()) {
-				equal = 0;
-				if(nodesMarked[node_.getId()])
-					continue;
-				for(Integer att: node.getAttributes().keySet()) {
-					if(node.getAttributeValue(att) == AttributeProfiles.tree.getMtree().getAttribute(node_, att)) {						
-						equal++;
-					}
-				}
-				if(equal == node.getAttributes().keySet().size()) {
-					nodesMarked[node_.getId()] = true;
-					numEquals++;
-				}
-			}			
-		}
-		System.out.println();
-		System.out.println("Equals attributes? : " + (numEquals == tree2.getNumNode()));*/
-		
+		WindowImages.show(profiles[profiles.length-1]);
 	}
 	
 }

@@ -9,20 +9,13 @@ import mmlib4j.representation.tree.NodeLevelSets;
  *
  */
 public interface BuilderComponentTree {
-
-	public void build( );
-		
-	public NodeLevelSets getRoot( );
 	
-	public NodeLevelSets[] getMap( );
-	
-	public SimpleLinkedList<NodeLevelSets> getListNodes();
-	
-	public int getNunNode();
-	
-	public int getNumNodeIdMax();
-	
+	public void build( );		
+	public NodeLevelSets getRoot( );	
+	public NodeLevelSets[] getMap( );	
+	public SimpleLinkedList<NodeLevelSets> getListNodes();	
+	public int getNunNode();	
+	public int getNumNodeIdMax();	
 	public BuilderComponentTree getClone();
-	
 	
 }

@@ -1,8 +1,12 @@
 package mmlib4j.representation.tree.tos;
 
+import java.io.File;
+
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.descriptors.AttributeProfiles;
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
@@ -11,10 +15,15 @@ import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
+import mmlib4j.representation.tree.attribute.ComputerBasicAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
+import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
+import mmlib4j.utils.ImageAlgebra;
+import mmlib4j.utils.ImageBuilder;
+import mmlib4j.utils.ImageUtils;
 import mmlib4j.utils.Utils;
 
 
@@ -107,6 +116,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			case Attribute.MOMENT_LENGTH_MINOR_AXES:
 			case Attribute.MOMENT_ORIENTATION:
 			case Attribute.MOMENT_ASPECT_RATIO:
+			case Attribute.MOMENT_OF_INERTIA:
 				computerCentralMomentAttribute();
 				break;
 			
@@ -130,7 +140,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
 		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
-		fifo.enqueue( prunedTree.getRoot() );
+		fifo.enqueue(prunedTree.getRoot());
 		while(!fifo.isEmpty()){
 			InfoPrunedTree.NodePrunedTree node_ = fifo.dequeue();
 			NodeLevelSets node = (NodeToS) node_.getInfo();
@@ -145,7 +155,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 				imgOut.setPixel(p, node.getLevel());
 			}
 			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){
-				fifo.enqueue( son );	
+				fifo.enqueue(son);	
 			}
 		}
 		return imgOut;
@@ -153,15 +163,14 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	
 
 	public InfoPrunedTree getPrunedTree(double attributeValue, int type, int typePruning){
-		long ti = System.currentTimeMillis();
+		//long ti = System.currentTimeMillis();
 		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
 		for(NodeLevelSets no: getListNodes()){
 			if(! (getAttribute(no, type) <= attributeValue) ){ //poda
 				prunedTree.addNodeNotPruned(no);
 			}
 		}
-		System.out.println("Tempo de execucao [Tree of shapes - filtering by pruning]  "+ ((System.currentTimeMillis() - ti) /1000.0)  + "s");
-		
+		//System.out.println("Tempo de execucao [Tree of shapes - filtering by pruning]  "+ ((System.currentTimeMillis() - ti) /1000.0)  + "s");		
 		return prunedTree;
 	}
 
@@ -293,8 +302,67 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 
 	@Override
 	public void simplificationTree(double attributeValue, int attributeType, int typeSimplification) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub		
+	}
+	
+	public void simplificationTreeByDirectRule(double attributeValue, int type){
+		boolean[] mapCorrection = new boolean[numNodeIdMax];
+		int newNumNodeIdMax = 1;
+		NodeLevelSets parent;
 		
+		for(NodeLevelSets node : listNode.reverse()) {
+			if(node == getRoot())
+				continue;								
+			parent = node.getParent();								
+			if(node.getAttributeValue(type) <= attributeValue) {						
+				mergeParent(node);
+				mapCorrection[parent.getId()] = true;			
+			} else { 
+				// This helps to decrease the size of auxiliary structures
+				if(node.getId() > newNumNodeIdMax)
+					newNumNodeIdMax = node.getId();
+				// Pass the mapCorrection to all ancestors
+				if(mapCorrection[node.getId()])
+					mapCorrection[parent.getId()] = true;
+			}
+		}
+		
+		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
+		
+		// Verify each attribute that was computed before
+		if(hasComputerCentralMomentAttribute) {
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
+		}
+
+		// Modify maxID to optimize memory		
+		numNodeIdMax = newNumNodeIdMax + 1;
+	}
+	
+	public static void main(String args[]) {
+		
+		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/img_teste_2.png"));
+		int type = Attribute.AREA;
+		
+		ConnectedFilteringByTreeOfShape tree = new ConnectedFilteringByTreeOfShape(imgInput);	
+		tree.loadAttribute(type);		
+		tree.simplificationTreeByDirectRule(100, type);		
+		
+		
+		ConnectedFilteringByTreeOfShape tree2 = new ConnectedFilteringByTreeOfShape(tree.reconstruction());
+		tree2.loadAttribute(type);
+		System.out.println("Nós árvore filtrada: " + tree.getNumNode());
+		System.out.println("Nós árvore cópia: " + tree2.getNumNode());	
+		int c = 0;
+		
+		for(NodeLevelSets node1 : tree.getListNodes()) {
+			NodeLevelSets node2 = tree2.getSC(node1.getCanonicalPixel());
+			if(node1.getCompactNodePixels().size() != node2.getCompactNodePixels().size()) {
+				c++;
+			}							
+		}
+		
+		System.out.println("Nós diferentes: "+ c);
+			
 	}
 	
 }

@@ -23,7 +23,6 @@ import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueComponentTree.ExtinctionValueNode;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
-import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerViterbi;
@@ -352,8 +351,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	/*
 	 * Take care! This operation modifies the original tree structure. (root is not removed)
-	 * */			
-	public void simplificationTreeByDirectRule(double attributeValue, int type){			
+	 * */	
+	public void simplificationTreeByDirectRule(double attributeValue, int type){
 		boolean[] mapCorrection = new boolean[numNodeIdMax];
 		int newNumNodeIdMax = 1;
 		NodeLevelSets parent;
@@ -376,7 +375,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		}
 		
 		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
-
+		
 		// Verify each attribute that was computed before
 		if(hasComputerCentralMomentAttribute) {
 			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
@@ -391,7 +390,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * Take care! This operation modifies the original tree structure. (root is not removed)
 	 * */	
 	public void simplificationTreeBySubstractiveRule(double attributeValue, int type){
-		boolean[] mapCorrection = new boolean[numNodeIdMax];		
+		boolean[] mapCorrection = new boolean[numNodeIdMax];
 		int offset[] = new int[numNodeIdMax];
 		int newNumNodeIdMax = 1;				
 		NodeLevelSets parent;

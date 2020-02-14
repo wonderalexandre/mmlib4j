@@ -507,9 +507,5 @@ public class ComponentTree {
 	public int getValueMax() {
 		return imgInput.maxValue();
 	}
-
-	public NodeLevelSets[] getMap() {
-		return map;
-	}
 	
 }

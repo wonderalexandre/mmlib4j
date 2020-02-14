@@ -33,16 +33,14 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	private byte imgU[];
 	private int parent[];
 	private int numNode; 
-	
+	private int numNodeIdMax;
 	private int xInfinito=-1;
 	private int yInfinito=-1;
 	
 	GrayScaleImage img;
 	private NodeToS root;
 	
-	private BuilderTreeOfShapeByUnionFindParallel(){ }
-	
-		
+	private BuilderTreeOfShapeByUnionFindParallel(){ }			
 	
 	public BuilderTreeOfShapeByUnionFindParallel getClone(){
 		BuilderTreeOfShapeByUnionFindParallel b = new BuilderTreeOfShapeByUnionFindParallel();
@@ -57,6 +55,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		b.imgU = this.imgU;
 		
 		b.unInterpolateTree( b.parent );
+		this.numNodeIdMax = numNode;
 		return b;
 	}
 	
@@ -111,7 +110,10 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		{ {-1, -1}, {-1, 1}, {1, -1}, {1, 1} }, 
 	};
 	
-	
+	@Override
+	public int getNumNodeIdMax() {
+		return numNodeIdMax;
+	}
 	
 	public BuilderTreeOfShapeByUnionFindParallel(GrayScaleImage img, int xInfinito, int yInfinito){
 		super();
@@ -124,6 +126,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		sort( obj );
 		this.parent = createTreeByUnionFind();
 		unInterpolateTree( parent );
+		this.numNodeIdMax = numNode;
 		
 	}
 	
@@ -786,7 +789,5 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			printTree(son, out, s + "------");
 		}
 	}
-
-
 	
 }

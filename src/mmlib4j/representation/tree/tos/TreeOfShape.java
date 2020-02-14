@@ -23,6 +23,7 @@ public class TreeOfShape{
 	protected int width;
 	protected int height;
 	protected int numNode; 
+	protected int numNodeIdMax;
 	protected int heightTree;
 	protected AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5);
 	protected GrayScaleImage imgInput;
@@ -57,10 +58,17 @@ public class TreeOfShape{
 		this.width = img.getWidth();
 		this.height = img.getHeight();
 		this.imgInput = img;
-		this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true);
+		
 		//this.build = new BuilderTreeOfShapeByUnionFindParallel(img, xInfinito, yInfinito);
+		this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true);
+		/*this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, false);
+		this.imgInput = build.getInputImage();
+		this.width = imgInput.getWidth();
+		this.height = imgInput.getHeight();*/
+		
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
+		this.numNodeIdMax = build.getNumNodeIdMax();
 		computerInforTree(this.root, 0);
 		createNodesMap();
 		if(Utils.debug){
@@ -352,15 +360,14 @@ public class TreeOfShape{
 	}
 		
 	/* Add by gobber */	
-	public void mergeParent( NodeLevelSets nodeG ) {
-		NodeLevelSets node = nodeG;		
+	public void mergeParent( NodeLevelSets node ) {
 		if( node != root ) {						
 			NodeLevelSets parent = node.getParent();
-			parent.getChildren().remove( node );			
-			listNode.remove( node );
+			parent.getChildren().remove(node);			
+			listNode.remove(node);
 			numNode--;			
 			for( int p: node.getCompactNodePixels() ) {				
-				parent.addPixel(p);				
+				parent.getCompactNodePixels().add(p);
 				map[p] = parent;				
 			}			
 			for(NodeLevelSets child : node.getChildren()) {							

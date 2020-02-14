@@ -61,31 +61,10 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 	public void preProcessing(NodeLevelSets node) {
 		attr[node.getId()] = new BasicAttribute();
 		//area e volume
+		node.getAttribute(Attribute.LEVEL).value = node.getLevel();
 		attr[node.getId()].volume.value = node.getCompactNodePixels().size() * node.getLevel();
 		attr[node.getId()].highest = attr[node.getId()].lowest = node.getLevel(); 
 	}	
-	
-	/*public void mergeChildrenUpdate(NodeLevelSets node, NodeLevelSets son) {
-		
-		attr[node.getId()].volume.value = attr[node.getId()].volume.value + son.getAttributeValue(Attribute.VOLUME);
-		
-		// How to compute them?
-		if(son.isNodeMaxtree()) {			
-			int highest = (int) (son.getAttributeValue(Attribute.ALTITUDE) + son.getLevel() - 1);
-			attr[node.getId()].highest = Math.max(attr[node.getId()].highest, highest);
-		}
-		else{
-			int lowest = (int) (son.getLevel() - son.getAttributeValue(Attribute.ALTITUDE) + 1);			
-			attr[node.getId()].lowest = Math.min(attr[node.getId()].lowest, lowest);
-		}
-		
-	}
-	
-	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {				
-		attr[node.getId()].volume.value = attr[node.getId()].volume.value + attr[son.getId()].volume.value;
-		attr[node.getId()].highest = Math.max(attr[node.getId()].highest, attr[son.getId()].highest);
-		attr[node.getId()].lowest = Math.min(attr[node.getId()].lowest, attr[son.getId()].lowest);		
-	}*/
 	
 	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {				
 		attr[node.getId()].volume.value = attr[node.getId()].volume.value + son.getAttributeValue(Attribute.VOLUME);
@@ -95,12 +74,9 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 	
 		int lowest = (int) (son.getLevel() - son.getAttributeValue(Attribute.ALTITUDE) + 1);			
 		attr[node.getId()].lowest = Math.min(attr[node.getId()].lowest, lowest);
-				
 	}
 	
-
 	public void posProcessing(NodeLevelSets root) {
-		
 		root.setVolume( (int) attr[ root.getId() ].volume.value );
 		
 		if(root.isNodeMaxtree()){
@@ -108,12 +84,10 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 		}
 		else{
 			attr[root.getId()].altitude.value = root.getLevel() - attr[root.getId()].lowest + 1;
-		}
-		
+		}		
 		
 		root.addAttribute(Attribute.VOLUME, attr[ root.getId() ].volume);
-		root.addAttribute(Attribute.ALTITUDE, attr[ root.getId() ].altitude);
-		
+		root.addAttribute(Attribute.ALTITUDE, attr[ root.getId() ].altitude);		
 	}
 
 	public class BasicAttribute {		
