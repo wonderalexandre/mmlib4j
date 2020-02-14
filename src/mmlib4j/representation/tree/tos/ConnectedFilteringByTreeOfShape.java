@@ -342,26 +342,33 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		
 		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/img_teste_2.png"));
 		int type = Attribute.AREA;
+		double t = 10000;
+		Utils.debug = false;
 		
-		ConnectedFilteringByTreeOfShape tree = new ConnectedFilteringByTreeOfShape(imgInput);	
-		tree.loadAttribute(type);		
-		tree.simplificationTreeByDirectRule(100, type);		
+		ConnectedFilteringByTreeOfShape tree = new ConnectedFilteringByTreeOfShape(imgInput);		
+		tree.loadAttribute(type);						
+		tree.simplificationTreeByDirectRule(t, type);
 		
-		
+		// Print new tree
 		ConnectedFilteringByTreeOfShape tree2 = new ConnectedFilteringByTreeOfShape(tree.reconstruction());
 		tree2.loadAttribute(type);
+		
 		System.out.println("Nós árvore filtrada: " + tree.getNumNode());
-		System.out.println("Nós árvore cópia: " + tree2.getNumNode());	
-		int c = 0;
+		System.out.println("Nós árvore cópia: " + tree2.getNumNode());				
 		
-		for(NodeLevelSets node1 : tree.getListNodes()) {
-			NodeLevelSets node2 = tree2.getSC(node1.getCanonicalPixel());
-			if(node1.getCompactNodePixels().size() != node2.getCompactNodePixels().size()) {
-				c++;
-			}							
-		}
+		for(int p = 0 ; p < imgInput.getSize() ; p++) {
+			NodeLevelSets node1 = tree.getSC(p);
+			NodeLevelSets node2 = tree2.getSC(p);
+			for(Integer att: node1.getAttributes().keySet()) {
+				if(att == Attribute.ALTITUDE)
+					continue;
+				if(node1.getAttributeValue(att) != node2.getAttributeValue(att)) {
+					//System.out.println(Attribute.getNameAttribute(att));
+				}				
+			}		
+		}	
 		
-		System.out.println("Nós diferentes: "+ c);
+		System.out.println("Images iguais? " + ImageAlgebra.equals(tree.reconstruction(), tree2.reconstruction()));
 			
 	}
 	

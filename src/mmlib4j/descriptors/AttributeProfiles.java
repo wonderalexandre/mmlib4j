@@ -127,13 +127,13 @@ public class AttributeProfiles {
 	
 	public static void main(String args[]) {
 		
-		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));
+		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/img_teste_2.png"));
 		int type = Attribute.MOMENT_OF_INERTIA;
 		
 		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(MmlibImageFactory.instance, 
 																		 imgInput, 
 																		 type, 
-																		 new double[] {0.4},
+																		 new double[] {0.9},
 																		 SIMPLIFY_SUBTRACTIVE_RULE);
 		
 		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(profiles[profiles.length-1], 

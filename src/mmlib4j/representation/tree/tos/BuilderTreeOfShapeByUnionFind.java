@@ -126,18 +126,18 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			int pai = parent[p];
 			
 			if(p == pai){ //Note que:  p = pInfinito
-				this.root = nodesMapTmp[p] = new NodeToS(numNode++, imgU[p], img, p);
+				this.root = nodesMapTmp[p] = new NodeToS(numNode++, ByteImage.toInt(imgU[p]), img, p);
 				nodesMapTmp[p].addPixel( p );
 				continue;
 			}
 			
 			if(nodesMapTmp[pai] == null) {
-				nodesMapTmp[pai] = new NodeToS(numNode++, imgU[pai], img, p);
+				nodesMapTmp[pai] = new NodeToS(numNode++, ByteImage.toInt(imgU[pai]), img, p);
 			}
 			 
-			if(imgU[p] != imgU[pai]){ //novo no
+			if(ByteImage.toInt(imgU[p]) != ByteImage.toInt(imgU[pai])){ //novo no
 				if(nodesMapTmp[p] == null){
-					nodesMapTmp[p] = new NodeToS(numNode++, imgU[p], img, p);
+					nodesMapTmp[p] = new NodeToS(numNode++, ByteImage.toInt(imgU[p]), img, p);
 				}
 				nodesMapTmp[p].setParent( nodesMapTmp[pai] );
 				nodesMapTmp[pai].addChildren(nodesMapTmp[p]);	
@@ -177,7 +177,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			int pixelUnterpolate = (x/2) + (y/2) * imgWidth;
 			
 			if(p == pai){ //Note que:  p = pInfinito
-				this.root = nodesMapTmp[p] = new NodeToS(numNode++, imgU[p], img, pixelUnterpolate);
+				this.root = nodesMapTmp[p] = new NodeToS(numNode++, ByteImage.toInt(imgU[p]), img, pixelUnterpolate);
 				if(x % 2 == 1 && y % 2 == 1){
 					nodesMapTmp[p].addPixel(pixelUnterpolate);					
 				}
@@ -185,12 +185,12 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			}
 			
 			if(nodesMapTmp[pai] == null) {
-				nodesMapTmp[pai] = new NodeToS(numNode++, imgU[pai], img, pixelUnterpolate);
+				nodesMapTmp[pai] = new NodeToS(numNode++, ByteImage.toInt(imgU[pai]), img, pixelUnterpolate);
 			}
 			 
-			if(imgU[p] != imgU[pai]){ //novo no
+			if(ByteImage.toInt(imgU[p]) != ByteImage.toInt(imgU[pai])){ //novo no
 				if(nodesMapTmp[p] == null){
-					nodesMapTmp[p] = new NodeToS(numNode++, imgU[p], img, pixelUnterpolate);
+					nodesMapTmp[p] = new NodeToS(numNode++, ByteImage.toInt(imgU[p]), img, pixelUnterpolate);
 				}
 				nodesMapTmp[p].setParent( nodesMapTmp[pai] );
 				nodesMapTmp[pai].addChildren(nodesMapTmp[p]);	
@@ -261,14 +261,14 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		for (int i = 0; i < imgR.length; i++) {
 			int p = imgR[i];
 			int q = parent[p];
-			if(imgU[parent[q]] == imgU[q]){
+			if(ByteImage.toInt(imgU[parent[q]]) == ByteImage.toInt(imgU[q])){
 				parent[p] = parent[q];
 			}
 		}
 		zPar = null;
 		
 		long tf = System.currentTimeMillis();
-        if(isLog)
+		if(Utils.debug)
         	System.out.println("Tempo de execucao [union-find] "+ ((tf - ti) /1000.0)  + "s");
 		
         return parent;
@@ -306,7 +306,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 			i++;
 		}
 		long tf = System.currentTimeMillis();
-		if(isLog)
+		if(Utils.debug)
 			System.out.println("Tempo de execucao [sort] "+ ((tf - ti) /1000.0)  + "s");
 	}
 	
@@ -483,7 +483,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		}
         
         long tf = System.currentTimeMillis();
-        if(isLog){
+        if(Utils.debug){
         	System.out.println("Tempo de execucao [interpolacao2] "+ ((tf - ti) /1000.0)  + "s");
 	        
 	        /*for(y=0; y < interpHeight; y++){

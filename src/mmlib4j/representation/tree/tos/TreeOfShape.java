@@ -57,15 +57,9 @@ public class TreeOfShape{
 		long ti = System.currentTimeMillis();
 		this.width = img.getWidth();
 		this.height = img.getHeight();
-		this.imgInput = img;
-		
+		this.imgInput = img;		
 		//this.build = new BuilderTreeOfShapeByUnionFindParallel(img, xInfinito, yInfinito);
-		this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true);
-		/*this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, false);
-		this.imgInput = build.getInputImage();
-		this.width = imgInput.getWidth();
-		this.height = imgInput.getHeight();*/
-		
+		this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true);		
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
 		this.numNodeIdMax = build.getNumNodeIdMax();

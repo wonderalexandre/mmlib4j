@@ -9,6 +9,7 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
@@ -272,7 +273,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 			else{
 				if(img.getPixel(pai) != img.getPixel(p)){ //novo no
 					if(nodesMap[p] == null){ 
-						nodesMap[p] = new NodeToS(numNode++, imgU[p], img, p);	
+						nodesMap[p] = new NodeToS(numNode++, ByteImage.toInt(imgU[p]), img, p);	
 					}
 					nodesMap[p].setParent( nodesMap[pai] );
 					nodesMap[pai].addChildren(nodesMap[p]);
@@ -337,7 +338,7 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		for (int i = 0; i < imgR.length; i++) {
 			int p = imgR[i];
 			int pai = parent[p];
-			if(imgU[parent[pai]] == imgU[pai]){
+			if(ByteImage.toInt(imgU[parent[pai]]) == ByteImage.toInt(imgU[pai])){
 				parent[p] = parent[pai];
 			}
 		}
@@ -784,7 +785,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
     
 
 	public static void printTree(NodeLevelSets no, PrintStream out, String s){
-		out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCompactNodePixels().size());
+		//out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCompactNodePixels().size());
+		out.printf(s + "[%3d; %f]\n", no.getLevel(), no.getAttributeValue(Attribute.VOLUME));
 		for(NodeLevelSets son: no.getChildren()){
 			printTree(son, out, s + "------");
 		}
