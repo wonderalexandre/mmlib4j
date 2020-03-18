@@ -1,6 +1,7 @@
 package mmlib4j.utils;
 
 import java.math.BigDecimal;
+import java.util.Random;
 
 import javax.swing.JOptionPane;
 
@@ -152,8 +153,28 @@ public class ImageUtils {
     	return low + k;
     }
     
+    public static void addGaussianNoise (GrayScaleImage img, double sigma) { 
+    	Random rnd = new Random(); 
+    	for(int p=0; p < img.getSize(); p++) {
+    		int level = img.getPixel(p);
+    		int noise = (int) (rnd.nextGaussian() * sigma);
+    		if(level + noise < 0)
+    			img.setPixel(p, 0);
+    		else if(level + noise > 255)
+    			img.setPixel(p, 255);
+    		else 
+    			img.setPixel(p, (int) (level + noise));
+    	}
+    }
     
     
+    
+    
+    public static GrayScaleImage getGaussianNoise(GrayScaleImage img, double sigma) {
+    	GrayScaleImage imgOut = img.duplicate();
+    	addGaussianNoise(imgOut, sigma);
+    	return imgOut;
+    }
   
     
 }

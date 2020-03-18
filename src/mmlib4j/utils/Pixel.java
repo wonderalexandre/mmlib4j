@@ -22,10 +22,18 @@ public class Pixel {
     	this.y += dy;
     }
     
+    public Pixel getTranslate(int dx, int dy) {
+    	return new Pixel(x+dx, y+dy);
+    }
+    
     public Pixel(int x, int y, int direction){
 		this.x = x;
 		this.y = y;
 		this.direction = direction;
 	}
+    
+    public boolean equals(Pixel p) {
+    	return p.x == x && p.y == y;
+    }
 	
 }
