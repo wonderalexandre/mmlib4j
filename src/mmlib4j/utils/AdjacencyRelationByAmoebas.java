@@ -1,13 +1,11 @@
 package mmlib4j.utils;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.Queue;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.Image2D;
 import mmlib4j.images.impl.ImageFactory;
 
 
@@ -351,11 +349,13 @@ public class AdjacencyRelationByAmoebas {
 		
 		
 		GrayScaleImage img = ImageBuilder.openGrayImage();
+
 		GrayScaleImage imgNoise = ImageUtils.getGaussianNoise(img, 20);
 		
 		GrayScaleImage imgMedia = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		GrayScaleImage imgMediaAboema = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-		
+
+				
 		for(int p=0; p < imgNoise.getSize(); p++){
 			int cont = 0;
 			int soma = 0; 
@@ -392,11 +392,6 @@ public class AdjacencyRelationByAmoebas {
 		WindowImages.show(imgMediaAboema, "Filtro de media adaptativo");
 		
 	}
-	
-	
-
-	
-
-	
+		
 	
 }
