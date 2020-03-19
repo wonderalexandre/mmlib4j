@@ -52,6 +52,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		node.addAttribute(Attribute.MOMENT_CENTRAL_02, attr[ node.getId() ].moment02);
 		node.addAttribute(Attribute.MOMENT_CENTRAL_20, attr[ node.getId() ].moment20);
 		node.addAttribute(Attribute.MOMENT_CENTRAL_11, attr[ node.getId() ].moment11);
+		node.addAttribute(Attribute.SUM_LEVEL_2, new Attribute(Attribute.SUM_LEVEL_2, attr[node.getId()].sumLevel2));
 		node.addAttribute(Attribute.VARIANCE_LEVEL, attr[ node.getId() ].variance);
 		node.addAttribute(Attribute.LEVEL_MEAN, attr[ node.getId() ].levelMean);
 		node.addAttribute(Attribute.STD_LEVEL, new Attribute(Attribute.STD_LEVEL, Math.sqrt( attr[ node.getId() ].variance.value) ));

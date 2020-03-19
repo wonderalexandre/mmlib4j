@@ -7,7 +7,6 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.filtering.EdgeOperators;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.Pixel;
 import mmlib4j.utils.Utils;

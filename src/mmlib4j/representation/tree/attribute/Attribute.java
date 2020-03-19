@@ -90,6 +90,9 @@ public class Attribute {
 	public static final int FUNCTIONAL_ATTRIBUTE = 53;
 	public static final int FUNCTIONAL_VARIATIONAL = 54;
 	
+	// others
+	public static final int SUM_LEVEL_2 = 70;
+	
 	public static String getNameAttribute(int type) {
 		switch(type){
 		case ALTITUDE: return "ALTITUDE";	
@@ -137,6 +140,9 @@ public class Attribute {
 		case SUM_GRAD_CONTOUR: return "SUM_GRAD_CONTOUR";
 		case FUNCTIONAL_ATTRIBUTE: return "FUNCTIONAL_ATTRIBUTE";
 		case FUNCTIONAL_VARIATIONAL: return "FUNCTIONAL_VARIATIONAL";
+		
+		//others
+		case SUM_LEVEL_2: return "SUM_LEVEL_2";
 		
 		default: return "UNDEFINED";
 	}

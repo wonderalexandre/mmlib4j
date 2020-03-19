@@ -7,6 +7,7 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
 
 
+
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
  * @author Wonder Alexandre Luz Alves

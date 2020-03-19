@@ -13,7 +13,6 @@ import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
@@ -354,7 +353,7 @@ public class ComputerExtinctionValueComponentTree implements ComputerExtinctionV
 		boolean visitado[] = new boolean[tree.getNumNode()];
 		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = new SimpleArrayList<ExtinctionValueNode>();		
 		for(Object obj: folhas){
-			NodeCT folha = (NodeCT) obj;
+			NodeLevelSets folha = (NodeLevelSets) obj;
 			extincao = (int)tree.getRoot().getAttribute(Attribute.ALTITUDE).getValue();
 			NodeLevelSets pai = folha.getParent();
 			while (pai != null &&  pai.getAttribute(Attribute.ALTITUDE).getValue() <= Math.abs(folha.getLevel() - pai.getLevel())) {

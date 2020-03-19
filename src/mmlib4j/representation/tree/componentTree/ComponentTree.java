@@ -167,11 +167,12 @@ public class ComponentTree {
 			parent.getChildren().remove(node);
 			tree.listLeaves = null;
 			
-			for(NodeLevelSets no: node.getNodesDescendants()){
+			for(NodeLevelSets no: node.getNodesDescendants()){				
 				tree.listNode.remove(no);
 				tree.numNode--;
 				for(int p: no.getCompactNodePixels()){
-					parent.addPixel(p);
+					//parent.addPixel(p);
+					parent.getCompactNodePixels().add(p);
 					tree.map[p] = parent;	
 				}
 			}
@@ -394,7 +395,7 @@ public class ComponentTree {
 
 	protected void createNodesMap(){
 		if(map == null)
-			map = new NodeCT[imgInput.getSize()];
+			map = new NodeLevelSets[imgInput.getSize()];
 		listNode = new SimpleLinkedList<NodeLevelSets>();
 		listLeaves = new SimpleLinkedList<NodeLevelSets>();
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();

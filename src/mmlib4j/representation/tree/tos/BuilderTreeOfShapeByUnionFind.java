@@ -286,7 +286,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		long ti = System.currentTimeMillis();
   		//Algoritmo de ordenacao do paper
 		int size = interpWidth * interpHeight;
-  		PriorityQueueToS queue = new PriorityQueueToS( );
+  		PriorityQueueToS queue = new PriorityQueueToS();
 		int i = 0;
 		boolean dejavu[] = new boolean[size]; //dejavu eh inicializado com false
 		this.imgR = new int[size];
@@ -429,8 +429,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		Arrays.sort( pixels );		
 		
 		// Calculated based on Thierry examples
-		int median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;
-
+		int median = ( pixels[ img.getSize() / 2 - 1 ] + pixels[ img.getSize() / 2 + 1 ] ) / 2;	
 		int min, max;
 		int adjX[] =  null;
 		int adjY[] =  null;

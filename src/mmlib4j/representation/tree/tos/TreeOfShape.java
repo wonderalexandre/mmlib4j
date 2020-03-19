@@ -356,12 +356,15 @@ public class TreeOfShape{
 	/* Add by gobber */	
 	public void mergeParent( NodeLevelSets node ) {
 		if( node != root ) {						
+			if(node.getLevel() == 72)
+				System.out.println(node.getId());
 			NodeLevelSets parent = node.getParent();
 			parent.getChildren().remove(node);			
 			listNode.remove(node);
 			numNode--;			
-			for( int p: node.getCompactNodePixels() ) {				
-				parent.getCompactNodePixels().add(p);
+			for(int p: node.getCompactNodePixels()) {				
+				//parent.getCompactNodePixels().add(p);
+				parent.addPixel(p);
 				map[p] = parent;				
 			}			
 			for(NodeLevelSets child : node.getChildren()) {							

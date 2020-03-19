@@ -10,7 +10,6 @@ import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 
 
 /**
@@ -98,10 +97,6 @@ public abstract class NodeLevelSets {
 		return isNodeMaxtree;
 	}
 	
-	public void setParent(NodeLevelSets parent) {
-		this.parent = parent;
-	}
-	
 	public void addAttribute(int key, Attribute attr){
 		attributes.put(key, attr);
 	}
@@ -133,11 +128,11 @@ public abstract class NodeLevelSets {
 		return isClone;
 	}
 	
-	public void setParent(NodeCT p){
+	public void setParent(NodeLevelSets p){
 		parent = p;
 	}
 	
-	public void addChildren(NodeCT n){
+	public void addChildren(NodeLevelSets n){
 		children.add(n);
 	}
 	
@@ -300,11 +295,6 @@ public abstract class NodeLevelSets {
 	/*public SimpleLinkedList<NodeLevelSets> getAdjcencyNodes() {
 		return adjcencyNodes;
 	}*/
-
-
-	public void addChildren(NodeLevelSets son) {
-		children.add(son);
-	}
 	
 
 	public int hashCode(){

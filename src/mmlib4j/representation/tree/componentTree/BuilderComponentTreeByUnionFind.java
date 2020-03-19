@@ -401,7 +401,7 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 	
 	
 	public static void printTree(NodeLevelSets no, PrintStream out, String s){
-		out.printf(s + "[%3d; %d]\n", no.getLevel(), no.getCompactNodePixels().size());
+		out.printf(s + "[%3d; %f]\n", no.getLevel(), no.getAttributeValue(Attribute.VOLUME));
 		//out.printf(s + "[%d], [%3f]\n",  no.getId(), no.getAttributeValue(Attribute.MOMENT_OF_INERTIA));
 		for(NodeLevelSets son: no.getChildren()){
 			printTree(son, out, s + "------");

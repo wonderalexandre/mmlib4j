@@ -5,8 +5,6 @@ import java.io.File;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
-import mmlib4j.descriptors.AttributeProfiles;
-import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
@@ -23,7 +21,6 @@ import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes
 import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
 import mmlib4j.utils.ImageAlgebra;
 import mmlib4j.utils.ImageBuilder;
-import mmlib4j.utils.ImageUtils;
 import mmlib4j.utils.Utils;
 
 
@@ -306,7 +303,8 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	}
 	
 	public void simplificationTreeByDirectRule(double attributeValue, int type){
-		boolean[] mapCorrection = new boolean[numNodeIdMax];
+		boolean[] update = new boolean[numNodeIdMax];
+		boolean[] modified = new boolean[numNodeIdMax];
 		int newNumNodeIdMax = 1;
 		NodeLevelSets parent;
 		
@@ -314,26 +312,27 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			if(node == getRoot())
 				continue;								
 			parent = node.getParent();								
-			if(node.getAttributeValue(type) <= attributeValue) {						
+			if(node.getAttributeValue(type) < attributeValue) {						
 				mergeParent(node);
-				mapCorrection[parent.getId()] = true;			
+				update[parent.getId()] = true;		
+				modified[parent.getId()] = true;
 			} else { 
 				// This helps to decrease the size of auxiliary structures
 				if(node.getId() > newNumNodeIdMax)
 					newNumNodeIdMax = node.getId();
 				// Pass the mapCorrection to all ancestors
-				if(mapCorrection[node.getId()])
-					mapCorrection[parent.getId()] = true;
+				if(update[node.getId()])
+					update[parent.getId()] = true;
 			}
 		}
 		
-		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
+		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 		// Verify each attribute that was computed before
 		if(hasComputerCentralMomentAttribute) {
-			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), mapCorrection).addAttributeInNodesCT(getListNodes(), mapCorrection);
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);
 		}
-
+		
 		// Modify maxID to optimize memory		
 		numNodeIdMax = newNumNodeIdMax + 1;
 	}

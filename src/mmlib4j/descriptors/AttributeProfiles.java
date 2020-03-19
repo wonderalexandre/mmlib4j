@@ -2,17 +2,13 @@ package mmlib4j.descriptors;
 
 import java.io.File;
 
-import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
-import mmlib4j.representation.tree.componentTree.BuilderComponentTree;
-import mmlib4j.representation.tree.componentTree.BuilderComponentTreeByUnionFind;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
@@ -22,6 +18,8 @@ public class AttributeProfiles {
 	public final static int ENERGY = 10; 
 	public final static int SIMPLIFY_DIRECT_RULE = 11;
 	public final static int SIMPLIFY_SUBTRACTIVE_RULE = 12;
+	public final static int SIMPLIFY_MIN_RULE = 13;
+	public final static int SIMPLIFY_MAX_RULE = 14;
 	public static ConnectedFilteringByComponentTree tree;	
 	public static FilteringStrategy strategy;
 	
@@ -74,6 +72,25 @@ public class AttributeProfiles {
 					return compFV.getSimplifiedImage();
 				}
 			};
+			
+		case SIMPLIFY_MIN_RULE:
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					tree.simplificationTreeByPruningMin(threshold, attributeType);
+					return tree.reconstruction();
+				}
+			};
+			
+		case SIMPLIFY_MAX_RULE:
+			return new FilteringStrategy() {				
+				@Override
+				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
+					tree.simplificationTreeByPruningMax(threshold, attributeType);
+					return tree.reconstruction();
+				}
+			};
+			
 		case SIMPLIFY_DIRECT_RULE:
 			return new FilteringStrategy() {				
 				@Override
@@ -133,26 +150,25 @@ public class AttributeProfiles {
 		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(MmlibImageFactory.instance, 
 																		 imgInput, 
 																		 type, 
-																		 new double[] {0.9},
+																		 new double[] {0.1, 0.2, 0.3},
 																		 SIMPLIFY_SUBTRACTIVE_RULE);
 		
 		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(profiles[profiles.length-1], 
 																						AdjacencyRelation.getAdjacency4(), 
 																						true);
 		tree2.loadAttribute(type);		
-		System.out.println("Nós árvore original: " + AttributeProfiles.tree.getNumNode());
+		System.out.println("Nós árvore filtrada: " + AttributeProfiles.tree.getNumNode());
 		System.out.println("Nós nova árvore: " + tree2.getNumNode());
 		
 		for(NodeLevelSets node : AttributeProfiles.tree.getListNodes()) {
 			NodeLevelSets node2 = tree2.getNodesMap()[node.getCanonicalPixel()];
 			for(Integer att: node.getAttributes().keySet()) {
-				if(node.getAttributeValue(att) != node2.getAttributeValue(att)) {
-					System.out.println(Attribute.getNameAttribute(att));
+				if(node.getAttributeValue(att) != node2.getAttributeValue(att)) {					
+					System.out.println("Att: " + node.getAttributeValue(att) + " Att Correct: "+ node2.getAttributeValue(att));
 				}				
 			}
 		}
 		
-		WindowImages.show(profiles[profiles.length-1]);
 	}
 	
 }

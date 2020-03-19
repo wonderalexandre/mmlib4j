@@ -11,7 +11,6 @@ import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
@@ -154,8 +153,8 @@ public class ComputerMserComponentTree implements ComputerMser {
 
 	
 	public boolean[] getMappingNodesByMSER(int delta){
-		ascendant = new NodeCT[tree.getNumNode()];
-		descendants = new NodeCT[tree.getNumNode()];
+		ascendant = new NodeLevelSets[tree.getNumNode()];
+		descendants = new NodeLevelSets[tree.getNumNode()];
 		boolean mser[] = new boolean[tree.getNumNode()];
 		num = 0;
 		for(NodeLevelSets node: tree.getListNodes()){
@@ -197,8 +196,8 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	
 	public boolean[] getMappingNodesByMSER(int delta, InfoPrunedTree prunedTree){
-		ascendant = new NodeCT[tree.getNumNode()];
-		descendants = new NodeCT[tree.getNumNode()];
+		ascendant = new NodeLevelSets[tree.getNumNode()];
+		descendants = new NodeLevelSets[tree.getNumNode()];
 		boolean mser[] = new boolean[tree.getNumNode()];
 		
 		for(NodeLevelSets node: tree.getListNodes()){

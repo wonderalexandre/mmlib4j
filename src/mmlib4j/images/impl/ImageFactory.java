@@ -29,12 +29,12 @@ public class ImageFactory {
 	
 
 	public static ColorImage createColorImage(int width, int height){
-		return  MmlibImageFactory.instance.createColorImage(width, height);
+		return MmlibImageFactory.instance.createColorImage(width, height);
 	}
 	
 
 	public static RealImage createRealImage(int width, int height){
-		return  MmlibImageFactory.instance.createRealImage(width, height);
+		return MmlibImageFactory.instance.createRealImage(width, height);
 	}
 	
 	
@@ -42,23 +42,23 @@ public class ImageFactory {
 	//      create copy for the object pixels[] ///
 	/////////////////////////////////////////////////////////	
 	public static ColorImage createCopyColorImage(GrayScaleImage img){
-		return  MmlibImageFactory.instance.createCopyColorImage(img);
+		return MmlibImageFactory.instance.createCopyColorImage(img);
 	}
 	
 	public static ColorImage createCopyColorImage(BinaryImage img){
-		return  MmlibImageFactory.instance.createCopyColorImage(img);
+		return MmlibImageFactory.instance.createCopyColorImage(img);
 	}
 	
 	public static ColorImage createCopyColorImage(ColorImage img){
-		return  MmlibImageFactory.instance.createCopyColorImage(img);
+		return MmlibImageFactory.instance.createCopyColorImage(img);
 	}
 	
 	public static GrayScaleImage createCopyGrayScaleImage(GrayScaleImage img) {
-		return  MmlibImageFactory.instance.createCopyGrayScaleImage(img);
+		return MmlibImageFactory.instance.createCopyGrayScaleImage(img);
 	}
 	
 	public static BinaryImage createCopyBinaryImage(BinaryImage img) {
-		return  MmlibImageFactory.instance.createCopyBinaryImage(img);
+		return MmlibImageFactory.instance.createCopyBinaryImage(img);
 	}
 
 	
@@ -82,7 +82,7 @@ public class ImageFactory {
 	}
 
 	public static GrayScaleImage createReferenceGrayScaleImage(int depth, Object pixels, int width, int height) {
-		return  MmlibImageFactory.instance.createReferenceGrayScaleImage(depth, pixels, width, height);
+		return MmlibImageFactory.instance.createReferenceGrayScaleImage(depth, pixels, width, height);
 	}
 	
 }

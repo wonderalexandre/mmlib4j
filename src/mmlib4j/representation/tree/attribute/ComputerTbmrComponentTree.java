@@ -2,7 +2,6 @@ package mmlib4j.representation.tree.attribute;
 
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
 
 
 /**
