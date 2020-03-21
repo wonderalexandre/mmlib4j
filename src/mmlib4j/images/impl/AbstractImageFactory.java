@@ -11,17 +11,13 @@ public abstract class AbstractImageFactory {
 	public static final int DEPTH_16BITS = 16;
 	public static final int DEPTH_8BITS = 8;
 	
-	private static AbstractImageFactory instance;
+	protected static AbstractImageFactory instance;
 	
 	public static AbstractImageFactory getInstance() {
 		if(instance == null) {
 			instance = new MmlibImageFactory();
 		}
 		return instance;
-	}
-	
-	public static void setInstance(AbstractImageFactory instance) {
-		AbstractImageFactory.instance = instance;
 	}
 	
 	
