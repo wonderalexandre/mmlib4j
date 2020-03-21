@@ -6,7 +6,7 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
@@ -135,7 +135,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	}
 	
 	public GrayScaleImage reconstruction(InfoPrunedTree prunedTree){
-		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
 		fifo.enqueue(prunedTree.getRoot());
 		while(!fifo.isEmpty()){
@@ -180,7 +180,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	 */
 	public GrayScaleImage filteringByPruning(double attributeValue, int type){
 		long ti = System.currentTimeMillis();
-		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(this.root);
 		while(!fifo.isEmpty()){
@@ -244,7 +244,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		if(extinctionValue.getType() != type)
 			extincaoPorNode = extinctionValue.getExtinctionValueCut(attributeValue, type);
 		
-		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());;
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()){

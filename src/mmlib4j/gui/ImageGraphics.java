@@ -5,16 +5,13 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
-import mmlib4j.images.impl.RGBImage;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.ImageBuilder;
-import mmlib4j.utils.ImageUtils;
 
 public class ImageGraphics {
 
@@ -30,7 +27,7 @@ public class ImageGraphics {
      * @return
      */
     public static ColorImage drawLine(GrayScaleImage img, Point p1, Point p2, Color c){
-    	ColorImage imgOut = AbstractImageFactory.instance.createColorImage(img.getWidth(), img.getHeight());
+    	ColorImage imgOut = ImageFactory.createColorImage(img.getWidth(), img.getHeight());
         imgOut.addSubImage(img, 0, 0);
         drawLine(imgOut, p1, p2, c);  
         return imgOut;
@@ -164,7 +161,7 @@ public class ImageGraphics {
      * @return
      */
     public static ColorImage drawRectangle(GrayScaleImage img, Point p1, int width, int height, Color c){
-    	ColorImage imgOut = AbstractImageFactory.instance.createColorImage(img.getWidth(), img.getHeight());
+    	ColorImage imgOut = ImageFactory.createColorImage(img.getWidth(), img.getHeight());
         imgOut.addSubImage(img, 0, 0);
         drawRectangle(imgOut, p1, width, height, c);  
         return imgOut;
@@ -179,7 +176,7 @@ public class ImageGraphics {
      * @return
      */
     public static ColorImage drawRectangle(GrayScaleImage img, Point p1, Point p2, Color c){
-    	ColorImage imgOut = AbstractImageFactory.instance.createColorImage(img.getWidth(), img.getHeight());
+    	ColorImage imgOut = ImageFactory.createColorImage(img.getWidth(), img.getHeight());
         imgOut.addSubImage(img, 0, 0);
         drawRectangle(imgOut, p1, p2, c);  
         return imgOut;
@@ -275,7 +272,7 @@ public class ImageGraphics {
      * @return
      */
     public static ColorImage drawString(GrayScaleImage img, String s, Font font, Color c, int x, int y) {
-    	ColorImage imgOut = AbstractImageFactory.instance.createColorImage(img.getWidth(), img.getHeight());
+    	ColorImage imgOut = ImageFactory.createColorImage(img.getWidth(), img.getHeight());
         imgOut.addSubImage(img, 0, 0);
         drawString(imgOut, s, font, c, x, y);
         return imgOut;

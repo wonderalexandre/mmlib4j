@@ -1,7 +1,7 @@
 package mmlib4j.utils;
 
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 
 
 /**
@@ -29,7 +29,7 @@ public class ImageAlgebra {
     }
     
     public static GrayScaleImage minimum(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgM = AbstractImageFactory.instance.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
+        GrayScaleImage imgM = ImageFactory.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
         minimum(imgA, imgB, imgM);
         return imgM;
     }
@@ -41,7 +41,7 @@ public class ImageAlgebra {
      * @return
      */
     public static GrayScaleImage maximum(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgM = AbstractImageFactory.instance.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
+        GrayScaleImage imgM = ImageFactory.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
         maximum(imgA, imgB, imgM);
         return imgM;
     }
@@ -72,7 +72,7 @@ public class ImageAlgebra {
     }
   
     public static GrayScaleImage subtraction(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
         subtraction(imgA, imgB, imgOut);
         return imgOut;
     }
@@ -88,7 +88,7 @@ public class ImageAlgebra {
     }
    
     public static GrayScaleImage subtractionAbs(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
         subtractionAbs(imgA, imgB, imgOut);
         return imgOut;
     }
@@ -104,7 +104,7 @@ public class ImageAlgebra {
     }
     
     public static GrayScaleImage multiply(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
         multiply(imgA, imgB, imgOut);
         return imgOut;
     }
@@ -120,7 +120,7 @@ public class ImageAlgebra {
     }
     
     public static GrayScaleImage add(GrayScaleImage imgA, GrayScaleImage imgB){
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgA.getDepth(), imgA.getWidth(), imgA.getHeight());
         add(imgA, imgB, imgOut);
         return imgOut;
     }

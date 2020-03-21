@@ -4,7 +4,7 @@ import mmlib4j.images.BinaryImage;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.BitImage;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
  
 
 /**
@@ -28,7 +28,7 @@ public class Resampling {
      * @return imgem de saida
      */
     public static GrayScaleImage nearestNeighbor(GrayScaleImage img, float fator){
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(),  (int)(img.getWidth() * fator), (int) (img.getHeight() * fator));
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(),  (int)(img.getWidth() * fator), (int) (img.getHeight() * fator));
         int value;
         if(fator <= 0) throw new RuntimeException("fator precisa ser maior que 0!");
         for(int w=0; w < imgOut.getWidth(); w++){
@@ -100,7 +100,7 @@ public class Resampling {
     public static GrayScaleImage bilinear(GrayScaleImage img, int width, int heigth){
     	
     	
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), width, heigth);
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), width, heigth);
         int value;
         if(width <= 0 || heigth <= 0) throw new RuntimeException("largura ou altura da imagem precisa ser maior que 0!");
         
@@ -146,7 +146,7 @@ public class Resampling {
     public static ColorImage bilinear(ColorImage img, int width, int heigth){
     	
     	
-    	ColorImage imgOut = AbstractImageFactory.instance.createColorImage(width, heigth);
+    	ColorImage imgOut = ImageFactory.createColorImage(width, heigth);
         int value;
         if(width <= 0 || heigth <= 0) throw new RuntimeException("largura ou altura da imagem precisa ser maior que 0!");
         
@@ -253,7 +253,7 @@ public class Resampling {
      * @return imgem de saida
      */
     public static GrayScaleImage bilinear(GrayScaleImage img, float fator){
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), (int)(img.getWidth() * fator), (int) (img.getHeight() * fator));
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), (int)(img.getWidth() * fator), (int) (img.getHeight() * fator));
         int value;
         if(fator <= 0) throw new RuntimeException("fator precisa ser maior que 0!");
         
@@ -294,7 +294,7 @@ public class Resampling {
      * @return imgem de saida
      */ 
     public static ColorImage bilinear(ColorImage img, float fator){
-        ColorImage imgOut = AbstractImageFactory.instance.createColorImage( (int)(img.getWidth() * fator), (int) (img.getHeight() * fator));
+        ColorImage imgOut = ImageFactory.createColorImage( (int)(img.getWidth() * fator), (int) (img.getHeight() * fator));
 
         if(fator <= 0) throw new RuntimeException("fator precisa ser maior que 0!");
         
@@ -352,7 +352,7 @@ public class Resampling {
      * @return imgem de saida
      */
     public static GrayScaleImage rotation(GrayScaleImage img, float graus){
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
         //imgOut.initImage(255);
         
         double radian = 2.0 * Math.PI * graus / 360.0;
@@ -414,7 +414,7 @@ public class Resampling {
      * @return imgem de saida
      */
     public static ColorImage rotation(ColorImage img, double graus){
-        ColorImage imgOut = AbstractImageFactory.instance.createColorImage(img.getWidth(), img.getHeight());
+        ColorImage imgOut = ImageFactory.createColorImage(img.getWidth(), img.getHeight());
         
         double radian = 2.0 * Math.PI * graus / 360.0;
         double ct = Math.cos(radian);

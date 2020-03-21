@@ -15,7 +15,7 @@ public class ImageFactory {
 	//                   create news images
 	////////////////////////////////////////////////////////
 	public static GrayScaleImage createGrayScaleImage(int depth, int width, int height){
-		return MmlibImageFactory.instance.createGrayScaleImage(depth, width, height);
+		return AbstractImageFactory.getInstance().createGrayScaleImage(depth, width, height);
 	}
 	/*
 	public static GrayScaleImage createGrayScaleImage(int width, int height) {
@@ -24,17 +24,17 @@ public class ImageFactory {
 	*/
 	
 	public static BinaryImage createBinaryImage(int width, int height){
-		return MmlibImageFactory.instance.createBinaryImage(width, height);
+		return AbstractImageFactory.getInstance().createBinaryImage(width, height);
 	}
 	
 
 	public static ColorImage createColorImage(int width, int height){
-		return MmlibImageFactory.instance.createColorImage(width, height);
+		return AbstractImageFactory.getInstance().createColorImage(width, height);
 	}
 	
 
 	public static RealImage createRealImage(int width, int height){
-		return MmlibImageFactory.instance.createRealImage(width, height);
+		return AbstractImageFactory.getInstance().createRealImage(width, height);
 	}
 	
 	
@@ -42,47 +42,47 @@ public class ImageFactory {
 	//      create copy for the object pixels[] ///
 	/////////////////////////////////////////////////////////	
 	public static ColorImage createCopyColorImage(GrayScaleImage img){
-		return MmlibImageFactory.instance.createCopyColorImage(img);
+		return AbstractImageFactory.getInstance().createCopyColorImage(img);
 	}
 	
 	public static ColorImage createCopyColorImage(BinaryImage img){
-		return MmlibImageFactory.instance.createCopyColorImage(img);
+		return AbstractImageFactory.getInstance().createCopyColorImage(img);
 	}
 	
 	public static ColorImage createCopyColorImage(ColorImage img){
-		return MmlibImageFactory.instance.createCopyColorImage(img);
+		return AbstractImageFactory.getInstance().createCopyColorImage(img);
 	}
 	
 	public static GrayScaleImage createCopyGrayScaleImage(GrayScaleImage img) {
-		return MmlibImageFactory.instance.createCopyGrayScaleImage(img);
+		return AbstractImageFactory.getInstance().createCopyGrayScaleImage(img);
 	}
 	
 	public static BinaryImage createCopyBinaryImage(BinaryImage img) {
-		return MmlibImageFactory.instance.createCopyBinaryImage(img);
+		return AbstractImageFactory.getInstance().createCopyBinaryImage(img);
 	}
 
 	
 	public static RealImage createCopyRealImage(RealImage img) {
-		return MmlibImageFactory.instance.createCopyRealImage(img);
+		return AbstractImageFactory.getInstance().createCopyRealImage(img);
 	}
 	
 	//////////////////////////////////////////////////////////
 	//      create new references for the object pixels[] ///
 	/////////////////////////////////////////////////////////
 	public static ColorImage createReferenceColorImage(int pixels[], int width, int height){
-		return MmlibImageFactory.instance.createReferenceColorImage(pixels, width, height);		
+		return AbstractImageFactory.getInstance().createReferenceColorImage(pixels, width, height);		
 	}
 	
 	public static RealImage createReferenceRealImage(float pixels[], int width, int height){
-		return MmlibImageFactory.instance.createReferenceRealImage(pixels, width, height);
+		return AbstractImageFactory.getInstance().createReferenceRealImage(pixels, width, height);
 	}
 
 	public static BinaryImage createReferenceBinaryImage(boolean pixels[], int width, int height){
-		return MmlibImageFactory.instance.createReferenceBinaryImage(pixels, width, height);
+		return AbstractImageFactory.getInstance().createReferenceBinaryImage(pixels, width, height);
 	}
 
 	public static GrayScaleImage createReferenceGrayScaleImage(int depth, Object pixels, int width, int height) {
-		return MmlibImageFactory.instance.createReferenceGrayScaleImage(depth, pixels, width, height);
+		return AbstractImageFactory.getInstance().createReferenceGrayScaleImage(depth, pixels, width, height);
 	}
 	
 }

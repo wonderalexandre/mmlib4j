@@ -1,7 +1,7 @@
 package mmlib4j.filtering.color;
 
 import mmlib4j.images.RealImage;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.images.impl.RGBImage;
 
 public class ColorSpace {
@@ -12,9 +12,9 @@ public class ColorSpace {
     public static RealImage[] getColorSpaceXYZ(RGBImage img){
         float red, green, blue;
         
-        RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float[][] matrix = new float[][] {{0.4124564f, 0.3575761f, 0.1804375f},
         								  {0.2126729f, 0.7151522f, 0.0721750f},
@@ -53,9 +53,9 @@ public class ColorSpace {
     public static RealImage[] getColorSpaceLAB(RGBImage img){
     	RealImage xyz[] = getColorSpaceXYZ(img); 
 
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float l, a, b;
     	float fX, fY, fZ;
@@ -108,9 +108,9 @@ public class ColorSpace {
      * @return
      */
     public static RealImage[] getColorSpaceYUV(RGBImage img){
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float Y, U, V;
         float red, green, blue;
@@ -136,9 +136,9 @@ public class ColorSpace {
     // This is the matrix for full-range (0-255) YCbCr colors
     public static RealImage[] getColorSpaceYCbCr(RGBImage img){
     
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float Y, Cb, Cr;
     	for(int q=0; q < img.getSize(); q++){
@@ -168,9 +168,9 @@ public class ColorSpace {
     */
     public static RealImage[] getColorSpaceYIQ(RGBImage img){
         
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float Y, I, Q;
         float red, green, blue;
@@ -208,9 +208,9 @@ public class ColorSpace {
     
     	RealImage xyz[] = getColorSpaceXYZ(img); 
 
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float x=0, y=0, z=0;
         x = Lwhite[0];
@@ -268,9 +268,9 @@ public class ColorSpace {
      * @return
      */
     public static RealImage[] getColorSpaceHSI(RGBImage img){
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float H, S, I;
         float red, green, blue;
@@ -318,9 +318,9 @@ public class ColorSpace {
      * http://www.easyrgb.com/math.html
      */
     public static RealImage[] getColorSpaceHSL(RGBImage img){
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float H, S, L;
         float red, green, blue;
@@ -375,9 +375,9 @@ public class ColorSpace {
      * @return
      */
     public static RealImage[] getColorSpaceHSV(RGBImage img){
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float H, S, V;
         float red, green, blue;
@@ -425,10 +425,10 @@ public class ColorSpace {
      * Because CMYK is subtractive, invert the image to see the appearance of the plates. 
      */
     public static RealImage[] getColorSpaceCMYK(RGBImage img){
-    	RealImage c1 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c2 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c3 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
-        RealImage c4 = AbstractImageFactory.instance.createRealImage(img.getWidth(), img.getHeight());
+    	RealImage c1 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c2 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c3 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
+        RealImage c4 = ImageFactory.createRealImage(img.getWidth(), img.getHeight());
 
         float C, M, Y, K;
         float red, green, blue;

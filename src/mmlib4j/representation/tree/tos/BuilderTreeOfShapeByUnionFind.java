@@ -5,9 +5,10 @@ import java.util.Iterator;
 
 import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ByteImage;
-import mmlib4j.utils.Utils;
 import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ByteImage;
+import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.utils.Utils;
 
 
 /**
@@ -110,7 +111,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	}
 	
 	public GrayScaleImage getImageInterpolated(){
-		return AbstractImageFactory.instance.createReferenceGrayScaleImage(8, imgU, interpWidth, interpHeight);
+		return ImageFactory.createReferenceGrayScaleImage(8, imgU, interpWidth, interpHeight);
 	}
 	
 	/**
@@ -539,7 +540,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		// Second example of Thierry
 		
-		GrayScaleImage input = AbstractImageFactory.instance.createGrayScaleImage( AbstractImageFactory.DEPTH_8BITS, 
+		GrayScaleImage input = ImageFactory.createGrayScaleImage( AbstractImageFactory.DEPTH_8BITS, 
 				  												  5, 5 );
 		
 		input.setPixel( 0, 0, 128 );

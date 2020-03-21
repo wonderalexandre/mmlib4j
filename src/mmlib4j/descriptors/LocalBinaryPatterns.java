@@ -3,7 +3,7 @@ package mmlib4j.descriptors;
 import mmlib4j.filtering.Histogram;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.ImageBuilder;
 
 public class LocalBinaryPatterns {
@@ -46,7 +46,7 @@ public class LocalBinaryPatterns {
 	}
 	
 	public GrayScaleImage computerLBP(GrayScaleImage img, int threshold) {
-		GrayScaleImage imgLBP = AbstractImageFactory.instance.createGrayScaleImage(8, img.getWidth(), img.getHeight());
+		GrayScaleImage imgLBP = ImageFactory.createGrayScaleImage(8, img.getWidth(), img.getHeight());
 		/* Calculate the lbp */
 		for (int x = (int) (0 + radius); x < img.getWidth() - radius; ++x) {
 			for (int y = (int)(0 + radius); y < img.getHeight() - radius; ++y) {

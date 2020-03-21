@@ -23,8 +23,8 @@ public class AttributeProfiles {
 	public static ConnectedFilteringByComponentTree tree;	
 	public static FilteringStrategy strategy;
 	
-	public static GrayScaleImage[] getAttributeProfile(AbstractImageFactory factory, GrayScaleImage img, int attributeType, double thresholds[]) {
-		return getAttributeProfile(factory, img, attributeType, thresholds, MorphologicalTreeFiltering.PRUNING_MIN);
+	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[]) {
+		return getAttributeProfile(img, attributeType, thresholds, MorphologicalTreeFiltering.PRUNING_MIN);
 	}
 	
 	public static FilteringStrategy getStrategy(int typeStrategy) {
@@ -112,9 +112,9 @@ public class AttributeProfiles {
 		}	
 	}
 	
-	public static GrayScaleImage[] getAttributeProfile(AbstractImageFactory factory, GrayScaleImage img, int attributeType, double thresholds[], int typeStrategy) {
+
+	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[], int typeStrategy) {
 		
-		AbstractImageFactory.instance = factory;
 		int lambdas = thresholds.length;
 		GrayScaleImage[] profiles = new GrayScaleImage[2 * lambdas + 1];
 		strategy = getStrategy(typeStrategy);		
@@ -138,6 +138,8 @@ public class AttributeProfiles {
 		
 	}
 	
+	
+	
 	public interface FilteringStrategy {	
 		public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType);
 	}
@@ -147,8 +149,7 @@ public class AttributeProfiles {
 		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/img_teste_2.png"));
 		int type = Attribute.MOMENT_OF_INERTIA;
 		
-		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(MmlibImageFactory.instance, 
-																		 imgInput, 
+		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(imgInput, 
 																		 type, 
 																		 new double[] {0.1, 0.2, 0.3},
 																		 SIMPLIFY_SUBTRACTIVE_RULE);

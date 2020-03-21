@@ -5,7 +5,7 @@ import java.util.Iterator;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.Image2D;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 
 
 /**
@@ -209,8 +209,8 @@ public class AdjacencyRelationByAmoebas {
 		
 		GrayScaleImage imgOriginal = ImageBuilder.openGrayImage();
 		GrayScaleImage img = ImageBuilder.openGrayImage();
-		GrayScaleImage imgMedia = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
-		GrayScaleImage imgMediaAboema = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgMedia = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
+		GrayScaleImage imgMediaAboema = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());
 		
 		for(int p=0; p < img.getSize(); p++){
 			int cont = 0;

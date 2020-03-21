@@ -4,6 +4,7 @@ import java.io.File;
 
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -28,7 +29,7 @@ public class TreeOfComponentTree {
 		this.input = tree.getInputImage();
 		
 		// Image of attr		
-		imgAttr = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, input.getWidth(), input.getHeight());
+		imgAttr = ImageFactory.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, input.getWidth(), input.getHeight());
 		
 		for(NodeLevelSets node : tree.getListNodes()) {			
 			for(int p : node.getCompactNodePixels()) {

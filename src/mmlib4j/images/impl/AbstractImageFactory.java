@@ -11,7 +11,19 @@ public abstract class AbstractImageFactory {
 	public static final int DEPTH_16BITS = 16;
 	public static final int DEPTH_8BITS = 8;
 	
-	public static AbstractImageFactory instance = MmlibImageFactory.instance;
+	private static AbstractImageFactory instance;
+	
+	public static AbstractImageFactory getInstance() {
+		if(instance == null) {
+			instance = new MmlibImageFactory();
+		}
+		return instance;
+	}
+	
+	public static void setInstance(AbstractImageFactory instance) {
+		AbstractImageFactory.instance = instance;
+	}
+	
 	
 	public abstract GrayScaleImage createGrayScaleImage(int depth, int width, int height);
 	

@@ -3,7 +3,7 @@ package mmlib4j.segmentation;
 import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 
 
@@ -43,8 +43,8 @@ public class LiveWireIFT {
 
 	public static GrayScaleImage liveWire(AdjacencyRelation adj, GrayScaleImage img, int pixelBegin){
 		long ti = System.currentTimeMillis();	
-		 GrayScaleImage imgMapaPredecessores = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgMapaCusto = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaPredecessores = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaCusto = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 int NIL = -1;
 		 boolean NO_PROCESSED = false;//GRAY
 		 boolean PROCESSED = true; //BLACK 

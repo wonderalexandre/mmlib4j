@@ -2,7 +2,7 @@ package mmlib4j.segmentation;
 
 import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 
 
@@ -17,8 +17,8 @@ public class RegionalMinimaByIFT {
 	
 	public static GrayScaleImage extractionOfRegionalMinima(GrayScaleImage img){
 		long ti = System.currentTimeMillis();	
-		 GrayScaleImage imgMapaPredecessores = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-		 GrayScaleImage imgMapaCusto = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaPredecessores = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMapaCusto = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 int NIL = -1;
 		 boolean NO_PROCESSED = false;//GRAY
 		 boolean PROCESSED = true; //BLACK 
@@ -57,7 +57,7 @@ public class RegionalMinimaByIFT {
 		 }
 			
 		 //pos-processamento
-		 GrayScaleImage imgMinimo = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		 GrayScaleImage imgMinimo = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		 int label = 0;
 		 for(int i=0; i < imgMinimo.getSize(); i++){
 			 if(imgMapaPredecessores.getPixel(i) == NIL){

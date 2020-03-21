@@ -4,6 +4,7 @@ package mmlib4j.representation.tree.shapeSpace;
 import mmlib4j.datastruct.PriorityQueueDial;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 
@@ -22,7 +23,7 @@ public class TreeOfComponentTree2 {
 				
 		this.tree = tree;
 		this.numNode = tree.getNumNode();
-		GrayScaleImage attrImg = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, 1, numNode);		
+		GrayScaleImage attrImg = ImageFactory.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, 1, numNode);		
 		// Imagem do atributo (apenas para os nós)
 		for(NodeLevelSets node : tree.getListNodes()) {
 			attrImg.setPixel(node.getId(), (int) node.getAttributeValue(attr));

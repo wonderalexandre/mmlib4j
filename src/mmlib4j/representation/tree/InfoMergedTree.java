@@ -7,7 +7,7 @@ import mmlib4j.datastruct.FlattenList;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.attribute.Attribute;
 
 /*
@@ -69,7 +69,7 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	}
 	
 	public GrayScaleImage reconstruction() {		
-		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());		
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(img.getDepth(), img.getWidth(), img.getHeight());		
 		/*int cont = 0;
 		int numWrongNodes = 0;*/						
 		for(NodeMergedTree node_ : this) {							

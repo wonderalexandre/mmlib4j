@@ -7,6 +7,7 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Pixel;
 
@@ -18,7 +19,7 @@ import mmlib4j.utils.Pixel;
 public class Labeling {
 
 	public static GrayScaleImage labeling(BinaryImage img, AdjacencyRelation adj){
-		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		
 		int label = 1;
 		for(int p=0; p < img.getSize(); p++){
@@ -50,7 +51,7 @@ public class Labeling {
 		for(int p=0; p < img.getSize(); p++){
 			if(flags[p] || img.isPixelBackground(p)) continue;
 			flags[p] = true;
-			imgs[label] = AbstractImageFactory.instance.createBinaryImage(img.getWidth(), img.getHeight());
+			imgs[label] = ImageFactory.createBinaryImage(img.getWidth(), img.getHeight());
 			imgs[label].setPixel(p, true);
 			Queue<Integer> fifo = new Queue<Integer>();
 			fifo.enqueue(p);
@@ -142,8 +143,8 @@ public class Labeling {
 	 }
 	
 	 public static GrayScaleImage markerCenter(GrayScaleImage img, AdjacencyRelation adj){
-			GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
-			GrayScaleImage imgOutC = AbstractImageFactory.instance.createGrayScaleImage(8, img.getWidth(), img.getHeight());
+			GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+			GrayScaleImage imgOutC = ImageFactory.createGrayScaleImage(8, img.getWidth(), img.getHeight());
 			int label = 1;
 			for(int p=0; p < img.getSize(); p++){
 				if(imgOut.getPixel(p) != 0) continue;
@@ -176,7 +177,7 @@ public class Labeling {
 		}
 	
 	public static GrayScaleImage labeling(GrayScaleImage img, AdjacencyRelation adj){
-		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, img.getWidth(), img.getHeight());
 		
 		int label = 1;
 		for(int p=0; p < img.getSize(); p++){
@@ -200,7 +201,7 @@ public class Labeling {
 	
 	
 	public static GrayScaleImage labeling(GrayScaleImage img, AdjacencyRelation adj, int k){
-		GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
 		
 		int label = 1;
 		for(int p=0; p < img.getSize(); p++){
@@ -230,7 +231,7 @@ public class Labeling {
     public static ArrayList<Integer> getHeights(BinaryImage imgIn){
     	BinaryImage img = imgIn.duplicate();
     	ArrayList<Integer> list = new ArrayList<Integer>();
-        GrayScaleImage imgOut = AbstractImageFactory.instance.createGrayScaleImage(32, img.getWidth(), img.getHeight());
+        GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(32, img.getWidth(), img.getHeight());
         
         int labeling = 0;
         for(int w=0; w < img.getWidth(); w++)

@@ -13,7 +13,6 @@ import mmlib4j.images.RealImage;
  */
 public class MmlibImageFactory extends AbstractImageFactory {
 	
-	public static final AbstractImageFactory instance = new MmlibImageFactory();
 	
 	//////////////////////////////////////////////////////////
 	//                   create news images
