@@ -116,6 +116,18 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 		return numNodeIdMax;
 	}
 	
+	public int[] getOrderedPixels() {
+		return imgR;
+	}
+	
+	public byte[] getValuesOfOrderedPixels() {
+		return imgU;
+	}
+	
+	public int[] getParent() {
+		return parent;
+	}
+	
 	public BuilderTreeOfShapeByUnionFindParallel(GrayScaleImage img, int xInfinito, int yInfinito){
 		super();
 		this.img = img;

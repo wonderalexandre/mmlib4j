@@ -1,10 +1,7 @@
 package mmlib4j.descriptors;
 
-import java.io.File;
-
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
-import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
@@ -20,7 +17,6 @@ public class AttributeProfiles {
 	public final static int SIMPLIFY_SUBTRACTIVE_RULE = 12;
 	public final static int SIMPLIFY_MIN_RULE = 13;
 	public final static int SIMPLIFY_MAX_RULE = 14;
-	public static ConnectedFilteringByComponentTree tree;	
 	public static FilteringStrategy strategy;
 	
 	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[]) {
@@ -112,6 +108,22 @@ public class AttributeProfiles {
 		}	
 	}
 	
+	public static String[] getLabels(int attributeType, double thresholds[], int typeStrategy) {
+		int lambdas = thresholds.length;
+		String[] labels = new String[2 * lambdas + 1];
+		
+		for (int i = 0; i < lambdas; i++) {
+			labels[lambdas-i-1] = Attribute.getNameAttribute(attributeType)+ ": "+ thresholds[i];								
+		}
+		
+		labels[lambdas] = "input";
+		
+		for (int i = 0; i < lambdas; i++) {
+			labels[i+lambdas+1] = Attribute.getNameAttribute(attributeType)+ ": "+ thresholds[i];							
+		}
+		
+		return labels;
+	}
 
 	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[], int typeStrategy) {
 		
@@ -119,7 +131,9 @@ public class AttributeProfiles {
 		GrayScaleImage[] profiles = new GrayScaleImage[2 * lambdas + 1];
 		strategy = getStrategy(typeStrategy);		
 		
-		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency4(), false);
+		ConnectedFilteringByComponentTree tree;
+		
+		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
 		tree.loadAttribute(attributeType);				
 		
 		for (int i = 0; i < lambdas; i++) {
@@ -127,7 +141,7 @@ public class AttributeProfiles {
 		}
 
 		profiles[lambdas] = img;
-		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency4(), true);		
+		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), true);		
 		tree.loadAttribute(attributeType);				
 		
 		for (int i = 0; i < lambdas; i++) {
@@ -146,29 +160,16 @@ public class AttributeProfiles {
 	
 	public static void main(String args[]) {
 		
-		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/img_teste_2.png"));
-		int type = Attribute.MOMENT_OF_INERTIA;
+		GrayScaleImage imgInput  = ImageBuilder.openGrayImage();
+		int attributeType = Attribute.FUNCTIONAL_ATTRIBUTE;
+		double thresholds[] = new double[] {0.1, 0.2, 0.3};
+		int typeStrategy = ENERGY;
 		
-		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(imgInput, 
-																		 type, 
-																		 new double[] {0.1, 0.2, 0.3},
-																		 SIMPLIFY_SUBTRACTIVE_RULE);
+		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(imgInput, attributeType, thresholds, typeStrategy);
 		
-		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(profiles[profiles.length-1], 
-																						AdjacencyRelation.getAdjacency4(), 
-																						true);
-		tree2.loadAttribute(type);		
-		System.out.println("Nós árvore filtrada: " + AttributeProfiles.tree.getNumNode());
-		System.out.println("Nós nova árvore: " + tree2.getNumNode());
+		String labels[] = AttributeProfiles.getLabels(attributeType, thresholds, typeStrategy);
 		
-		for(NodeLevelSets node : AttributeProfiles.tree.getListNodes()) {
-			NodeLevelSets node2 = tree2.getNodesMap()[node.getCanonicalPixel()];
-			for(Integer att: node.getAttributes().keySet()) {
-				if(node.getAttributeValue(att) != node2.getAttributeValue(att)) {					
-					System.out.println("Att: " + node.getAttributeValue(att) + " Att Correct: "+ node2.getAttributeValue(att));
-				}				
-			}
-		}
+		WindowImages.show(profiles, labels);
 		
 	}
 	

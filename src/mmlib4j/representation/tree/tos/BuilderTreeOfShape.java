@@ -16,4 +16,9 @@ public interface BuilderTreeOfShape {
 	public BuilderTreeOfShape getClone();
 	public GrayScaleImage getInputImage();
 	
+	public int[] getOrderedPixels();
+	
+	public byte[] getValuesOfOrderedPixels();
+	
+	public int[] getParent();
 }

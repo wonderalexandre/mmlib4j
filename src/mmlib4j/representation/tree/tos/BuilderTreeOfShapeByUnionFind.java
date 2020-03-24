@@ -41,6 +41,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	GrayScaleImage img;
 	private NodeToS root;
 	
+	
+	
 	protected BuilderTreeOfShapeByUnionFind(){ }
 	
 	public BuilderTreeOfShapeByUnionFind getClone(){
@@ -275,6 +277,17 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
         return parent;
 	}
 	
+	public int[] getOrderedPixels() {
+		return imgR;
+	}
+	
+	public byte[] getValuesOfOrderedPixels() {
+		return imgU;
+	}
+	
+	public int[] getParent() {
+		return parent;
+	}
 	
 	/**
 	 * Ordena a imagem interpolada. 

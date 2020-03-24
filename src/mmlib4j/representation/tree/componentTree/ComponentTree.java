@@ -170,9 +170,9 @@ public class ComponentTree {
 			for(NodeLevelSets no: node.getNodesDescendants()){				
 				tree.listNode.remove(no);
 				tree.numNode--;
+				parent.getCompactNodePixels().addAll(no.getCompactNodePixels());
 				for(int p: no.getCompactNodePixels()){
 					//parent.addPixel(p);
-					parent.getCompactNodePixels().add(p);
 					tree.map[p] = parent;	
 				}
 			}
@@ -231,12 +231,15 @@ public class ComponentTree {
 		if( node != root ) {						
 			NodeLevelSets parent = node.getParent();
 			parent.getChildren().remove( node );			
-			listNode.remove( node );
+			//listNode.remove( node );
 			numNode--;									
+			
+			parent.getCompactNodePixels().addAll(node.getCompactNodePixels());
 			for( int p: node.getCompactNodePixels() ) {				
-				parent.getCompactNodePixels().add(p);
+				//parent.getCompactNodePixels().add(p);
 				map[p] = parent;				
-			}			
+			}
+			
 			for(NodeLevelSets child : node.getChildren()) {							
 				parent.addChildren(child);				
 				child.setParent(parent);			

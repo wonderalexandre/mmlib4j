@@ -301,6 +301,82 @@ public abstract class NodeLevelSets {
 		return id;
 	}
 	
+	
+	public Iterable<NodeLevelSets> getNodesDescendantsOfMainBranch(){
+		return getNodesDescendantsOfMainBranch((int) Math.pow(2, img.getDepth()));
+	}
+	
+	
+	/**
+	 * Return the descendants of the main branch
+	 * @param n
+	 * @return
+	 */
+	public Iterable<NodeLevelSets> getNodesDescendantsOfMainBranch(int n){
+		final NodeLevelSets node = this;
+		
+		return new Iterable<NodeLevelSets>() {
+			int cont = 0;
+			public Iterator<NodeLevelSets> iterator() {
+				return new Iterator<NodeLevelSets>() {
+					private NodeLevelSets nodeRef = node; 
+					public boolean hasNext() {
+						return !nodeRef.isLeaf() && cont <= n;
+					}
+					public NodeLevelSets next() {
+						int area = 0;
+						for(NodeLevelSets son: nodeRef.getChildren()) {
+							if(area < son.getArea()) {
+								area = son.getArea();
+								nodeRef = son;	
+							}
+						} 
+						cont++;
+						return nodeRef;
+					}
+					public void remove() {}
+				};
+			}
+		};
+	}
+	
+	
+	public Iterable<NodeLevelSets> getNodesAncestors(){
+		return getNodesAncestors((int) Math.pow(2, img.getDepth()));
+	}
+	
+	/**
+	 * Return the ancestors of the main branch
+	 * @param n
+	 * @return
+	 */
+	public Iterable<NodeLevelSets> getNodesAncestors(int n){
+		final NodeLevelSets node = this;
+		
+		return new Iterable<NodeLevelSets>() {
+			int cont = 0;
+			public Iterator<NodeLevelSets> iterator() {
+				return new Iterator<NodeLevelSets>() {
+					NodeLevelSets nodeRef = node;
+					public boolean hasNext() {
+						if(node.getHeightNode() < n) return false;
+						return nodeRef != null && cont <= n;
+					}
+
+					public NodeLevelSets next() {
+						NodeLevelSets n = nodeRef;
+						nodeRef = nodeRef.getParent();
+						cont++;
+						return n;
+					}
+
+					public void remove() { }
+					
+				};
+			}
+		};
+	}
+	
 
 	public Iterable<NodeLevelSets> getNodesDescendants(){
 		final Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
