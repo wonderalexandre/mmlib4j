@@ -105,7 +105,7 @@ public class FloatImage extends AbstractImage2D implements RealImage {
      * Pega uma matriz bidimensional de pixel da imagem
      * @return float[][]
      */
-    public float[] getPixels(){
+    public Object getPixels(){
         return pixels;
     }
 
@@ -115,10 +115,10 @@ public class FloatImage extends AbstractImage2D implements RealImage {
      * Modifica a matriz de pixel da imagem para os valores da matriz dada
      * @param matrix 
      */
-    public void setPixels(int width, int height, float pixels[]){
+    public void setPixels(int width, int height, Object pixels){
         this.width = width;
         this.height = height;
-        this.pixels = pixels;
+        this.pixels = (float[]) pixels;
         setPixelIndexer( PixelIndexer.getExceptionIndexer(getWidth(), getHeight()) );
     }
     

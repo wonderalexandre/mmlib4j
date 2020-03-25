@@ -80,35 +80,35 @@ public class ComputerDistanceTransform {
 					imgDT.setPixel(p, 0);	
 			}
 			
-			distanceTransformFloat(img.getWidth(), img.getHeight(), imgDT.getPixels(), 1, (float) Math.sqrt(2));
+			distanceTransformFloat(img.getWidth(), img.getHeight(), imgDT, 1, (float) Math.sqrt(2));
 		}
 		
 
-		public void distanceTransformFloat(int w, int h, float dpix[], float k1, float k2){
+		public void distanceTransformFloat(int w, int h, RealImage dpix, float k1, float k2){
 			
 			float d1, d2, d3, d4, dmin;
 			//L->R pass:
 			for (int v = 0; v < h; v++) {
 				for (int u = 0; u < w; u++) {
 					int i = v * w + u;
-					if (dpix[i]>0) { //not a foreground pixel
+					if (dpix.getPixel(i) > 0) { //not a foreground pixel
 						//compute distances via neighboring pixels
 						d1 = Float.POSITIVE_INFINITY;
 						d2 = Float.POSITIVE_INFINITY;
 						d3 = Float.POSITIVE_INFINITY;
 						d4 = Float.POSITIVE_INFINITY;
 						
-						if (u>0) 			d1 = k1 + dpix[v*w+u-1];
-						if (u>0 && v>0) 	d2 = k2 + dpix[(v-1)*w+u-1];
-						if (v>0)			d3 = k1 + dpix[(v-1)*w+u];
-						if (v>0 && u<w-1)	d4 = k2 + dpix[(v-1)*w+u+1];
+						if (u>0) 			d1 = k1 + dpix.getPixel(v*w+u-1);
+						if (u>0 && v>0) 	d2 = k2 + dpix.getPixel((v-1)*w+u-1);
+						if (v>0)			d3 = k1 + dpix.getPixel((v-1)*w+u);
+						if (v>0 && u<w-1)	d4 = k2 + dpix.getPixel((v-1)*w+u+1);
 						
-						dmin = dpix[i];
+						dmin = dpix.getPixel(i);
 						if (d1<dmin) dmin = d1;
 						if (d2<dmin) dmin = d2;
 						if (d3<dmin) dmin = d3;
 						if (d4<dmin) dmin = d4;
-						dpix[i] = dmin;
+						dpix.setPixel(i, dmin);
 					}
 				}
 			}
@@ -117,7 +117,7 @@ public class ComputerDistanceTransform {
 			for (int v = h - 1; v >= 0; v--) {
 				for (int u = w - 1; u >= 0; u--) {
 					int i = v * w + u;
-					if (dpix[i] > 0) { //not a foreground pixel
+					if (dpix.getPixel(i) > 0) { //not a foreground pixel
 						
 						//compute distances via neighboring pixels
 						d1 = Float.POSITIVE_INFINITY;
@@ -125,17 +125,17 @@ public class ComputerDistanceTransform {
 						d3 = Float.POSITIVE_INFINITY;
 						d4 = Float.POSITIVE_INFINITY;
 						
-						if (u<w-1) 			d1 = k1 + dpix[v*w+u+1];
-						if (u<w-1 && v<h-1)	d2 = k2 + dpix[(v+1)*w+u+1];
-						if (v<h-1)			d3 = k1 + dpix[(v+1)*w+u];
-						if (v<h-1 && u>0)	d4 = k2 + dpix[(v+1)*w+u-1];
+						if (u<w-1) 			d1 = k1 + dpix.getPixel(v*w+u+1);
+						if (u<w-1 && v<h-1)	d2 = k2 + dpix.getPixel((v+1)*w+u+1);
+						if (v<h-1)			d3 = k1 + dpix.getPixel((v+1)*w+u);
+						if (v<h-1 && u>0)	d4 = k2 + dpix.getPixel((v+1)*w+u-1);
 						
-						dmin = dpix[i];
+						dmin = dpix.getPixel(i);
 						if (d1<dmin) dmin = d1;
 						if (d2<dmin) dmin = d2;
 						if (d3<dmin) dmin = d3;
 						if (d4<dmin) dmin = d4;
-						dpix[i] = dmin;
+						dpix.setPixel(i, dmin);
 					}
 				}
 			}
