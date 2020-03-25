@@ -299,26 +299,7 @@ public class ComponentTree extends AbstractMorphologicalTree implements Morpholo
 		return adj;
 	}
 
-	protected void createNodesMap(){
-		if(map == null)
-			map = new NodeLevelSets[imgInput.getSize()];
-		listNode = new SimpleLinkedList<NodeLevelSets>();
-		listLeaves = new SimpleLinkedList<NodeLevelSets>();
-		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
-		fifo.enqueue(this.root);
-		while(!fifo.isEmpty()){
-			NodeLevelSets no = fifo.dequeue();
-			listNode.add(no);
-			for(Integer p: no.getCompactNodePixels()){
-				map[p] = no;
-			}
-			for(NodeLevelSets son: no.getChildren()){
-				fifo.enqueue(son);	 
-			}
-			if(no.getChildren().isEmpty())
-				listLeaves.add(no);	
-		}
-	}
+
 	
 	
 	public void computerInforTree(NodeLevelSets node, int height){
