@@ -8,9 +8,10 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.AbstractMorphologicalTree;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
 
@@ -19,24 +20,17 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class TreeOfShape{
-	protected NodeLevelSets root;
+public class TreeOfShape extends AbstractMorphologicalTree implements MorphologicalTree{
+	
 	protected int width;
 	protected int height;
-	protected int numNode; 
-	protected int numNodeIdMax;
-	protected int heightTree;
-	protected AdjacencyRelation adj = AdjacencyRelation.getCircular(1.5);
-	protected GrayScaleImage imgInput;
-	protected NodeLevelSets []map;
-	protected SimpleLinkedList<NodeLevelSets> listNode;
-	protected SimpleLinkedList<NodeLevelSets> listLeaves;
+	
 	protected BuilderTreeOfShape build;
 	
 	protected int sup = 255;
 	protected int inf = 0;
-	protected boolean isExtendedTree;
-	
+	 
+	 
 	
 	public TreeOfShape(GrayScaleImage img){
 		this(img, -1, -1);
@@ -72,49 +66,9 @@ public class TreeOfShape{
 		}
 	}
 	
-	public GrayScaleImage getInputImage(){
-		return imgInput;
-	}
-
-	public SimpleLinkedList<NodeLevelSets> getListNodes(){
-		return listNode; 
-	}
-	
-	
-	public NodeLevelSets[] getNodesMap(){
-		return map;
-	}
-	
 	public void createNodesMap(){
 		map = new NodeLevelSets[getWidth()*getHeight()];
-		listLeaves = new SimpleLinkedList<NodeLevelSets>();
-		listNode = new SimpleLinkedList<NodeLevelSets>();
-		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
-		fifo.enqueue(this.root);
-		while(!fifo.isEmpty()){
-			NodeLevelSets no = fifo.dequeue();
-			for(Integer p: no.getCompactNodePixels()){
-				map[p] = no;
-			}
-			listNode.add(no);
-			for(NodeLevelSets son: no.getChildren()){
-				fifo.enqueue(son);	 
-			}
-			if(no.isLeaf())
-				listLeaves.add(no);
-		}
-		
-	}
-	
-	public SimpleLinkedList<NodeLevelSets> getLeaves(){
-		if(listLeaves == null){
-			listLeaves = new SimpleLinkedList<NodeLevelSets>();
-			for(NodeLevelSets node: listNode){
-				if(node.getChildren().isEmpty())
-					listLeaves.add(node);	
-			}
-		}
-		return listLeaves;
+		super.createNodesMap();
 	}
 	
 
@@ -272,15 +226,6 @@ public class TreeOfShape{
 		return ramoInicio;
 	}
 	
-	public NodeLevelSets getSC(int p){
-		return map[p]; 
-	}
-	
-	
-	public NodeLevelSets getRoot() {
-		return root;
-	}
-
 
 	public int getWidth() {
 		return width;
@@ -290,16 +235,6 @@ public class TreeOfShape{
 	public int getHeight() {
 		return height;
 	}
-
-	public int getNumNode() {
-		return numNode;
-	}
-
-
-	public int getHeightTree() {
-		return heightTree;
-	}
-
 
 	public TreeOfShape getClone(){
 		TreeOfShape c = new TreeOfShape(this.build.getClone());
@@ -317,24 +252,6 @@ public class TreeOfShape{
 	}
 	
 
-	public GrayScaleImage reconstruction(){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
-		fifo.enqueue(this.root);
-		while(!fifo.isEmpty()){
-			NodeLevelSets no = fifo.dequeue();
-			for(int p: no.getCompactNodePixels()){
-				imgOut.setPixel(p, no.getLevel());
-			}
-			
-			for(NodeLevelSets son: no.getChildren()){
-				fifo.enqueue(son);	 
-			}
-			
-		}
-		return imgOut;
-	}
-	
 
 	public GrayScaleImage reconstructionByDepth(){
 		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(AbstractImageFactory.DEPTH_32BITS, imgInput.getWidth(), imgInput.getHeight());
@@ -353,29 +270,7 @@ public class TreeOfShape{
 		}
 		return imgOut;
 	}
-		
-	/* Add by gobber */	
-	public void mergeParent( NodeLevelSets node ) {
-		if( node != root ) {						
-			if(node.getLevel() == 72)
-				System.out.println(node.getId());
-			NodeLevelSets parent = node.getParent();
-			parent.getChildren().remove(node);			
-			listNode.remove(node);
-			numNode--;			
-			for(int p: node.getCompactNodePixels()) {				
-				//parent.getCompactNodePixels().add(p);
-				parent.addPixel(p);
-				map[p] = parent;				
-			}			
-			for(NodeLevelSets child : node.getChildren()) {							
-				parent.addChildren(child);				
-				child.setParent(parent);			
-			}			
-			/* update attributes */									
-			node = null;			
-		}
-	}
+	
 	
 	public static void prunning(TreeOfShape tree, NodeLevelSets node){
 		if(node != tree.root){

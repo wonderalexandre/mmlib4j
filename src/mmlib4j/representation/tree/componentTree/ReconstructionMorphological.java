@@ -272,7 +272,7 @@ public class ReconstructionMorphological {
 		long ti = System.currentTimeMillis();
 		PriorityQueue<Integer> queue = new PriorityQueue<Integer>(255);
 		
-		for(NodeLevelSets node: tree.listNode){
+		for(NodeLevelSets node: tree.getListNodes()){
 			if(tree.isMaxtree){
 				flagPruningMaxtree[node.getId()] = true;
 			}else {
@@ -285,13 +285,13 @@ public class ReconstructionMorphological {
 				if(imgMarcador.getPixel(p) <= imgInput.getPixel(p)){
 					queue.add(p, imgMarcador.getPixel(p));
 				}
-				flagProcessMaxtree[tree.map[p].getId()] = false;
+				flagProcessMaxtree[tree.getSC(p).getId()] = false;
 				//tree.map[p].flagProcess = false;
 			}else{
 				if(imgMarcador.getPixel(p) >= imgInput.getPixel(p)){
 					queue.add(p, imgMarcador.getPixel(p));
 				}
-				flagProcessMintree[tree.map[p].getId()] = false;
+				flagProcessMintree[tree.getSC(p).getId()] = false;
 				//tree.map[p].flagProcess = false;
 			}
 			
@@ -306,7 +306,7 @@ public class ReconstructionMorphological {
 			else
 				p = queue.remove();
 			
-			NodeLevelSets node = tree.map[p]; 
+			NodeLevelSets node = tree.getSC(p); 
 			if(tree.isMaxtree)
 				flagProcess = flagProcessMaxtree[node.getId()];
 			else
@@ -370,18 +370,18 @@ public class ReconstructionMorphological {
 					if(imgMarcador.getPixel(p) <= imgInput.getPixel(p)){
 						queue.add(p, imgMarcador.getPixel(p));
 					}
-					flagProcessMaxtree[ tree.map[p].getId() ] = false;
+					flagProcessMaxtree[ tree.getSC(p).getId() ] = false;
 				}else{
 					if(imgMarcador.getPixel(p) >= imgInput.getPixel(p)){
 						queue.add(p, imgMarcador.getPixel(p));
 					}
-					flagProcessMintree[ tree.map[p].getId() ] = false;
+					flagProcessMintree[ tree.getSC(p).getId() ] = false;
 				}
 				
 			}
 			
 			
-			for(NodeLevelSets node: tree.listNode){
+			for(NodeLevelSets node: tree.getListNodes()){
 				if(tree.isMaxtree)
 					flagPruningMaxtree[ node.getId() ] = true;
 				else
@@ -395,7 +395,7 @@ public class ReconstructionMorphological {
 				else
 					p = queue.remove();
 				
-				NodeLevelSets node = tree.map[p];
+				NodeLevelSets node = tree.getSC(p);
 				boolean flagProcess;
 				if(tree.isMaxtree)
 					flagProcess = flagProcessMaxtree[ node.getId() ];
@@ -439,7 +439,7 @@ public class ReconstructionMorphological {
 			else
 				flagPruning = flagPruningMintree;
 			Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
-			fifo.enqueue(tree.root);
+			fifo.enqueue(tree.getRoot());
 			while(!fifo.isEmpty()){
 				NodeLevelSets no = fifo.dequeue();
 				if(flagPruning[no.getId()]){ //poda

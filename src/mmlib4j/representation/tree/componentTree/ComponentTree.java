@@ -7,7 +7,9 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.AbstractMorphologicalTree;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.utils.AdjacencyRelation;
@@ -19,24 +21,11 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ComponentTree {
-	protected NodeLevelSets root;
-	protected NodeLevelSets[] map;
-	protected SimpleLinkedList<NodeLevelSets> listNode;
-	protected SimpleLinkedList<NodeLevelSets> listLeaves;
-	
-	protected int numNode;
-	protected int numNodeIdMax;
-	protected int heightTree;
-	
+public class ComponentTree extends AbstractMorphologicalTree implements MorphologicalTree{
 	protected boolean isMaxtree;
-	
-	protected AdjacencyRelation adj;
-	protected GrayScaleImage imgInput;
 	
 	public final static int NUM_ATTRIBUTES = 10;
 	public final static int NUM_ATTRIBUTES_NC = 2;
-	
 	
 	protected ThreadPoolExecutor pool;
 	protected BuilderComponentTree builder;
@@ -44,6 +33,7 @@ public class ComponentTree {
 	protected int sup = 255;
 	protected int inf = 0;
 	protected boolean isExtendedTree;
+	protected AdjacencyRelation adj;
 	
 	public ComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		long ti = System.currentTimeMillis();
@@ -144,21 +134,7 @@ public class ComponentTree {
 	}*/
 	
 	
-	public void prunning(NodeLevelSets node){
-		if(node != root && map[node.getCanonicalPixel()] == node){
-			NodeLevelSets parent = node.getParent();
-			parent.getChildren().remove(node);
-			listLeaves = null;
-			for(NodeLevelSets no: node.getNodesDescendants()){
-				listNode.remove(no);
-				numNode--;
-				for(int p: no.getCompactNodePixels()){
-					parent.addPixel(p);
-					map[p] = parent;	
-				}
-			}
-		}
-	}
+	
 	
 
 	public static void prunning(ComponentTree tree, NodeLevelSets node){
@@ -213,76 +189,6 @@ public class ComponentTree {
 		return imgOut;
 	}
 	
-	/*NodeLevelSets parent = node.getParent();
-	parent.getChildren().remove(node);
-	tree.listLeaves = null;
-	
-	for(NodeLevelSets no: node.getNodesDescendants()){
-		tree.listNode.remove(no);
-		tree.numNode--;
-		for(int p: no.getCompactNodePixels()){
-			parent.addPixel(p);
-			tree.map[p] = parent;	
-		}
-	}
-	
-	/* Add by gobber */		
-	public void mergeParent( NodeLevelSets node ) {
-		if( node != root ) {	
-			NodeLevelSets parent = node.getParent();
-			parent.getChildren().remove( node );			
-			//listNode.remove( node );
-			numNode--;									
-			
-			parent.getCompactNodePixels().addAll(node.getCompactNodePixels());
-			for( int p: node.getCompactNodePixels() ) {				
-				//parent.getCompactNodePixels().add(p);
-				map[p] = parent;				
-			}
-			
-			for(NodeLevelSets child : node.getChildren()) {							
-				parent.addChildren(child);				
-				child.setParent(parent);			
-			}			
-			/* Update Node Attributes */	
-			parent.setNumDescendent(parent.getNumDescendent()-1);
-			if(node.isLeaf())				
-				parent.setNumDescendentLeaf(parent.getNumDescendentLeaf()-1);			
-			parent.setNumNodeInSameBranch(parent.getNumNodeInSameBranch()-1);
-		} else { // Remove root?
-			numNode = 1;
-			listNode.clear();
-			listNode.add(node);
-			node.setChildren( new SimpleLinkedList<NodeLevelSets>() );
-			for(int p=0; p < getInputImage().getSize(); p++){
-				map[p] = node;
-				node.addPixel(p);
-			}
-			/* Update Root Attributes? */	
-			//node.setNumDescendent(0);
-			//node.setNumDescendentLeaf(0);
-			//node.setVolume(getInputImage().getSize() * node.getLevel());
-			//node.setNumNodeInSameBranch(1);
-		}
-	}
-	
-	public GrayScaleImage reconstruction(){
-		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
-		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
-		fifo.enqueue(this.root);
-		while(!fifo.isEmpty()){
-			NodeLevelSets no = fifo.dequeue();
-			for(int p: no.getCompactNodePixels()){
-				imgOut.setPixel(p, no.getLevel());
-			}
-			
-			for(NodeLevelSets son: no.getChildren()){
-				fifo.enqueue(son);	 
-			}
-			
-		}
-		return imgOut;
-	}
 	
 
 	public void extendedTree(){
@@ -383,10 +289,7 @@ public class ComponentTree {
 		return ramoInicio;
 	}
 	
-		
-	public NodeLevelSets getSC(int p){
-		return map[p];
-	}
+	
 	
 	public boolean isMaxtree(){
 		return  isMaxtree;
@@ -415,12 +318,8 @@ public class ComponentTree {
 			if(no.getChildren().isEmpty())
 				listLeaves.add(no);	
 		}
-		
 	}
 	
-	public NodeLevelSets[] getNodesMap(){
-		return map;
-	}
 	
 	public void computerInforTree(NodeLevelSets node, int height){
 		node.setNodeType( isMaxtree );
@@ -440,20 +339,6 @@ public class ComponentTree {
 		}				
 	}	
 	
-	public SimpleLinkedList<NodeLevelSets> getListNodes(){
-		return listNode;
-	}
-	
-	public SimpleLinkedList<NodeLevelSets> getLeaves(){
-		if(listLeaves == null){
-			listLeaves = new SimpleLinkedList<NodeLevelSets>();
-			for(NodeLevelSets node: listNode){
-				if(node.getChildren().isEmpty())
-					listLeaves.add(node);	
-			}
-		}
-		return listLeaves;
-	}
 
 	/**
 	 * Encontrar o node contendo o pixel e com nivel de cinza level.
@@ -478,38 +363,5 @@ public class ComponentTree {
 	}
 	
 	
-	
-	public NodeLevelSets getRoot() {
-		return root;
-	}
-
-
-	public GrayScaleImage getInputImage(){
-		return imgInput;
-	}
-	
-	public int getNumNodeIdMax() {
-		return numNodeIdMax;
-	}
-	
-	public int getNumNode() {
-		return numNode;
-	}
-	
-	public int getNumLeaves() {
-		return getLeaves().size();
-	}
-
-	public int getHeightTree() {
-		return heightTree;
-	}
-
-	public int getValueMin() {
-		return imgInput.minValue();
-	}
-
-	public int getValueMax() {
-		return imgInput.maxValue();
-	}
 	
 }
