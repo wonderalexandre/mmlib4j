@@ -1,10 +1,8 @@
 package mmlib4j.descriptors;
 
-import java.io.File;
-
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
-import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
@@ -19,8 +17,6 @@ public class AttributeProfiles {
 	public final static int SIMPLIFY_MIN_RULE = 13;
 	public final static int SIMPLIFY_MAX_RULE = 14;
 	public static FilteringStrategy strategy;
-	
-	public static ConnectedFilteringByComponentTree tree;
 	
 	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[]) {
 		return getAttributeProfile(img, attributeType, thresholds, MorphologicalTreeFiltering.PRUNING_MIN);
@@ -134,7 +130,7 @@ public class AttributeProfiles {
 		GrayScaleImage[] profiles = new GrayScaleImage[2 * lambdas + 1];
 		strategy = getStrategy(typeStrategy);		
 		
-//		ConnectedFilteringByComponentTree tree;
+		ConnectedFilteringByComponentTree tree;
 		
 		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
 		tree.loadAttribute(attributeType);				
@@ -156,8 +152,7 @@ public class AttributeProfiles {
 	}
 	
 	
-	
-	public interface FilteringStrategy {	
+	private interface FilteringStrategy {	
 		public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType);
 	}
 	
@@ -166,29 +161,14 @@ public class AttributeProfiles {
 		GrayScaleImage imgInput  = ImageBuilder.openGrayImage();
 		//GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/Images/lena.jpg"));
 		int attributeType = Attribute.STD_LEVEL;
-		double thresholds[] = new double[] {0.1, 0.2, 0.3};
+		double thresholds[] = new double[] {10, 20, 30};
 		int typeStrategy = SIMPLIFY_SUBTRACTIVE_RULE;
 		
 		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(imgInput, attributeType, thresholds, typeStrategy);		
 		String labels[] = AttributeProfiles.getLabels(attributeType, thresholds, typeStrategy);
 		
-		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(profiles[profiles.length-1], AdjacencyRelation.getAdjacency8(), true);
 
-		tree2.loadAttribute(attributeType);		
-		System.out.println("Nós árvore filtrada: " + AttributeProfiles.tree.getNumNode());
-		System.out.println("Nós nova árvore: " + tree2.getNumNode());
-		
-		for(NodeLevelSets node : AttributeProfiles.tree.getListNodes()) {
-			NodeLevelSets node2 = tree2.getNodesMap()[node.getCanonicalPixel()];
-			for(Integer att: node.getAttributes().keySet()) {
-				if(node.getAttributeValue(att) != node2.getAttributeValue(att)) {	
-					System.out.println(Attribute.getNameAttribute(att));
-					System.out.println("Att: " + node.getAttributeValue(att) + " Att Correct: "+ node2.getAttributeValue(att));
-				}				
-			}
-		}
-		
-		//WindowImages.show(profiles, labels);
+		WindowImages.show(profiles, labels);
 		
 	}
 	
