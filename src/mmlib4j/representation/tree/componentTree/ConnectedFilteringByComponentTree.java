@@ -54,13 +54,14 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	boolean[] update;		
 	boolean[] modified;
+	boolean[] prevupdate;
 	
 	public ConnectedFilteringByComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		super(img, adj, isMaxtree);
 		
 		update = new boolean[numNodeIdMax];
 		modified = new boolean[numNodeIdMax];
-		
+		prevupdate = new boolean[numNodeIdMax];		
 		computerBasicAttribute();
 	}
 	
@@ -367,25 +368,32 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		for(NodeLevelSets node: listNode.reverse()) {
 			if(node == getRoot())
 				continue;
-			else if(node.isLeaf()) {
+			else if(node.isLeaf() && !prevupdate[node.getId()]) {
 				update[node.getId()] = false;
 				modified[node.getId()] = false;
 			}
 			
-			parent = node.getParent();	
-			update[parent.getId()] = false;
-			modified[parent.getId()] = false;
-			
+			parent = node.getParent();
+			// Necessary, since a parent could be marked 
+			// as True previously.
+			if(!prevupdate[parent.getId()]) {
+				update[parent.getId()] = false;
+				modified[parent.getId()] = false;
+			}			
 						
 			if(node.getAttributeValue(type) < attributeValue) {	
 				ComponentTree.prunning(this, node);												
 				update[parent.getId()] = true;
 				modified[parent.getId()] = true;
+				prevupdate[parent.getId()] = true;
 			} else { 										
 				// Pass the update to all ancestors
-				if(update[node.getId()])
+				if(update[node.getId()]) {
 					update[parent.getId()] = true;
-			}
+					prevupdate[parent.getId()] = true;
+				}
+			}			
+			prevupdate[node.getId()] = false;
 			
 		}				
 		if(Utils.debug){
@@ -396,9 +404,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 		// Verify each attribute that was computed before
-		if(hasComputerCentralMomentAttribute) {
-			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);	
-		}
+		if(hasComputerCentralMomentAttribute) 
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);		
 		
 	}
 	
@@ -411,76 +418,90 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			NodeLevelSets node = iterator.next();
 			if(node == getRoot())
 				continue;
-			else if(node.isLeaf()) {
+			else if(node.isLeaf() && !prevupdate[node.getId()]) {
 				update[node.getId()] = false;
 				modified[node.getId()] = false;
 			}
 			
-			parent = node.getParent();	
-			update[parent.getId()] = false;
-			modified[parent.getId()] = false;
+			parent = node.getParent();
+			if(!prevupdate[parent.getId()]) {
+				update[parent.getId()] = false;
+				modified[parent.getId()] = false;
+			}
 			
 			if(node.getAttributeValue(type) < attributeValue && node.getChildren().isEmpty()) {
-				if(node != root)
-					iterator.remove(); //remove in constant time
+				iterator.remove(); //remove in constant time
 				mergeParent(node);			
 				update[parent.getId()] = true;
 				modified[parent.getId()] = true;
+				prevupdate[parent.getId()] = true;
 			} else { 
 				
 				// Pass the update to all ancestors
-				if(update[node.getId()])
+				if(update[node.getId()]) {
 					update[parent.getId()] = true;
+					prevupdate[parent.getId()] = true;
+				}
 			}
+			prevupdate[node.getId()] = false;
 			
 		}		
+		
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
 			System.out.println("Tempo de execucao [simplificationTreeByPruningMax]  "+ ((tf - ti) /1000.0)  + "s");
 		}
+		
 		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 		// Verify each attribute that was computed before
-		if(hasComputerCentralMomentAttribute)
-			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);	
-
+		if(hasComputerCentralMomentAttribute) 
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);			
 		
 	}
 	
-	public void simplificationTreeByPruningViterbi(double attributeValue, int type){}
+	public void simplificationTreeByPruningViterbi(double attributeValue, int type){
+		new UnsupportedOperationException("Not implemented yet");
+	}
 	
 	/*
 	 * Take care! This operation modifies the original tree structure. (root is not removed)
-	 * */
+	 * */	
 	public void simplificationTreeByDirectRule(double attributeValue, int type){
 		long ti = System.currentTimeMillis();
 		
-		NodeLevelSets parent;
+		NodeLevelSets parent;				
 		Iterator<NodeLevelSets> iterator = listNode.reverse().iterator();
 		while(iterator.hasNext()) {
 			NodeLevelSets node = iterator.next();
 			if(node == getRoot())
 				continue;
-			else if(node.isLeaf()) {
+			else if(node.isLeaf() && !prevupdate[node.getId()]) {
 				update[node.getId()] = false;
 				modified[node.getId()] = false;
 			}
 			
-			parent = node.getParent();	
-			update[parent.getId()] = false;
-			modified[parent.getId()] = false;
+			parent = node.getParent();				
+			if(!prevupdate[parent.getId()]) {
+				update[parent.getId()] = false;
+				modified[parent.getId()] = false;
+			}
 			
 			if(node.getAttributeValue(type) < attributeValue) {		
-				if(node != root)
-					iterator.remove(); //remove in constant time
+				iterator.remove(); //remove in constant time
 				mergeParent(node);			
 				update[parent.getId()] = true;
 				modified[parent.getId()] = true;
+				prevupdate[parent.getId()] = true;
 			} else { 
 				// Pass the update to all ancestors
-				if(update[node.getId()])
+				if(update[node.getId()]) {
 					update[parent.getId()] = true;
+					prevupdate[parent.getId()] = true;
+				}
 			}
+			
+			prevupdate[node.getId()] = false;
 		}
 		
 		if(Utils.debug){
@@ -505,7 +526,6 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		int offset[] = new int[numNodeIdMax];			
 		NodeLevelSets parent;
 		
-		
 		// Compute offsets
 		for(NodeLevelSets node : listNode) {
 			if(node == getRoot())
@@ -524,21 +544,23 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			NodeLevelSets node = iterator.next();
 			if(node == getRoot())
 				continue;
-			else if(node.isLeaf()) {
+			else if(node.isLeaf() && !prevupdate[node.getId()]) {
 				update[node.getId()] = false;
 				modified[node.getId()] = false;
 			}
 			
 			parent = node.getParent();	
-			update[parent.getId()] = false;
-			modified[parent.getId()] = false;
+			if(!prevupdate[parent.getId()]) {
+				update[parent.getId()] = false;
+				modified[parent.getId()] = false;
+			}
 			
 			if(node.getAttributeValue(type) < attributeValue) {
-				if(node != root)
-					iterator.remove(); //remove in constant time
+				iterator.remove(); //remove in constant time
 				mergeParent(node);			
 		 		update[parent.getId()] = true;				
 		 		modified[parent.getId()] = true;
+		 		prevupdate[parent.getId()] = true;
 			} else {				
 			 	node.setLevel(node.getLevel() + offset[node.getId()]);
 			 	// This node was changed by offset
@@ -547,9 +569,12 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			 		modified[node.getId()] = true;
 			 	}
 				// Pass the update to all ancestors
-			 	if(update[node.getId()])
+			 	if(update[node.getId()]) {
 					update[parent.getId()] = true;
+					prevupdate[parent.getId()] = true;
+			 	}
 			}
+			prevupdate[node.getId()] = false;
 		}			
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
@@ -559,9 +584,8 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 		// Verify each attribute that was computed before
-		if(hasComputerCentralMomentAttribute) {
-			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);
-		}
+		if(hasComputerCentralMomentAttribute) 
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);		
 				
 	}
 	

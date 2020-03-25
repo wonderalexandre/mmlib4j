@@ -228,7 +228,7 @@ public class ComponentTree {
 	
 	/* Add by gobber */		
 	public void mergeParent( NodeLevelSets node ) {
-		if( node != root ) {						
+		if( node != root ) {	
 			NodeLevelSets parent = node.getParent();
 			parent.getChildren().remove( node );			
 			//listNode.remove( node );
@@ -246,8 +246,8 @@ public class ComponentTree {
 			}			
 			/* Update Node Attributes */	
 			parent.setNumDescendent(parent.getNumDescendent()-1);
-			if(node.isLeaf())
-				parent.setNumDescendentLeaf(parent.getNumDescendentLeaf()-1);
+			if(node.isLeaf())				
+				parent.setNumDescendentLeaf(parent.getNumDescendentLeaf()-1);			
 			parent.setNumNodeInSameBranch(parent.getNumNodeInSameBranch()-1);
 		} else { // Remove root?
 			numNode = 1;
