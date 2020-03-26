@@ -28,7 +28,7 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 		this.update = update;
 		this.modified = modified;
 		double ti = System.currentTimeMillis();
-		computerAttribute(root);
+		computerAttribute(root);	
 		if(Utils.debug){
 			double tf = System.currentTimeMillis();
 			System.out.println("Tempo de execucao [extraction of attribute - basics]  "+ ((tf - ti) /1000.0)  + "s");			
@@ -39,7 +39,7 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 		return attr;
 	}
 	
-	public void preProcessing(NodeLevelSets node) {
+	public void preProcessing(NodeLevelSets node) {			
 		attr[node.getId()] = new BasicAttribute();
 		//volume
 		node.getAttribute(Attribute.LEVEL).value = node.getLevel();

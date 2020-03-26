@@ -16,12 +16,12 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	
 	CentralMomentsAttribute attr[];
 	int numNode;
-	int withImg;
+	int widthImg;
 	
-	public ComputerCentralMomentAttribute(int numNode, NodeLevelSets root, int withImg){
+	public ComputerCentralMomentAttribute(int numNode, NodeLevelSets root, int widthImg){
 		long ti = System.currentTimeMillis();
 		this.numNode = numNode;
-		this.withImg = withImg;
+		this.widthImg = widthImg;
 		attr = new CentralMomentsAttribute[numNode];
 		computerAttribute(root);
 		if(Utils.debug){
@@ -34,16 +34,49 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	
 	public CentralMomentsAttribute[] getAttribute(){
 		return attr;
-	}
+	}	
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list){
-		for(NodeLevelSets node: list){
+	/**
+	 * 
+	 * 	This method add the computed attributes in the list of nodes passed by parameter.
+	 * 
+	 * 	@param listNodes A list of nodes.
+	 * 
+	 */
+	public void addAttributeInNodes(SimpleLinkedList<NodeLevelSets> listNodes){
+		for(NodeLevelSets node: listNodes){
 			addAttributeInNodes(node);
 		}
 	}
 	
-	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> hashSet){
-		for(NodeLevelSets node: hashSet){
+	/**
+	 * 
+	 * 	This method add the computed attributes in the list of nodes (Tree of Shapes) passed by parameter.
+	 * 
+	 * 	@param listNodes A list of nodes.
+	 * 
+	 *	@deprecated use {@link #addAttributeInNodes(SimpleLinkedList)} instead. 
+	 * 
+	 */
+	@Deprecated
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> listNodes){
+		for(NodeLevelSets node: listNodes){
+			addAttributeInNodes(node);
+		}
+	} 
+	
+	/**
+	 * 
+	 * 	This method add the computed attributes in the list of nodes (Tree of Shapes) passed by parameter.
+	 * 
+	 * 	@param listNodes A list of nodes.
+	 * 
+	 *	@deprecated use {@link #addAttributeInNodes(SimpleLinkedList)} instead. 
+	 * 
+	 */
+	@Deprecated
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> listNodes){
+		for(NodeLevelSets node: listNodes){
 			addAttributeInNodes(node);
 		}
 	} 
@@ -67,11 +100,11 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	}
 	
 	public void preProcessing(NodeLevelSets node) {
-		attr[node.getId()] = new CentralMomentsAttribute(node, withImg);
+		attr[node.getId()] = new CentralMomentsAttribute(node, widthImg);
 		//area e volume		
 		for(int pixel: node.getCompactNodePixels()){
-			int x = pixel % withImg;
-			int y = pixel / withImg;			
+			int x = pixel % widthImg;
+			int y = pixel / widthImg;			
 			// Note that, this optimization is only for p=2 and q=2			
 			attr[node.getId()].sumX2 += x*x;
 			attr[node.getId()].sumY2 += y*y;
@@ -92,20 +125,23 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		double n = node.getAttributeValue(Attribute.AREA);				
 		attr[node.getId()].variance.value = (SumSq - Math.pow(Sum, 2)/n)/n; 		
 		// update		
-		attr[node.getId()].moment02.value = attr[node.getId()].sumY2 - Math.pow(node.getSumY(), 2) / n;
-		attr[node.getId()].moment20.value = attr[node.getId()].sumX2 - Math.pow(node.getSumX(), 2) / n;		
+		attr[node.getId()].moment02.value = attr[node.getId()].sumY2 - Math.pow(node.getAttributeValue(Attribute.SUM_Y), 2) / n;
+		attr[node.getId()].moment20.value = attr[node.getId()].sumX2 - Math.pow(node.getAttributeValue(Attribute.SUM_X), 2) / n;		
 	}
 	
 	public static CentralMomentsAttribute getInstance(NodeLevelSets node, int widthImg){
 		CentralMomentsAttribute c = new ComputerCentralMomentAttribute().new CentralMomentsAttribute();
-		c.area = node.getArea();
-		c.xCentroid = node.getCentroid() % widthImg;
-		c.yCentroid = node.getCentroid() / widthImg;
+		c.area = node.getArea();		
+		int xc = (int)node.getAttributeValue(Attribute.SUM_X) / (int)node.getAttributeValue(Attribute.AREA);
+		int yc = (int)node.getAttributeValue(Attribute.SUM_Y) / (int)node.getAttributeValue(Attribute.AREA);
+		int centroid = (xc + yc * widthImg);		
+		c.xCentroid = centroid % widthImg;
+		c.yCentroid = centroid / widthImg;
 		c.width = widthImg;
 		c.moment02 = node.getAttribute(Attribute.MOMENT_CENTRAL_02);
 		c.moment20 = node.getAttribute(Attribute.MOMENT_CENTRAL_20);		
 		//
-		// Is it not the zero-sum mean property?
+		// Is it not leading to the zero-sum mean property?
 		// https://stats.stackexchange.com/questions/287718/zero-sum-property-of-the-difference-between-the-data-and-the-mean
 		//
 		c.moment11 = node.getAttribute(Attribute.MOMENT_CENTRAL_11);		
@@ -119,7 +155,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		Attribute moment20 = new Attribute(Attribute.MOMENT_CENTRAL_20);
 		Attribute moment02 = new Attribute(Attribute.MOMENT_CENTRAL_02);		
 		//
-		// Is it not the zero-sum mean property?
+		// Is it not leading to the zero-sum mean property?
 		// https://stats.stackexchange.com/questions/287718/zero-sum-property-of-the-difference-between-the-data-and-the-mean
 		//
 		Attribute moment11 = new Attribute(Attribute.MOMENT_CENTRAL_11);
@@ -141,8 +177,11 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		
 		public CentralMomentsAttribute(NodeLevelSets node, int width){
 			this.area = (double) node.getArea();
-			this.xCentroid = node.getCentroid() % width;
-			this.yCentroid = node.getCentroid() / width;
+			int xc = (int)node.getAttributeValue(Attribute.SUM_X) / (int)node.getAttributeValue(Attribute.AREA);
+			int yc = (int)node.getAttributeValue(Attribute.SUM_Y) / (int)node.getAttributeValue(Attribute.AREA);			
+			int centroid = (xc + yc * width);
+			this.xCentroid = centroid % width;
+			this.yCentroid = centroid / width;																
 			this.width = width;
 			this.levelMean = new Attribute(Attribute.LEVEL_MEAN,  node.getAttributeValue(Attribute.VOLUME) / node.getAttributeValue(Attribute.AREA));
 

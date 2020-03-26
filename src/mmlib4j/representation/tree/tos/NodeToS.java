@@ -1,17 +1,8 @@
 package mmlib4j.representation.tree.tos;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
-import mmlib4j.filtering.binary.Contour;
-import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.BitImage;
-import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.attribute.Attribute;
 
 
 /**
@@ -30,8 +21,6 @@ public class NodeToS extends NodeLevelSets implements Cloneable{
 		this.level = level; 
 		this.img = img;
 		this.canonicalPixel = canonicalPixel;
-		xmin = ymin = Integer.MAX_VALUE;
-		xmax = ymax = Integer.MIN_VALUE;
 	}
 	
 	

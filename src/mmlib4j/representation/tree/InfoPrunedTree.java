@@ -3,6 +3,7 @@ package mmlib4j.representation.tree;
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
 
@@ -18,9 +19,9 @@ public class InfoPrunedTree {
 	private int attributeType;
 	private double attributeValue;
 	
+	private GrayScaleImage imgInput;
 	private NodePrunedTree root;
 	private NodePrunedTree map[]; //mapping from id to Node. If map[id] = null then Node:ID was pruned 
-	private MorphologicalTreeFiltering tree;
 	private SimpleLinkedList<NodeLevelSets> listLeaves;
 	
 	public int getAttributeType() {
@@ -39,12 +40,12 @@ public class InfoPrunedTree {
 		this.attributeValue = attributeValue;
 	}
 
-	public InfoPrunedTree(MorphologicalTreeFiltering tree, NodeLevelSets root, int numNodes, int attributeType, double attributeValue) {
-		this.tree = tree;
+	public InfoPrunedTree(NodeLevelSets root, int numNodes, int attributeType, double attributeValue, GrayScaleImage imgInput) {
 		this.map = new NodePrunedTree[numNodes];
 		this.root = map[root.hashCode()] = new NodePrunedTree(root);
         this.attributeType = attributeType;
         this.attributeValue = attributeValue;
+        this.imgInput = imgInput;
         this.numNode = 1;
     }
 	
@@ -61,10 +62,6 @@ public class InfoPrunedTree {
 			map[node.hashCode()].parent = map[parent.hashCode()];
 			map[parent.hashCode()].children.add( map[node.hashCode()] );
 		}
-	}
-	
-	public MorphologicalTreeFiltering getTree(){
-		return tree;
 	}
 	
 	public NodePrunedTree[] getMap() {
@@ -111,15 +108,27 @@ public class InfoPrunedTree {
 	}
 	
 	public GrayScaleImage reconstruction(){
-		if(tree instanceof ConnectedFilteringByComponentTree){
-			return ((ConnectedFilteringByComponentTree) tree).reconstruction(this);
+		GrayScaleImage imgOut = ImageFactory.createGrayScaleImage(imgInput.getDepth(), imgInput.getWidth(), imgInput.getHeight());
+		Queue<InfoPrunedTree.NodePrunedTree> fifo = new Queue<InfoPrunedTree.NodePrunedTree>();
+		fifo.enqueue(getRoot());
+		while(!fifo.isEmpty()){
+			InfoPrunedTree.NodePrunedTree node_ = fifo.dequeue();
+			NodeLevelSets node = node_.getInfo();
+			for(NodeLevelSets son: node.getChildren()){
+				if(wasPruned(son)){
+					for(int p: son.getPixelsOfCC()){
+						imgOut.setPixel(p, node.getLevel());
+					}
+				}
+			}
+			for(int p: node.getCompactNodePixels()){
+				imgOut.setPixel(p, node.getLevel());
+			}
+			for(InfoPrunedTree.NodePrunedTree son: node_.getChildren()){
+				fifo.enqueue(son);	
+			}
 		}
-		else if (tree instanceof ConnectedFilteringByTreeOfShape){
-			return ((ConnectedFilteringByTreeOfShape) tree).reconstruction(this);
-		}
-		else{
-			return null;
-		}
+		return imgOut;
 	}
 	
 	public class NodePrunedTree {

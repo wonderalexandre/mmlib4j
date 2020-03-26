@@ -5,6 +5,7 @@ import mmlib4j.filtering.binary.Contour;
 import mmlib4j.filtering.binary.ContourTracer;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.attribute.Attribute;
 
 
 
@@ -27,8 +28,6 @@ public class NodeCT extends NodeLevelSets implements Cloneable{
 		this.img = img;
 		this.canonicalPixel = canonicalPixel; 
 		this.level = img.getPixel(canonicalPixel);
-		xmin = ymin = Integer.MAX_VALUE;
-		xmax = ymax = Integer.MIN_VALUE;
 	}
 	
 	public NodeLevelSets getClone(){
@@ -61,8 +60,8 @@ public class NodeCT extends NodeLevelSets implements Cloneable{
 	public Contour getContour() {
 		if(contourE == null){
 			ContourTracer c = new ContourTracer(true, isNodeMaxtree, img, level);
-			int x = pixelYmin % img.getWidth();
-			int y = pixelYmin / img.getWidth(); 
+			int x = ((int)getAttributeValue(Attribute.PIXEL_YMIN)) % img.getWidth();
+			int y = ((int)getAttributeValue(Attribute.PIXEL_YMIN)) / img.getWidth(); 
 			this.contourE = c.findOuterContours(x, y);
 		}
 		return contourE;

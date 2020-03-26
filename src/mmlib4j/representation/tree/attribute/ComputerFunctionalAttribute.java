@@ -11,6 +11,7 @@ import mmlib4j.representation.tree.InfoMergedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
@@ -25,7 +26,7 @@ public class ComputerFunctionalAttribute {
 	private int numNode;
 	private InfoMergedTree mTree;
 	
-	public ComputerFunctionalAttribute(ComponentTree tree, boolean useHeuristic, GrayScaleImage img) {
+	public ComputerFunctionalAttribute(MorphologicalTree tree, boolean useHeuristic, GrayScaleImage img) {
 		
 		long ti = System.currentTimeMillis();				
 		this.numNode = tree.getNumNode();
@@ -63,7 +64,7 @@ public class ComputerFunctionalAttribute {
 		}
 	}
 	
-	public ComputerFunctionalAttribute(ComponentTree tree, GrayScaleImage img) {
+	public ComputerFunctionalAttribute(MorphologicalTree tree, GrayScaleImage img) {
 		this(tree, true, img);		
 	}
 	
@@ -188,13 +189,7 @@ public class ComputerFunctionalAttribute {
 		}
 	}
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list) {
-		for(NodeLevelSets node : list) {
-			addAttributeInNodes(node);
-		}		
-	}
-	
-	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> hashSet) {
+	public void addAttributeInNodes(SimpleLinkedList<NodeLevelSets> hashSet) {
 		for(NodeLevelSets node : hashSet) {
 			addAttributeInNodes(node);
 		}
@@ -213,13 +208,13 @@ public class ComputerFunctionalAttribute {
 		
     	ConnectedFilteringByComponentTree tree1 = new ConnectedFilteringByComponentTree( input, AdjacencyRelation.getCircular( 1 ), true );
 		tree1.computerAttributeBasedPerimeterExternal();
-		new ComputerFunctionalAttribute(tree1, true, input).addAttributeInNodesCT(tree1.getListNodes());
+		new ComputerFunctionalAttribute(tree1, true, input).addAttributeInNodes(tree1.getListNodes());
 		tree1.filteringByDirectRule(1000, type);
 		
 		
 		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(tree1.getMtree().reconstruction(), AdjacencyRelation.getCircular( 1 ), true);
 		tree2.computerAttributeBasedPerimeterExternal();						
-		new ComputerFunctionalAttribute(tree2, true, input).addAttributeInNodesCT(tree2.getListNodes());			
+		new ComputerFunctionalAttribute(tree2, true, input).addAttributeInNodes(tree2.getListNodes());			
 		
 		/*NodeLevelSets[] nodeTree1 = new NodeLevelSets[tree1.getNumNode()];
 		NodeLevelSets[] nodeTree2 = new NodeLevelSets[tree1.getNumNode()];

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.Queue;
-import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.ImageFactory;
@@ -97,8 +96,6 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 				node.setNumDescendentLeaf( node.getNumDescendentLeaf() + 1 ); 
 			node.setNumDescendent(node.getNumDescendent() + son.getNumDescendent());
 			node.setNumDescendentLeaf(node.getNumDescendentLeaf() + son.getNumDescendentLeaf());
-			node.setSumX( node.getSumX() + son.getSumX() );
-			node.setSumY( node.getSumY() + son.getSumY() );
 			node.setArea( node.getArea() + son.getArea() );
 		}
 		

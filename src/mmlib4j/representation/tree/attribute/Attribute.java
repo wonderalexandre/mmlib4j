@@ -92,6 +92,16 @@ public class Attribute {
 	
 	// others
 	public static final int SUM_LEVEL_2 = 70;
+	public static final int XMIN = 71;
+	public static final int XMAX = 72;
+	public static final int YMIN = 73;
+	public static final int YMAX = 74;
+	public static final int PIXEL_XMIN = 75;
+	public static final int PIXEL_XMAX = 76;
+	public static final int PIXEL_YMIN = 77;
+	public static final int PIXEL_YMAX = 78;
+	public static final int SUM_X = 79;
+	public static final int SUM_Y = 80;
 	
 	public static String getNameAttribute(int type) {
 		switch(type){
@@ -143,6 +153,16 @@ public class Attribute {
 		
 		//others
 		case SUM_LEVEL_2: return "SUM_LEVEL_2";
+		case XMIN: return "XMIN";
+		case XMAX: return "XMAX";
+		case YMIN: return "YMIN";
+		case YMAX: return "YMAX";
+		case PIXEL_XMIN: return "PIXEL_XMIN";
+		case PIXEL_XMAX: return "PIXEL_XMAX"; 
+		case PIXEL_YMIN: return "PIXEL_YMIN";
+		case PIXEL_YMAX: return "PIXEL_YMAX";
+		case SUM_X: return "SUM_X";
+		case SUM_Y: return "SUM_Y";
 		
 		default: return "UNDEFINED";
 	}

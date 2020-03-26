@@ -29,6 +29,7 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
+@Deprecated
 public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements MorphologicalTreeFiltering{
 	
 	private boolean hasComputerBasicAttribute = false;
@@ -67,21 +68,21 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 	
 	public void computerCentralMomentAttribute(){
 		if(!hasComputerCentralMomentAttribute){
-			new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodesToS(getListNodes());
+			new ComputerCentralMomentAttribute(numNode, getRoot(), imgInput.getWidth()).addAttributeInNodes(getListNodes());
 			hasComputerCentralMomentAttribute = true;
 		}
 	}
 	
 	public void computerBasicAttribute(){
 		if(!hasComputerBasicAttribute){
-			new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodesToS(getListNodes());
+			new ComputerBasicAttribute(numNode, getRoot(), imgInput).addAttributeInNodes(getListNodes());
 			hasComputerBasicAttribute = true;
 		}
 	}
 	
 	public void computerAttributeBasedPerimeterExternal(){
 		if(!hasComputerAttributeBasedPerimeterExternal){
-			new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodesToS(getListNodes());
+			new ComputerAttributeBasedPerimeterExternal(numNode, getRoot(), getInputImage()).addAttributeInNodes(getListNodes());
 			hasComputerAttributeBasedPerimeterExternal = true;
 		}
 	}
@@ -140,7 +141,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 		fifo.enqueue(prunedTree.getRoot());
 		while(!fifo.isEmpty()){
 			InfoPrunedTree.NodePrunedTree node_ = fifo.dequeue();
-			NodeLevelSets node = (NodeToS) node_.getInfo();
+			NodeLevelSets node = node_.getInfo();
 			for(NodeLevelSets son: node.getChildren()){
 				if(prunedTree.wasPruned(son)){
 					for(int p: son.getPixelsOfCC()){
@@ -161,7 +162,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 
 	public InfoPrunedTree getPrunedTree(double attributeValue, int type, int typePruning){
 		//long ti = System.currentTimeMillis();
-		InfoPrunedTree prunedTree = new InfoPrunedTree(this, getRoot(), getNumNode(), type, attributeValue);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
 		for(NodeLevelSets no: getListNodes()){
 			if(! (getAttribute(no, type) <= attributeValue) ){ //poda
 				prunedTree.addNodeNotPruned(no);

@@ -1,22 +1,23 @@
 package mmlib4j.descriptors;
 
+import java.io.File;
+
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
+import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
+import mmlib4j.representation.tree.filtering.AttributeFilters;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
 public class AttributeProfiles {
 			
 	public final static int ENERGY = 10; 
-	public final static int SIMPLIFY_DIRECT_RULE = 11;
-	public final static int SIMPLIFY_SUBTRACTIVE_RULE = 12;
-	public final static int SIMPLIFY_MIN_RULE = 13;
-	public final static int SIMPLIFY_MAX_RULE = 14;
 	public static FilteringStrategy strategy;
+	public static ComponentTree tree;
 	
 	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[]) {
 		return getAttributeProfile(img, attributeType, thresholds, MorphologicalTreeFiltering.PRUNING_MIN);
@@ -24,82 +25,82 @@ public class AttributeProfiles {
 	
 	public static FilteringStrategy getStrategy(int typeStrategy) {
 		switch (typeStrategy) {
-		case MorphologicalTreeFiltering.PRUNING_MIN:
+		case AttributeFilters.PRUNING_MIN:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					return tree.filteringByPruningMin(threshold, attributeType);
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					return filter.filteringByPruningMin(threshold, attributeType);
 				}
 			};
-		case MorphologicalTreeFiltering.PRUNING_MAX:
+		case AttributeFilters.PRUNING_MAX:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					return tree.filteringByPruningMax(threshold, attributeType);
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					return filter.filteringByPruningMax(threshold, attributeType);
 				}
 			};
-		case MorphologicalTreeFiltering.PRUNING_VITERBI:
+		case AttributeFilters.PRUNING_VITERBI:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					return tree.filteringByPruningViterbi(threshold, attributeType);
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					return filter.filteringByPruningViterbi(threshold, attributeType);
 				}
 			};
-		case MorphologicalTreeFiltering.DIRECT_RULE:
+		case AttributeFilters.DIRECT_RULE:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					return tree.filteringByDirectRule(threshold, attributeType);
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					return filter.filteringByDirectRule(threshold, attributeType);
 				}
 			};
-		case MorphologicalTreeFiltering.SUBTRACTIVE_RULE:
+		case AttributeFilters.SUBTRACTIVE_RULE:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					return tree.filteringBySubtractiveRule(threshold, attributeType);
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					return filter.filteringBySubtractiveRule(threshold, attributeType);
 				}
 			};	
 		case ENERGY:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					ComputerFunctionalVariational compFV = new ComputerFunctionalVariational(tree, threshold, true);
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					ComputerFunctionalVariational compFV = new ComputerFunctionalVariational((ComponentTree)filter.getTree(), threshold, true);
 					return compFV.getSimplifiedImage();
 				}
 			};
 			
-		case SIMPLIFY_MIN_RULE:
+		case AttributeFilters.SIMPLIFY_MIN:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					tree.simplificationTreeByPruningMin(threshold, attributeType);
-					return tree.reconstruction();
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					filter.simplificationTreeByPruningMin(threshold, attributeType);
+					return filter.getTree().reconstruction();
 				}
 			};
 			
-		case SIMPLIFY_MAX_RULE:
+		case AttributeFilters.SIMPLIFY_MAX:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					tree.simplificationTreeByPruningMax(threshold, attributeType);
-					return tree.reconstruction();
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					filter.simplificationTreeByPruningMax(threshold, attributeType);
+					return filter.getTree().reconstruction();
 				}
 			};
 			
-		case SIMPLIFY_DIRECT_RULE:
+		case AttributeFilters.SIMPLIFY_DIRECT:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					tree.simplificationTreeByDirectRule(threshold, attributeType);
-					return tree.reconstruction();
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					filter.simplificationTreeByDirectRule(threshold, attributeType);
+					return filter.getTree().reconstruction();
 				}
 			};
-		case SIMPLIFY_SUBTRACTIVE_RULE:
+		case AttributeFilters.SIMPLIFY_SUBTRACTIVE:
 			return new FilteringStrategy() {				
 				@Override
-				public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType) {
-					tree.simplificationTreeBySubstractiveRule(threshold, attributeType);
-					return tree.reconstruction();
+				public GrayScaleImage filterBy(AttributeFilters filter, double threshold, int attributeType) {
+					filter.simplificationTreeBySubstractiveRule(threshold, attributeType);
+					return filter.getTree().reconstruction();
 				}
 			};						
 		default:			
@@ -130,21 +131,22 @@ public class AttributeProfiles {
 		GrayScaleImage[] profiles = new GrayScaleImage[2 * lambdas + 1];
 		strategy = getStrategy(typeStrategy);		
 		
-		ConnectedFilteringByComponentTree tree;
-		
-		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
-		tree.loadAttribute(attributeType);				
+		AttributeFilters filter;		
+		tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
+		filter = new AttributeFilters(tree);
+		filter.loadAttribute(attributeType);				
 		
 		for (int i = 0; i < lambdas; i++) {
-			profiles[lambdas-i-1] = strategy.filterBy(tree, thresholds[i], attributeType);								
+			profiles[lambdas-i-1] = strategy.filterBy(filter, thresholds[i], attributeType);		
 		}
 
 		profiles[lambdas] = img;
 		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), true);		
-		tree.loadAttribute(attributeType);				
+		filter = new AttributeFilters(tree);
+		filter.loadAttribute(attributeType);				
 		
 		for (int i = 0; i < lambdas; i++) {
-			profiles[i+lambdas+1] = strategy.filterBy(tree, thresholds[i], attributeType);							
+			profiles[i+lambdas+1] = strategy.filterBy(filter, thresholds[i], attributeType);
 		}
 		
 		return profiles;
@@ -153,21 +155,20 @@ public class AttributeProfiles {
 	
 	
 	private interface FilteringStrategy {	
-		public GrayScaleImage filterBy(ConnectedFilteringByComponentTree tree, double threshold, int attributeType);
+		public GrayScaleImage filterBy(AttributeFilters tree, double threshold, int attributeType);
 	}
 	
 	public static void main(String args[]) {
 		
-		GrayScaleImage imgInput  = ImageBuilder.openGrayImage();
-		//GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/Images/lena.jpg"));
+		//GrayScaleImage imgInput  = ImageBuilder.openGrayImage();
+		GrayScaleImage imgInput  = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/Images/lena.jpg"));
 		int attributeType = Attribute.STD_LEVEL;
-		double thresholds[] = new double[] {10, 20, 30};
-		int typeStrategy = SIMPLIFY_SUBTRACTIVE_RULE;
+		double thresholds[] = new double[] {2, 3, 4};
+		int typeStrategy = AttributeFilters.SIMPLIFY_SUBTRACTIVE;
 		
 		GrayScaleImage[] profiles = AttributeProfiles.getAttributeProfile(imgInput, attributeType, thresholds, typeStrategy);		
-		String labels[] = AttributeProfiles.getLabels(attributeType, thresholds, typeStrategy);
+		String labels[] = AttributeProfiles.getLabels(attributeType, thresholds, typeStrategy);		
 		
-
 		WindowImages.show(profiles, labels);
 		
 	}

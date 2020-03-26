@@ -89,17 +89,50 @@ public class ComputerAttributeBasedPerimeterExternal {
 		return perimeters;
 	}
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list){
-		for(NodeLevelSets node: list){
+	/**
+	 * 
+	 * 	This method add the computed attributes in the list of nodes passed by parameter.
+	 * 
+	 * 	@param listNodes A list of nodes.
+	 * 
+	 */
+	public void addAttributeInNodes(SimpleLinkedList<NodeLevelSets> listNodes){
+		for(NodeLevelSets node: listNodes){
 			addAttributeInNodes(node);
 		}
 	}
 	
-	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> hashSet){
-		for(NodeLevelSets node: hashSet){
+	/**
+	 * 
+	 * 	This method add the computed attributes in the list of nodes (Tree of Shapes) passed by parameter.
+	 * 
+	 * 	@param listNodes A list of nodes.
+	 * 
+	 *	@deprecated use {@link #addAttributeInNodes(SimpleLinkedList)} instead. 
+	 * 
+	 */
+	@Deprecated
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> listNodes){
+		for(NodeLevelSets node: listNodes){
 			addAttributeInNodes(node);
 		}
 	} 
+	
+	/**
+	 * 
+	 * 	This method add the computed attributes in the list of nodes (Tree of Shapes) passed by parameter.
+	 * 
+	 * 	@param listNodes A list of nodes.
+	 * 
+	 *	@deprecated use {@link #addAttributeInNodes(SimpleLinkedList)} instead. 
+	 * 
+	 */
+	@Deprecated
+	public void addAttributeInNodesToS(SimpleLinkedList<NodeLevelSets> listNodes){
+		for(NodeLevelSets node: listNodes){
+			addAttributeInNodes(node);
+		}
+	}
 	
 	public void addAttributeInNodes(NodeLevelSets node){
 		node.addAttribute(Attribute.PERIMETER_EXTERNAL, perimeters[node.getId()]);
@@ -135,10 +168,10 @@ public class ComputerAttributeBasedPerimeterExternal {
 			if(node instanceof NodeToS){
 				is8Connected = node.isNodeMaxtree() == true;
 				
-				xmin = node.getXmin();
-				int xmax = node.getXmax();
-				int ymax = node.getYmax();
-				ymin = node.getYmin();
+				xmin = (int) node.getAttributeValue(Attribute.XMIN);
+				int xmax = (int) node.getAttributeValue(Attribute.XMAX);
+				int ymax = (int) node.getAttributeValue(Attribute.YMAX);
+				ymin = (int) node.getAttributeValue(Attribute.YMIN);
 				imgBin = new boolean[xmax-xmin+1][ymax-ymin+1];
 				NodeToS n = (NodeToS) node;
 				for(int p: n.getPixelsOfCC()){
@@ -158,8 +191,8 @@ public class ComputerAttributeBasedPerimeterExternal {
 						b.setPixel(x,  y, imgBin[x][y]);
 				WindowImages.show( b, "imgBin" );
 				WindowImages.show( node.createImage() );
-			}*/
-			double values [] = computerContour(node.getPixelWithYmin() % img.getWidth()-xmin, node.getPixelWithYmin() / img.getWidth()-ymin);
+			}*/			
+			double values [] = computerContour((((int)node.getAttributeValue(Attribute.PIXEL_YMIN)) % img.getWidth())-xmin, (((int)node.getAttributeValue(Attribute.PIXEL_YMIN)) / img.getWidth())-ymin);
 			perimeter.value = values[ 0 ];
 			sumGradContour.value = values[ 1 ]/values[ 0 ];
 			//System.out.println(perimeter.value);

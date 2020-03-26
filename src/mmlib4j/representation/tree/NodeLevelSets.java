@@ -40,18 +40,6 @@ public abstract class NodeLevelSets {
 	//protected SimpleLinkedList<NodeLevelSets> adjcencyNodes = new SimpleLinkedList<NodeLevelSets>();
 	protected boolean isClone = false;
 	protected int countPixelInFrame;
-	
-	//basic attribute node
-	protected int xmin;
-	protected int ymin;
-	protected int xmax;
-	protected int ymax;
-	private int sumX;
-	private int sumY;	
-	protected int pixelXmax;
-	protected int pixelXmin;
-	protected int pixelYmin;
-	protected int pixelYmax;
 	private int area;
 	
 	
@@ -145,15 +133,7 @@ public abstract class NodeLevelSets {
 	
 	public SimpleLinkedList<NodeLevelSets> getChildren(){
 		return children;
-	}
-	
-	
-	public int getCentroid(){
-		int xc = getSumX() / getArea();
-		int yc = getSumY() / getArea();
-		
-		return (xc + yc * img.getWidth());
-	}
+	}		
 	
 	public boolean isLeaf(){
 		return children.isEmpty();
@@ -163,23 +143,10 @@ public abstract class NodeLevelSets {
 		return children.size();
 	}
 	
-	public int getXmin(){
-		return xmin;
-	}
-	public int getYmin(){
-		return ymin;
-	}
-	public int getXmax(){
-		return xmax;
-	}
-	public int getYmax(){
-		return ymax;
-	}		
-	
 	public void addPixel(int p){		
 		int x = p % img.getWidth();
 		int y = p / img.getWidth();
-		if(x < xmin){ 
+		/*if(x < xmin){ 
 			xmin = x;
 			pixelXmin = p;
 		}
@@ -200,7 +167,7 @@ public abstract class NodeLevelSets {
 		if(y > ymax){
 			ymax = y;
 			pixelYmax = p;
-		}
+		}*/
 		if(x == 0 || y == 0 || x == img.getWidth()-1 || y == img.getHeight()-1){
 			countPixelInFrame++;
 			if(x == 0 && y == 0)
@@ -213,62 +180,14 @@ public abstract class NodeLevelSets {
 				countPixelInFrame++;
 		}
 		
-		setSumX(getSumX() + x);
-		setSumY(getSumY() + y);
+		/*setSumX(getSumX() + x);
+		setSumY(getSumY() + y);*/
 		setArea(getArea() + 1);
 		pixels.add(p);
 	}
 
 	public int getArea(){
 		return area;
-	}
-	
-	public void setXmin(int p) {
-		xmin = p;
-	}
-
-	public void setYmin(int p) {
-		ymin = p;
-	}
-
-	public void setXmax(int p) {
-		xmax = p;
-	}
-
-	public void setYmax(int p) {
-		ymax = p;
-	}
-
-	public void setPixelWithXmax(int p) {
-		pixelXmax = p;
-	}
-
-	public void setPixelWithYmax(int p) {
-		pixelYmax = p;
-	}
-
-	public void setPixelWithXmin(int p) {
-		pixelXmin = p;
-	}
-
-	public void setPixelWithYmin(int p) {
-		pixelYmin = p;
-	}
-
-	public int getPixelWithXmax() {
-		return pixelXmax ;
-	}
-
-	public int getPixelWithYmax() {
-		return pixelYmax;
-	}
-
-	public int getPixelWithXmin() {
-		return pixelXmin;
-	}
-
-	public int getPixelWithYmin() {
-		return pixelYmin;
 	}
 
 	public void setHeightNode(int height) {
@@ -605,22 +524,6 @@ public abstract class NodeLevelSets {
 
 	public void setArea(int area) {
 		this.area = area;
-	}
-
-	public int getSumX() {
-		return sumX;
-	}
-
-	public void setSumX(int sumX) {
-		this.sumX = sumX;
-	}
-
-	public int getSumY() {
-		return sumY;
-	}
-
-	public void setSumY(int sumY) {
-		this.sumY = sumY;
 	}
 	
 }

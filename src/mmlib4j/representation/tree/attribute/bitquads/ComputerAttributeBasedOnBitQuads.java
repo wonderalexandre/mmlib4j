@@ -6,7 +6,7 @@ import mmlib4j.images.impl.PixelIndexer;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.AttributeComputedIncrementally;
-import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
+import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -18,7 +18,7 @@ public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrement
 	protected AttributeBasedOnBitQuads[] quadAttributes;
 	protected PatternCounter patternCounter;
 	
-	public ComputerAttributeBasedOnBitQuads(ConnectedFilteringByComponentTree tree) {
+	public ComputerAttributeBasedOnBitQuads(ComponentTree tree) {
 		long ti = System.currentTimeMillis();
 		img = tree.getInputImage();
 		adj = tree.getAdjacency();
@@ -39,7 +39,7 @@ public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrement
 		}
 	}
 	
-	private String getFilenameFromCTType(ConnectedFilteringByComponentTree tree) {
+	private String getFilenameFromCTType(ComponentTree tree) {
 		if (tree.isMaxtree()) {
 			if (tree.getAdjacency() == AdjacencyRelation.getAdjacency4())
 				return "dt-max-tree-4c.dat";
@@ -99,8 +99,7 @@ public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrement
 		quadAttributes[nodeId].nPD -= quadAttributes[nodeId].nPDT;
 	}
 	
-	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list)
-	{
+	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> list) {
 		for (NodeLevelSets node : list)
 			addAttributeInNodes(node);
 	}
