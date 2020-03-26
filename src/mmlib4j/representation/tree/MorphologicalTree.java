@@ -17,7 +17,7 @@ public interface MorphologicalTree {
 	
 	public int getNumNode();
 	
-	public void mergeParent( NodeLevelSets node );
+	public void mergeParent(NodeLevelSets node);
 	
 	public void prunning(NodeLevelSets node);
 

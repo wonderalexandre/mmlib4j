@@ -29,9 +29,7 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 	
 	protected int sup = 255;
 	protected int inf = 0;
-	 
-	 
-	
+	 	 
 	public TreeOfShape(GrayScaleImage img){
 		this(img, -1, -1);
 	}

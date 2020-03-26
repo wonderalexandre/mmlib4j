@@ -374,8 +374,6 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			}
 			
 			parent = node.getParent();
-			// Necessary, since a parent could be marked 
-			// as True previously.
 			if(!prevupdate[parent.getId()]) {
 				update[parent.getId()] = false;
 				modified[parent.getId()] = false;

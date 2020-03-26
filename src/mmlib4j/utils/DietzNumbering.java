@@ -1,6 +1,6 @@
 package mmlib4j.utils;
 
-import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.AttributeComputedIncrementally;
 
@@ -10,9 +10,9 @@ public class DietzNumbering extends AttributeComputedIncrementally{
 	int cnt = 0;
 	int preOrder[];
 	int postOrder[];
-	MorphologicalTreeFiltering tree;
+	MorphologicalTree tree;
 	
-	public DietzNumbering(MorphologicalTreeFiltering tree) {
+	public DietzNumbering(MorphologicalTree tree) {
 		this.tree = tree;
 		preOrder  = new int[tree.getNumNode()];
 		postOrder = new int[tree.getNumNode()];

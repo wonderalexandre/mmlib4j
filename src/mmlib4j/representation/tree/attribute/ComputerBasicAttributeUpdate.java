@@ -66,8 +66,7 @@ public class ComputerBasicAttributeUpdate extends AttributeComputedIncrementally
 		attr[node.getId()].lowest = Math.min(attr[node.getId()].lowest, lowest);
 	}
 	
-	public void posProcessing(NodeLevelSets root) {
-		root.setVolume( (int) root.getAttributeValue(Attribute.VOLUME) );		
+	public void posProcessing(NodeLevelSets root) {		
 		if(root.isNodeMaxtree()){
 			attr[root.getId()].altitude.value = attr[root.getId()].highest - root.getLevel() + 1; 
 		}

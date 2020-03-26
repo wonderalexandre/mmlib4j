@@ -161,11 +161,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally {
 		root.setPixelWithXmax( attr[ root.getId() ].pixelXmax );
 		root.setPixelWithYmax( attr[ root.getId() ].pixelYmax );
 		root.setPixelWithXmin( attr[ root.getId() ].pixelXmin );
-		root.setPixelWithYmin( attr[ root.getId() ].pixelYmin );
-		
-		// Where was setVolume before?
-		root.setVolume( (int) attr[ root.getId() ].volume.value );
-		//
+		root.setPixelWithYmin( attr[ root.getId() ].pixelYmin );		
 		
 		attr[root.getId()].rect.value = root.getArea() / (attr[root.getId()].width.value * attr[root.getId()].height.value);
 		attr[root.getId()].ratioWH.value =  Math.max(attr[root.getId()].width.value, attr[root.getId()].height.value) / Math.min(attr[root.getId()].width.value, attr[root.getId()].height.value);

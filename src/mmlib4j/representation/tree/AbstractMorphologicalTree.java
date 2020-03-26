@@ -100,7 +100,6 @@ public abstract class AbstractMorphologicalTree implements MorphologicalTree{
 			/* Update Root Attributes? */	
 			node.setNumDescendent(0);
 			node.setNumDescendentLeaf(0);
-			node.setVolume(getInputImage().getSize() * node.getLevel());
 			node.setNumNodeInSameBranch(1);
 		}
 	}

@@ -1,0 +1,477 @@
+package mmlib4j.representation.tree.filtering;
+
+import java.util.Iterator;
+
+import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.MorphologicalTree;
+import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
+import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
+import mmlib4j.representation.tree.attribute.ComputerBasicAttributeUpdate;
+import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
+import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttributeUpdate;
+import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
+import mmlib4j.utils.Utils;
+
+/**
+ * 
+ * 
+ * 	This class implements Connected Filtering in Morphological Trees.
+ * 
+ *	@author Charles Ferreira Gobber and Wonder Alexandre Luz Alves
+ *	@version v2020
+ * 	@since v2020
+ *  @see Attribute
+ *  @see MorphologicalTree
+ * 
+ */
+public class ConnectedFilteringByMorphologicalTree{
+	
+	public final static int PRUNING_MIN = 1;
+	public final static int PRUNING_MAX = 2;
+	//public final static int PRUNING_VITERBI = 3;
+	public final static int DIRECT_RULE = 4;
+	public final static int SUBTRACTIVE_RULE = 5;
+	
+	public final static int SIMPLIFY_MIN = 6;
+	public final static int SIMPLIFY_MAX = 7;
+	public final static int SIMPLIFY_DIRECT = 8;
+	public final static int SIMPLIFY_SUBTRACTIVE = 9;
+	
+	private boolean hasComputerBasicAttribute = false;
+	private boolean hasComputerAttributeBasedPerimeterExternal = false;
+	private boolean hasComputerCentralMomentAttribute = false;
+	private boolean hasComputerAttributeBasedBitQuads = false;
+	private boolean hasComputerDistanceTransform = false;
+	private boolean hasComputerFunctionalAttribute = false;
+	private ComputerDistanceTransform dt = null;
+	private MorphologicalTree tree;	
+	
+	boolean[] update;		
+	boolean[] modified;
+	boolean[] prevupdate;
+	
+	public ConnectedFilteringByMorphologicalTree(MorphologicalTree tree) {
+		this.tree = tree;		
+		update = new boolean[tree.getNumNodeIdMax()];
+		modified = new boolean[tree.getNumNodeIdMax()];
+		prevupdate = new boolean[tree.getNumNodeIdMax()];
+	}
+	
+	/**
+	 * 
+	 *	This method loads an attribute in tree structure.
+	 *
+	 * 	@param attr Type of attribute (see {@link Attribute}).  
+	 * 
+	 */
+	public void loadAttribute(int attr){
+		switch(attr){
+			case Attribute.ALTITUDE:
+			case Attribute.AREA:
+			case Attribute.VOLUME:
+			case Attribute.WIDTH:
+			case Attribute.HEIGHT:
+			//case Attribute.PERIMETER:
+			case Attribute.LEVEL:
+			case Attribute.RECTANGULARITY:
+			case Attribute.RATIO_WIDTH_HEIGHT:
+				computerBasicAttribute();
+				break;
+				
+			case Attribute.MOMENT_CENTRAL_02:
+			case Attribute.MOMENT_CENTRAL_20:
+			case Attribute.MOMENT_CENTRAL_11:
+			case Attribute.VARIANCE_LEVEL:
+			case Attribute.LEVEL_MEAN:
+			case Attribute.STD_LEVEL:
+			case Attribute.SUM_LEVEL_2:
+			case Attribute.MOMENT_COMPACTNESS:
+			case Attribute.MOMENT_ECCENTRICITY:
+			case Attribute.MOMENT_ELONGATION:
+			case Attribute.MOMENT_LENGTH_MAJOR_AXES:
+			case Attribute.MOMENT_LENGTH_MINOR_AXES:
+			case Attribute.MOMENT_ORIENTATION:
+			case Attribute.MOMENT_ASPECT_RATIO:
+			case Attribute.MOMENT_OF_INERTIA:
+				computerCentralMomentAttribute();
+				break;
+			
+			case Attribute.PERIMETER_EXTERNAL:
+			case Attribute.CIRCULARITY:
+			case Attribute.COMPACTNESS:
+			case Attribute.ELONGATION:
+			case Attribute.SUM_GRAD_CONTOUR:
+				computerAttributeBasedPerimeterExternal();
+				break;				
+				
+			//case Attribute.NUM_HOLES:
+			case Attribute.BIT_QUADS_PERIMETER:
+			case Attribute.BIT_QUADS_EULER_NUMBER:
+			case Attribute.BIT_QUADS_HOLE_NUMBER:
+			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
+			case Attribute.BIT_QUADS_CIRCULARITY:
+			case Attribute.BIT_QUADS_AVERAGE_AREA:
+			case Attribute.BIT_QUADS_AVERAGE_PERIMETER:
+			case Attribute.BIT_QUADS_AVERAGE_LENGTH:
+			case Attribute.BIT_QUADS_AVERAGE_WIDTH:
+				//computerAttributeBasedBitQuads();
+				break;
+				
+			case Attribute.FUNCTIONAL_ATTRIBUTE:
+				//computerFunctionalAttribute();
+				break;
+		}
+	}
+	
+	/**
+	 * 
+	 *	This method returns the internal Morphological tree.
+	 *
+	 * 	@return The internal Morphological tree.
+	 * 
+	 */
+	public MorphologicalTree getTree() {
+		return tree;
+	}
+	
+	public ComputerDistanceTransform computerDistanceTransform(){
+		if(!hasComputerDistanceTransform){
+			dt = new ComputerDistanceTransform(tree.getNumNode(), tree.getRoot(), tree.getInputImage());
+			hasComputerDistanceTransform = true;
+		}
+		return dt;
+	}	
+	
+	public void computerCentralMomentAttribute(){
+		if(!hasComputerCentralMomentAttribute){
+			new ComputerCentralMomentAttribute(tree.getNumNode(), tree.getRoot(), tree.getInputImage().getWidth()).addAttributeInNodesToS(tree.getListNodes());
+			hasComputerCentralMomentAttribute = true;
+		}
+	}
+	
+	public void computerBasicAttribute(){
+		if(!hasComputerBasicAttribute){
+			new ComputerBasicAttribute(tree.getNumNode(), tree.getRoot(), tree.getInputImage()).addAttributeInNodesToS(tree.getListNodes());
+			hasComputerBasicAttribute = true;
+		}
+	}
+	
+	public void computerAttributeBasedPerimeterExternal(){
+		if(!hasComputerAttributeBasedPerimeterExternal){
+			new ComputerAttributeBasedPerimeterExternal(tree.getNumNode(), tree.getRoot(), tree.getInputImage()).addAttributeInNodesToS(tree.getListNodes());
+			hasComputerAttributeBasedPerimeterExternal = true;
+		}
+	}
+	
+	private double getAttribute(NodeLevelSets node, int type){
+		loadAttribute(type);
+		return node.getAttributeValue(type);	
+	}
+
+	public GrayScaleImage getImageFiltered(double attributeValue, int attributeType, int typeSimplification) {
+		/*if(typeSimplification == PRUNING_MIN)
+			return filteringByPruningMin(attributeValue, attributeType);
+		else if(typeSimplification == PRUNING_MAX)
+			return filteringByPruningMax(attributeValue, attributeType);
+		else if(typeSimplification == PRUNING_VITERBI)
+			return filteringByPruningViterbi(attributeValue, attributeType);
+		else if(typeSimplification == DIRECT_RULE)
+			return filteringByDirectRule(attributeValue, attributeType);
+		else if(typeSimplification == SUBTRACTIVE_RULE)
+			return filteringBySubtractiveRule(attributeValue, attributeType);
+		throw new RuntimeException("type filtering invalid");*/
+		return null;
+	}
+
+	
+	public InfoPrunedTree getInfoPrunedTree(double attributeValue, int attributeType, int typeSimplification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * 
+	 * This method performs a simplification in tree based on the most common filtering rules.
+	 * This method modifies the tree structure.  
+	 *  
+	 * @param attributeValue The value of the threshold (same as $ i $).
+	 * @param type The type of the attribute.
+	 * @param One of following filtering rules: SIMPLIFY_MIN, SIMPLIFY_MAX, SIMPLIFY_DIRECT or SIMPLIFY_SUBTRACTIVE.
+	 * 
+	 */	
+	public void simplificationTree(double attributeValue, int attributeType, int typeSimplification) {
+		if(typeSimplification == SIMPLIFY_MIN)
+			simplificationTreeByPruningMin(attributeValue, attributeType);
+		else if(typeSimplification == SIMPLIFY_MAX)
+			simplificationTreeByPruningMax(attributeValue, attributeType);
+		//else if(typeSimplification == PRUNING_VITERBI)
+		//	simplificationTreeByPruningViterbi(attributeValue, attributeType);
+		else if(typeSimplification == SIMPLIFY_DIRECT)
+			simplificationTreeByDirectRule(attributeValue, attributeType);
+		else if(typeSimplification == SIMPLIFY_SUBTRACTIVE)
+			simplificationTreeBySubstractiveRule(attributeValue, attributeType);
+		else
+			throw new RuntimeException("type filtering invalid");
+	}
+	
+	private void updateAttributes() {
+		new ComputerBasicAttributeUpdate(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage(), update, modified);
+		if(hasComputerCentralMomentAttribute) 
+			new ComputerCentralMomentAttributeUpdate(tree.getNumNodeIdMax(), tree.getRoot(), update, modified);
+	}
+	
+	/**
+	 * 
+	 * This method implements the min filtering rule in the tree received by the class constructor.
+	 * In min rule if a node $ \tau $ is removed, then are all its descendants. The criterion of 
+	 * remotion is $ \kappa(\tau) < i $, where $ \kappa $ is an attribute and $ i $ a threshold. 
+	 * This method modifies the tree structure. 
+	 *  
+	 * @param attributeValue The value of the threshold (same as $ i $).
+	 * @param type The type of the attribute.
+	 * 
+	 */	
+	public void simplificationTreeByPruningMin(double attributeValue, int type){
+		long ti = System.currentTimeMillis();
+		NodeLevelSets parent;	
+		
+		for(NodeLevelSets node: tree.getListNodes().reverse()) {
+			if(node == tree.getRoot())
+				continue;
+			else if(node.isLeaf() && !prevupdate[node.getId()]) {
+				update[node.getId()] = false;
+				modified[node.getId()] = false;
+			}
+			
+			parent = node.getParent();
+			if(!prevupdate[parent.getId()]) {
+				update[parent.getId()] = false;
+				modified[parent.getId()] = false;
+			}			
+						
+			if(node.getAttributeValue(type) < attributeValue) {	
+				tree.prunning(node);												
+				update[parent.getId()] = true;
+				modified[parent.getId()] = true;
+				prevupdate[parent.getId()] = true;
+			} else { 										
+				// Pass the update to all ancestors
+				if(update[node.getId()]) {
+					update[parent.getId()] = true;
+					prevupdate[parent.getId()] = true;
+				}
+			}			
+			prevupdate[node.getId()] = false;
+			
+		}				
+		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [simplificationTreeByPruningMin]  "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		updateAttributes();	
+		
+	}
+	
+	/**
+	 * 
+	 * This method implements the max filtering rule in the tree received by the class constructor.
+	 * In max rule a node $ \tau $ is removed only if are all its descendants. The criterion of 
+	 * remotion is $ \kappa(\tau) < i $, where $ \kappa $ is an attribute and $ i $ a threshold. 
+	 * This method modifies the tree structure. 
+	 *  
+	 * @param attributeValue The value of the threshold (same as $ i $).
+	 * @param type The type of the attribute.
+	 * 
+	 */	
+	public void simplificationTreeByPruningMax(double attributeValue, int type){	
+		long ti = System.currentTimeMillis();
+		NodeLevelSets parent;
+		
+		Iterator<NodeLevelSets> iterator = tree.getListNodes().reverse().iterator();
+		while(iterator.hasNext()) {
+			NodeLevelSets node = iterator.next();
+			if(node == tree.getRoot())
+				continue;
+			else if(node.isLeaf() && !prevupdate[node.getId()]) {
+				update[node.getId()] = false;
+				modified[node.getId()] = false;
+			}
+			
+			parent = node.getParent();
+			if(!prevupdate[parent.getId()]) {
+				update[parent.getId()] = false;
+				modified[parent.getId()] = false;
+			}
+			
+			if(node.getAttributeValue(type) < attributeValue && node.getChildren().isEmpty()) {
+				iterator.remove(); //remove in constant time
+				tree.mergeParent(node);			
+				update[parent.getId()] = true;
+				modified[parent.getId()] = true;
+				prevupdate[parent.getId()] = true;
+			} else { 
+				
+				// Pass the update to all ancestors
+				if(update[node.getId()]) {
+					update[parent.getId()] = true;
+					prevupdate[parent.getId()] = true;
+				}
+			}
+			prevupdate[node.getId()] = false;
+			
+		}		
+		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [simplificationTreeByPruningMax]  "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		updateAttributes();
+		
+	}
+	
+	/**
+	 * 
+	 * This method implements the direct filtering rule in the tree received by the class constructor.
+	 * In direct rule if a node $ \tau $ is removed it is merged with its parent. The criterion of 
+	 * remotion is $ \kappa(\tau) < i $, where $ \kappa $ is an attribute and $ i $ a threshold.
+	 * This method modifies the tree structure. 
+	 *  
+	 * @param attributeValue The value of the threshold (same as $ i $).
+	 * @param type The type of the attribute.
+	 * 
+	 */	
+	public void simplificationTreeByDirectRule(double attributeValue, int type){
+		long ti = System.currentTimeMillis();
+		
+		NodeLevelSets parent;				
+		Iterator<NodeLevelSets> iterator = tree.getListNodes().reverse().iterator();
+		while(iterator.hasNext()) {
+			NodeLevelSets node = iterator.next();
+			if(node == tree.getRoot())
+				continue;
+			else if(node.isLeaf() && !prevupdate[node.getId()]) {
+				update[node.getId()] = false;
+				modified[node.getId()] = false;
+			}
+			
+			parent = node.getParent();				
+			if(!prevupdate[parent.getId()]) {
+				update[parent.getId()] = false;
+				modified[parent.getId()] = false;
+			}
+			
+			if(node.getAttributeValue(type) < attributeValue) {		
+				iterator.remove(); //remove in constant time
+				tree.mergeParent(node);			
+				update[parent.getId()] = true;
+				modified[parent.getId()] = true;
+				prevupdate[parent.getId()] = true;
+			} else { 
+				// Pass the update to all ancestors
+				if(update[node.getId()]) {
+					update[parent.getId()] = true;
+					prevupdate[parent.getId()] = true;
+				}
+			}
+			
+			prevupdate[node.getId()] = false;
+		}
+		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [simplificationTreeByDirectRule]  "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		updateAttributes();	
+
+	}
+		
+	/**
+	 * 
+	 * This method implements the subtractive filtering rule in the tree received by the class constructor.
+	 * In subtractive rule if a node $ \tau $ is removed it is merged with its parent and all its descendants
+	 * are lowered by its gray level. The criterion of remotion is $ \kappa(\tau) < i $, where $ \kappa $ is an attribute and $ i $ a threshold.
+	 * This method modifies the tree structure. 
+	 *  
+	 * @param attributeValue The value of the threshold (same as $ i $).
+	 * @param type The type of the attribute.
+	 * 
+	 */	
+	public void simplificationTreeBySubstractiveRule(double attributeValue, int type){
+		long ti = System.currentTimeMillis();
+		int offset[] = new int[tree.getNumNodeIdMax()];			
+		NodeLevelSets parent;
+		
+		// Compute offsets
+		for(NodeLevelSets node : tree.getListNodes()) {
+			if(node == tree.getRoot())
+				continue;
+			parent = node.getParent();						
+			if(node.getAttributeValue(type) < attributeValue) {
+				offset[node.getId()] = offset[parent.getId()] - node.getLevel() + parent.getLevel();				
+			} else {
+				offset[node.getId()] = offset[parent.getId()];									
+			}
+		}		
+		
+		// Propagate differences
+		Iterator<NodeLevelSets> iterator = tree.getListNodes().reverse().iterator();
+		while(iterator.hasNext()) {
+			NodeLevelSets node = iterator.next();
+			if(node == tree.getRoot())
+				continue;
+			else if(node.isLeaf() && !prevupdate[node.getId()]) {
+				update[node.getId()] = false;
+				modified[node.getId()] = false;
+			}
+			
+			parent = node.getParent();	
+			if(!prevupdate[parent.getId()]) {
+				update[parent.getId()] = false;
+				modified[parent.getId()] = false;
+			}
+			
+			if(node.getAttributeValue(type) < attributeValue) {
+				iterator.remove(); //remove in constant time
+				tree.mergeParent(node);			
+		 		update[parent.getId()] = true;				
+		 		modified[parent.getId()] = true;
+		 		prevupdate[parent.getId()] = true;
+			} else {				
+			 	node.setLevel(node.getLevel() + offset[node.getId()]);
+			 	// This node was changed by offset
+			 	if(offset[node.getId()] != 0) {			 		
+			 		update[node.getId()] = true;
+			 		modified[node.getId()] = true;
+			 	}
+				// Pass the update to all ancestors
+			 	if(update[node.getId()]) {
+					update[parent.getId()] = true;
+					prevupdate[parent.getId()] = true;
+			 	}
+			}
+			prevupdate[node.getId()] = false;
+		}	
+		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [simplificationTreeBySubstractiveRule]  "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		updateAttributes();		
+				
+	}
+	
+	// We should think if it is possible to update the viterbi structures.
+	// I believe we can use the update structure.
+	public void simplificationTreeByPruningViterbi(double attributeValue, int type){
+		new UnsupportedOperationException("Not implemented yet");
+	}
+
+}

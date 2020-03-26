@@ -53,7 +53,6 @@ public abstract class NodeLevelSets {
 	protected int pixelYmin;
 	protected int pixelYmax;
 	private int area;
-	protected int volume;
 	
 	
 	public abstract NodeLevelSets getClone();
@@ -65,8 +64,7 @@ public abstract class NodeLevelSets {
 	
 	public void setId(int id) {
 		this.id = id;
-	}
-	
+	}	
 
 	public int getLevel(){
 		return level;
@@ -218,21 +216,11 @@ public abstract class NodeLevelSets {
 		setSumX(getSumX() + x);
 		setSumY(getSumY() + y);
 		setArea(getArea() + 1);
-		volume += (level);
 		pixels.add(p);
 	}
-	
 
 	public int getArea(){
 		return area;
-	}
-	
-	public void setVolume(int volume) {
-		this.volume = volume;
-	}
-	
-	public int getVolume(){
-		return volume;
 	}
 	
 	public void setXmin(int p) {
