@@ -2,14 +2,13 @@ package mmlib4j.descriptors;
 
 import java.io.File;
 
+import mmlib4j.filtering.AttributeFilters;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
-import mmlib4j.representation.tree.filtering.AttributeFilters;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
@@ -17,7 +16,7 @@ public class AttributeProfiles {
 			
 	public final static int ENERGY = 10; 
 	public static FilteringStrategy strategy;
-	public static ComponentTree tree;
+	
 	
 	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[]) {
 		return getAttributeProfile(img, attributeType, thresholds, MorphologicalTreeFiltering.PRUNING_MIN);
@@ -131,6 +130,7 @@ public class AttributeProfiles {
 		GrayScaleImage[] profiles = new GrayScaleImage[2 * lambdas + 1];
 		strategy = getStrategy(typeStrategy);		
 		
+		ComponentTree tree;
 		AttributeFilters filter;		
 		tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
 		filter = new AttributeFilters(tree);
@@ -141,7 +141,7 @@ public class AttributeProfiles {
 		}
 
 		profiles[lambdas] = img;
-		tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), true);		
+		tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), true);		
 		filter = new AttributeFilters(tree);
 		filter.loadAttribute(attributeType);				
 		
@@ -152,7 +152,6 @@ public class AttributeProfiles {
 		return profiles;
 		
 	}
-	
 	
 	private interface FilteringStrategy {	
 		public GrayScaleImage filterBy(AttributeFilters tree, double threshold, int attributeType);

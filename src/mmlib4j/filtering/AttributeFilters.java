@@ -1,4 +1,4 @@
-package mmlib4j.representation.tree.filtering;
+package mmlib4j.filtering;
 
 import java.util.Iterator;
 
@@ -444,8 +444,8 @@ public class AttributeFilters {
 			simplificationTreeByPruningMin(attributeValue, attributeType);
 		else if(typeSimplification == SIMPLIFY_MAX)
 			simplificationTreeByPruningMax(attributeValue, attributeType);
-		//else if(typeSimplification == PRUNING_VITERBI)
-		//	simplificationTreeByPruningViterbi(attributeValue, attributeType);
+		else if(typeSimplification == PRUNING_VITERBI)
+			simplificationTreeByPruningViterbi(attributeValue, attributeType);
 		else if(typeSimplification == SIMPLIFY_DIRECT)
 			simplificationTreeByDirectRule(attributeValue, attributeType);
 		else if(typeSimplification == SIMPLIFY_SUBTRACTIVE)

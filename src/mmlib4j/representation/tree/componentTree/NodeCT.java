@@ -15,11 +15,7 @@ import mmlib4j.representation.tree.attribute.Attribute;
  *
  */
 public class NodeCT extends NodeLevelSets implements Cloneable{
-	
-	
-	public boolean flagProcess;
-	public boolean flagPruning = true;
-	
+
 	Contour contourE = null;
 	
 	public NodeCT(boolean isMaxtree, int numCreate, GrayScaleImage img, int canonicalPixel){
