@@ -33,7 +33,7 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 		this(img, -1, -1);
 	}
 	
-	protected TreeOfShape(BuilderTreeOfShape build){
+	public TreeOfShape(BuilderTreeOfShape build){
 		this.build = build;
 		this.width = build.getInputImage().getWidth();
 		this.height = build.getInputImage().getHeight();
