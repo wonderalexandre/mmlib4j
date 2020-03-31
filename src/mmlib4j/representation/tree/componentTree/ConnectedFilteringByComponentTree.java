@@ -17,6 +17,7 @@ import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
+import mmlib4j.representation.tree.attribute.ComputerAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
@@ -400,11 +401,13 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			System.out.println("Tempo de execucao [simplificationTreeByPruningMin]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 		
-		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
+		/*new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 		// Verify each attribute that was computed before
 		if(hasComputerCentralMomentAttribute) 
-			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);		
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);*/
+		
+		new ComputerAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 	}
 	
@@ -451,11 +454,12 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			System.out.println("Tempo de execucao [simplificationTreeByPruningMax]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 		
-		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
+		/*new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 		// Verify each attribute that was computed before
 		if(hasComputerCentralMomentAttribute) 
-			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);			
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);*/
+		new ComputerAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 	}
 	
@@ -508,11 +512,13 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			System.out.println("Tempo de execucao [simplificationTreeByDirectRule]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 		
-		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
+		/*new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 		// Verify each attribute that was computed before
 		if(hasComputerCentralMomentAttribute)
-			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);	
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);*/
+		
+		new ComputerAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 
 	}
 	
@@ -580,11 +586,12 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 			System.out.println("Tempo de execucao [simplificationTreeBySubstractiveRule]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 		// Always computed
-		new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
+		/*new ComputerBasicAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 		
 		// Verify each attribute that was computed before
 		if(hasComputerCentralMomentAttribute) 
-			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);		
+			new ComputerCentralMomentAttributeUpdate(numNodeIdMax, getRoot(), update, modified);*/
+		new ComputerAttributeUpdate(numNodeIdMax, getRoot(), imgInput, update, modified);
 				
 	}
 	

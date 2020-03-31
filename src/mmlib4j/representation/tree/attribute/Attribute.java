@@ -102,6 +102,10 @@ public class Attribute {
 	public static final int PIXEL_YMAX = 78;
 	public static final int SUM_X = 79;
 	public static final int SUM_Y = 80;
+		
+	// attributes based on node histogram
+	public static final int ENTROPY = 81;
+	public static final int ENERGY = 82;
 	
 	public static String getNameAttribute(int type) {
 		switch(type){
@@ -163,6 +167,9 @@ public class Attribute {
 		case PIXEL_YMAX: return "PIXEL_YMAX";
 		case SUM_X: return "SUM_X";
 		case SUM_Y: return "SUM_Y";
+		
+		case ENTROPY: return "ENTROPY";
+		case ENERGY: return "ENERGY";
 		
 		default: return "UNDEFINED";
 	}

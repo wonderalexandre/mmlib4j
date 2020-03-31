@@ -58,7 +58,7 @@ public class ComputerFunctionalAttribute {
 			calculateEnergy(queue);
 		}
 		
-		if( Utils.debug ) {
+		if(Utils.debug) {
 			long tf = System.currentTimeMillis();
 			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );			
 		}
@@ -68,14 +68,14 @@ public class ComputerFunctionalAttribute {
 		this(tree, true, img);		
 	}
 	
-	public ComputerFunctionalAttribute(InfoMergedTree mTree, int numNode, boolean useHeuristic, boolean[] mapCorrection) {
+	public ComputerFunctionalAttribute(InfoMergedTree mTree, int numNode, boolean useHeuristic, boolean[] update) {
 		
 		long ti = System.currentTimeMillis();				
 		this.numNode = numNode;
 		this.mTree = mTree;
 		
-		areaR = new double[ numNode ];
-		volumeR = new double[ numNode ];
+		areaR = new double[numNode];
+		volumeR = new double[numNode];
 		mumfordShaEnergy = new Attribute[numNode];		
 		
 		for(NodeMergedTree node : mTree) {
@@ -90,13 +90,13 @@ public class ComputerFunctionalAttribute {
 		PriorityQueueHeap<NodeMergedTree> queue = new PriorityQueueHeap<>(numNode);
 		if(useHeuristic) {			
 			for(NodeMergedTree node : mTree.getRoot().getChildren())
-				if(mapCorrection[node.getId()])
+				if(update[node.getId()])
 					for(NodeMergedTree desc : node.getNodesDescendants())
 						queue.add(desc, mTree.getAttribute(desc, Attribute.SUM_GRAD_CONTOUR));			
 			calculateEnergyByHeuristic(queue);
 		} else {
 			for(NodeMergedTree node : mTree.getRoot().getChildren())
-				if(mapCorrection[node.getId()])
+				if(update[node.getId()])
 					for(NodeMergedTree desc : node.getNodesDescendants())
 						queue.add(desc, mumfordShaEnergy[desc.getId()].value);
 			calculateEnergy(queue);
@@ -175,9 +175,9 @@ public class ComputerFunctionalAttribute {
 		
 	}
 	
-	public void addAttributeInNodesMtree(boolean[] mapCorrection){
+	public void addAttributeInNodesMtree(boolean[] update){
 		for(NodeMergedTree node_ : mTree.getRoot().getChildren()) {
-			if(mapCorrection[node_.getId()]) {
+			if(update[node_.getId()]) {
 				for(NodeMergedTree desc : node_.getNodesDescendants()) {
 					if(!desc.isAttrModified()) {
 						desc.setAttributes(new HashMap<Integer, Attribute>());

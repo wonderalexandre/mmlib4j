@@ -147,7 +147,7 @@ public class AttributeProfiles {
 		
 		for (int i = 0; i < lambdas; i++) {
 			profiles[i+lambdas+1] = strategy.filterBy(filter, thresholds[i], attributeType);
-		}
+		} 
 		
 		return profiles;
 		
