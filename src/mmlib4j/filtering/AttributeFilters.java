@@ -216,9 +216,7 @@ public class AttributeFilters {
 	 * 
 	 */
 	public void computerFunctionalAttribute(){		
-		if(!(tree instanceof ComponentTree)) {
-			throw new UnsupportedOperationException("This attribute doesn't work for all trees yet!");
-		} else if(!hasComputerFunctionalAttribute){
+		if(!hasComputerFunctionalAttribute){
 			computerAttributeBasedPerimeterExternal();			
 			new ComputerFunctionalAttribute(tree, tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
 			hasComputerFunctionalAttribute = true;

@@ -99,7 +99,15 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally {
 		node.addAttribute(Attribute.RECTANGULARITY, attr[ node.getId() ].rect);
 		node.addAttribute(Attribute.RATIO_WIDTH_HEIGHT, attr[ node.getId() ].ratioWH);
 		node.addAttribute(Attribute.SUM_X, attr[node.getId()].sumx);
-		node.addAttribute(Attribute.SUM_Y, attr[node.getId()].sumy);
+		node.addAttribute(Attribute.SUM_Y, attr[node.getId()].sumy);		
+		node.addAttribute(Attribute.XMIN, new Attribute(Attribute.XMIN, attr[node.getId()].xmin));
+		node.addAttribute(Attribute.XMAX, new Attribute(Attribute.XMAX, attr[node.getId()].xmax));
+		node.addAttribute(Attribute.YMIN, new Attribute(Attribute.YMIN, attr[node.getId()].ymin));
+		node.addAttribute(Attribute.YMAX, new Attribute(Attribute.YMAX, attr[node.getId()].ymax));		
+		node.addAttribute(Attribute.PIXEL_XMIN, new Attribute(Attribute.PIXEL_XMIN, attr[node.getId()].pixelXmin));
+		node.addAttribute(Attribute.PIXEL_XMAX, new Attribute(Attribute.PIXEL_XMAX, attr[node.getId()].pixelXmax));
+		node.addAttribute(Attribute.PIXEL_YMIN, new Attribute(Attribute.PIXEL_YMIN, attr[node.getId()].pixelYmin));
+		node.addAttribute(Attribute.PIXEL_YMAX, new Attribute(Attribute.PIXEL_YMAX, attr[node.getId()].pixelYmax));
 	} 	
 	
 	public void preProcessing(NodeLevelSets node) {

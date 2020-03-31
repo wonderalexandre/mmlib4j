@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import mmlib4j.datastruct.PriorityQueueHeap;
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.filtering.AttributeFilters;
+import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.InfoMergedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
@@ -14,6 +16,8 @@ import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
+import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
+import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
@@ -68,7 +72,7 @@ public class ComputerFunctionalAttribute {
 		this(tree, true, img);		
 	}
 	
-	public ComputerFunctionalAttribute(InfoMergedTree mTree, int numNode, boolean useHeuristic, boolean[] update) {
+	/*public ComputerFunctionalAttribute(InfoMergedTree mTree, int numNode, boolean useHeuristic, boolean[] update) {
 		
 		long ti = System.currentTimeMillis();				
 		this.numNode = numNode;
@@ -106,7 +110,7 @@ public class ComputerFunctionalAttribute {
 			long tf = System.currentTimeMillis();
 			System.out.println( "Tempo de execucao [extraction of attribute - based on mumford-sha-energy]  " + ( ( tf - ti ) / 1000.0 )  + "s" );			
 		}
-	}
+	}*/
 	
 	private double pow2( double v ) {
 		return v*v;
@@ -202,44 +206,16 @@ public class ComputerFunctionalAttribute {
 	public static void main(String args[]) throws FileNotFoundException {
     	    	
     	Utils.debug = true;
-    	System.out.println("Component tree");
-    	GrayScaleImage input = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));
-    	int type = Attribute.FUNCTIONAL_ATTRIBUTE;
-		
-    	ConnectedFilteringByComponentTree tree1 = new ConnectedFilteringByComponentTree( input, AdjacencyRelation.getCircular( 1 ), true );
-		tree1.computerAttributeBasedPerimeterExternal();
-		new ComputerFunctionalAttribute(tree1, true, input).addAttributeInNodes(tree1.getListNodes());
-		tree1.filteringByDirectRule(1000, type);
-		
-		
-		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(tree1.getMtree().reconstruction(), AdjacencyRelation.getCircular( 1 ), true);
-		tree2.computerAttributeBasedPerimeterExternal();						
-		new ComputerFunctionalAttribute(tree2, true, input).addAttributeInNodes(tree2.getListNodes());			
-		
-		/*NodeLevelSets[] nodeTree1 = new NodeLevelSets[tree1.getNumNode()];
-		NodeLevelSets[] nodeTree2 = new NodeLevelSets[tree1.getNumNode()];
-		
-		for(NodeLevelSets n1 : tree1.getListNodes()) {
-			nodeTree1[n1.getId()] = n1; 
-		}
-		
-		for(NodeLevelSets n2 : tree2.getListNodes()) {
-			nodeTree2[n2.getId()] = n2; 
-		}
-		
-		for(int i = 0 ; i < tree1.getNumNode() ; i++) {
-			if(nodeTree1[i].getAttributeValue(Attribute.FUNCTIONAL_ATTRIBUTE) != nodeTree2[i].getAttributeValue(Attribute.FUNCTIONAL_ATTRIBUTE))
-				System.out.println("wrong");
-		}*/
-		
-		for(NodeLevelSets node : tree2.getRoot().getChildren()) {
-			System.out.println("id: " + node.getId() + " energy: " + node.getAttributeValue(Attribute.SUM_GRAD_CONTOUR));
-		}
-		
-		for(NodeMergedTree node : tree1.getMtree().getRoot().getChildren()) {
-			//System.out.println("id: " + node.getId() + " energy: " + tree1.getMtree().getAttribute(node,type));
-			System.out.println("id: " + node.getId() + " energy: " + tree1.getMtree().getAttribute(node, Attribute.SUM_GRAD_CONTOUR));
-		}
+    	GrayScaleImage input = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/Images/lena.jpg"));
+    	int type = Attribute.FUNCTIONAL_ATTRIBUTE;	
+    	
+    	TreeOfShape tree = new TreeOfShape(input);
+    	AttributeFilters filter = new AttributeFilters(tree);
+    	filter.computerFunctionalAttribute();
+    	
+    	filter.simplificationTreeByDirectRule(100, type);
+    	
+    	WindowImages.show(tree.reconstruction());
 		
     }
 
