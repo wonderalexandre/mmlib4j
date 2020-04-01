@@ -45,11 +45,21 @@ public class ComputerAttributeBasedHistogram extends AttributeComputedIncrementa
 	}
 
 	@Override
-	public void mergeChildren(NodeLevelSets parent, NodeLevelSets son) {}	
+	public void mergeChildren(NodeLevelSets node, NodeLevelSets son) {									
+		if(attr[node.getId()].hist == null) {
+			attr[node.getId()].hist = attr[son.getId()].hist;											
+			attr[node.getId()].hist[node.getLevel()] += node.getCompactNodePixels().size();								
+		} else { // after the for below the histogram of the node may changed, since its parent can have the same pointer reference
+			for(int i = attr[son.getId()].init ; i <= attr[son.getId()].end ; i++) {
+				attr[node.getId()].hist[i] += attr[son.getId()].hist[i];					
+			}
+		}			
+		attr[node.getId()].init = Math.min(attr[node.getId()].init, attr[son.getId()].init);
+		attr[node.getId()].end = Math.max(attr[node.getId()].end, attr[son.getId()].end);			
+	}	
 
 	@Override
-	public void posProcessing(NodeLevelSets node) {		
-			
+	public void posProcessing(NodeLevelSets node) {					
 		if(node.isLeaf()) {			
 			attr[node.getId()].hist = new int[256];
 			attr[node.getId()].hist[node.getLevel()] = node.getCompactNodePixels().size();
@@ -60,43 +70,7 @@ public class ComputerAttributeBasedHistogram extends AttributeComputedIncrementa
 				attr[node.getId()].entropy.value += (prob * log2(prob));									
 			}
 			attr[node.getId()].entropy.value *= -1;
-		}			
-		
-		//****************** test if they are equal using a naive approach (entropy) *******************
-		/*int[] histaux = new int[256];		
-		for(NodeLevelSets nd : node.getNodesDescendants()) {
-			histaux[nd.getLevel()] += nd.getCompactNodePixels().size();
-		}						
-		
-		for(int i = 0 ; i < histaux.length ; i++) {
-			double pi = histaux[i] / node.getAttributeValue(Attribute.AREA);
-			attr[node.getId()].descentropy += (pi * log2(pi));
-			if(attr[node.getId()].hist[i] != histaux[i])
-				System.out.println("my hist: " + attr[node.getId()].hist[i] + " desc hist: " + histaux[i]);
-		}
-		
-		attr[node.getId()].descentropy *= -1;
-		
-		if(attr[node.getId()].entropy.value != attr[node.getId()].descentropy) {		
-			System.out.println("my entropy: " +attr[node.getId()].entropy.value + " desc entropy: " + attr[node.getId()].descentropy + " is leaf? " + node.isLeaf());
-		}*/
-		//**********************************************************************************************
-
-		// histogram propagation
-		NodeLevelSets parent = node.getParent();				
-		if(parent != null) {			
-			if(attr[parent.getId()].hist == null) {
-				attr[parent.getId()].hist = attr[node.getId()].hist;											
-				attr[parent.getId()].hist[parent.getLevel()] += parent.getCompactNodePixels().size();								
-			} else { // after the for below the histogram of the node may changed, since its parent can have the same pointer reference
-				for(int i = attr[node.getId()].init ; i <= attr[node.getId()].end ; i++) {
-					attr[parent.getId()].hist[i] += attr[node.getId()].hist[i];					
-				}
-			}			
-			attr[parent.getId()].init = Math.min(attr[parent.getId()].init, attr[node.getId()].init);
-			attr[parent.getId()].end = Math.max(attr[parent.getId()].end, attr[node.getId()].end);	
 		}		
-				
 	}
 	
 	class HistogramAttributes{
@@ -105,8 +79,6 @@ public class ComputerAttributeBasedHistogram extends AttributeComputedIncrementa
 		Attribute energy = new Attribute(Attribute.ENERGY);
 		int init;
 		int end;
-		// entropy computed using descedants (only for test purposes)
-		// double descentropy = 0;
 	}
 	
 	public static void main(String args[]) {
