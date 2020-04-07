@@ -131,6 +131,8 @@ public class BuilderTreeOfShapeByUnionFindParallel implements BuilderTreeOfShape
 	public BuilderTreeOfShapeByUnionFindParallel(GrayScaleImage img, int xInfinito, int yInfinito){
 		super();
 		this.img = img;
+		if(img.getDepth() != 8)
+			throw new RuntimeException("This implementation works only for 8-bits grayscale images.");
 		this.xInfinito = xInfinito;
 		this.yInfinito = yInfinito;
         

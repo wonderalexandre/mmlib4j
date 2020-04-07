@@ -292,5 +292,10 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 			}
 		}
 	}
+
+	@Override
+	public int getTypeOfTree() {
+		return MorphologicalTree.TREE_OF_SHAPE;
+	}
 }
 

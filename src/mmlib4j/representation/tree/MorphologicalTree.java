@@ -5,6 +5,10 @@ import mmlib4j.images.GrayScaleImage;
 
 public interface MorphologicalTree {
 
+	public static final int MINTREE = 1;
+	public static final int MAXTREE = 2;
+	public static final int TREE_OF_SHAPE = 3;
+	
 	public GrayScaleImage reconstruction();
 	
 	public NodeLevelSets getSC(int p);
@@ -30,4 +34,6 @@ public interface MorphologicalTree {
 	public void extendedTree();
 	
 	public MorphologicalTree getClone();
+	
+	public int getTypeOfTree();
 }

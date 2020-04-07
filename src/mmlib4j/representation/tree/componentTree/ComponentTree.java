@@ -340,6 +340,14 @@ public class ComponentTree extends AbstractMorphologicalTree implements Morpholo
 		}
 		return node;
 	}
+
+	@Override
+	public int getTypeOfTree() {
+		if(isMaxtree)
+			return MorphologicalTree.MAXTREE;
+		else
+			return MorphologicalTree.MINTREE;
+	}
 	
 	
 	

@@ -71,6 +71,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		this.imgWidth = img.getWidth();
 		this.imgHeight = img.getHeight();
 		this.img = img;
+		if(img.getDepth() != 8)
+			throw new RuntimeException("This implementation works only for 8-bits grayscale images.");
 		this.xInfinito = xInfinito;
 		this.yInfinito = yInfinito;		
 		sort(interpolateImage());
@@ -214,7 +216,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		this.numNodeIdMax = numNode;
 		long tf = System.currentTimeMillis();
         if(Utils.debug)
-        	System.out.println("Tempo de execucao [unInterpolate2] "+ ((tf - ti) /1000.0)  + "s");
+        	System.out.println("Tempo de execucao [unInterpolateAndCreateTree] "+ ((tf - ti) /1000.0)  + "s");
 		
 	}
 	
@@ -272,7 +274,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
-        	System.out.println("Tempo de execucao [union-find] "+ ((tf - ti) /1000.0)  + "s");
+        	System.out.println("Tempo de execucao [createTreeByUnionFind] "+ ((tf - ti) /1000.0)  + "s");
 		
         return parent;
 	}
@@ -305,8 +307,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		boolean dejavu[] = new boolean[size]; //dejavu eh inicializado com false
 		this.imgR = new int[size];
 		this.imgU = new byte[size];
-		int pInfinito = 0;//getInfinity(interpolation); 
-		//System.out.println("pInfinito (" + xInfinito + ", " + yInfinito + ")");
+		int pInfinito = getInfinity(interpolation, 0); //0 is min; 1 is max 
 		queue.initial(pInfinito, ByteImage.toInt(interpolation[pInfinito][0]));
 		dejavu[pInfinito] = true;
 		while(!queue.isEmpty()){
@@ -322,6 +323,45 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		long tf = System.currentTimeMillis();
 		if(Utils.debug)
 			System.out.println("Tempo de execucao [sort] "+ ((tf - ti) /1000.0)  + "s");
+	}
+	
+
+	private int getInfinity(byte interpolation[][], int OPT ){
+		//long ti = System.currentTimeMillis();
+		if(xInfinito != -1 || yInfinito != -1) return (2*yInfinito + 1) * interpWidth + (2*xInfinito + 1);
+		
+		  
+		
+		short order[] = new short[2*interpWidth + 2*interpHeight]; 
+		//short orderOri[] = new short[2*interpWidth + 2*interpHeight]; 
+		for(int px=0; px < interpWidth; px++){
+			order[px] = interpolation[px + (0) * interpWidth][OPT];
+			order[px + interpWidth] = interpolation[px + (interpHeight-1) * interpWidth][OPT];;
+		}
+		for(int py=0; py < interpHeight; py++){
+			order[py + 2 * interpWidth] = interpolation[py * interpWidth][OPT];;
+			order[py + interpHeight + 2 * interpWidth] = interpolation[(interpWidth-1) + py * interpWidth][OPT];;
+		}
+		
+		//System.arraycopy(order, 0, orderOri, 0, order.length);
+		
+		Arrays.sort(order);
+		int value = order[order.length/2];
+		
+		for(int px=0; px < interpWidth; px++){
+			if(value == interpolation[px + 0 * interpWidth][OPT])
+				return (px + 0 * interpWidth);
+			if(value == interpolation[px + (interpHeight-1) * interpWidth][OPT])
+				return (px + (interpHeight-1) * interpWidth);
+		}
+		for(int py=0; py < interpHeight; py++){
+			if(value == interpolation[0 + py * interpWidth][OPT])
+				return 0 + py * interpWidth;
+			if(value == interpolation[(interpWidth-1) + py * interpWidth][OPT])
+				return (interpWidth-1) + py * interpWidth;
+		}
+		
+		return 0;
 	}
 	
 	
@@ -414,7 +454,7 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
   	private final static int adjRetVerY[] = new int[]{0, 0};
 
 	/**
-	 * Interpola os pixels da imagem. 
+	 * Interpola os pixels da imagem.   
 	 * @param matrix => pixels da imagem 
 	 * @return pixels interpolados.
 	 */
@@ -515,103 +555,43 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 
 
 	public static void main( String args [] ) {
-		
-		
-		/*GrayScaleImage input = AbstractImageFactory.instance.createGrayScaleImage( AbstractImageFactory.instance.DEPTH_8BITS, 
-																  4, 3 );
-																  		
 		// First example of Thierry
-		
-		
-		input.setPixel( 0, 0, 0 );
-		
-		input.setPixel( 1, 0, 0 );
-		
-		input.setPixel( 2, 0, 3 );
-		
-		input.setPixel( 3, 0, 2 );
-		
-		
-		
-		input.setPixel( 0, 1, 0 );
-		
-		input.setPixel( 1, 1, 1 );
-		
-		input.setPixel( 2, 1, 1 );
-		
-		input.setPixel( 3, 1, 2 );
-		
-		
-		input.setPixel( 0, 2, 0 );		
-		
-		input.setPixel( 1, 2, 0 );
-		
-		input.setPixel( 2, 2, 2 );
-		
-		input.setPixel( 3, 2, 2 );*/
+		GrayScaleImage input1 = ImageFactory.createReferenceGrayScaleImage(ImageFactory.DEPTH_8BITS, new byte[]{
+						0, 0, 3, 2,
+						0, 1, 1, 2,
+						0, 0, 2, 2}
+		, 4, 3);
 		
 		
 		// Second example of Thierry
+		GrayScaleImage input2 = ImageFactory.createGrayScaleImage(ImageFactory.DEPTH_8BITS, 5, 5 );
+		input2.setPixel(0, 0, 128 );
+		input2.setPixel(1, 0, 124 );
+		input2.setPixel(2, 0, 150 );
+		input2.setPixel(3, 0, 137 );
+		input2.setPixel(4, 0, 106 );
+		input2.setPixel(0, 1, 116 );
+		input2.setPixel(1, 1, 128 );
+		input2.setPixel(2, 1, 156 );
+		input2.setPixel(3, 1, 165 );
+		input2.setPixel(4, 1, 117 );		
+		input2.setPixel(0, 2, 117 );
+		input2.setPixel(1, 2, 90 );
+		input2.setPixel(2, 2, 131 );
+		input2.setPixel(3, 2, 108 );
+		input2.setPixel(4, 2, 151 );
+		input2.setPixel(0, 3, 107 );
+		input2.setPixel(1, 3, 87 );
+		input2.setPixel(2, 3, 118 );
+		input2.setPixel(3, 3, 109 );
+		input2.setPixel(4, 3, 167 );
+		input2.setPixel(0, 4, 107 );
+		input2.setPixel(1, 4, 73 );
+		input2.setPixel(2, 4, 125 );
+		input2.setPixel(3, 4, 157 );
+		input2.setPixel(4, 4, 117 );
 		
-		GrayScaleImage input = ImageFactory.createGrayScaleImage( AbstractImageFactory.DEPTH_8BITS, 
-				  												  5, 5 );
-		
-		input.setPixel( 0, 0, 128 );
-		
-		input.setPixel( 1, 0, 124 );
-		
-		input.setPixel( 2, 0, 150 );
-				
-		input.setPixel( 3, 0, 137 );
-		
-		input.setPixel( 4, 0, 106 );
-		
-		
-		input.setPixel( 0, 1, 116 );
-		
-		input.setPixel( 1, 1, 128 );
-		
-		input.setPixel( 2, 1, 156 );
-		
-		input.setPixel( 3, 1, 165 );
-		
-		input.setPixel( 4, 1, 117 );		
-		
-		
-		input.setPixel( 0, 2, 117 );
-		
-		input.setPixel( 1, 2, 90 );
-		
-		input.setPixel( 2, 2, 131 );
-		
-		input.setPixel( 3, 2, 108 );
-		
-		input.setPixel( 4, 2, 151 );
-		
-		
-		input.setPixel( 0, 3, 107 );
-		
-		input.setPixel( 1, 3, 87 );
-		
-		input.setPixel( 2, 3, 118 );
-		
-		input.setPixel( 3, 3, 109 );
-		
-		input.setPixel( 4, 3, 167 );
-		
-		
-		input.setPixel( 0, 4, 107 );
-		
-		input.setPixel( 1, 4, 73 );
-		
-		input.setPixel( 2, 4, 125 );
-		
-		input.setPixel( 3, 4, 157 );
-		
-		input.setPixel( 4, 4, 117 );
-		
-		
-		BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(input, false);
+		BuilderTreeOfShapeByUnionFind build = new BuilderTreeOfShapeByUnionFind(input1, false);
 		
 		
 		
