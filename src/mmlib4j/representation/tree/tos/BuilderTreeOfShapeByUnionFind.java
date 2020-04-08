@@ -35,8 +35,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	private int numNode; 
 	private int numNodeIdMax;
 	private boolean isLog = true;
-	private int xInfinito;
-	private int yInfinito;
+	private int xInfinite;
+	private int yInfinite;
 	
 	GrayScaleImage img;
 	private NodeToS root;
@@ -53,8 +53,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		b.imgHeight = this.imgHeight;
 		b.parent = this.parent;
 		b.isLog = this.isLog;
-		b.xInfinito = this.xInfinito;
-		b.yInfinito = this.yInfinito;
+		b.xInfinite = this.xInfinite;
+		b.yInfinite = this.yInfinite;
 		b.img = this.img;	
 		b.imgR = this.imgR;
 		b.imgU = this.imgU;
@@ -73,8 +73,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		this.img = img;
 		if(img.getDepth() != 8)
 			throw new RuntimeException("This implementation works only for 8-bits grayscale images.");
-		this.xInfinito = xInfinito;
-		this.yInfinito = yInfinito;		
+		this.xInfinite = xInfinito;
+		this.yInfinite = yInfinito;		
 		sort(interpolateImage());
 		this.parent = createTreeByUnionFind();
 		if(isInter)
@@ -98,6 +98,24 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		return root;
 	}
 	
+	
+	
+	public int getxInfinite() {
+		return xInfinite;
+	}
+
+	public void setxInfinite(int xInfinite) {
+		this.xInfinite = xInfinite;
+	}
+
+	public int getyInfinite() {
+		return yInfinite;
+	}
+
+	public void setyInfinite(int yInfinite) {
+		this.yInfinite = yInfinite;
+	}
+
 	public int getNumNode(){
 		return numNode;
 	}
@@ -327,8 +345,8 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 	
 
 	private int getInfinity(byte interpolation[][], int OPT ){
-		//long ti = System.currentTimeMillis();
-		if(xInfinito != -1 || yInfinito != -1) return (2*yInfinito + 1) * interpWidth + (2*xInfinito + 1);
+		//long ti = System.currentTimeMillis(); y * width + x
+		if(xInfinite > -1 && yInfinite > -1) return (2*yInfinite + 1) * interpWidth + (2*xInfinite + 1);
 		
 		  
 		
@@ -347,21 +365,33 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		
 		Arrays.sort(order);
 		int value = order[order.length/2];
-		
+		int pInf = -1;
 		for(int px=0; px < interpWidth; px++){
-			if(value == interpolation[px + 0 * interpWidth][OPT])
-				return (px + 0 * interpWidth);
-			if(value == interpolation[px + (interpHeight-1) * interpWidth][OPT])
-				return (px + (interpHeight-1) * interpWidth);
+			if(value == interpolation[px + 0 * interpWidth][OPT]) {
+				pInf = (px + 0 * interpWidth);
+				break;
+			}
+			else if(value == interpolation[px + (interpHeight-1) * interpWidth][OPT]) {
+				pInf = (px + (interpHeight-1) * interpWidth);
+				break;
+			}
 		}
 		for(int py=0; py < interpHeight; py++){
-			if(value == interpolation[0 + py * interpWidth][OPT])
-				return 0 + py * interpWidth;
-			if(value == interpolation[(interpWidth-1) + py * interpWidth][OPT])
-				return (interpWidth-1) + py * interpWidth;
+			if(value == interpolation[0 + py * interpWidth][OPT]) {
+				pInf = 0 + py * interpWidth;
+				break;
+			}
+			else if(value == interpolation[(interpWidth-1) + py * interpWidth][OPT]) {
+				pInf = (interpWidth-1) + py * interpWidth;
+				break;
+			}
+			
 		}
 		
-		return 0;
+		xInfinite = ((int)(pInf % interpWidth)) / 2;
+		yInfinite = ((int)(pInf / interpWidth)) / 2;
+		
+		return (2*xInfinite + 1) * interpWidth + (2*yInfinite + 1);
 	}
 	
 	
