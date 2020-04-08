@@ -376,22 +376,23 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 				break;
 			}
 		}
-		for(int py=0; py < interpHeight; py++){
-			if(value == interpolation[0 + py * interpWidth][OPT]) {
-				pInf = 0 + py * interpWidth;
-				break;
+		//if(pInf == -1)
+			for(int py=0; py < interpHeight; py++){
+				if(value == interpolation[0 + py * interpWidth][OPT]) {
+					pInf = 0 + py * interpWidth;
+					break;
+				}
+				else if(value == interpolation[(interpWidth-1) + py * interpWidth][OPT]) {
+					pInf = (interpWidth-1) + py * interpWidth;
+					break;
+				}
+				
 			}
-			else if(value == interpolation[(interpWidth-1) + py * interpWidth][OPT]) {
-				pInf = (interpWidth-1) + py * interpWidth;
-				break;
-			}
-			
-		}
 		
 		xInfinite = ((int)(pInf % interpWidth)) / 2;
 		yInfinite = ((int)(pInf / interpWidth)) / 2;
 		
-		return (2*xInfinite + 1) * interpWidth + (2*yInfinite + 1);
+		return (2*xInfinite + 1) + interpWidth * (2*yInfinite + 1);
 	}
 	
 	
