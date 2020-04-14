@@ -164,7 +164,7 @@ public class AttributeFilters {
 	 */
 	public ComputerDistanceTransform computerDistanceTransform(){
 		if(!hasComputerDistanceTransform){
-			dt = new ComputerDistanceTransform(tree.getNumNode(), tree.getRoot(), tree.getInputImage());
+			dt = new ComputerDistanceTransform(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage());
 			hasComputerDistanceTransform = true;
 		}
 		return dt;
@@ -178,7 +178,7 @@ public class AttributeFilters {
 	 */
 	public void computerCentralMomentAttribute(){
 		if(!hasComputerCentralMomentAttribute){
-			new ComputerCentralMomentAttribute(tree.getNumNode(), tree.getRoot(), tree.getInputImage().getWidth()).addAttributeInNodes(tree.getListNodes());
+			new ComputerCentralMomentAttribute(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage().getWidth()).addAttributeInNodes(tree.getListNodes());
 			hasComputerCentralMomentAttribute = true;
 		}
 	}
@@ -191,7 +191,7 @@ public class AttributeFilters {
 	 */
 	public void computerBasicAttribute(){
 		if(!hasComputerBasicAttribute){
-			new ComputerBasicAttribute(tree.getNumNode(), tree.getRoot(), tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
+			new ComputerBasicAttribute(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
 			hasComputerBasicAttribute = true;
 		}
 	}
@@ -204,7 +204,7 @@ public class AttributeFilters {
 	 */
 	public void computerAttributeBasedPerimeterExternal(){
 		if(!hasComputerAttributeBasedPerimeterExternal){
-			new ComputerAttributeBasedPerimeterExternal(tree.getNumNode(), tree.getRoot(), tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
+			new ComputerAttributeBasedPerimeterExternal(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
 			hasComputerAttributeBasedPerimeterExternal = true;
 		}
 	}
@@ -356,7 +356,7 @@ public class AttributeFilters {
 	 * 
 	 */ 
 	public InfoPrunedTree getInfoPrunedTreeByMin(double attributeValue, int attributeType){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNode(), attributeType, attributeValue, tree.getInputImage());
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNodeIdMax(), attributeType, attributeValue, tree.getInputImage());
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()) {
@@ -384,8 +384,8 @@ public class AttributeFilters {
 	 * 
 	 */ 
 	public InfoPrunedTree getInfoPrunedTreeByMax(double attributeValue, int attributeType){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNode(), attributeType, attributeValue, tree.getInputImage());
-		boolean criterion[] = new boolean[tree.getNumNode()]; 
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNodeIdMax(), attributeType, attributeValue, tree.getInputImage());
+		boolean criterion[] = new boolean[tree.getNumNodeIdMax()]; 
 		for(NodeLevelSets node: tree.getListNodes().reverse()) { //reverse order: when a node is computed, means that all its descendants nodes also was computed
 			boolean prunedDescendants = false;
 			
@@ -417,8 +417,8 @@ public class AttributeFilters {
 	 * 
 	 */ 
 	public InfoPrunedTree getInfoPrunedTreeByViterbi(double attributeValue, int attributeType){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNode(), attributeType, attributeValue, tree.getInputImage());
-		boolean criterion[] = new ComputerViterbi(tree.getRoot(), tree.getNumNode(), attributeValue, attributeType).getNodesByViterbi();		
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNodeIdMax(), attributeType, attributeValue, tree.getInputImage());
+		boolean criterion[] = new ComputerViterbi(tree.getRoot(), tree.getNumNodeIdMax(), attributeValue, attributeType).getNodesByViterbi();		
 		for(NodeLevelSets node : tree.getListNodes()) {
 			if(!criterion[node.getId()]) {
 				prunedTree.addNodeNotPruned(node);
