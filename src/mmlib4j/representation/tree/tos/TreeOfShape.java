@@ -34,24 +34,11 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 	}
 	
 	public TreeOfShape(BuilderTreeOfShape build){
+		long ti = System.currentTimeMillis();
 		this.build = build;
 		this.width = build.getInputImage().getWidth();
 		this.height = build.getInputImage().getHeight();
 		this.imgInput = build.getInputImage();
-		this.root = build.getRoot();
-		this.numNode = build.getNumNode();
-		computerInforTree(this.root, 0);
-		createNodesMap();
-		
-	}
-	
-	public TreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
-		long ti = System.currentTimeMillis();
-		this.width = img.getWidth();
-		this.height = img.getHeight();
-		this.imgInput = img;		
-		//this.build = new BuilderTreeOfShapeByUnionFindParallel(img, xInfinito, yInfinito);
-		this.build = new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true);		
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
 		this.numNodeIdMax = build.getNumNodeIdMax();
@@ -61,6 +48,11 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 			long tf = System.currentTimeMillis();
 			System.out.println("Tempo de execucao [create tree of shape] "+ ((tf - ti) /1000.0)  + "s");
 		}
+		
+	}
+	
+	public TreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){
+		this(new BuilderTreeOfShapeByUnionFind(img, xInfinito, yInfinito, true));
 	}
 	
 	public void createNodesMap(){
