@@ -90,7 +90,7 @@ public class UltimateAttributeOpening {
 
 	
 	public void computeUAO(int paramValueMax, int typeParam){
-		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute((MorphologicalTreeFiltering) tree, typeParam).getMappingSelectedNodes());	
+		this.computeUAO(paramValueMax, typeParam, new PruningBasedAttribute(tree, typeParam).getMappingSelectedNodes());	
 	}
 	
 	public boolean hasNodeSelectedInPrimitive(NodeLevelSets currentNode){

@@ -1,11 +1,9 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.NodeCT;
-import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
 
@@ -17,7 +15,7 @@ import mmlib4j.utils.Utils;
  */
 public class PruningBasedElongation implements MappingStrategyOfPruning{
 	
-	MorphologicalTreeFiltering tree;
+	MorphologicalTree tree;
 	String selected = "";
 	
 	private int tMin=5;
@@ -27,10 +25,10 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 	private double maxVariation = Double.MAX_VALUE;
 	private int attribute;
 	
-	public PruningBasedElongation(MorphologicalTreeFiltering tree){
+	public PruningBasedElongation(MorphologicalTree tree){
 		this.tree = tree;
-		tree.loadAttribute(Attribute.AREA);
-		tree.loadAttribute(Attribute.MOMENT_ELONGATION);
+		Attribute.loadAttribute(tree, Attribute.AREA);
+		Attribute.loadAttribute(tree, Attribute.MOMENT_ELONGATION);
 	}
 	
 	public void setParametersTBMR(int tMin, int tMax){

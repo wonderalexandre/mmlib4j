@@ -1,6 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
-import mmlib4j.representation.tree.MorphologicalTreeFiltering;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerMserTreeOfShapes;
@@ -15,7 +15,7 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedMSER implements MappingStrategyOfPruning{
 
-	protected MorphologicalTreeFiltering tree;
+	protected MorphologicalTree tree;
 	protected int num;
 	protected Double q[];
 	
@@ -27,7 +27,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	private boolean estimateDelta = false;
 	
 	public PruningBasedMSER(){
-		tree.loadAttribute(Attribute.AREA);
+		Attribute.loadAttribute(tree, Attribute.AREA);
 	}
 	
 	public void setMaxVariation(double d){
@@ -57,7 +57,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 		this.attribute = attribute;
 	}
 	
-	public PruningBasedMSER(MorphologicalTreeFiltering tree, int delta){
+	public PruningBasedMSER(MorphologicalTree tree, int delta){
 		this.tree = tree;
 		this.delta = delta;
 	}

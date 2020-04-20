@@ -1,5 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
@@ -17,7 +18,7 @@ import mmlib4j.utils.Utils;
  */
 public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 	
-	MorphologicalTreeFiltering tree;
+	MorphologicalTree tree;
 	String selected;
 	
 	protected int delta;
@@ -28,15 +29,15 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 	private int tMin=5;
 	private int tMax=Integer.MAX_VALUE;
 	
-	public PruningBasedTextLocation(MorphologicalTreeFiltering tree){
+	public PruningBasedTextLocation(MorphologicalTree tree){
 		this.tree = tree;
-		tree.loadAttribute(Attribute.AREA);
-		tree.loadAttribute(Attribute.HEIGHT);
-		tree.loadAttribute(Attribute.WIDTH);
-		tree.loadAttribute(Attribute.BIT_QUADS_HOLE_NUMBER);
-		tree.loadAttribute(Attribute.RECTANGULARITY);
-		tree.loadAttribute(Attribute.RATIO_WIDTH_HEIGHT);
-		tree.loadAttribute(Attribute.VARIANCE_LEVEL);
+		Attribute.loadAttribute(tree, Attribute.AREA);
+		Attribute.loadAttribute(tree, Attribute.HEIGHT);
+		Attribute.loadAttribute(tree, Attribute.WIDTH);
+		Attribute.loadAttribute(tree, Attribute.BIT_QUADS_HOLE_NUMBER);
+		Attribute.loadAttribute(tree, Attribute.RECTANGULARITY);
+		Attribute.loadAttribute(tree, Attribute.RATIO_WIDTH_HEIGHT);
+		Attribute.loadAttribute(tree, Attribute.VARIANCE_LEVEL);
 	}
 	
 	public void setParametersTBMR(int tMin, int tMax){

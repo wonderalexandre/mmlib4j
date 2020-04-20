@@ -1,5 +1,6 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
@@ -18,7 +19,7 @@ import mmlib4j.utils.Utils;
 public class PruningBasedCircularity implements MappingStrategyOfPruning{
 	
 	
-	MorphologicalTreeFiltering tree;
+	MorphologicalTree tree;
 	String selected = "";
 	
 
@@ -29,10 +30,10 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 	private int tMin=5;
 	private int tMax=Integer.MAX_VALUE;
 	
-	public PruningBasedCircularity(MorphologicalTreeFiltering tree){
+	public PruningBasedCircularity(MorphologicalTree tree){
 		this.tree = tree;
-		tree.loadAttribute(Attribute.AREA);
-		tree.loadAttribute(Attribute.CIRCULARITY);
+		Attribute.loadAttribute(tree, Attribute.AREA);
+		Attribute.loadAttribute(tree, Attribute.CIRCULARITY);
 	}
 	
 	public void setParametersTBMR(int tMin, int tMax){
