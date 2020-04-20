@@ -41,13 +41,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 	NodeLevelSets root;
 	NodeLevelSets nodesMap[];
     
-    
-    
-    /*
-	public BuilderComponentTreeByRegionGrowing(int pixels[], int width, int height, AdjacencyRelation adj, boolean isMaxtree){
-		this(new IntegerImage(pixels, width, height), adj, isMaxtree);
-	}*/
-	
+  
 	public BuilderComponentTreeByRegionGrowing(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
 		this.img = img;
 		this.px = adj.getVectorX();
@@ -84,6 +78,7 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 		
 	}
 
+	
 	
 	public void build() {
 		if(isMaxtree){
@@ -382,7 +377,19 @@ public class BuilderComponentTreeByRegionGrowing implements BuilderComponentTree
 		return numNodeIdMax;
 	}
 
-	
-	
+	@Override
+	public GrayScaleImage getInputImage() {
+		return this.img;
+	}
+
+	@Override
+	public boolean isMaxtree() {
+		return this.isMaxtree;
+	}
+
+	@Override
+	public AdjacencyRelation getAdjacencyRelation() {
+		return new AdjacencyRelation(this.px, this.py);
+	}
     
 }

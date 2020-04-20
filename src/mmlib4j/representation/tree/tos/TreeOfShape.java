@@ -11,6 +11,7 @@ import mmlib4j.representation.tree.AbstractMorphologicalTree;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.utils.Utils;
 
 
@@ -26,7 +27,7 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 	
 	protected BuilderTreeOfShape build;
 	
-	protected int sup = 255;
+	protected int sup;
 	protected int inf = 0;
 	 	 
 	public TreeOfShape(GrayScaleImage img){
@@ -42,12 +43,15 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 		this.root = build.getRoot();
 		this.numNode = build.getNumNode();
 		this.numNodeIdMax = build.getNumNodeIdMax();
+		this.sup = (int) Math.pow(2, imgInput.getDepth()) - 1;
+		
 		computerInforTree(this.root, 0);
 		createNodesMap();
 		if(Utils.debug){
 			long tf = System.currentTimeMillis();
 			System.out.println("Tempo de execucao [create tree of shape] "+ ((tf - ti) /1000.0)  + "s");
 		}
+		new ComputerBasicAttribute(this.getNumNodeIdMax(), this.getRoot(), this.getInputImage()).addAttributeInNodes(this.getListNodes());
 		
 	}
 	

@@ -46,13 +46,12 @@ public class AttributeFilters {
 	public final static int SIMPLIFY_DIRECT = 8;
 	public final static int SIMPLIFY_SUBTRACTIVE = 9;
 	
-	private boolean hasComputerBasicAttribute = false;
+	private boolean hasComputerBasicAttribute = true;
 	private boolean hasComputerAttributeBasedPerimeterExternal = false;
 	private boolean hasComputerCentralMomentAttribute = false;
 	private boolean hasComputerAttributeBasedBitQuads = false;
-	private boolean hasComputerDistanceTransform = false;
 	private boolean hasComputerFunctionalAttribute = false;
-	private ComputerDistanceTransform dt = null;
+	
 	private MorphologicalTree tree;	
 	
 	boolean[] update;		
@@ -163,11 +162,7 @@ public class AttributeFilters {
 	 * 
 	 */
 	public ComputerDistanceTransform computerDistanceTransform(){
-		if(!hasComputerDistanceTransform){
-			dt = new ComputerDistanceTransform(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage());
-			hasComputerDistanceTransform = true;
-		}
-		return dt;
+		return new ComputerDistanceTransform(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage());
 	}	
 	
 	/**

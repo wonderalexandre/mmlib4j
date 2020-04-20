@@ -12,6 +12,7 @@ import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -24,59 +25,42 @@ import mmlib4j.utils.Utils;
 public class ComponentTree extends AbstractMorphologicalTree implements MorphologicalTree{
 	protected boolean isMaxtree;
 	
-	public final static int NUM_ATTRIBUTES = 10;
-	public final static int NUM_ATTRIBUTES_NC = 2;
-	
 	protected ThreadPoolExecutor pool;
 	protected BuilderComponentTree builder;
 	
-	protected int sup = 255;
+	protected int sup;
 	protected int inf = 0;
 	protected boolean isExtendedTree;
 	protected AdjacencyRelation adj;
 	
 	public ComponentTree(GrayScaleImage img, AdjacencyRelation adj, boolean isMaxtree){
-		long ti = System.currentTimeMillis();
-		this.imgInput = img;
-		this.isMaxtree = isMaxtree;
-		this.adj = adj;
-		this.builder = new BuilderComponentTreeByUnionFind(img, adj, isMaxtree);
-		//this.builder = new BuilderComponentTreeByRegionGrowing(img, adj, isMaxtree);
-		this.root = builder.getRoot();
-		this.numNode = builder.getNunNode();
-		this.map = builder.getMap();
-		this.listNode = builder.getListNodes();
-		this.numNodeIdMax = builder.getNumNodeIdMax();
-		computerInforTree(this.root, 0);
-		
-		//computerAdjcencyNodes();
-		long tf = System.currentTimeMillis();
-		if(Utils.debug)
-			System.out.println("Tempo de execucao [create component tree] "+ ((tf - ti) /1000.0)  + "s");
+		this(new BuilderComponentTreeByUnionFind(img, adj, isMaxtree));
 	}
 	
 	public ComponentTree(BuilderComponentTree builder){
+		long ti = System.currentTimeMillis();
+		
 		this.builder = builder;
-		if(builder instanceof BuilderComponentTreeByUnionFind){
-			BuilderComponentTreeByUnionFind builderUF = (BuilderComponentTreeByUnionFind) builder;
-			this.imgInput = builderUF.img;
-			this.isMaxtree = builderUF.isMaxtree;
-			this.adj = new AdjacencyRelation(builderUF.px, builderUF.py);
-		}else{
-			BuilderComponentTreeByRegionGrowing builderUF = (BuilderComponentTreeByRegionGrowing) builder;
-			this.imgInput = builderUF.img;
-			this.isMaxtree = builderUF.isMaxtree;
-			this.adj = new AdjacencyRelation(builderUF.px, builderUF.py);
-		}
+		this.imgInput = builder.getInputImage();
+		this.isMaxtree = builder.isMaxtree();
+		this.adj = builder.getAdjacencyRelation();
 		
 		this.root = builder.getRoot();
 		this.numNode = builder.getNunNode();
 		this.numNodeIdMax = builder.getNumNodeIdMax();
 		this.map = builder.getMap();
 		this.listNode = builder.getListNodes();
+		this.sup = (int) Math.pow(2, imgInput.getDepth()) - 1;
 		
 		computerInforTree(this.root, 0);
 		
+		//computerAdjcencyNodes();
+		if(Utils.debug) {
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [create component tree] "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		new ComputerBasicAttribute(this.getNumNodeIdMax(), this.getRoot(), this.getInputImage()).addAttributeInNodes(this.getListNodes());
 	}
 	
 	public ComponentTree getClone(){

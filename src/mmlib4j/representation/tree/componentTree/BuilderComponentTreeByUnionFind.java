@@ -428,6 +428,20 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		return numNodeIdMax;
 	}
 	
-	
+	@Override
+	public GrayScaleImage getInputImage() {
+		return this.img;
+	}
+
+	@Override
+	public boolean isMaxtree() {
+		return this.isMaxtree;
+	}
+
+	@Override
+	public AdjacencyRelation getAdjacencyRelation() {
+		return new AdjacencyRelation(this.px, this.py);
+	}
+
 	
 }
