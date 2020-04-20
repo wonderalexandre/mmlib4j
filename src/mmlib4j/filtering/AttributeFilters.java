@@ -351,7 +351,7 @@ public class AttributeFilters {
 	 * 
 	 */ 
 	public InfoPrunedTree getInfoPrunedTreeByMin(double attributeValue, int attributeType){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNodeIdMax(), attributeType, attributeValue, tree.getInputImage());
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, attributeType, attributeValue);
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(tree.getRoot());
 		while(!fifo.isEmpty()) {
@@ -379,7 +379,7 @@ public class AttributeFilters {
 	 * 
 	 */ 
 	public InfoPrunedTree getInfoPrunedTreeByMax(double attributeValue, int attributeType){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNodeIdMax(), attributeType, attributeValue, tree.getInputImage());
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, attributeType, attributeValue);
 		boolean criterion[] = new boolean[tree.getNumNodeIdMax()]; 
 		for(NodeLevelSets node: tree.getListNodes().reverse()) { //reverse order: when a node is computed, means that all its descendants nodes also was computed
 			boolean prunedDescendants = false;
@@ -412,7 +412,7 @@ public class AttributeFilters {
 	 * 
 	 */ 
 	public InfoPrunedTree getInfoPrunedTreeByViterbi(double attributeValue, int attributeType){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree.getRoot(), tree.getNumNodeIdMax(), attributeType, attributeValue, tree.getInputImage());
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, attributeType, attributeValue);
 		boolean criterion[] = new ComputerViterbi(tree.getRoot(), tree.getNumNodeIdMax(), attributeValue, attributeType).getNodesByViterbi();		
 		for(NodeLevelSets node : tree.getListNodes()) {
 			if(!criterion[node.getId()]) {

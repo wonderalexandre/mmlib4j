@@ -23,6 +23,7 @@ public class InfoPrunedTree {
 	private NodePrunedTree root;
 	private NodePrunedTree map[]; //mapping from id to Node. If map[id] = null then Node:ID was pruned 
 	private SimpleLinkedList<NodeLevelSets> listLeaves;
+	private MorphologicalTree originalTree;
 	
 	public int getAttributeType() {
 		return attributeType;
@@ -40,14 +41,27 @@ public class InfoPrunedTree {
 		this.attributeValue = attributeValue;
 	}
 
-	public InfoPrunedTree(NodeLevelSets root, int numNodes, int attributeType, double attributeValue, GrayScaleImage imgInput) {
+	/*public InfoPrunedTree(NodeLevelSets root, int numNodes, int attributeType, double attributeValue, GrayScaleImage imgInput) {
 		this.map = new NodePrunedTree[numNodes];
 		this.root = map[root.hashCode()] = new NodePrunedTree(root);
         this.attributeType = attributeType;
         this.attributeValue = attributeValue;
         this.imgInput = imgInput;
         this.numNode = 1;
+    }*/
+	public InfoPrunedTree(MorphologicalTree tree, int attributeType, double attributeValue) {
+		this.map = new NodePrunedTree[tree.getNumNodeIdMax()];
+		this.root = map[root.hashCode()] = new NodePrunedTree(tree.getRoot());
+        this.attributeType = attributeType;
+        this.attributeValue = attributeValue;
+        this.imgInput = tree.getInputImage();
+        this.numNode = 1;
+        this.originalTree = tree;
     }
+	
+	public MorphologicalTree getOriginalTree() {
+		return originalTree;
+	}
 	
 	public void addNodeNotPruned(NodeLevelSets node){
 		NodeLevelSets parent = node.getParent();

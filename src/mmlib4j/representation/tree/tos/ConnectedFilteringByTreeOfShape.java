@@ -162,7 +162,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 
 	public InfoPrunedTree getPrunedTree(double attributeValue, int type, int typePruning){
 		//long ti = System.currentTimeMillis();
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		for(NodeLevelSets no: getListNodes()){
 			if(! (getAttribute(no, type) <= attributeValue) ){ //poda
 				prunedTree.addNodeNotPruned(no);

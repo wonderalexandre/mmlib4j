@@ -292,7 +292,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * The node is removed otherwise.
 	 */
 	public InfoPrunedTree getInfoPrunedTreeByMin(double attributeValue, int type){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		Queue<NodeLevelSets> fifo = new Queue<NodeLevelSets>();
 		fifo.enqueue(getRoot());
 		while(!fifo.isEmpty()) {
@@ -312,7 +312,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * The node Nk is preserved otherwise.
 	 */
 	public InfoPrunedTree getInfoPrunedTreeByMax(double attributeValue, int type){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		boolean criterion[] = new boolean[numNode]; 
 		for(NodeLevelSets node: this.getListNodes().reverse()) { //reverse order: when a node is computed, means that all its descendants nodes also was computed
 			boolean prunedDescendants = false;
@@ -338,7 +338,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * otherwise. The optimum trellis path is obtained by the Viterbi Algorithm.
 	 */
 	public InfoPrunedTree getInfoPrunedTreeByViterbi(double attributeValue, int type){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		boolean criterion[] = new ComputerViterbi(getRoot(), getNumNode(), attributeValue, type).getNodesByViterbi();		
 		for(NodeLevelSets node : listNode) {
 			if(!criterion[node.getId()]) {
@@ -822,7 +822,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * @return imagem filtrada
 	 */
 	public GrayScaleImage filteringByPruning(double attributeValue, int type){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		for(NodeLevelSets no: listNode){
 			if( !(getAttribute(no, type) <= attributeValue) ){ //nao poda			
 				prunedTree.addNodeNotPruned(no);
@@ -834,7 +834,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public InfoPrunedTree getPrunedTreeByExtinctionValue(double attributeValue, int type){
 		long ti = System.currentTimeMillis();
 		loadAttribute(type);
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		
 		extinctionValue = new ComputerExtinctionValueComponentTree(this);
 		extincaoPorNode = extinctionValue.getExtinctionValueCut(type);
@@ -902,7 +902,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	 * @return imagem filtrada
 	 */
 	public InfoPrunedTree getPrunedTree(double attributeValue, int type){
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		for(NodeLevelSets no: listNode){
 			if( !(getAttribute(no, type) <= attributeValue) ){ //nao poda
 				prunedTree.addNodeNotPruned(no);
@@ -913,7 +913,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	public InfoPrunedTree getPrunedTreeByMSER(double attributeValue, int type, int delta){
 		long ti = System.currentTimeMillis();
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		ComputerMserComponentTree mser = new ComputerMserComponentTree(this);
 		boolean resultPruning[] = new boolean[this.getNumNode()];
 		SimpleLinkedList<NodeLevelSets> list = mser.getNodesByMSER(delta);
@@ -945,7 +945,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	public InfoPrunedTree getPrunedTreeByGradualTransition(double attributeValue, int type, int delta){
 		long ti = System.currentTimeMillis();
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		PruningBasedGradualTransition gt = new PruningBasedGradualTransition(this, type, delta); 
 		boolean resultPruning[] = gt.getMappingSelectedNodes( );
 		SimpleLinkedList<NodeLevelSets> list = gt.getListOfSelectedNodes( );
@@ -977,7 +977,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	
 	public InfoPrunedTree getPrunedTreeByTBMR(double attributeValue, int type, int tMin, int tMax){
 		long ti = System.currentTimeMillis();
-		InfoPrunedTree prunedTree = new InfoPrunedTree(getRoot(), getNumNode(), type, attributeValue, imgInput);
+		InfoPrunedTree prunedTree = new InfoPrunedTree(this, type, attributeValue);
 		ComputerTbmrComponentTree tbmr = new ComputerTbmrComponentTree(this);
 		boolean resultPruning[] = new boolean[this.getNumNode()];
 		boolean result[] = tbmr.getSelectedNode(tMin, tMax);
