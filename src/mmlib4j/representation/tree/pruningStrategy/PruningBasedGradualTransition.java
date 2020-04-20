@@ -3,8 +3,10 @@ package mmlib4j.representation.tree.pruningStrategy;
 
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
+import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.componentTree.NodeCT;
 import mmlib4j.representation.tree.tos.NodeToS;
@@ -18,16 +20,16 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  */
 public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
 	
-	private MorphologicalTreeFiltering inputTree;
+	private MorphologicalTree inputTree;
 	private int typeParam;
 	private int delta;
 	private int num;
 	
-	public PruningBasedGradualTransition(MorphologicalTreeFiltering tree, int typeParam, int delta){
+	public PruningBasedGradualTransition(MorphologicalTree tree, int typeParam, int delta){
 		this.inputTree = tree;
 		this.typeParam = typeParam;
 		this.delta = delta;
-		tree.loadAttribute(typeParam);
+		Attribute.loadAttribute(tree, typeParam);
 	}
 	
 	
