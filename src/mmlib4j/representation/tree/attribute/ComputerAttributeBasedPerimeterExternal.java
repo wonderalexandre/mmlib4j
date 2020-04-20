@@ -47,7 +47,10 @@ public class ComputerAttributeBasedPerimeterExternal {
 			System.out.println("Tempo de execucao [extraction of attribute - based on perimeter external]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 	}
-	
+
+	public static void loadAttribute(MorphologicalTree tree) {
+		new ComputerAttributeBasedPerimeterExternal(tree).addAttributeInNodes(tree.getListNodes());
+	}
 
 	public void computerAttribute(NodeLevelSets node){
 		SimpleLinkedList<NodeLevelSets> children = node.getChildren();

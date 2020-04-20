@@ -68,8 +68,12 @@ public class ComputerFunctionalAttribute {
 		}
 	}
 	
-	public ComputerFunctionalAttribute(MorphologicalTree tree, GrayScaleImage img) {
+	public ComputerFunctionalAttribute(MorphologicalTree tree) {
 		this(tree, true, tree.getInputImage());		
+	}
+	
+	public static void loadAttribute(MorphologicalTree tree) {
+		new ComputerFunctionalAttribute(tree).addAttributeInNodes(tree.getListNodes());
 	}
 	
 	/*public ComputerFunctionalAttribute(InfoMergedTree mTree, int numNode, boolean useHeuristic, boolean[] update) {

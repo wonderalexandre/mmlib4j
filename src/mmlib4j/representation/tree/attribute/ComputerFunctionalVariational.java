@@ -7,6 +7,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.InfoMergedTree;
 import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -37,10 +38,10 @@ public class ComputerFunctionalVariational {
 	private double areaR[];	
 	private double volumeR[];	
 	private GrayScaleImage simplifiedImage;	
-	private ComponentTree tree;
+	private MorphologicalTree tree;
 	private InfoMergedTree mTree;
 	
-	public ComputerFunctionalVariational(ComponentTree tree, double scale, boolean useHeuristic) {
+	public ComputerFunctionalVariational(MorphologicalTree tree, double scale, boolean useHeuristic) {
 	
 		long ti = System.currentTimeMillis();	
 		this.tree = tree;		
@@ -73,8 +74,12 @@ public class ComputerFunctionalVariational {
 
 	}
 	
-	public ComputerFunctionalVariational(ComponentTree tree, double scale) {		
+	public ComputerFunctionalVariational(MorphologicalTree tree, double scale) {		
 		this(tree, scale, false);		
+	}
+	
+	public static void loadAttribute(MorphologicalTree tree, double scale) {
+		new ComputerFunctionalVariational(tree, scale).addAttributeInNodes(tree.getListNodes());
 	}
 		
 	public GrayScaleImage getSimplifiedImage() {		
@@ -203,7 +208,7 @@ public class ComputerFunctionalVariational {
 		}		
 	} 
 	
-	public ComponentTree getSimplifiedTree() {		
+	public MorphologicalTree getSimplifiedTree() {		
 		return tree;	
 	}
 
@@ -211,10 +216,15 @@ public class ComputerFunctionalVariational {
 		this.tree = tree;		
 	}
 
+	public void addAttributeInNodes(SimpleLinkedList<NodeLevelSets> hashSet) {
+		for(NodeLevelSets node : hashSet) {
+			addAttributeInNodes(node);
+		}
+	} 
 	
 	public void addAttributeInNodes(NodeLevelSets node) {
 		functionalVariational[node.getId()].value *= -1;
-		node.addAttribute(Attribute.FUNCTIONAL_VARIATIONAL, functionalVariational[node.getId()]);		
+		node.addAttribute(Attribute.FUNCTIONAL_VARIATIONAL, functionalVariational[node.getId()]);
 	}	
 	
 	private double pow2(double v) {		

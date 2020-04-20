@@ -155,7 +155,7 @@ public class ConnectedFilteringByComponentTree extends ComponentTree implements 
 	public void computerFunctionalAttribute(){		
 		if(!hasComputerFunctionalAttribute){
 			computerAttributeBasedPerimeterExternal();
-			new ComputerFunctionalAttribute(this, imgInput).addAttributeInNodes(getListNodes());
+			new ComputerFunctionalAttribute(this).addAttributeInNodes(getListNodes());
 			hasComputerFunctionalAttribute = true;
 		}
 	}

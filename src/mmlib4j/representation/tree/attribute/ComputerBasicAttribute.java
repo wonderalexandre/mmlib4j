@@ -41,6 +41,10 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally {
 		return attr;
 	}
 	
+	public static void loadAttribute(MorphologicalTree tree) {
+		new ComputerBasicAttribute(tree).addAttributeInNodes(tree.getListNodes());
+	}
+	
 	public void addAttributeInNodesCT(SimpleLinkedList<NodeLevelSets> hashSet, boolean[] mapCorrection){
 		for(NodeLevelSets node: hashSet){
 			if(mapCorrection[node.getId()])

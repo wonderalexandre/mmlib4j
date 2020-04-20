@@ -269,7 +269,7 @@ public class Attribute {
 			case Attribute.PIXEL_YMAX: 
 			case Attribute.SUM_X: 
 			case Attribute.SUM_Y: 
-				new ComputerBasicAttribute(tree).addAttributeInNodes(tree.getListNodes());
+				ComputerBasicAttribute.loadAttribute(tree);
 				break;
 				
 			case Attribute.MOMENT_CENTRAL_02:
@@ -287,7 +287,7 @@ public class Attribute {
 			case Attribute.MOMENT_ORIENTATION:
 			case Attribute.MOMENT_ASPECT_RATIO:
 			case Attribute.MOMENT_OF_INERTIA:
-				new ComputerCentralMomentAttribute(tree).addAttributeInNodes(tree.getListNodes());
+				ComputerCentralMomentAttribute.loadAttribute(tree);
 				break;
 			
 			case Attribute.PERIMETER_EXTERNAL:
@@ -295,7 +295,7 @@ public class Attribute {
 			case Attribute.COMPACTNESS:
 			case Attribute.ELONGATION:
 			case Attribute.SUM_GRAD_CONTOUR:
-				new ComputerAttributeBasedPerimeterExternal(tree).addAttributeInNodes(tree.getListNodes());
+				ComputerAttributeBasedPerimeterExternal.loadAttribute(tree);
 				break;				
 				
 			//case Attribute.NUM_HOLES:
@@ -311,12 +311,12 @@ public class Attribute {
 				if(!(tree instanceof ComponentTree)) 
 					throw new UnsupportedOperationException("This attribute doesn't work for all trees yet!");
 				else 	
-					new ComputerAttributeBasedOnBitQuads((ComponentTree) tree).addAttributeInNodesCT(tree.getListNodes());
+					ComputerAttributeBasedOnBitQuads.loadAttribute((ComponentTree)tree);
 				break;
 				
 			case Attribute.FUNCTIONAL_ATTRIBUTE:
 				Attribute.loadAttribute(tree, Attribute.SUM_GRAD_CONTOUR);			
-				new ComputerFunctionalAttribute(tree, tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
+				ComputerFunctionalAttribute.loadAttribute(tree);
 				break;
 				
 			default:

@@ -3,9 +3,11 @@ package mmlib4j.representation.tree.attribute.bitquads;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.PixelIndexer;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.AttributeComputedIncrementally;
+import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
@@ -37,6 +39,10 @@ public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrement
 			System.out.println("Tempo de execucao [extraction of attributes - bit-quads]" + ((tf-ti)/1000.0) 
 					+ "s");
 		}
+	}
+	
+	public static void loadAttribute(ComponentTree tree) {
+		new ComputerAttributeBasedOnBitQuads(tree).addAttributeInNodesCT(tree.getListNodes());
 	}
 	
 	private String getFilenameFromCTType(ComponentTree tree) {

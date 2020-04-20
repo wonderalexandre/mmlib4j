@@ -37,6 +37,11 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 
 	public ComputerCentralMomentAttribute(){	}
 	
+	
+	public static void loadAttribute(MorphologicalTree tree) {
+		new ComputerCentralMomentAttribute(tree).addAttributeInNodes(tree.getListNodes());
+	}
+	
 	public CentralMomentsAttribute[] getAttribute(){
 		return attr;
 	}	

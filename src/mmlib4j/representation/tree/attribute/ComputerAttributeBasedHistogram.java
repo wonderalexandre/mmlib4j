@@ -6,6 +6,7 @@ import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.filtering.AttributeFilters;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
@@ -14,6 +15,10 @@ import mmlib4j.utils.ImageBuilder;
 public class ComputerAttributeBasedHistogram extends AttributeComputedIncrementally{
 
 	HistogramAttributes[] attr;
+	
+	public ComputerAttributeBasedHistogram(MorphologicalTree tree) {
+		this(tree.getNumNodeIdMax(), tree.getRoot());
+	}
 	
 	public ComputerAttributeBasedHistogram(int numNode, NodeLevelSets root) {
 		attr = new HistogramAttributes[numNode];
@@ -25,6 +30,10 @@ public class ComputerAttributeBasedHistogram extends AttributeComputedIncrementa
 			return 0;
 		else
 			return Math.log(v)/Math.log(2);
+	}
+	
+	public static void loadAttribute(MorphologicalTree tree) {
+		new ComputerAttributeBasedHistogram(tree).addAttributeInNodes(tree.getListNodes());
 	}
 	
 	public void addAttributeInNodes(SimpleLinkedList<NodeLevelSets> listNodes){
