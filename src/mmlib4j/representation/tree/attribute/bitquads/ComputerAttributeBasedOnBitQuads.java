@@ -113,15 +113,15 @@ public class ComputerAttributeBasedOnBitQuads extends AttributeComputedIncrement
 		node.addAttribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, 
 				new Attribute(Attribute.BIT_QUADS_PERIMETER_CONTINUOUS, quadAttributes[nodeId].getPerimeterContinuous()));
 		node.addAttribute(Attribute.BIT_QUADS_CIRCULARITY, 
-				new Attribute(Attribute.BIT_QUADS_CIRCULARITY, quadAttributes[nodeId].getCircularity(node.getArea())));
+				new Attribute(Attribute.BIT_QUADS_CIRCULARITY, quadAttributes[nodeId].getCircularity((int)node.getAttributeValue(Attribute.AREA))));
 		node.addAttribute(Attribute.BIT_QUADS_AVERAGE_AREA, 
-				new Attribute(Attribute.BIT_QUADS_AVERAGE_AREA, quadAttributes[nodeId].getAverageArea(node.getArea())));
+				new Attribute(Attribute.BIT_QUADS_AVERAGE_AREA, quadAttributes[nodeId].getAverageArea((int)node.getAttributeValue(Attribute.AREA))));
 		node.addAttribute(Attribute.BIT_QUADS_AVERAGE_PERIMETER, 
 				new Attribute(Attribute.BIT_QUADS_AVERAGE_PERIMETER, quadAttributes[nodeId].getAveragePerimeter()));
 		node.addAttribute(Attribute.BIT_QUADS_AVERAGE_LENGTH, 
 				new Attribute(Attribute.BIT_QUADS_AVERAGE_LENGTH, quadAttributes[nodeId].getAverageLength()));
 		node.addAttribute(Attribute.BIT_QUADS_AVERAGE_WIDTH, 
-				new Attribute(Attribute.BIT_QUADS_AVERAGE_WIDTH, quadAttributes[nodeId].getAverageWidth(node.getArea())));
+				new Attribute(Attribute.BIT_QUADS_AVERAGE_WIDTH, quadAttributes[nodeId].getAverageWidth((int)node.getAttributeValue(Attribute.AREA))));
 		node.addAttribute(Attribute.BIT_QUADS_AREA, new Attribute(Attribute.BIT_QUADS_AREA, quadAttributes[nodeId].getArea()));
 		node.addAttribute(Attribute.BIT_QUADS_AREA_DUDA, new Attribute(Attribute.BIT_QUADS_AREA_DUDA, quadAttributes[nodeId].getAreaDuda()));
 	}

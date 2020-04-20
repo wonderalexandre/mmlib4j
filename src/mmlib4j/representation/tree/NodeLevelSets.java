@@ -182,13 +182,14 @@ public abstract class NodeLevelSets {
 		
 		/*setSumX(getSumX() + x);
 		setSumY(getSumY() + y);*/
-		setArea(getArea() + 1);
+		//setArea(getArea() + 1);
 		pixels.add(p);
 	}
-
+	
+	/*
 	public int getArea(){
 		return area;
-	}
+	}*/
 
 	public void setHeightNode(int height) {
 		this.heightNode = height;
@@ -233,8 +234,8 @@ public abstract class NodeLevelSets {
 					public NodeLevelSets next() {
 						int area = 0;
 						for(NodeLevelSets son: nodeRef.getChildren()) {
-							if(area < son.getArea()) {
-								area = son.getArea();
+							if(area < son.getAttributeValue(Attribute.AREA)) {
+								area = (int) son.getAttributeValue(Attribute.AREA);
 								nodeRef = son;	
 							}
 						} 

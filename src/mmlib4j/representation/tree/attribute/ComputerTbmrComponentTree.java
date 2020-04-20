@@ -23,11 +23,11 @@ public class ComputerTbmrComponentTree {
 		num = 0;
 		int numChildren[] = new int[tree.getNumNode()];
 		for(NodeLevelSets node: tree.getListNodes()){
-			if(node.getArea() >= tMin && node.getParent() != null)
+			if(node.getAttributeValue(Attribute.AREA) >= tMin && node.getParent() != null)
 				++numChildren[node.getParent().getId()];
 		}
 		for(NodeLevelSets node: tree.getListNodes()){
-			if(node.getParent() != null && node.getArea() < tMax && numChildren[node.getId()] == 1 && numChildren[node.getParent().getId()] >= 2){
+			if(node.getParent() != null && node.getAttributeValue(Attribute.AREA) < tMax && numChildren[node.getId()] == 1 && numChildren[node.getParent().getId()] >= 2){
 				result[node.getId()] = true;
 				num += 1;
 			}

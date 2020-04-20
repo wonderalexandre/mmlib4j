@@ -112,7 +112,7 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 
 
 	public boolean isNodeElongation(NodeLevelSets node){
-		if(node.getAttributeValue(Attribute.MOMENT_ELONGATION) < elongation && node.getArea() >= areaMin && node.getArea() <= areaMax){
+		if(node.getAttributeValue(Attribute.MOMENT_ELONGATION) < elongation && node.getAttributeValue(Attribute.AREA) >= areaMin && node.getAttributeValue(Attribute.AREA) <= areaMax){
 			return true;
 		}
 		else

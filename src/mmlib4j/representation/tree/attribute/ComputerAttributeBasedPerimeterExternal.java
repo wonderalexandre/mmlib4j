@@ -59,14 +59,14 @@ public class ComputerAttributeBasedPerimeterExternal {
 			}			
 			sumGradContour[ node.getId() ].value = sumgrad/perimeters[ node.getId() ].value;
 		}else{
-			if(node.getArea() < 3){
-				perimeters[node.getId()].value = node.getArea();
+			if(node.getAttributeValue(Attribute.AREA) < 3){
+				perimeters[node.getId()].value = node.getAttributeValue(Attribute.AREA);
 				double sumgrad = 0;
 				for( int pixel : node.getCompactNodePixels()) {					
 					sumgrad += imgGrad.getPixel( pixel );					
 				}				
 				sumGradContour[ node.getId() ].value = sumgrad/perimeters[ node.getId() ].value;
-			}else if(node.getParent().getArea() - node.getArea() < 3){
+			}else if(node.getParent().getAttributeValue(Attribute.AREA) - node.getAttributeValue(Attribute.AREA) < 3){
 				perimeters[node.getId()].value = perimeters[node.getParent().getId()].value - 1;
 				double sumgrad = 0;
 				for( int pixel : node.getCompactNodePixels() ) {					
@@ -143,15 +143,15 @@ public class ComputerAttributeBasedPerimeterExternal {
 	}
 	
 	public double getCircularity(NodeLevelSets node){
-		return (4.0 * Math.PI * node.getArea()) / Math.pow(perimeters[node.getId()].getValue(), 2);
+		return (4.0 * Math.PI * node.getAttributeValue(Attribute.AREA)) / Math.pow(perimeters[node.getId()].getValue(), 2);
 	}
 	
 	public double getCompacity(NodeLevelSets node){
-		return Math.pow(perimeters[node.getId()].getValue(), 2) / node.getArea();
+		return Math.pow(perimeters[node.getId()].getValue(), 2) / node.getAttributeValue(Attribute.AREA);
 	}
 	
 	public double getElongation(NodeLevelSets node){
-		return node.getArea() / Math.pow(perimeters[node.getId()].getValue(), 2);
+		return node.getAttributeValue(Attribute.AREA) / Math.pow(perimeters[node.getId()].getValue(), 2);
 	}
 	//int cont;
 	class ThreadNodeCTPerimeter extends Thread {

@@ -218,7 +218,7 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally {
 		attr[root.getId()].width.value = attr[root.getId()].xmax - attr[root.getId()].xmin + 1;  
 		attr[root.getId()].height.value = attr[root.getId()].ymax - attr[root.getId()].ymin + 1;
 		
-		attr[root.getId()].rect.value = root.getArea() / (attr[root.getId()].width.value * attr[root.getId()].height.value);
+		attr[root.getId()].rect.value = root.getAttributeValue(Attribute.AREA) / (attr[root.getId()].width.value * attr[root.getId()].height.value);
 		attr[root.getId()].ratioWH.value =  Math.max(attr[root.getId()].width.value, attr[root.getId()].height.value) / Math.min(attr[root.getId()].width.value, attr[root.getId()].height.value);
 		
 		if(root.isNodeMaxtree()){

@@ -115,7 +115,7 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 
 	public boolean isNodeCircle(NodeLevelSets node){
 		if ( 
-				(areaMin <= node.getArea() && node.getArea() <= areaMax )
+				(areaMin <= node.getAttributeValue(Attribute.AREA) && node.getAttributeValue(Attribute.AREA) <= areaMax )
 				&& (node.getAttributeValue(Attribute.CIRCULARITY) >= circ)
 			)
 			return true;

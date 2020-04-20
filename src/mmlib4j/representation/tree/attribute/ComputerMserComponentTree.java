@@ -7,6 +7,7 @@ import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -84,7 +85,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 		if(descendants[nodeAsc.getId()] == null)
 			descendants[nodeAsc.getId()] = nodeDes;
 		
-		if(descendants[nodeAsc.getId()].getArea() < nodeDes.getArea())
+		if(descendants[nodeAsc.getId()].getAttributeValue(Attribute.AREA) < nodeDes.getAttributeValue(Attribute.AREA))
 			descendants[nodeAsc.getId()] = nodeDes;
 		
 	}
@@ -92,7 +93,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	protected double getStabilityByBoundary(NodeLevelSets node){
 		if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
-			return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double)node.getAttributeValue(Attribute.PERIMETER_EXTERNAL);
+			return (ascendant[node.getId()].getAttributeValue(Attribute.AREA) - descendants[node.getId()].getAttributeValue(Attribute.AREA)) / (double)node.getAttributeValue(Attribute.PERIMETER_EXTERNAL);
 		}
 		else{
 			return Double.MAX_VALUE;
@@ -137,7 +138,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
 				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
 				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation && node.getArea() > minArea && node.getArea() < maxArea){
+					if(stability[node.getId()].getValue() < maxVariation && node.getAttributeValue(Attribute.AREA) > minArea && node.getAttributeValue(Attribute.AREA) < maxArea){
 						mser[node.getId()] = true;
 						list.add(node);
 					}
@@ -179,7 +180,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
 				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
 				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation && node.getArea() >= minArea && node.getArea() <= maxArea){
+					if(stability[node.getId()].getValue() < maxVariation && node.getAttributeValue(Attribute.AREA) >= minArea && node.getAttributeValue(Attribute.AREA) <= maxArea){
 						mser[node.getId()] = true;
 						num++;
 					}
@@ -284,11 +285,10 @@ public class ComputerMserComponentTree implements ComputerMser {
 		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
 		//tree.extendedTree();
 		//.extendedTree();
-		ComputerMserComponentTree m = new ComputerMserComponentTree(tree);
-		int delta = 10;
-		//WindowImages.show(m.getPointImageMSER(delta));
 		
-		WindowImages.show(m.getImageMSER(delta));
+		ComputerMserComponentTree m = new ComputerMserComponentTree(tree);
+		WindowImages.show(m.getImageMSER(5));
+		
 		
 		 
 		//m.imprimirScoreRamo();

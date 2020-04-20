@@ -131,7 +131,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	
 	public static CentralMomentsAttribute getInstance(NodeLevelSets node, int widthImg){
 		CentralMomentsAttribute c = new ComputerCentralMomentAttribute().new CentralMomentsAttribute();
-		c.area = node.getArea();		
+		c.area = node.getAttributeValue(Attribute.AREA);		
 		int xc = (int)node.getAttributeValue(Attribute.SUM_X) / (int)node.getAttributeValue(Attribute.AREA);
 		int yc = (int)node.getAttributeValue(Attribute.SUM_Y) / (int)node.getAttributeValue(Attribute.AREA);
 		int centroid = (xc + yc * widthImg);		
@@ -176,7 +176,7 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 		public CentralMomentsAttribute(){}
 		
 		public CentralMomentsAttribute(NodeLevelSets node, int width){
-			this.area = (double) node.getArea();
+			this.area = (double) node.getAttributeValue(Attribute.AREA);
 			int xc = (int)node.getAttributeValue(Attribute.SUM_X) / (int)node.getAttributeValue(Attribute.AREA);
 			int yc = (int)node.getAttributeValue(Attribute.SUM_Y) / (int)node.getAttributeValue(Attribute.AREA);			
 			int centroid = (xc + yc * width);

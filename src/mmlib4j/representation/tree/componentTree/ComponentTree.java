@@ -314,7 +314,7 @@ public class ComponentTree extends AbstractMorphologicalTree implements Morpholo
 				node.setNumDescendentLeaf(node.getNumDescendentLeaf() + 1); 
 			node.setNumDescendent(node.getNumDescendent() + son.getNumDescendent());
 			node.setNumDescendentLeaf(node.getNumDescendentLeaf() + son.getNumDescendentLeaf());
-			node.setArea(node.getArea() + son.getArea());			
+			//node.setArea(node.getArea() + son.getArea());			
 		}				
 	}	
 	
