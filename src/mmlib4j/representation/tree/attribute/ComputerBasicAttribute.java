@@ -3,6 +3,7 @@ package mmlib4j.representation.tree.attribute;
 
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.Utils;
 
@@ -18,6 +19,10 @@ public class ComputerBasicAttribute extends AttributeComputedIncrementally {
 	int numNode;
 	GrayScaleImage img;
 	boolean flagPerimeter[];
+	
+	public ComputerBasicAttribute(MorphologicalTree tree) {
+		this(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage());
+	}
 	
 	public ComputerBasicAttribute(int numNode, NodeLevelSets root, GrayScaleImage img){
 		long ti = System.currentTimeMillis();

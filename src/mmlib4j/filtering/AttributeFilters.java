@@ -46,12 +46,6 @@ public class AttributeFilters {
 	public final static int SIMPLIFY_DIRECT = 8;
 	public final static int SIMPLIFY_SUBTRACTIVE = 9;
 	
-	private boolean hasComputerBasicAttribute = true;
-	private boolean hasComputerAttributeBasedPerimeterExternal = false;
-	private boolean hasComputerCentralMomentAttribute = false;
-	private boolean hasComputerAttributeBasedBitQuads = false;
-	private boolean hasComputerFunctionalAttribute = false;
-	
 	private MorphologicalTree tree;	
 	
 	boolean[] update;		
@@ -63,87 +57,8 @@ public class AttributeFilters {
 		update = new boolean[tree.getNumNodeIdMax()];
 		modified = new boolean[tree.getNumNodeIdMax()];
 		prevupdate = new boolean[tree.getNumNodeIdMax()];
-		computerBasicAttribute();
 	}
-	
-	/**
-	 * 
-	 *	This method loads an attribute in tree structure.
-	 *
-	 * 	@param attr Type of attribute (see {@link Attribute}).  
-	 * 
-	 */
-	public void loadAttribute(int attr){
-		switch(attr){
-			case Attribute.ALTITUDE:
-			case Attribute.AREA:
-			case Attribute.VOLUME:
-			case Attribute.WIDTH:
-			case Attribute.HEIGHT:
-			//case Attribute.PERIMETER:
-			case Attribute.LEVEL:
-			case Attribute.RECTANGULARITY:
-			case Attribute.RATIO_WIDTH_HEIGHT:
-			case Attribute.XMIN:
-			case Attribute.XMAX:
-			case Attribute.YMIN:
-			case Attribute.YMAX:
-			case Attribute.PIXEL_XMIN:
-			case Attribute.PIXEL_XMAX: 
-			case Attribute.PIXEL_YMIN: 
-			case Attribute.PIXEL_YMAX: 
-			case Attribute.SUM_X: 
-			case Attribute.SUM_Y: 
-				computerBasicAttribute();
-				break;
-				
-			case Attribute.MOMENT_CENTRAL_02:
-			case Attribute.MOMENT_CENTRAL_20:
-			case Attribute.MOMENT_CENTRAL_11:
-			case Attribute.VARIANCE_LEVEL:
-			case Attribute.LEVEL_MEAN:
-			case Attribute.STD_LEVEL:
-			case Attribute.SUM_LEVEL_2:
-			case Attribute.MOMENT_COMPACTNESS:
-			case Attribute.MOMENT_ECCENTRICITY:
-			case Attribute.MOMENT_ELONGATION:
-			case Attribute.MOMENT_LENGTH_MAJOR_AXES:
-			case Attribute.MOMENT_LENGTH_MINOR_AXES:
-			case Attribute.MOMENT_ORIENTATION:
-			case Attribute.MOMENT_ASPECT_RATIO:
-			case Attribute.MOMENT_OF_INERTIA:
-				computerCentralMomentAttribute();
-				break;
-			
-			case Attribute.PERIMETER_EXTERNAL:
-			case Attribute.CIRCULARITY:
-			case Attribute.COMPACTNESS:
-			case Attribute.ELONGATION:
-			case Attribute.SUM_GRAD_CONTOUR:
-				computerAttributeBasedPerimeterExternal();
-				break;				
-				
-			//case Attribute.NUM_HOLES:
-			case Attribute.BIT_QUADS_PERIMETER:
-			case Attribute.BIT_QUADS_EULER_NUMBER:
-			case Attribute.BIT_QUADS_HOLE_NUMBER:
-			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
-			case Attribute.BIT_QUADS_CIRCULARITY:
-			case Attribute.BIT_QUADS_AVERAGE_AREA:
-			case Attribute.BIT_QUADS_AVERAGE_PERIMETER:
-			case Attribute.BIT_QUADS_AVERAGE_LENGTH:
-			case Attribute.BIT_QUADS_AVERAGE_WIDTH:
-				computerAttributeBasedBitQuads();
-				break;
-				
-			case Attribute.FUNCTIONAL_ATTRIBUTE:
-				computerFunctionalAttribute();
-				break;
-				
-			default:
-				throw new RuntimeException("Unsupported attribute!");
-		}
-	}
+
 	
 	/**
 	 * 
@@ -154,83 +69,6 @@ public class AttributeFilters {
 	 */
 	public MorphologicalTree getTree() {
 		return tree;
-	}
-	
-	/**
-	 * 
-	 *	This method computes the distance transform in tree.
-	 * 
-	 */
-	public ComputerDistanceTransform computerDistanceTransform(){
-		return new ComputerDistanceTransform(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage());
-	}	
-	
-	/**
-	 * 
-	 *	This method computes some central moment attributes in tree.
-	 *  (see {@link ComputerCentralMomentAttribute})
-	 * 
-	 */
-	public void computerCentralMomentAttribute(){
-		if(!hasComputerCentralMomentAttribute){
-			new ComputerCentralMomentAttribute(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage().getWidth()).addAttributeInNodes(tree.getListNodes());
-			hasComputerCentralMomentAttribute = true;
-		}
-	}
-	
-	/**
-	 * 
-	 *	This method computes some basic attributes in tree.
-	 *  (see {@link ComputerBasicAttribute})
-	 * 
-	 */
-	public void computerBasicAttribute(){
-		if(!hasComputerBasicAttribute){
-			new ComputerBasicAttribute(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
-			hasComputerBasicAttribute = true;
-		}
-	}
-	
-	/**
-	 * 
-	 *	This method computes some attributes based on the external perimeter in tree.
-	 *  (see {@link ComputerAttributeBasedPerimeterExternal})
-	 * 
-	 */
-	public void computerAttributeBasedPerimeterExternal(){
-		if(!hasComputerAttributeBasedPerimeterExternal){
-			new ComputerAttributeBasedPerimeterExternal(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
-			hasComputerAttributeBasedPerimeterExternal = true;
-		}
-	}
-	
-	/**
-	 * 
-	 *	This method computes the functional attribute.
-	 *  (see {@link ComputerFunctionalAttribute})
-	 * 
-	 */
-	public void computerFunctionalAttribute(){		
-		if(!hasComputerFunctionalAttribute){
-			computerAttributeBasedPerimeterExternal();			
-			new ComputerFunctionalAttribute(tree, tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
-			hasComputerFunctionalAttribute = true;
-		}
-	}
-	
-	/**
-	 * 
-	 *	This method computes attributes based on bit quads.
-	 *  (see {@link ComputerFunctionalAttribute})
-	 * 
-	 */
-	public void computerAttributeBasedBitQuads(){
-		if(!(tree instanceof ComponentTree)) {
-			throw new UnsupportedOperationException("This attribute doesn't work for all trees yet!");
-		} else if(!hasComputerAttributeBasedBitQuads){
-			new ComputerAttributeBasedOnBitQuads((ComponentTree) tree).addAttributeInNodesCT(tree.getListNodes());
-			hasComputerAttributeBasedBitQuads = true;
-		}
 	}
 	
 	/**
@@ -447,9 +285,10 @@ public class AttributeFilters {
 			throw new RuntimeException("type filtering invalid");
 	}
 	
+	
 	private void updateAttributes() {
 		new ComputerBasicAttributeUpdate(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage(), update, modified);
-		if(hasComputerCentralMomentAttribute) 
+		if(!tree.getRoot().hasAttribute(Attribute.STD_LEVEL))
 			new ComputerCentralMomentAttributeUpdate(tree.getNumNodeIdMax(), tree.getRoot(), update, modified);
 	}
 	

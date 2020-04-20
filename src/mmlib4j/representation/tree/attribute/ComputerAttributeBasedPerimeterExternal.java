@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.filtering.EdgeOperators;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.tos.NodeToS;
 import mmlib4j.utils.Pixel;
@@ -26,6 +27,10 @@ public class ComputerAttributeBasedPerimeterExternal {
 	private GrayScaleImage imgGrad;
 	private static final int[][] delta = { { 1,0}, { 1, 1}, {0, 1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, { 1,-1} };
 	NodeLevelSets rootTree;
+	
+	public ComputerAttributeBasedPerimeterExternal(MorphologicalTree tree) {
+		this(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage());
+	}
 	
 	public ComputerAttributeBasedPerimeterExternal(int numNode, NodeLevelSets root, GrayScaleImage img){
 		long ti = System.currentTimeMillis();

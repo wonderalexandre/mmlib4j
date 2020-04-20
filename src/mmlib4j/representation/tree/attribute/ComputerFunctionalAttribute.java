@@ -69,7 +69,7 @@ public class ComputerFunctionalAttribute {
 	}
 	
 	public ComputerFunctionalAttribute(MorphologicalTree tree, GrayScaleImage img) {
-		this(tree, true, img);		
+		this(tree, true, tree.getInputImage());		
 	}
 	
 	/*public ComputerFunctionalAttribute(InfoMergedTree mTree, int numNode, boolean useHeuristic, boolean[] update) {
@@ -211,7 +211,7 @@ public class ComputerFunctionalAttribute {
     	
     	TreeOfShape tree = new TreeOfShape(input);
     	AttributeFilters filter = new AttributeFilters(tree);
-    	filter.computerFunctionalAttribute();
+    	Attribute.loadAttribute(tree, type);
     	
     	filter.simplificationTreeByDirectRule(100, type);
     	

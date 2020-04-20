@@ -60,7 +60,7 @@ public class ComponentTree extends AbstractMorphologicalTree implements Morpholo
 			System.out.println("Tempo de execucao [create component tree] "+ ((tf - ti) /1000.0)  + "s");
 		}
 		
-		new ComputerBasicAttribute(this.getNumNodeIdMax(), this.getRoot(), this.getInputImage()).addAttributeInNodes(this.getListNodes());
+		Attribute.loadAttribute(this, Attribute.AREA);
 	}
 	
 	public ComponentTree getClone(){

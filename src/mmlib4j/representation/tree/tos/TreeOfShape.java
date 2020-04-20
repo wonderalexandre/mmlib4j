@@ -51,8 +51,8 @@ public class TreeOfShape extends AbstractMorphologicalTree implements Morphologi
 			long tf = System.currentTimeMillis();
 			System.out.println("Tempo de execucao [create tree of shape] "+ ((tf - ti) /1000.0)  + "s");
 		}
-		new ComputerBasicAttribute(this.getNumNodeIdMax(), this.getRoot(), this.getInputImage()).addAttributeInNodes(this.getListNodes());
 		
+		Attribute.loadAttribute(this, Attribute.AREA);
 	}
 	
 	public TreeOfShape(GrayScaleImage img, int xInfinito, int yInfinito){

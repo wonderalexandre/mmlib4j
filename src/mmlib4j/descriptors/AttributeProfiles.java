@@ -133,17 +133,18 @@ public class AttributeProfiles {
 		ComponentTree tree;
 		AttributeFilters filter;		
 		tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
+		Attribute.loadAttribute(tree, attributeType);
 		filter = new AttributeFilters(tree);
-		filter.loadAttribute(attributeType);				
-		
+				
 		for (int i = 0; i < lambdas; i++) {
 			profiles[lambdas-i-1] = strategy.filterBy(filter, thresholds[i], attributeType);		
 		}
 
 		profiles[lambdas] = img;
 		tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), true);		
+		Attribute.loadAttribute(tree, attributeType);
 		filter = new AttributeFilters(tree);
-		filter.loadAttribute(attributeType);				
+						
 		
 		for (int i = 0; i < lambdas; i++) {
 			profiles[i+lambdas+1] = strategy.filterBy(filter, thresholds[i], attributeType);

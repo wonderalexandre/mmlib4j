@@ -3,6 +3,7 @@ package mmlib4j.representation.tree.attribute;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.utils.Utils;
 
@@ -17,6 +18,10 @@ public class ComputerCentralMomentAttribute extends AttributeComputedIncremental
 	CentralMomentsAttribute attr[];
 	int numNode;
 	int widthImg;
+	
+	public ComputerCentralMomentAttribute(MorphologicalTree tree) {
+		this(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage().getWidth());
+	}
 	
 	public ComputerCentralMomentAttribute(int numNode, NodeLevelSets root, int widthImg){
 		long ti = System.currentTimeMillis();

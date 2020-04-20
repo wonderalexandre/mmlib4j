@@ -5,6 +5,10 @@ import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Locale;
 
+import mmlib4j.representation.tree.MorphologicalTree;
+import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
+import mmlib4j.representation.tree.componentTree.ComponentTree;
+
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -234,5 +238,95 @@ public class Attribute {
 	public String toString(){
 		return getHeader() +": "+ getValueFormat();
 	}
+	
+	/**
+	 * 
+	 *	This method loads an attribute in tree structure.
+	 *
+	 *  @param tree Morphological tree.
+	 * 	@param attr Type of attribute (see {@link Attribute}).  
+	 * 
+	 */
+	public static void loadAttribute(MorphologicalTree tree, int attr) {
+		if(!tree.getRoot().hasAttribute(attr)){
+			switch(attr){
+			case Attribute.ALTITUDE:
+			case Attribute.AREA:
+			case Attribute.VOLUME:
+			case Attribute.WIDTH:
+			case Attribute.HEIGHT:
+			//case Attribute.PERIMETER:
+			case Attribute.LEVEL:
+			case Attribute.RECTANGULARITY:
+			case Attribute.RATIO_WIDTH_HEIGHT:
+			case Attribute.XMIN:
+			case Attribute.XMAX:
+			case Attribute.YMIN:
+			case Attribute.YMAX:
+			case Attribute.PIXEL_XMIN:
+			case Attribute.PIXEL_XMAX: 
+			case Attribute.PIXEL_YMIN: 
+			case Attribute.PIXEL_YMAX: 
+			case Attribute.SUM_X: 
+			case Attribute.SUM_Y: 
+				new ComputerBasicAttribute(tree).addAttributeInNodes(tree.getListNodes());
+				break;
+				
+			case Attribute.MOMENT_CENTRAL_02:
+			case Attribute.MOMENT_CENTRAL_20:
+			case Attribute.MOMENT_CENTRAL_11:
+			case Attribute.VARIANCE_LEVEL:
+			case Attribute.LEVEL_MEAN:
+			case Attribute.STD_LEVEL:
+			case Attribute.SUM_LEVEL_2:
+			case Attribute.MOMENT_COMPACTNESS:
+			case Attribute.MOMENT_ECCENTRICITY:
+			case Attribute.MOMENT_ELONGATION:
+			case Attribute.MOMENT_LENGTH_MAJOR_AXES:
+			case Attribute.MOMENT_LENGTH_MINOR_AXES:
+			case Attribute.MOMENT_ORIENTATION:
+			case Attribute.MOMENT_ASPECT_RATIO:
+			case Attribute.MOMENT_OF_INERTIA:
+				new ComputerCentralMomentAttribute(tree).addAttributeInNodes(tree.getListNodes());
+				break;
+			
+			case Attribute.PERIMETER_EXTERNAL:
+			case Attribute.CIRCULARITY:
+			case Attribute.COMPACTNESS:
+			case Attribute.ELONGATION:
+			case Attribute.SUM_GRAD_CONTOUR:
+				new ComputerAttributeBasedPerimeterExternal(tree).addAttributeInNodes(tree.getListNodes());
+				break;				
+				
+			//case Attribute.NUM_HOLES:
+			case Attribute.BIT_QUADS_PERIMETER:
+			case Attribute.BIT_QUADS_EULER_NUMBER:
+			case Attribute.BIT_QUADS_HOLE_NUMBER:
+			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
+			case Attribute.BIT_QUADS_CIRCULARITY:
+			case Attribute.BIT_QUADS_AVERAGE_AREA:
+			case Attribute.BIT_QUADS_AVERAGE_PERIMETER:
+			case Attribute.BIT_QUADS_AVERAGE_LENGTH:
+			case Attribute.BIT_QUADS_AVERAGE_WIDTH:
+				if(!(tree instanceof ComponentTree)) 
+					throw new UnsupportedOperationException("This attribute doesn't work for all trees yet!");
+				else 	
+					new ComputerAttributeBasedOnBitQuads((ComponentTree) tree).addAttributeInNodesCT(tree.getListNodes());
+				break;
+				
+			case Attribute.FUNCTIONAL_ATTRIBUTE:
+				Attribute.loadAttribute(tree, Attribute.SUM_GRAD_CONTOUR);			
+				new ComputerFunctionalAttribute(tree, tree.getInputImage()).addAttributeInNodes(tree.getListNodes());
+				break;
+				
+			default:
+				throw new RuntimeException("Unsupported attribute!");
+			}
+		}
+	}
+	
+	public static ComputerDistanceTransform computerDistanceTransform(MorphologicalTree tree){
+		return new ComputerDistanceTransform(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage());
+	}	
 	
 }
