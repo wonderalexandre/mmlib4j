@@ -7,11 +7,10 @@ import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
 import mmlib4j.representation.tree.InfoPrunedTree;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
@@ -21,9 +20,9 @@ import mmlib4j.utils.ImageBuilder;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class ComputerMserComponentTree implements ComputerMser {
+public class ComputerMSER {
 	
-	private ComponentTree tree;
+	private MorphologicalTree tree;
 	private NodeLevelSets ascendant[];
 	private NodeLevelSets descendants[];
 	private int num;
@@ -36,7 +35,7 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	private int attribute = Attribute.AREA;
 	
-	public ComputerMserComponentTree(ComponentTree tree){
+	public ComputerMSER(MorphologicalTree tree){
 		this.tree = tree;
 		
 	}
@@ -282,11 +281,11 @@ public class ComputerMserComponentTree implements ComputerMser {
 	
 	public static void main(String args[]){
 		GrayScaleImage img = ImageBuilder.openGrayImage();
-		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
+		MorphologicalTree tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
 		//tree.extendedTree();
 		//.extendedTree();
 		
-		ComputerMserComponentTree m = new ComputerMserComponentTree(tree);
+		ComputerMSER m = new ComputerMSER(tree);
 		WindowImages.show(m.getImageMSER(5));
 		
 		
