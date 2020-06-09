@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import mmlib4j.representation.tree.MorphologicalTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 
@@ -318,15 +319,57 @@ public class Attribute {
 				Attribute.loadAttribute(tree, Attribute.SUM_GRAD_CONTOUR);			
 				ComputerFunctionalAttribute.loadAttribute(tree);
 				break;
-				
 			default:
-				throw new RuntimeException("Unsupported attribute!");
+				throw new RuntimeException("Unsupported attribute!\nAttribute name:"+ getNameAttribute(attr));
 			}
 		}
+	}
+	public static boolean hasAttribute(MorphologicalTree tree, int attr) {
+		return tree.getRoot().hasAttribute(attr);
+	}
+	
+	public static boolean hasComputerAttribute(MorphologicalTree tree, Class classe) {
+		if(ComputerBasicAttribute.class.equals(classe))
+			return hasAttribute(tree, Attribute.AREA) && hasAttribute(tree, Attribute.VOLUME) && hasAttribute(tree, Attribute.RATIO_WIDTH_HEIGHT);
+		else if(ComputerCentralMomentAttribute.class.equals(classe))
+			return hasAttribute(tree, Attribute.MOMENT_OF_INERTIA);
+		else if(ComputerAttributeBasedPerimeterExternal.class.equals(classe))
+			return hasAttribute(tree, Attribute.PERIMETER_EXTERNAL);
+		else if(ComputerAttributeBasedOnBitQuads.class.equals(classe))
+			return hasAttribute(tree, Attribute.BIT_QUADS_EULER_NUMBER);
+		else if(ComputerFunctionalAttribute.class.equals(classe))
+			return hasAttribute(tree, Attribute.FUNCTIONAL_ATTRIBUTE);
+		
+		return false;
+	}
+	
+	public static double getMaxValue(MorphologicalTree tree, int type) {
+		double max = tree.getRoot().getAttributeValue(type);
+		for(NodeLevelSets node: tree.getListNodes()) {
+			if(node.getAttributeValue(type) > max) {
+				max = node.getAttributeValue(type);
+			}
+		}
+		return max;
+	}
+	
+	public static double getMinValue(MorphologicalTree tree, int type) {
+		double min = tree.getRoot().getAttributeValue(type);
+		for(NodeLevelSets node: tree.getListNodes()) {
+			if(node.getAttributeValue(type) < min) {
+				min = node.getAttributeValue(type);
+			}
+		}
+		return min;
 	}
 	
 	public static ComputerDistanceTransform computerDistanceTransform(MorphologicalTree tree){
 		return new ComputerDistanceTransform(tree.getNumNodeIdMax(), tree.getRoot(), tree.getInputImage());
 	}	
+
+	public static void main(String args[]) {
+		Class c = ComputerBasicAttribute.class;
+		System.out.print( ComputerBasicAttribute.class.equals(c) );
+	}
 	
 }

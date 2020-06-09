@@ -3,21 +3,28 @@ package mmlib4j.filtering;
 import java.util.Iterator;
 
 import mmlib4j.datastruct.Queue;
+import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.tree.InfoMergedTree;
+import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
+import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
+import mmlib4j.representation.tree.InfoMergedTreeReverseLevelOrder;
 import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttributeUpdate;
-import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
-import mmlib4j.representation.tree.attribute.ComputerFunctionalAttribute;
+import mmlib4j.representation.tree.attribute.ComputerMSER;
+import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerViterbi;
-import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
+import mmlib4j.representation.tree.attribute.mergetree.ComputerBasicAttributeMergeTree;
+import mmlib4j.representation.tree.attribute.mergetree.ComputerCentralMomentAttributeMergeTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
+import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
+import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
 
 /**
@@ -69,6 +76,17 @@ public class AttributeFilters {
 	 */
 	public MorphologicalTree getTree() {
 		return tree;
+	}
+	
+	/**
+	 * 
+	 *	This method loads an attribute in tree structure.
+	 *
+	 * 	@param attr Type of attribute (see {@link Attribute}).  
+	 * 
+	 */
+	public void loadAttribute(int attr) {
+		Attribute.loadAttribute(getTree(), attr);
 	}
 	
 	/**
@@ -147,14 +165,163 @@ public class AttributeFilters {
 
 	// It must be adapted from the original one
 	public GrayScaleImage filteringByDirectRule(double attributeValue, int attributeType){
-		//return getInfoMergedTreeByDirectRule(attributeValue, attributeType).reconstruction();
-		throw new UnsupportedOperationException("This method doesn't work yet!");
+		return getInfoMergedTreeByDirectRule(attributeValue, attributeType).reconstruction();
+		//throw new UnsupportedOperationException("This method doesn't work yet!");
 	}
+	
+
+	/*
+	 * This operation keeps the original tree structure unchanged.
+	 **/		
+	public InfoMergedTree getInfoMergedTreeByDirectRule(double attributeValue, int type) {
+		return getInfoMergedTreeByDirectRule(attributeValue, type, null);
+	}
+	
+	public InfoMergedTree getInfoMergedTreeByDirectRule(double attributeValue, int type, InfoMergedTreeReverseLevelOrder mTree){			
+		
+		boolean[] update = new boolean[tree.getNumNodeIdMax()];
+		NodeLevelSets parent;		
+		int newNumNodeIdMax = 1;
+		
+		if(mTree == null) {			
+			mTree = new InfoMergedTreeReverseLevelOrder(tree);
+			for(NodeLevelSets node : tree.getListNodes().reverse()) {
+				if(node == tree.getRoot())
+					continue;							
+				parent = node.getParent();								
+				if(node.getAttributeValue(type) < attributeValue) {						
+					// Merge
+					mTree.addNodeToMerge(node);
+					update[parent.getId()] = true;			
+				} else { 
+					// Not merge
+					mTree.addNodeNotMerge(node);
+					// This helps to decrease the size of auxiliary structures
+					if(node.getId() > newNumNodeIdMax)
+						newNumNodeIdMax = node.getId();
+					// Pass the update to all ancestors
+					if(update[node.getId()])
+						update[parent.getId()] = true;
+				}
+			}
+		} else {
+			for(NodeMergedTree node_ : mTree.skipRoot()) {						
+				if(mTree.getAttribute(node_, type) < attributeValue) {	
+					mTree.updateNodeToMerge(node_);	
+					for(NodeMergedTree n : node_.getParent().getPathToRoot()) {
+						if(update[n.getId()])
+							break;
+						update[n.getId()] = true;	
+					}
+				} else {
+					if(node_.getId() > newNumNodeIdMax)
+						newNumNodeIdMax = node_.getId();
+				}			
+			}
+		}	
+		if(Attribute.hasComputerAttribute(tree, ComputerBasicAttribute.class))
+			new ComputerBasicAttributeMergeTree(tree.getNumNodeIdMax(), mTree, update).addAttributeInNodes();
+		if(Attribute.hasComputerAttribute(tree, ComputerCentralMomentAttribute.class))
+			new ComputerCentralMomentAttributeMergeTree(tree.getNumNodeIdMax(), mTree, update).addAttributeInNodes();		
+		
+		
+		return mTree;
+	}
+	
 	
 	// It must be adapted from the original one
 	public GrayScaleImage filteringBySubtractiveRule(double attributeValue, int attributeType) {		
-		//return getInfoMergedTreeBySubstractiveRule(attributeValue, attributeType).reconstruction();
-		throw new UnsupportedOperationException("This method doesn't work yet!");
+		return getInfoMergedTreeBySubstractiveRule(attributeValue, attributeType).reconstruction();
+		//throw new UnsupportedOperationException("This method doesn't work yet!");
+	}
+	
+	/*
+	 * This operation keeps the original tree structure unchanged.
+	 **/			
+	public InfoMergedTree getInfoMergedTreeBySubstractiveRule(double attributeValue, int type){
+		return getInfoMergedTreeBySubstractiveRule(attributeValue, type, null);
+	}
+	public InfoMergedTree getInfoMergedTreeBySubstractiveRule(double attributeValue, int type, InfoMergedTreeLevelOrder mTree){			
+		
+		int[] offset = new int[tree.getNumNodeIdMax()];
+		boolean[] update = new boolean[tree.getNumNodeIdMax()];
+		NodeLevelSets parent;		
+		int newNumNodeIdMax = 1;
+		
+		if(mTree == null) {			
+			mTree = new InfoMergedTreeLevelOrder(tree);
+			for(NodeLevelSets node : getTree().getListNodes()) {
+				if(node == getTree().getRoot())
+					continue;								
+				parent = node.getParent();								
+				if(node.getAttributeValue(type) < attributeValue) {						
+					// Merge
+					mTree.addNodeToMerge(node);
+					// Compute offsets
+					offset[node.getId()] = offset[parent.getId()] - node.getLevel() + parent.getLevel();					
+					update[parent.getId()] = true;		
+					for(NodeLevelSets n : parent.getPathToRoot()) {
+						if(update[n.getId()])
+							break;
+						update[n.getId()] = true;	
+					}
+				} else { 
+					// Not merge
+					mTree.addNodeNotMerge(node);
+					// This helps to decrease the size of auxiliary structures
+					if(node.getId() > newNumNodeIdMax)
+						newNumNodeIdMax = node.getId();
+					// Propagate offset
+					offset[node.getId()] = offset[parent.getId()];
+					// Pass the update to all ancestors
+					if(offset[node.getId()] != 0) {
+						for(NodeLevelSets n : node.getPathToRoot()) {
+							if(update[n.getId()])
+								break;
+							update[n.getId()] = true;	
+						}
+					}
+				}
+			}
+		} else {
+			// First compute offsets and update	
+			SimpleLinkedList<NodeLevelSets> nodesToMerge = new SimpleLinkedList<>();
+			for(NodeMergedTree node_ : mTree.skipRoot()) {						
+				if(mTree.getAttribute(node_, type) < attributeValue) {	
+					offset[node_.getId()] = offset[node_.getParent().getId()] - node_.getLevel() + node_.getParent().getLevel();				
+					for(NodeMergedTree n : node_.getParent().getPathToRoot()) {
+						if(update[n.getId()])
+							break;
+						update[n.getId()] = true;	
+					}
+					nodesToMerge.add(node_.getInfo());
+				} else {
+					offset[node_.getId()] = offset[node_.getParent().getId()];					
+					if(node_.getId() > newNumNodeIdMax)
+						newNumNodeIdMax = node_.getId();
+					// When offset != null this node changed the level value
+					if(offset[node_.getId()] != 0) {
+						for(NodeMergedTree n : node_.getPathToRoot()) {
+							if(update[n.getId()])
+								break;
+							update[n.getId()] = true;	
+						}
+					}
+				}
+			}
+			// Make merges 
+			mTree.updateNodeToMergeAll(nodesToMerge);
+		}
+		
+		// Correct offsets
+		mTree.updateLevels(offset);
+		/*
+		if(Attribute.hasComputerAttribute(tree, ComputerBasicAttribute.class))
+			new ComputerBasicAttributeMergeTree(tree.getNumNodeIdMax(), mTree, update).addAttributeInNodes();
+		if(Attribute.hasComputerAttribute(tree, ComputerCentralMomentAttribute.class))
+			new ComputerCentralMomentAttributeMergeTree(tree.getNumNodeIdMax(), mTree, update).addAttributeInNodes();		
+		*/
+		return mTree;
 	}
 	
 	/**
@@ -541,6 +708,105 @@ public class AttributeFilters {
 	// I believe we can use the update structure.
 	public void simplificationTreeByPruningViterbi(double attributeValue, int attributeType){
 		new UnsupportedOperationException("Not implemented yet");
+	}
+
+
+	public InfoPrunedTree getPrunedTreeByMSER(double attributeValue, int type, int delta){
+		long ti = System.currentTimeMillis();
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, type, attributeValue);
+		
+		ComputerMSER mser = new ComputerMSER(tree);
+		SimpleLinkedList<NodeLevelSets> list = mser.getNodesByMSER(delta);
+		
+		boolean resultPruning[] = new boolean[tree.getNumNode()];
+		for(NodeLevelSets node: list){
+			if(node.getAttributeValue(type) <= attributeValue){ //poda				
+				for(NodeLevelSets song: node.getChildren()){
+					for(NodeLevelSets n: song.getNodesDescendants())
+						resultPruning[n.getId()] = true;	 
+				}
+			}
+		}
+		
+		for(NodeLevelSets no: tree.getListNodes()){
+			if( ! resultPruning[no.getId()]  ){ //nao poda
+				prunedTree.addNodeNotPruned(no);
+			}
+		}
+		
+		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [AttributeFilter - filtering by pruning mser]  "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		return prunedTree;
+	}
+	
+	
+	
+	public InfoPrunedTree getPrunedTreeByGradualTransition(double attributeValue, int type, int delta){
+		long ti = System.currentTimeMillis();
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, type, attributeValue);
+		PruningBasedGradualTransition gt = new PruningBasedGradualTransition(tree, type, delta); 
+		boolean resultPruning[] = gt.getMappingSelectedNodes( );
+		SimpleLinkedList<NodeLevelSets> list = gt.getListOfSelectedNodes( );
+		for(NodeLevelSets obj: list){
+			NodeLevelSets node = (NodeLevelSets) obj;
+			if(node.getAttributeValue(type) <= attributeValue){ //poda				
+				for(NodeLevelSets song: node.getChildren()){
+					for(NodeLevelSets n: song.getNodesDescendants())
+						resultPruning[n.getId()] = true;	 
+				}
+			}
+		}
+		
+		for(NodeLevelSets no: tree.getListNodes()){
+			if( ! resultPruning[no.getId()]  ){ //nao poda
+				prunedTree.addNodeNotPruned(no);
+			}
+		}
+		
+		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [AttributeFilter - filtering by pruning gradual transition]  "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		
+		return prunedTree;
+	}
+	
+	public InfoPrunedTree getPrunedTreeByTBMR(double attributeValue, int type, int tMin, int tMax){
+		long ti = System.currentTimeMillis();
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, type, attributeValue);
+		if(tree instanceof TreeOfShape) 
+			throw new UnsupportedOperationException("This method was implemented only for the component tree.");
+		ComputerTbmrComponentTree tbmr = new ComputerTbmrComponentTree((ComponentTree) tree);
+		boolean resultPruning[] = new boolean[tree.getNumNode()];
+		boolean result[] = tbmr.getSelectedNode(tMin, tMax);
+		for(NodeLevelSets node: tree.getListNodes()){
+			if(node.getAttributeValue(type) <= attributeValue && result[node.getId()]){ //poda				
+				for(NodeLevelSets song: node.getChildren()){
+					for(NodeLevelSets n: song.getNodesDescendants())
+						resultPruning[n.getId()] = true;	 
+				}
+			}
+		}
+		
+		for(NodeLevelSets no: tree.getListNodes()){
+			if( ! resultPruning[no.getId()]  ){ //nao poda
+				prunedTree.addNodeNotPruned(no);
+			}
+		}
+		
+		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [Componente tree - filtering by pruning mser]  "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		return prunedTree;
 	}
 
 }

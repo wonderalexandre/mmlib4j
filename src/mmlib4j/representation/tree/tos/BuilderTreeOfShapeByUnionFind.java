@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import mmlib4j.datastruct.PriorityQueueToS;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.ByteImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.utils.Utils;
@@ -79,11 +78,12 @@ public class BuilderTreeOfShapeByUnionFind implements BuilderTreeOfShape {
 		this.parent = createTreeByUnionFind();
 		if(isInter)
 			unInterpolateAndCreateTree( parent );
-		else
+		else {
 			createTree(parent);
-		this.img = getImageInterpolated();
-		this.imgWidth = img.getWidth();
-		this.imgHeight = img.getHeight();
+			this.img = getImageInterpolated();
+			this.imgWidth = img.getWidth();
+			this.imgHeight = img.getHeight();
+		}
 			
 	}
 	

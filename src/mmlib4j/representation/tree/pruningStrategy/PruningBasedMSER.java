@@ -2,8 +2,7 @@ package mmlib4j.representation.tree.pruningStrategy;
 
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.attribute.ComputerMserComponentTree;
-import mmlib4j.representation.tree.attribute.ComputerMserTreeOfShapes;
+import mmlib4j.representation.tree.attribute.ComputerMSER;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 
@@ -67,7 +66,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			this.num = 0;
 			int rank[] = new int[tree.getNumNode()];
 			boolean rankSelected[] = new boolean[tree.getNumNode()];
-			ComputerMserComponentTree mser = new ComputerMserComponentTree( (ComponentTree) tree);
+			ComputerMSER mser = new ComputerMSER( (ComponentTree) tree);
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
@@ -92,7 +91,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			int rank[] = new int[tree.getNumNode()];
 			boolean rankSelected[] = new boolean[tree.getNumNode()];
 			this.num = 0;
-			ComputerMserTreeOfShapes mser = new ComputerMserTreeOfShapes((TreeOfShape) tree);
+			ComputerMSER mser = new ComputerMSER(tree);
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
@@ -119,7 +118,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 	
 	public boolean[] getMappingSelectedNodes() {
 		if(tree instanceof ComponentTree){
-			ComputerMserComponentTree mser = new ComputerMserComponentTree( (ComponentTree) tree);
+			ComputerMSER mser = new ComputerMSER( (ComponentTree) tree);
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);
@@ -130,7 +129,7 @@ public class PruningBasedMSER implements MappingStrategyOfPruning{
 			return result;
 		}
 		else if(tree instanceof TreeOfShape){
-			ComputerMserTreeOfShapes mser = new ComputerMserTreeOfShapes((TreeOfShape) tree);
+			ComputerMSER mser = new ComputerMSER(tree);
 			mser.setMaxArea(maxArea);
 			mser.setMinArea(minArea);
 			mser.setMaxVariation(maxVariation);

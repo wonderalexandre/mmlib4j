@@ -6,7 +6,6 @@ import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.Utils;
 
@@ -24,7 +23,7 @@ public class UltimateAttributeOpenClose{
 	public UltimateAttributeOpenClose(final GrayScaleImage img){
 		
 		class ProcessCT implements Runnable{
-			ConnectedFilteringByComponentTree tree;
+			ComponentTree tree;
 			boolean isMaxtree;
 			
 			ProcessCT(boolean maxtree){
@@ -32,7 +31,7 @@ public class UltimateAttributeOpenClose{
 			}
 			
 			public void run() {
-				this.tree = new ConnectedFilteringByComponentTree(img, AdjacencyRelation.getAdjacency8(), isMaxtree);
+				this.tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), isMaxtree);
 			}	
 		}
 		
@@ -55,12 +54,12 @@ public class UltimateAttributeOpenClose{
 		this.imgInput = tree1.getInputImage();	
 	}
 	
-	public ConnectedFilteringByComponentTree getMaxtree(){
-		return (ConnectedFilteringByComponentTree) processMaxtree.tree;
+	public ComponentTree getMaxtree(){
+		return (ComponentTree) processMaxtree.tree;
 	}
 	
-	public ConnectedFilteringByComponentTree getMintree(){
-		return (ConnectedFilteringByComponentTree) processMintree.tree;
+	public ComponentTree getMintree(){
+		return (ComponentTree) processMintree.tree;
 	}
 	
 	

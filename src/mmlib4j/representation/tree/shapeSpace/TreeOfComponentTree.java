@@ -2,13 +2,15 @@ package mmlib4j.representation.tree.shapeSpace;
 
 import java.io.File;
 
+import mmlib4j.filtering.AttributeFilters;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.ImageFactory;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
+import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageAlgebra;
 import mmlib4j.utils.ImageBuilder;
@@ -16,14 +18,14 @@ import mmlib4j.utils.ImageBuilder;
 public class TreeOfComponentTree {
 	
 	// Original Component Tree
-	private ComponentTree tree;
+	private MorphologicalTree tree;
 	private GrayScaleImage input;
 	
 	// Tree of Shape Space
-	private ComponentTree shapeSpacetree;
+	private MorphologicalTree shapeSpacetree;
 	private GrayScaleImage imgAttr;
 	
-	public TreeOfComponentTree(ComponentTree tree, int attr, boolean isMaxtree) {
+	public TreeOfComponentTree(MorphologicalTree tree, int attr, boolean isMaxtree) {
 				
 		this.tree = tree;
 		this.input = tree.getInputImage();
@@ -36,8 +38,11 @@ public class TreeOfComponentTree {
 				imgAttr.setPixel(p, (int) node.getAttributeValue(attr));
 			}			
 		}
+		if(tree instanceof ComponentTree)
+			shapeSpacetree = new ComponentTree(imgAttr, ((ComponentTree) tree).getAdjacency(), isMaxtree);
+		else
+			shapeSpacetree  = new TreeOfShape(imgAttr);
 		
-		shapeSpacetree = new ComponentTree(imgAttr, tree.getAdjacency(), isMaxtree);
 	}
 	
 	// Pruning Shape Space Tree
@@ -61,20 +66,17 @@ public class TreeOfComponentTree {
 		
 		GrayScaleImage input = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));
 				
-		ComponentTree tree = new ComponentTree(input, AdjacencyRelation.getAdjacency8(), true);		
-		ConnectedFilteringByComponentTree ctree = new ConnectedFilteringByComponentTree(tree);
-		ctree.computerBasicAttribute();
+		MorphologicalTree tree = new ComponentTree(input, AdjacencyRelation.getAdjacency8(), true);		
+		AttributeFilters af = new AttributeFilters(tree);
+		Attribute.loadAttribute(tree, Attribute.AREA);
 		
-		TreeOfComponentTree TT = new TreeOfComponentTree(tree, 
-														 Attribute.AREA,
-														 false);
-		
+		TreeOfComponentTree TT = new TreeOfComponentTree(tree, Attribute.AREA, false);
 		TT.prunning(100);
-		
 		GrayScaleImage output = TT.reconstruction();
 		
-		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(input, AdjacencyRelation.getAdjacency8(), true);
-		GrayScaleImage img2 = tree2.filteringByPruning(100, Attribute.AREA);
+		MorphologicalTree tree2 = new ComponentTree(input, AdjacencyRelation.getAdjacency8(), true);
+		AttributeFilters af2 = new AttributeFilters(tree);
+		GrayScaleImage img2 = af2.filteringByPruningMin(100, Attribute.AREA);
 		
 		System.out.println(ImageAlgebra.equals(output, img2));
 		System.out.println(ImageAlgebra.isLessOrEqual(output, input));

@@ -1,14 +1,12 @@
 package mmlib4j.representation.tree;
 
-import mmlib4j.images.GrayScaleImage;
-
 /**
 *  Must be built in level order traversal
 **/
-public class InfoMergedTreeLevelOrder extends InfoMergedTree {	
+public class InfoMergedTreeLevelOrder extends InfoMergedTree implements InfoTree {	
 
-	public InfoMergedTreeLevelOrder(NodeLevelSets root, int numNodes, GrayScaleImage img) {							
-		super(root, numNodes, img);
+	public InfoMergedTreeLevelOrder(MorphologicalTree tree) {							
+		super(tree);
 	}
 	
 	public void addNodeNotMerge(NodeLevelSets node){
@@ -53,5 +51,7 @@ public class InfoMergedTreeLevelOrder extends InfoMergedTree {
 		map[node.getId()] = parentM;
 		
 	}
+
+
 	
 }

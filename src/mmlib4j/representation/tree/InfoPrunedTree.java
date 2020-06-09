@@ -4,8 +4,6 @@ import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
-import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
 
 
 /**
@@ -13,7 +11,7 @@ import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class InfoPrunedTree {
+public class InfoPrunedTree implements InfoTree{
 	
 	private int numNode;
 	private int attributeType;
@@ -51,7 +49,7 @@ public class InfoPrunedTree {
     }*/
 	public InfoPrunedTree(MorphologicalTree tree, int attributeType, double attributeValue) {
 		this.map = new NodePrunedTree[tree.getNumNodeIdMax()];
-		this.root = map[root.hashCode()] = new NodePrunedTree(tree.getRoot());
+		this.root = map[tree.getRoot().hashCode()] = new NodePrunedTree(tree.getRoot());
         this.attributeType = attributeType;
         this.attributeValue = attributeValue;
         this.imgInput = tree.getInputImage();
@@ -98,7 +96,7 @@ public class InfoPrunedTree {
 		return getLeaves().size();
 	}
 	
-	public int getNunNode(){
+	public int getNumNode(){
 		return numNode;
 	}
 	

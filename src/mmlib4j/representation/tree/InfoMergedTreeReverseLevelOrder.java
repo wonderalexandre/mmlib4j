@@ -1,15 +1,12 @@
 package mmlib4j.representation.tree;
 
-
-import mmlib4j.images.GrayScaleImage;
-
 /**
 *  Must be built in reversed level order traversal
 **/
 public class InfoMergedTreeReverseLevelOrder extends InfoMergedTree {
 
-	public InfoMergedTreeReverseLevelOrder(NodeLevelSets root, int numNodes, GrayScaleImage img) {							
-		super(root, numNodes, img);
+	public InfoMergedTreeReverseLevelOrder(MorphologicalTree tree) {							
+		super(tree);
 	}
 	
 	public void addNodeNotMerge(NodeLevelSets node){

@@ -11,7 +11,6 @@ import mmlib4j.representation.tree.AbstractMorphologicalTree;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.utils.Utils;
 
 

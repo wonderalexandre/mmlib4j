@@ -6,10 +6,10 @@ import mmlib4j.datastruct.PriorityQueueHeap;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.InfoMergedTree;
+import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
@@ -50,7 +50,7 @@ public class ComputerFunctionalVariational {
 		this.areaR = new double[ numNode ];
 		this.volumeR = new double[ numNode ];
 		this.functionalVariational = new Attribute[numNode];
-		this.mTree = new InfoMergedTreeLevelOrder(tree.getRoot(), tree.getNumNode(), tree.getInputImage());
+		this.mTree = new InfoMergedTreeLevelOrder(tree);
 		
 		for(NodeLevelSets node : tree.getListNodes()) {		
 			mTree.addNodeNotMerge(node);

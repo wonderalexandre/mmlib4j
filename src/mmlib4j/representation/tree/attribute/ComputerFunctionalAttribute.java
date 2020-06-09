@@ -10,15 +10,11 @@ import mmlib4j.filtering.AttributeFilters;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.InfoMergedTree;
-import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.InfoMergedTree.NodeMergedTree;
 import mmlib4j.representation.tree.InfoMergedTreeLevelOrder;
 import mmlib4j.representation.tree.MorphologicalTree;
-import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
-import mmlib4j.representation.tree.tos.ConnectedFilteringByTreeOfShape;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.tos.TreeOfShape;
-import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
 
@@ -38,7 +34,7 @@ public class ComputerFunctionalAttribute {
 		areaR = new double[ numNode ];
 		volumeR = new double[ numNode ];
 		mumfordShaEnergy = new Attribute[numNode];
-		mTree = new InfoMergedTreeLevelOrder(tree.getRoot(), tree.getNumNode(), img);
+		mTree = new InfoMergedTreeLevelOrder(tree);
 		
 		for(NodeLevelSets node : tree.getListNodes()) {			
 			NodeLevelSets parent = node.getParent();

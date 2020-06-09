@@ -5,7 +5,6 @@ import mmlib4j.images.BinaryImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.AbstractImageFactory;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.segmentation.ThresholdGlobal;
 import mmlib4j.utils.ImageBuilder;
 

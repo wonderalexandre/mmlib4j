@@ -5,7 +5,6 @@ import java.io.File;
 import mmlib4j.filtering.AttributeFilters;
 import mmlib4j.gui.WindowImages;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerFunctionalVariational;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
@@ -19,7 +18,7 @@ public class AttributeProfiles {
 	
 	
 	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[]) {
-		return getAttributeProfile(img, attributeType, thresholds, MorphologicalTreeFiltering.PRUNING_MIN);
+		return getAttributeProfile(img, attributeType, thresholds, AttributeFilters.PRUNING_MIN);
 	}
 	
 	public static FilteringStrategy getStrategy(int typeStrategy) {
@@ -133,18 +132,17 @@ public class AttributeProfiles {
 		ComponentTree tree;
 		AttributeFilters filter;		
 		tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
-		Attribute.loadAttribute(tree, attributeType);
 		filter = new AttributeFilters(tree);
-				
+		filter.loadAttribute(attributeType);		
+		
 		for (int i = 0; i < lambdas; i++) {
 			profiles[lambdas-i-1] = strategy.filterBy(filter, thresholds[i], attributeType);		
 		}
 
 		profiles[lambdas] = img;
 		tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), true);		
-		Attribute.loadAttribute(tree, attributeType);
 		filter = new AttributeFilters(tree);
-						
+		filter.loadAttribute(attributeType);				
 		
 		for (int i = 0; i < lambdas; i++) {
 			profiles[i+lambdas+1] = strategy.filterBy(filter, thresholds[i], attributeType);

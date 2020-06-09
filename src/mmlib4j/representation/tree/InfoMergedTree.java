@@ -13,27 +13,58 @@ import mmlib4j.representation.tree.attribute.Attribute;
 /*
  * This tree is useful to perform merges keeping the original tree unchanged.  
  **/
-public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMergedTree> {
+public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMergedTree>, InfoTree {
 	
 	int numNode;
 	NodeMergedTree map[];
 	boolean isMerged[];
+	MorphologicalTree tree;
 	GrayScaleImage img;
-	
+	SimpleLinkedList<NodeLevelSets> listLeaves;
+			
 	public abstract void addNodeNotMerge(NodeLevelSets node);
 	
 	public abstract void addNodeToMerge(NodeLevelSets node);
-
-	public InfoMergedTree(NodeLevelSets root, int numNodes, GrayScaleImage img) {				
-		this.map = new NodeMergedTree[numNodes];
+	
+	public InfoMergedTree(MorphologicalTree tree) {				
+		this.tree = tree;
+		this.map = new NodeMergedTree[tree.getNumNode()];
 		this.numNode = 1;
-		this.map[root.getId()] = new NodeMergedTree(root);
-		this.img = img;
-		this.isMerged = new boolean[numNodes];		
+		this.map[tree.getRoot().getId()] = new NodeMergedTree(tree.getRoot());
+		this.img = tree.getInputImage();
+		this.isMerged = new boolean[tree.getNumNode()];		
 	}
 	
 	public int getNumNode() {
 		return numNode;
+	}
+	
+	public MorphologicalTree getInputTree() {
+		return tree;
+	}
+	
+
+	public int getNumLeaves(){
+		return getLeaves().size();
+	}
+	
+	public SimpleLinkedList<NodeLevelSets> getLeaves(){
+		if(listLeaves == null){
+			listLeaves = new SimpleLinkedList<NodeLevelSets>();
+			Queue<NodeMergedTree> fifo = new Queue<NodeMergedTree>();
+			fifo.enqueue(getRoot());
+			while(!fifo.isEmpty()){
+				NodeMergedTree node = fifo.dequeue();
+				if(node.children.isEmpty()){
+					listLeaves.add(node.info);
+				}else{
+					for(NodeMergedTree son: node.children){
+						fifo.enqueue(son);
+					}
+				}
+			}
+		}
+		return listLeaves;
 	}
 	
 	public void updateNodeToMergeAll(SimpleLinkedList<NodeLevelSets> nodes) {

@@ -393,9 +393,6 @@ public class BuilderComponentTreeByUnionFind implements BuilderComponentTree{
 		long tf = System.currentTimeMillis();
 		System.out.println("Tempo de execucao  "+ ((tf - ti) /1000.0)  + "s");
 		
-		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(ImageFactory.createReferenceGrayScaleImage(32, pixels5, width, height), AdjacencyRelation.getCircular(1), false);
-		tree.filteringByExtinctionValue(10, 0);
-		
 
 	}
 	

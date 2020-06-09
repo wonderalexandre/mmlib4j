@@ -5,9 +5,11 @@ import java.util.Arrays;
 
 import mmlib4j.datastruct.Queue;
 import mmlib4j.datastruct.SimpleLinkedList;
+import mmlib4j.filtering.AttributeFilters;
 import mmlib4j.images.GrayScaleImage;
+import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
-import mmlib4j.representation.tree.componentTree.ConnectedFilteringByComponentTree;
+import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageAlgebra;
 import mmlib4j.utils.ImageBuilder;
@@ -136,16 +138,18 @@ public class ComputerViterbi extends AttributeComputedIncrementally{
 	public static void main(String args[]) {
 		
 		GrayScaleImage input = ImageBuilder.openGrayImage(new File("/Users/gobber/Desktop/lena.jpg"));
-		ConnectedFilteringByComponentTree tree = new ConnectedFilteringByComponentTree(input, AdjacencyRelation.getAdjacency8(), true);
+		MorphologicalTree tree = new ComponentTree(input, AdjacencyRelation.getAdjacency8(), true);
 		
 		//tree.simplificationTreeByDirectRule(3000, Attribute.AREA);
-		tree.computerFunctionalAttribute();
-		tree.simplificationTreeBySubstractiveRule(3000, Attribute.FUNCTIONAL_ATTRIBUTE);
+		Attribute.loadAttribute(tree, Attribute.FUNCTIONAL_ATTRIBUTE);
+		AttributeFilters af = new AttributeFilters(tree);
+		af.simplificationTreeBySubstractiveRule(3000, Attribute.FUNCTIONAL_ATTRIBUTE);
 		GrayScaleImage output = tree.reconstruction();
 		//GrayScaleImage output = tree.filteringByPruningViterbi(3000, Attribute.AREA);
 		
-		ConnectedFilteringByComponentTree tree2 = new ConnectedFilteringByComponentTree(input, AdjacencyRelation.getAdjacency8(), true);
-		GrayScaleImage img2 = tree2.filteringByPruning(3000, Attribute.AREA);
+		MorphologicalTree tree2 = new ComponentTree(input, AdjacencyRelation.getAdjacency8(), true);
+		AttributeFilters af2 = new AttributeFilters(tree2);
+		GrayScaleImage img2 = af2.filteringByPruningMin(3000, Attribute.AREA);
 		
 		//System.out.println(ImageAlgebra.equals(output, img2));
 		System.out.println(ImageAlgebra.isLessOrEqual(output, input));

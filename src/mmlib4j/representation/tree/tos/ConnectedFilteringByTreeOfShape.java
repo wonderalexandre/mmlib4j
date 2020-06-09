@@ -3,12 +3,10 @@ package mmlib4j.representation.tree.tos;
 import java.io.File;
 
 import mmlib4j.datastruct.Queue;
-import mmlib4j.datastruct.SimpleArrayList;
 import mmlib4j.datastruct.SimpleLinkedList;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 import mmlib4j.representation.tree.InfoPrunedTree;
-import mmlib4j.representation.tree.MorphologicalTreeFiltering;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerAttributeBasedPerimeterExternal;
@@ -17,8 +15,6 @@ import mmlib4j.representation.tree.attribute.ComputerBasicAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerDistanceTransform;
-import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes;
-import mmlib4j.representation.tree.attribute.ComputerExtinctionValueTreeOfShapes.ExtinctionValueNode;
 import mmlib4j.utils.ImageAlgebra;
 import mmlib4j.utils.ImageBuilder;
 import mmlib4j.utils.Utils;
@@ -30,7 +26,7 @@ import mmlib4j.utils.Utils;
  *
  */
 @Deprecated
-public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements MorphologicalTreeFiltering{
+public class ConnectedFilteringByTreeOfShape extends TreeOfShape{
 	
 	private boolean hasComputerBasicAttribute = false;
 	private boolean hasComputerAttributeBasedPerimeterExternal = false;
@@ -232,7 +228,7 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			return filteringByPruning(attributeValue, type);
 	}
 	
-	
+	/*
 	SimpleArrayList<ExtinctionValueNode> extincaoPorNode;
 	ComputerExtinctionValueTreeOfShapes extinctionValue;
 	public GrayScaleImage filteringExtinctionValue(double attributeValue, int type){
@@ -284,24 +280,8 @@ public class ConnectedFilteringByTreeOfShape extends TreeOfShape implements Morp
 			System.out.println("Tempo de execucao [tree of shape - extinction value - direct]  "+ ((tf - ti) /1000.0)  + "s");
 		}
 		return imgOut;
-	}
+	}*/
 
-	@Override
-	public GrayScaleImage getImageFiltered(double attributeValue, int attributeType, int typeSimplification) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public InfoPrunedTree getInfoPrunedTree(double attributeValue, int attributeType, int typeSimplification) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void simplificationTree(double attributeValue, int attributeType, int typeSimplification) {
-		// TODO Auto-generated method stub		
-	}
 	
 	public void simplificationTreeByDirectRule(double attributeValue, int type){
 		boolean[] update = new boolean[numNodeIdMax];

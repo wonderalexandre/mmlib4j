@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.MmlibImageFactory;
 import mmlib4j.representation.graph.Edge;
 import mmlib4j.representation.graph.Graph;
 import mmlib4j.utils.AdjacencyRelation;
