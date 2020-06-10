@@ -9,6 +9,7 @@ import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.bitquads.ComputerAttributeBasedOnBitQuads;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
+import mmlib4j.representation.tree.pruningStrategy.PruningBasedMSER;
 
 
 /**
@@ -271,6 +272,10 @@ public class Attribute {
 			case Attribute.SUM_X: 
 			case Attribute.SUM_Y: 
 				ComputerBasicAttribute.loadAttribute(tree);
+				break;
+			
+			case Attribute.MSER:
+				ComputerMSER.loadAttribute(tree);
 				break;
 				
 			case Attribute.MOMENT_CENTRAL_02:

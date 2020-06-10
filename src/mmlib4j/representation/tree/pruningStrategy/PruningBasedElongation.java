@@ -3,6 +3,7 @@ package mmlib4j.representation.tree.pruningStrategy;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerMSER;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
@@ -13,9 +14,8 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class PruningBasedElongation implements MappingStrategyOfPruning{
+public class PruningBasedElongation extends FilteringBasedOnPruning{
 	
-	MorphologicalTree tree;
 	String selected = "";
 	
 	private int tMin=5;
@@ -26,7 +26,7 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 	private int attribute;
 	
 	public PruningBasedElongation(MorphologicalTree tree){
-		this.tree = tree;
+		super(tree, Attribute.AREA);
 		Attribute.loadAttribute(tree, Attribute.AREA);
 		Attribute.loadAttribute(tree, Attribute.MOMENT_ELONGATION);
 	}
@@ -47,28 +47,13 @@ public class PruningBasedElongation implements MappingStrategyOfPruning{
 
 		if(selected.equals("MSER")){
 			if(delta != 0){
-				PruningBasedMSER pruning = new PruningBasedMSER(tree, delta);
-				pruning.setAttribute(attribute);
-				pruning.setMaxArea(areaMax);
-				pruning.setMinArea(areaMin);
-				pruning.setMaxVariation(maxVariation);
-				selectedNodes = pruning.getMappingSelectedNodes();
+				ComputerMSER mser = new ComputerMSER(tree, attribute);
+				mser.setParameters(areaMin, areaMax, maxVariation, attribute);
+				selectedNodes = mser.computerMSER(delta);
 				if(Utils.debug)
 					System.out.println("PruningBasedElongation - " + selected);
 			}
-		}else if(selected.equals("MSER by rank")){
-			if(delta != 0){
-				PruningBasedMSER pruning = new PruningBasedMSER(tree, delta);
-				pruning.setAttribute(attribute);
-				pruning.setMaxArea(areaMax);
-				pruning.setMinArea(areaMin);
-				pruning.setMaxVariation(maxVariation);
-				selectedNodes = pruning.getMappingSelectedNodesRank();
-				if(Utils.debug)
-					System.out.println("PruningBasedElongation - " + selected);
-			}
-		}
-		else if(selected.equals("TBMR")){
+		}else if(selected.equals("TBMR")){
 			selectedNodes = new PruningBasedTBMR(tree, tMin, tMax).getMappingSelectedNodes();
 			if(Utils.debug)
 				System.out.println("PruningBasedElongation - " + selected);

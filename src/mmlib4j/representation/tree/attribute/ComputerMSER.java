@@ -7,52 +7,40 @@ import mmlib4j.gui.WindowImages;
 import mmlib4j.images.ColorImage;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
-import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.utils.AdjacencyRelation;
 import mmlib4j.utils.ImageBuilder;
 
-
-/**
- * MMLib4J - Mathematical Morphology Library for Java 
- * @author Wonder Alexandre Luz Alves
- *
- */
 public class ComputerMSER {
 	
-	private MorphologicalTree tree;
-	private NodeLevelSets ascendant[];
-	private NodeLevelSets descendants[];
-	private int num;
-	private Attribute stability[];
-	private double maxVariation = Double.MAX_VALUE;
+	protected MorphologicalTree tree;
+	protected Double q[];
+	
+	private double maxVariation = 0.5;
 	private int minArea=0;
 	private int maxArea=Integer.MAX_VALUE;
-	
 	private boolean estimateDelta = false;
+	private int attributeType;
+	private int num;
 	
-	private int attribute = Attribute.AREA;
+	private NodeLevelSets ascendant[];
+	private NodeLevelSets descendants[];
+	private Attribute stability[];
 	
-	public ComputerMSER(MorphologicalTree tree){
+
+	public ComputerMSER(MorphologicalTree tree, int attributeType){
 		this.tree = tree;
-		
-	}
-	
-	public void setEstimateDelta(boolean b){
-		estimateDelta = b;
+		this.attributeType = attributeType;
+		Attribute.loadAttribute(tree, attributeType);
 	}
 	
 	public void setMaxVariation(double d){
 		maxVariation = d;
 	}
 	
-	public void setAttribute(int t){
-		attribute = t;
-	}
-	
-	public void setMinArea(int a){ 
+	public void setMinArea(int a){
 		minArea = a;
 	}
 	
@@ -60,6 +48,77 @@ public class ComputerMSER {
 		maxArea = a;
 	}
 	
+	public void setEstimateDelta(boolean b){
+		estimateDelta = b;
+	}
+	
+	public void setAttribute(int t){
+		attributeType = t;
+	}
+
+	public void setParameters(int minArea, int maxArea, double maxVariation, int attribute){
+		this.minArea = minArea;
+		this.maxArea = maxArea;
+		this.maxVariation = maxVariation;
+		this.attributeType = attribute;
+	}
+
+	
+
+	public boolean[] computerMSER(int delta){
+		this.ascendant = new NodeLevelSets[tree.getNumNode()];
+		this.descendants = new NodeLevelSets[tree.getNumNode()];
+		boolean mser[] = new boolean[tree.getNumNode()];
+		this.num = 0;
+		for(NodeLevelSets node: tree.getListNodes()){
+			NodeLevelSets nodeAsc = getNodeAscendant(node, delta);
+			if(nodeAsc != null){
+				maxAreaDescendants(nodeAsc, node);
+				this.ascendant[node.getId()] = nodeAsc;
+			}
+		}
+		
+		this.stability = new Attribute[tree.getNumNode()];
+		for(NodeLevelSets node: tree.getListNodes()){
+			if(this.ascendant[node.getId()] != null && this.descendants[node.getId()] != null){
+				this.stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
+				
+			}
+			
+		}
+		
+		for(NodeLevelSets node: tree.getListNodes()){
+			if(this.stability[node.getId()] != null && this.stability[this.ascendant[node.getId()].getId() ] != null && this.stability[this.descendants[node.getId()].getId() ] != null){
+				double minStabilityDesc = this.stability[this.descendants[node.getId()].getId() ].getValue();
+				double minStabilityAsc = this.stability[this.ascendant[node.getId()].getId() ].getValue();
+				if(stability[node.getId()].getValue() < minStabilityDesc && this.stability[node.getId()].getValue() < minStabilityAsc){
+					if(stability[node.getId()].getValue() < maxVariation && node.getAttributeValue(Attribute.AREA) >= minArea && node.getAttributeValue(Attribute.AREA) <= maxArea){
+						mser[node.getId()] = true;
+						this.num++;
+					}
+				}
+			}
+		}
+		return mser;
+		
+	}
+
+	public int getNumNodes() {
+		return  num;
+	}
+
+	public SimpleLinkedList<NodeLevelSets> getListOfSelectedNodes(int delta){
+		boolean mapping[] = computerMSER(delta);
+		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<>(this.num);
+		for(NodeLevelSets node: tree.getListNodes()) {
+			if(mapping[node.getId()])
+				list.add(node);
+		}
+		return list;	
+	}
+	
+	
+
 	private NodeLevelSets getNodeAscendant(NodeLevelSets node, int h){
 		NodeLevelSets n = node;
 		if(estimateDelta)
@@ -90,7 +149,7 @@ public class ComputerMSER {
 	}
 	
 	
-	protected double getStabilityByBoundary(NodeLevelSets node){
+	private double getStabilityByBoundary(NodeLevelSets node){
 		if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
 			return (ascendant[node.getId()].getAttributeValue(Attribute.AREA) - descendants[node.getId()].getAttributeValue(Attribute.AREA)) / (double)node.getAttributeValue(Attribute.PERIMETER_EXTERNAL);
 		}
@@ -99,151 +158,47 @@ public class ComputerMSER {
 		}
 	}
 	
-	protected double getStability(NodeLevelSets node){
+	private double getStability(NodeLevelSets node){
 		if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
 			//return (ascendant[node.getId()].getArea() - descendants[node.getId()].getArea()) / (double) node.getArea();
-			return (ascendant[node.getId()].getAttributeValue(attribute) - descendants[node.getId()].getAttributeValue(attribute)) / (double) node.getAttributeValue(attribute);
+			//System.out.println(ascendant[node.getId()].getAttributeValue(attributeType));
+		
+			return (ascendant[node.getId()].getAttributeValue(attributeType) - descendants[node.getId()].getAttributeValue(attributeType)) / (double) node.getAttributeValue(attributeType);
 		}
 		else{
 			return Double.MAX_VALUE;
 		}
 	}
 	
-	public SimpleLinkedList<NodeLevelSets> getNodesByMSER(int delta){
-		
-		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<NodeLevelSets>();
-		ascendant = new NodeLevelSets[tree.getNumNode()];
-		descendants = new NodeLevelSets[tree.getNumNode()];
-
-		for(NodeLevelSets node: tree.getListNodes()){
-			NodeLevelSets nodeAsc = getNodeAscendant(node, delta);
-			if(nodeAsc != null){
-				maxAreaDescendants(nodeAsc, node);
-				ascendant[node.getId()] = nodeAsc;
-				
-			}
-		}
-		
-		stability = new Attribute[tree.getNumNode()];
-		for(NodeLevelSets node: tree.getListNodes()){
-			if(ascendant[node.getId()] != null && descendants[node.getId()] != null)
-				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
-		}
-		
-		boolean mser[] = new boolean[tree.getNumNode()];
-		for(NodeLevelSets node: tree.getListNodes()){
-			
-			if(stability[node.getId()] != null && stability[ ascendant[node.getId()].getId() ] != null && stability[ descendants[node.getId()].getId() ] != null){
-				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
-				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
-				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation && node.getAttributeValue(Attribute.AREA) > minArea && node.getAttributeValue(Attribute.AREA) < maxArea){
-						mser[node.getId()] = true;
-						list.add(node);
-					}
-					//System.out.print("*");
-				}
-				//System.out.println(q[node.getId()]);
-			}
-		}
-		return list;
-		
-	}
-	
-
-	
-	public boolean[] getMappingNodesByMSER(int delta){
-		ascendant = new NodeLevelSets[tree.getNumNode()];
-		descendants = new NodeLevelSets[tree.getNumNode()];
-		boolean mser[] = new boolean[tree.getNumNode()];
-		num = 0;
-		for(NodeLevelSets node: tree.getListNodes()){
-			NodeLevelSets nodeAsc = getNodeAscendant(node, delta);
-			if(nodeAsc != null){
-				maxAreaDescendants(nodeAsc, node);
-				ascendant[node.getId()] = nodeAsc;
-			}
-		}
-		
-		stability = new Attribute[tree.getNumNode()];
-		for(NodeLevelSets node: tree.getListNodes()){
-			if(ascendant[node.getId()] != null && descendants[node.getId()] != null){
-				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
-				
-			}
-			
-		}
-		
-		for(NodeLevelSets node: tree.getListNodes()){
-			if(stability[node.getId()] != null && stability[ ascendant[node.getId()].getId() ] != null && stability[ descendants[node.getId()].getId() ] != null){
-				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
-				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
-				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation && node.getAttributeValue(Attribute.AREA) >= minArea && node.getAttributeValue(Attribute.AREA) <= maxArea){
-						mser[node.getId()] = true;
-						num++;
-					}
-				}
-			}
-		}
-		return mser;
-		
-	}
-	
-	public int getNumMSER(){
-		return num;
-	}
-	
-	
-	public boolean[] getMappingNodesByMSER(int delta, InfoPrunedTree prunedTree){
-		ascendant = new NodeLevelSets[tree.getNumNode()];
-		descendants = new NodeLevelSets[tree.getNumNode()];
-		boolean mser[] = new boolean[tree.getNumNode()];
-		
-		for(NodeLevelSets node: tree.getListNodes()){
-			if(prunedTree.wasPruned(node))
-				continue;
-			
-			NodeLevelSets nodeAsc = getNodeAscendant(node, delta);
-			if(nodeAsc != null){
-				maxAreaDescendants(nodeAsc, node);
-				ascendant[node.getId()] = nodeAsc;
-			}
-		}
-		
-		stability = new Attribute[tree.getNumNode()];
-
-		for(NodeLevelSets node: tree.getListNodes()){
-			if(prunedTree.wasPruned(node))
-				continue;
-			
-			if(ascendant[node.getId()] != null && descendants[node.getId()] != null)
-				stability[node.getId()] = new Attribute(Attribute.MSER, getStability(node));
-		}
-		
-		for(NodeLevelSets node: tree.getListNodes()){
-			if(prunedTree.wasPruned(node))
-				continue;
-			
-			
-			if(stability[node.getId()] != null && stability[ ascendant[node.getId()].getId() ] != null && stability[ descendants[node.getId()].getId() ] != null){
-				double minStabilityDesc = stability[ descendants[node.getId()].getId() ].getValue();
-				double minStabilityAsc = stability[ ascendant[node.getId()].getId() ].getValue();
-				
-				if(stability[node.getId()].getValue() < minStabilityDesc && stability[node.getId()].getValue() < minStabilityAsc){
-					if(stability[node.getId()].getValue() < maxVariation){
-						mser[node.getId()] = true;
-					}
-				}
-			}
-		}
-		
-		return mser;
-		
-	}
-	
 	public Attribute[] getAttributeStability(){
 		return stability;
+	}
+	
+	public static void loadAttribute(MorphologicalTree tree) {
+		loadAttribute(tree, Attribute.AREA, 5);
+	}
+	
+	public static void loadAttribute(MorphologicalTree tree, int attributeType, int delta) {
+		ComputerMSER mser = new ComputerMSER(tree, attributeType);
+		mser.computerMSER(delta);
+		mser.addAttributeInNodes(tree.getListNodes());
+	}
+	
+	/**
+	 * 
+	 * 	This method add the computed attributes in the list of nodes passed by parameter.
+	 * 
+	 * 	@param listNodes A list of nodes.
+	 * 
+	 */
+	public void addAttributeInNodes(SimpleLinkedList<NodeLevelSets> listNodes){
+		for(NodeLevelSets node: listNodes){
+			addAttributeInNodes(node);
+		}
+	}
+	
+	public void addAttributeInNodes(NodeLevelSets node){
+		node.addAttribute(Attribute.MSER, stability[ node.getId() ]);
 	}
 	
 	public Double[] getScoreOfBranch(NodeLevelSets no){
@@ -259,7 +214,7 @@ public class ComputerMSER {
 	
 	public ColorImage getImageMSER(int delta){
 		ColorImage img = ImageFactory.createCopyColorImage(tree.getInputImage());
-		boolean b[] = getMappingNodesByMSER(delta);
+		boolean b[] = computerMSER(delta);
 		for(NodeLevelSets node: tree.getListNodes()){
 			if(b[node.getId()])
 				for(int p: node.getPixelsOfCC()){
@@ -271,21 +226,22 @@ public class ComputerMSER {
 
 	public ColorImage getPointImageMSER(int delta){
 		ColorImage img = ImageFactory.createCopyColorImage(tree.getInputImage());
-		for(NodeLevelSets node: getNodesByMSER(delta)){
+		for(NodeLevelSets node: getListOfSelectedNodes(delta)){
 			for(int p: node.getCompactNodePixels()){
 				img.setPixel(p, Color.RED.getRGB());
 			}
 		}
 		return img;
 	}
+
 	
 	public static void main(String args[]){
 		GrayScaleImage img = ImageBuilder.openGrayImage();
-		MorphologicalTree tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), false);
+		MorphologicalTree tree = new ComponentTree(img, AdjacencyRelation.getAdjacency8(), true);
 		//tree.extendedTree();
 		//.extendedTree();
 		
-		ComputerMSER m = new ComputerMSER(tree);
+		ComputerMSER m = new ComputerMSER(tree, Attribute.AREA);
 		WindowImages.show(m.getImageMSER(5));
 		
 		

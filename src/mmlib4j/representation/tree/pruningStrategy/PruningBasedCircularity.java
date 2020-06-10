@@ -3,6 +3,7 @@ package mmlib4j.representation.tree.pruningStrategy;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerMSER;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
@@ -13,10 +14,9 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class PruningBasedCircularity implements MappingStrategyOfPruning{
+public class PruningBasedCircularity extends FilteringBasedOnPruning{
 	
 	
-	MorphologicalTree tree;
 	String selected = "";
 	
 
@@ -28,7 +28,7 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 	private int tMax=Integer.MAX_VALUE;
 	
 	public PruningBasedCircularity(MorphologicalTree tree){
-		this.tree = tree;
+		super(tree, Attribute.AREA);
 		Attribute.loadAttribute(tree, Attribute.AREA);
 		Attribute.loadAttribute(tree, Attribute.CIRCULARITY);
 	}
@@ -49,23 +49,9 @@ public class PruningBasedCircularity implements MappingStrategyOfPruning{
 		
 		if(selected.equals("MSER")){
 			if(delta != 0){
-				PruningBasedMSER pruning = new PruningBasedMSER(tree, delta);
-				pruning.setAttribute(attribute);
-				pruning.setMaxArea(areaMax);
-				pruning.setMinArea(areaMin);
-				pruning.setMaxVariation(maxVariation);
-				selectedNodes = pruning.getMappingSelectedNodes();
-				if(Utils.debug)
-					System.out.println("PruningBasedCircularity - " + selected);
-			}
-		}else if(selected.equals("MSER by rank")){
-			if(delta != 0){
-				PruningBasedMSER pruning = new PruningBasedMSER(tree, delta);
-				pruning.setAttribute(attribute);
-				pruning.setMaxArea(areaMax);
-				pruning.setMinArea(areaMin);
-				pruning.setMaxVariation(maxVariation);
-				selectedNodes = pruning.getMappingSelectedNodesRank();
+				ComputerMSER mser = new ComputerMSER(tree, attribute);
+				mser.setParameters(areaMin, areaMax, maxVariation, attribute);
+				selectedNodes = mser.computerMSER(delta);
 				if(Utils.debug)
 					System.out.println("PruningBasedCircularity - " + selected);
 			}

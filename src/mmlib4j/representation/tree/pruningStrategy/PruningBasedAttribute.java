@@ -10,43 +10,34 @@ import mmlib4j.representation.tree.attribute.Attribute;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class PruningBasedAttribute implements MappingStrategyOfPruning{
+public class PruningBasedAttribute extends FilteringBasedOnPruning{
 
-	private MorphologicalTree tree;
-	private int typeParam;
-	private double valueParam;
-	private int num;
+	private double attributeValue;
 	
-	public PruningBasedAttribute(MorphologicalTree tree, int typeParam){
-		this.tree = tree;
-		this.typeParam = typeParam;
-		this.valueParam = Double.MAX_VALUE;
-		Attribute.loadAttribute(tree, typeParam);
+	public PruningBasedAttribute(MorphologicalTree tree, int attributeType, double attributeValue){
+		super(tree, attributeType);
+		this.attributeValue = attributeValue;
+		Attribute.loadAttribute(tree, attributeType);
 		
 	}
 	
-	public void setParameter(double v){
-		this.valueParam = v;
+	public void setParameter(double attributeValue){
+		this.attributeValue = attributeValue;
 	}
 	
 	public boolean[] getMappingSelectedNodes() {
-		this.num = 0;
+		super.num = 0;
 		boolean selected[] = new boolean[tree.getNumNode()];
 		for(NodeLevelSets node: tree.getListNodes()){
-			if(node.getParent() != null && node.getAttribute(typeParam).getValue() <= valueParam){
-				if ( node.getParent().getAttribute(typeParam).getValue() != node.getAttribute(typeParam).getValue()) {
+			if(node.getParent() != null && node.getAttribute(attributeType).getValue() <= attributeValue){
+				if ( node.getParent().getAttribute(attributeType).getValue() != node.getAttribute(attributeType).getValue()) {
 					selected[node.getId()] = true;
-					num++;
+					super.num++;
 				}
 			}
 		}
 		return selected;
 		
-	}
-	
-	
-	public int getNumOfPruning(){
-		return num;
 	}
 	
 

@@ -6,8 +6,6 @@ import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
-import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
 /**
@@ -15,106 +13,68 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class PruningBasedGradualTransition implements MappingStrategyOfPruning{
+public class PruningBasedGradualTransition extends FilteringBasedOnPruning{
 	
-	private MorphologicalTree inputTree;
-	private int typeParam;
 	private int delta;
-	private int num;
 	
-	public PruningBasedGradualTransition(MorphologicalTree tree, int typeParam, int delta){
-		this.inputTree = tree;
-		this.typeParam = typeParam;
+	
+	public PruningBasedGradualTransition(MorphologicalTree tree, int attributeType, int delta){
+		super(tree, attributeType);
 		this.delta = delta;
-		Attribute.loadAttribute(tree, typeParam);
+		Attribute.loadAttribute(tree, attributeType);
 	}
-	
+
 	
 	public boolean[] getMappingSelectedNodes(){
-		this.num = 0;
+		super.num = 0;
 		boolean selected[] = null;
-		if(inputTree instanceof ComponentTree){
-			ComponentTree tree = (ComponentTree) inputTree;
-			selected = new boolean[tree.getNumNode()];
-			for(NodeLevelSets node: tree.getListNodes()){
-				if(node.getParent() != null){
-					if ( node.getParent().getAttribute(typeParam).getValue() - node.getAttribute(typeParam).getValue()  > delta) {
-						selected[node.getId()] = true;
-						this.num = this.num + 1;
-					}
+		selected = new boolean[tree.getNumNode()];
+		for(NodeLevelSets node: tree.getListNodes()){
+			if(node.getParent() != null){
+				if ( node.getParent().getAttribute(attributeType).getValue() - node.getAttribute(attributeType).getValue()  > delta) {
+					selected[node.getId()] = true;
+					super.num = super.num + 1;
 				}
 			}
-		}else{
-			TreeOfShape tree = (TreeOfShape) inputTree;
-			selected = new boolean[tree.getNumNode()];
-			for(NodeLevelSets node: tree.getListNodes()){
-				if(node.getParent() != null){
-					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
-						selected[node.getId()] = true;
-						this.num = this.num + 1;
-					}
-				}
-			}
+		
 		}
 		return selected;
 	}
 	
-	public boolean[] getMappingSelectedNodes(InfoPrunedTree prunedTree){
-		boolean selected[] = null;
-		this.num = 0;
-		if(inputTree instanceof ComponentTree){
-			ComponentTree tree = (ComponentTree) inputTree;
-			selected = new boolean[tree.getNumNode()];
-			for(NodeLevelSets node: tree.getListNodes()){
-				if(node.getParent() != null && !prunedTree.wasPruned(node)){
-					if ( node.getParent().getAttribute(typeParam).getValue() - node.getAttribute(typeParam).getValue()  > delta) {
-						selected[node.getId()] = true;
-						this.num = this.num + 1;
-					}
-				}
-			}	
-		}else{
-			TreeOfShape tree = (TreeOfShape) inputTree;
-			selected = new boolean[tree.getNumNode()];
-			for(NodeLevelSets node: tree.getListNodes()){
-				if(node.getParent() != null && !prunedTree.wasPruned(node)){
-					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
-						selected[node.getId()] = true;
-						this.num = this.num + 1;
-					}
+
+	
+	/*
+	public InfoPrunedTree getPrunedTree(double attributeValue){
+		long ti = System.currentTimeMillis();
+		
+		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, typeParam, attributeValue);
+		
+		boolean resultPruning[] = this.getMappingSelectedNodes( );
+		SimpleLinkedList<NodeLevelSets> list = this.getListOfSelectedNodes( );
+		
+		for(NodeLevelSets node: list){
+			if(node.getAttributeValue(typeParam) <= attributeValue){ //poda				
+				for(NodeLevelSets song: node.getChildren()){
+					for(NodeLevelSets n: song.getNodesDescendants())
+						resultPruning[n.getId()] = true;	 
 				}
 			}
 		}
 		
-		return selected;
-	}
-
-	public int getNumOfPruning(){
-		return num;
-	}
-	
-	public SimpleLinkedList<NodeLevelSets> getListOfSelectedNodes( ){
-		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<NodeLevelSets>();
-		if(inputTree instanceof ComponentTree){
-			ComponentTree tree = (ComponentTree) inputTree;
-			for(NodeLevelSets node: tree.getListNodes()){
-				if(node.getParent() != null){
-					if ( node.getParent().getAttribute(typeParam).getValue() - node.getAttribute(typeParam).getValue()  > delta) {
-						list.add(node.getParent());
-					}
-				}
-			}
-		}else{
-			TreeOfShape tree = (TreeOfShape) inputTree;
-			for(NodeLevelSets node: tree.getListNodes()){
-				if(node.getParent() != null){
-					if ( node.getParent().getAttributeValue(typeParam) - node.getAttributeValue(typeParam)  > delta) {
-						list.add(node.getParent());
-					}
-				}
+		for(NodeLevelSets no: tree.getListNodes()){
+			if( ! resultPruning[no.getId()]  ){ //nao poda
+				prunedTree.addNodeNotPruned(no);
 			}
 		}
-		this.num = list.size();
-		return list;
-	}
+		
+		
+		if(Utils.debug){
+			long tf = System.currentTimeMillis();
+			System.out.println("Tempo de execucao [PruningBasedGradualTransition - filtering by pruning using gradual transition]  "+ ((tf - ti) /1000.0)  + "s");
+		}
+		
+		
+		return prunedTree;
+	}*/
+	
 }

@@ -56,8 +56,8 @@ public class UltimateGrainFilter {
 		this.imgInput = tree.getInputImage();
 	}
 	
-	public void computeUAO(int paramValueMax, int typeParam){
-		this.computeUGF(paramValueMax, typeParam, new PruningBasedAttribute(tree, typeParam).getMappingSelectedNodes());	
+	public void computeUGF(int paramValueMax, int typeParam){
+		this.computeUGF(paramValueMax, typeParam, new PruningBasedAttribute(tree, typeParam, paramValueMax).getMappingSelectedNodes());	
 	}
 	
 	public void computeUGF(int paramValueMax, int typeParam, boolean mapNodePruning[]){

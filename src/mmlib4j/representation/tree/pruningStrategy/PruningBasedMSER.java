@@ -1,10 +1,10 @@
 package mmlib4j.representation.tree.pruningStrategy;
 
+import mmlib4j.representation.tree.InfoPrunedTree;
 import mmlib4j.representation.tree.MorphologicalTree;
+import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
 import mmlib4j.representation.tree.attribute.ComputerMSER;
-import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.tos.TreeOfShape;
 
 
 /**
@@ -12,145 +12,75 @@ import mmlib4j.representation.tree.tos.TreeOfShape;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class PruningBasedMSER implements MappingStrategyOfPruning{
+public class PruningBasedMSER extends FilteringBasedOnPruning{
 
-	protected MorphologicalTree tree;
-	protected int num;
-	protected Double q[];
 	
-	protected int delta;
-	private double maxVariation = Double.MAX_VALUE;
-	private int minArea=0;
-	private int maxArea=Integer.MAX_VALUE;
-	private int attribute;
-	private boolean estimateDelta = false;
+	private ComputerMSER mser;
+	private int delta;
 	
-	public PruningBasedMSER(){
-		Attribute.loadAttribute(tree, Attribute.AREA);
-	}
 	
-	public void setMaxVariation(double d){
-		maxVariation = d;
-	}
-	
-	public void setMinArea(int a){
-		minArea = a;
-	}
-	
-	public void setMaxArea(int a){
-		maxArea = a;
-	}
-	
-	public void setEstimateDelta(boolean b){
-		estimateDelta = b;
-	}
-	
-	public void setAttribute(int t){
-		attribute = t;
-	}
-
-	public void setParameters(int minArea, int maxArea, double maxVariation, int attribute){
-		this.minArea = minArea;
-		this.maxArea = maxArea;
-		this.maxVariation = maxVariation;
-		this.attribute = attribute;
-	}
-	
-	public PruningBasedMSER(MorphologicalTree tree, int delta){
-		this.tree = tree;
+	public PruningBasedMSER(MorphologicalTree tree, int attributeType, int delta){
+		super(tree, attributeType);
 		this.delta = delta;
+		mser = new ComputerMSER(tree, attributeType);
 	}
+
+	public void setParameters(int minArea, int maxArea, double maxVariation){
+		mser.setParameters(minArea, maxArea, maxVariation, attributeType);
+	}
+	
 
 	public boolean[] getMappingSelectedNodesRank() {
-		if(tree instanceof ComponentTree){
-			this.num = 0;
-			int rank[] = new int[tree.getNumNode()];
-			boolean rankSelected[] = new boolean[tree.getNumNode()];
-			ComputerMSER mser = new ComputerMSER( (ComponentTree) tree);
-			mser.setMaxArea(maxArea);
-			mser.setMinArea(minArea);
-			mser.setMaxVariation(maxVariation);
-			mser.setAttribute(attribute);
-			mser.setEstimateDelta(estimateDelta);
-			for(int i=1; i < 50; i++){
-				boolean result[] = mser.getMappingNodesByMSER(i);
-				for(int k=0; k < result.length; k++){
-					rank[k] += result[k]? 1:0;
-				}
+		super.num = 0;
+		int rank[] = new int[tree.getNumNode()];
+		boolean rankSelected[] = new boolean[tree.getNumNode()];
+		for(int i=1; i < 50; i++){
+			boolean result[] = mser.computerMSER(i);
+			for(int k=0; k < result.length; k++){
+				rank[k] += result[k]? 1:0;
 			}
-			for(int k=0; k < rank.length; k++){
-				if(rank[k] > delta){
-					rankSelected[k] = true;
-					this.num++;
-				}
+		}
+		for(int k=0; k < rank.length; k++){
+			if(rank[k] > delta){
+				rankSelected[k] = true;
+				this.num++;
 			}
+		}
 			
-			return rankSelected;
-		}
-		else if(tree instanceof TreeOfShape){
-			int rank[] = new int[tree.getNumNode()];
-			boolean rankSelected[] = new boolean[tree.getNumNode()];
-			this.num = 0;
-			ComputerMSER mser = new ComputerMSER(tree);
-			mser.setMaxArea(maxArea);
-			mser.setMinArea(minArea);
-			mser.setMaxVariation(maxVariation);
-			mser.setAttribute(attribute);
-			mser.setEstimateDelta(estimateDelta);
-			for(int i=0; i < 50; i++){
-				boolean result[] = mser.getMappingNodesByMSER(i);
-				for(int k=0; k < result.length; k++){
-					rank[k] += result[k]? 1:0;
-				}
-			}
-			for(int k=0; k < rank.length; k++){
-				if(rank[k] > delta){
-					rankSelected[k] = true;
-					this.num++;
-				}
-			}
-			return rankSelected;
-		}
-		else{
-			return null;
-		}
+		return rankSelected;
+		
 	}
 	
 	public boolean[] getMappingSelectedNodes() {
-		if(tree instanceof ComponentTree){
-			ComputerMSER mser = new ComputerMSER( (ComponentTree) tree);
-			mser.setMaxArea(maxArea);
-			mser.setMinArea(minArea);
-			mser.setMaxVariation(maxVariation);
-			mser.setAttribute(attribute);
-			mser.setEstimateDelta(estimateDelta);
-			boolean result[] = mser.getMappingNodesByMSER(delta);
-			this.num = mser.getNumMSER();
-			return result;
-		}
-		else if(tree instanceof TreeOfShape){
-			ComputerMSER mser = new ComputerMSER(tree);
-			mser.setMaxArea(maxArea);
-			mser.setMinArea(minArea);
-			mser.setMaxVariation(maxVariation);
-			mser.setAttribute(attribute);
-			mser.setEstimateDelta(estimateDelta);
-			boolean result[] = mser.getMappingNodesByMSER(delta);
-			this.num = mser.getNumMSER();
-			return result;
-		}
-		else{
-			return null;
-		}
-	}
-	
-	
-	
-	public int getNumOfPruning(){
-		return num;
+		boolean result[] = mser.computerMSER(delta);
+		super.num = mser.getNumNodes();
+		return result;
 	}
 	
 
+	
+	public boolean[] getMappingSelectedNodesInPrunedTree(int localDelta, InfoPrunedTree prunedTree){
+		boolean selectedInPrunedTree[] = new boolean[tree.getNumNode()];
+		boolean selected[] = mser.computerMSER(localDelta);
+		
+		for(NodeLevelSets node: tree.getListNodes()){
+			if( !prunedTree.wasPruned(node) ){
+				if ( selected[node.getId()] ) {
+					selectedInPrunedTree[node.getId()] = true;
+				}
+			}
+		}	
+		
+		return selected;
+	}
+	
+	public Attribute[] getAttributeStability(){
+		return mser.getAttributeStability();
+	}
+	
+	public Double[] getScoreOfBranch(NodeLevelSets no){
+		return mser.getScoreOfBranch(no);
+	}
 
 	
 }

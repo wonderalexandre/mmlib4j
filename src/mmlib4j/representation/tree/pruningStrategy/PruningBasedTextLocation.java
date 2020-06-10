@@ -3,6 +3,7 @@ package mmlib4j.representation.tree.pruningStrategy;
 import mmlib4j.representation.tree.MorphologicalTree;
 import mmlib4j.representation.tree.NodeLevelSets;
 import mmlib4j.representation.tree.attribute.Attribute;
+import mmlib4j.representation.tree.attribute.ComputerMSER;
 import mmlib4j.representation.tree.componentTree.ComponentTree;
 import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
@@ -13,21 +14,19 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class PruningBasedTextLocation implements MappingStrategyOfPruning{
+public class PruningBasedTextLocation extends FilteringBasedOnPruning{
 	
-	MorphologicalTree tree;
 	String selected;
 	
 	protected int delta;
 	private double maxVariation = Double.MAX_VALUE;
 	private int attribute;
-	private boolean estimateDelta=false;
 	
 	private int tMin=5;
 	private int tMax=Integer.MAX_VALUE;
 	
 	public PruningBasedTextLocation(MorphologicalTree tree){
-		this.tree = tree;
+		super(tree, Attribute.AREA);
 		Attribute.loadAttribute(tree, Attribute.AREA);
 		Attribute.loadAttribute(tree, Attribute.HEIGHT);
 		Attribute.loadAttribute(tree, Attribute.WIDTH);
@@ -41,10 +40,7 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 		this.tMin = tMin;
 		this.tMax = tMax;
 	}
-	
-	public void setEstimateDelta(boolean b){
-		estimateDelta = b;
-	}
+
 	
 	public void setSelected(String s){
 		selected = s;
@@ -61,30 +57,13 @@ public class PruningBasedTextLocation implements MappingStrategyOfPruning{
 		
 		if(selected.equals("MSER")){
 			if(delta != 0){
-				PruningBasedMSER pruning = new PruningBasedMSER(tree, delta);
-				pruning.setAttribute(attribute);
-				pruning.setMaxArea(areaMax);
-				pruning.setMinArea(areaMin);
-				pruning.setMaxVariation(maxVariation);
-				pruning.setEstimateDelta(estimateDelta);
-				selectedNodes = pruning.getMappingSelectedNodes();
+				ComputerMSER mser = new ComputerMSER(tree, attribute);
+				mser.setParameters(areaMax, areaMax, maxVariation, attribute);
+				selectedNodes = mser.computerMSER(delta);
 				if(Utils.debug)
 					System.out.println("PruningBasedTextLocation - " + selected);
 			}
-		}else if(selected.equals("MSER by rank")){
-			if(delta != 0){
-				PruningBasedMSER pruning = new PruningBasedMSER(tree, delta);
-				pruning.setAttribute(attribute);
-				pruning.setMaxArea(areaMax);
-				pruning.setMinArea(areaMin);
-				pruning.setMaxVariation(maxVariation);
-				pruning.setEstimateDelta(estimateDelta);
-				selectedNodes = pruning.getMappingSelectedNodesRank();
-				if(Utils.debug)
-					System.out.println("PruningBasedTextLocation - " + selected);
-			}
-		}
-		else if(selected.equals("TBMR")){
+		}else if(selected.equals("TBMR")){
 			selectedNodes = new PruningBasedTBMR(tree, tMin, tMax).getMappingSelectedNodes();
 			if(Utils.debug)
 				System.out.println("PruningBasedTextLocation - " + selected);

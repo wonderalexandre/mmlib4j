@@ -17,14 +17,9 @@ import mmlib4j.representation.tree.attribute.ComputerBasicAttribute;
 import mmlib4j.representation.tree.attribute.ComputerBasicAttributeUpdate;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttribute;
 import mmlib4j.representation.tree.attribute.ComputerCentralMomentAttributeUpdate;
-import mmlib4j.representation.tree.attribute.ComputerMSER;
-import mmlib4j.representation.tree.attribute.ComputerTbmrComponentTree;
 import mmlib4j.representation.tree.attribute.ComputerViterbi;
 import mmlib4j.representation.tree.attribute.mergetree.ComputerBasicAttributeMergeTree;
 import mmlib4j.representation.tree.attribute.mergetree.ComputerCentralMomentAttributeMergeTree;
-import mmlib4j.representation.tree.componentTree.ComponentTree;
-import mmlib4j.representation.tree.pruningStrategy.PruningBasedGradualTransition;
-import mmlib4j.representation.tree.tos.TreeOfShape;
 import mmlib4j.utils.Utils;
 
 /**
@@ -53,11 +48,11 @@ public class AttributeFilters {
 	public final static int SIMPLIFY_DIRECT = 8;
 	public final static int SIMPLIFY_SUBTRACTIVE = 9;
 	
-	private MorphologicalTree tree;	
+	protected MorphologicalTree tree;	
 	
-	boolean[] update;		
-	boolean[] modified;
-	boolean[] prevupdate;
+	protected boolean[] update;		
+	protected boolean[] modified;
+	protected boolean[] prevupdate;
 	
 	public AttributeFilters(MorphologicalTree tree) {
 		this.tree = tree;		
@@ -711,102 +706,6 @@ public class AttributeFilters {
 	}
 
 
-	public InfoPrunedTree getPrunedTreeByMSER(double attributeValue, int type, int delta){
-		long ti = System.currentTimeMillis();
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, type, attributeValue);
-		
-		ComputerMSER mser = new ComputerMSER(tree);
-		SimpleLinkedList<NodeLevelSets> list = mser.getNodesByMSER(delta);
-		
-		boolean resultPruning[] = new boolean[tree.getNumNode()];
-		for(NodeLevelSets node: list){
-			if(node.getAttributeValue(type) <= attributeValue){ //poda				
-				for(NodeLevelSets song: node.getChildren()){
-					for(NodeLevelSets n: song.getNodesDescendants())
-						resultPruning[n.getId()] = true;	 
-				}
-			}
-		}
-		
-		for(NodeLevelSets no: tree.getListNodes()){
-			if( ! resultPruning[no.getId()]  ){ //nao poda
-				prunedTree.addNodeNotPruned(no);
-			}
-		}
-		
-		
-		if(Utils.debug){
-			long tf = System.currentTimeMillis();
-			System.out.println("Tempo de execucao [AttributeFilter - filtering by pruning mser]  "+ ((tf - ti) /1000.0)  + "s");
-		}
-		
-		return prunedTree;
-	}
 	
 	
-	
-	public InfoPrunedTree getPrunedTreeByGradualTransition(double attributeValue, int type, int delta){
-		long ti = System.currentTimeMillis();
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, type, attributeValue);
-		PruningBasedGradualTransition gt = new PruningBasedGradualTransition(tree, type, delta); 
-		boolean resultPruning[] = gt.getMappingSelectedNodes( );
-		SimpleLinkedList<NodeLevelSets> list = gt.getListOfSelectedNodes( );
-		for(NodeLevelSets obj: list){
-			NodeLevelSets node = (NodeLevelSets) obj;
-			if(node.getAttributeValue(type) <= attributeValue){ //poda				
-				for(NodeLevelSets song: node.getChildren()){
-					for(NodeLevelSets n: song.getNodesDescendants())
-						resultPruning[n.getId()] = true;	 
-				}
-			}
-		}
-		
-		for(NodeLevelSets no: tree.getListNodes()){
-			if( ! resultPruning[no.getId()]  ){ //nao poda
-				prunedTree.addNodeNotPruned(no);
-			}
-		}
-		
-		
-		if(Utils.debug){
-			long tf = System.currentTimeMillis();
-			System.out.println("Tempo de execucao [AttributeFilter - filtering by pruning gradual transition]  "+ ((tf - ti) /1000.0)  + "s");
-		}
-		
-		
-		return prunedTree;
-	}
-	
-	public InfoPrunedTree getPrunedTreeByTBMR(double attributeValue, int type, int tMin, int tMax){
-		long ti = System.currentTimeMillis();
-		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, type, attributeValue);
-		if(tree instanceof TreeOfShape) 
-			throw new UnsupportedOperationException("This method was implemented only for the component tree.");
-		ComputerTbmrComponentTree tbmr = new ComputerTbmrComponentTree((ComponentTree) tree);
-		boolean resultPruning[] = new boolean[tree.getNumNode()];
-		boolean result[] = tbmr.getSelectedNode(tMin, tMax);
-		for(NodeLevelSets node: tree.getListNodes()){
-			if(node.getAttributeValue(type) <= attributeValue && result[node.getId()]){ //poda				
-				for(NodeLevelSets song: node.getChildren()){
-					for(NodeLevelSets n: song.getNodesDescendants())
-						resultPruning[n.getId()] = true;	 
-				}
-			}
-		}
-		
-		for(NodeLevelSets no: tree.getListNodes()){
-			if( ! resultPruning[no.getId()]  ){ //nao poda
-				prunedTree.addNodeNotPruned(no);
-			}
-		}
-		
-		
-		if(Utils.debug){
-			long tf = System.currentTimeMillis();
-			System.out.println("Tempo de execucao [Componente tree - filtering by pruning mser]  "+ ((tf - ti) /1000.0)  + "s");
-		}
-		
-		return prunedTree;
-	}
-
 }

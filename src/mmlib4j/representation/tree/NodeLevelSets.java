@@ -40,7 +40,7 @@ public abstract class NodeLevelSets {
 	//protected SimpleLinkedList<NodeLevelSets> adjcencyNodes = new SimpleLinkedList<NodeLevelSets>();
 	protected boolean isClone = false;
 	protected int countPixelInFrame;
-	private int area;
+	//private int area;
 	
 	
 	public abstract NodeLevelSets getClone();
@@ -523,8 +523,8 @@ public abstract class NodeLevelSets {
 		this.numDescendent = numDescendent;
 	}
 
-	public void setArea(int area) {
+	/*public void setArea(int area) {
 		this.area = area;
-	}
+	}*/
 	
 }
