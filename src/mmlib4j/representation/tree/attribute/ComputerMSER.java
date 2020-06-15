@@ -63,7 +63,12 @@ public class ComputerMSER {
 		this.attributeType = attribute;
 	}
 
-	
+	public NodeLevelSets[] getAscendant() {
+		return ascendant;
+	}
+	public NodeLevelSets[] getDescendants() {
+		return descendants;
+	}
 
 	public boolean[] computerMSER(int delta){
 		this.ascendant = new NodeLevelSets[tree.getNumNode()];
@@ -109,7 +114,7 @@ public class ComputerMSER {
 
 	public SimpleLinkedList<NodeLevelSets> getListOfSelectedNodes(int delta){
 		boolean mapping[] = computerMSER(delta);
-		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<>(this.num);
+		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<NodeLevelSets>(this.num);
 		for(NodeLevelSets node: tree.getListNodes()) {
 			if(mapping[node.getId()])
 				list.add(node);

@@ -47,7 +47,7 @@ public class ComputerFunctionalAttribute {
 			}
 		}
 		
-		PriorityQueueHeap<NodeMergedTree> queue = new PriorityQueueHeap<>(numNode);
+		PriorityQueueHeap<NodeMergedTree> queue = new PriorityQueueHeap<NodeMergedTree>(numNode);
 		if(useHeuristic) { 
 			for(int i = 1 ; i < numNode ; i++)
 				queue.add(mTree.getMap()[i], mTree.getAttribute(mTree.getMap()[i], Attribute.SUM_GRAD_CONTOUR));		

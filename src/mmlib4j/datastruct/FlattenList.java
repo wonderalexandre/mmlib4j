@@ -8,7 +8,7 @@ public class FlattenList<T> implements Flatten<T> {
 	private int size = 0;
 	
 	public FlattenList() {
-		lists = new SimpleLinkedList<>();		
+		lists = new SimpleLinkedList<Flatten<T>>();		
 	}
 	
 	public void add(Flatten<T> structure) {

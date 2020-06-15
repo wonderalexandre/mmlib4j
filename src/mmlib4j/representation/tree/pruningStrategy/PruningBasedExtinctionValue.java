@@ -17,28 +17,37 @@ import mmlib4j.utils.Utils;
  * @author Wonder Alexandre Luz Alves
  *
  */
-public class PruningBasedExtinctionValue {//implements MappingStrategyOfPruning{
+public class PruningBasedExtinctionValue extends FilteringBasedOnPruning{
 
+	private int deltaMin;
+	private int deltaMax;
 	
-	private MorphologicalTree tree;
-	
-	public PruningBasedExtinctionValue(MorphologicalTree tree){
-		this.tree = tree;
+	public PruningBasedExtinctionValue(MorphologicalTree tree, int attributeType, int deltaMin, int deltaMax){
+		super(tree, attributeType);
+		this.deltaMin = deltaMin;
+		this.deltaMax = deltaMax;
+	}
+	public PruningBasedExtinctionValue(MorphologicalTree tree, int attributeType, int deltaMax){
+		this(tree, attributeType, 0, deltaMax);
+	}
+	public PruningBasedExtinctionValue(MorphologicalTree tree, int attributeType){
+		this(tree, attributeType, 0, (int) tree.getRoot().getAttributeValue(attributeType) );
 	}
 	
-	
-	public boolean[] getMappingSelectedNodes(int typeParam, int deltaMin, int deltaMax) {
-		int num = 0;
+
+	@Override
+	public boolean[] getMappingSelectedNodes() {
+		super.num = 0;
 		boolean selected[] = new boolean[tree.getNumNodeIdMax()];
-		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionValue(typeParam);
+		SimpleArrayList<ExtinctionValueNode> extincaoPorNode = getExtinctionValue(super.attributeType);
 		for(ExtinctionValueNode ev: extincaoPorNode){
 			
 			if(ev.extinctionValue >= deltaMin && ev.extinctionValue <= deltaMax){
 				selected[ev.nodeAncestral.getId()] = true;
-				for(NodeLevelSets filho:  ev.nodeAncestral.getChildren()){
+				/*for(NodeLevelSets filho:  ev.nodeAncestral.getChildren()){
 					selected[filho.getId()] = true;
 					num = num + 1;
-				}
+				}*/
 			}
 		}
 		return selected;
@@ -200,5 +209,5 @@ public class PruningBasedExtinctionValue {//implements MappingStrategyOfPruning{
 			else return 0;
 		} 
 	}
-	
+
 }

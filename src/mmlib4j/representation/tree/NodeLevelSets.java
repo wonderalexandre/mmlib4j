@@ -220,7 +220,7 @@ public abstract class NodeLevelSets {
 	 * @param n
 	 * @return
 	 */
-	public Iterable<NodeLevelSets> getNodesDescendantsOfMainBranch(int n){
+	public Iterable<NodeLevelSets> getNodesDescendantsOfMainBranch(final int n){
 		final NodeLevelSets node = this;
 		
 		return new Iterable<NodeLevelSets>() {
@@ -258,7 +258,7 @@ public abstract class NodeLevelSets {
 	 * @param n
 	 * @return
 	 */
-	public Iterable<NodeLevelSets> getNodesAncestors(int n){
+	public Iterable<NodeLevelSets> getNodesAncestors(final int n){
 		final NodeLevelSets node = this;
 		
 		return new Iterable<NodeLevelSets>() {

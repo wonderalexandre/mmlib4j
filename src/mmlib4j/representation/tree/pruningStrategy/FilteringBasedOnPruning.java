@@ -36,7 +36,7 @@ public abstract class FilteringBasedOnPruning {
 	
 	public SimpleLinkedList<NodeLevelSets> getListOfSelectedNodes(){
 		boolean mapping[] = getMappingSelectedNodes();
-		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<>(num);
+		SimpleLinkedList<NodeLevelSets> list = new SimpleLinkedList<NodeLevelSets>(num);
 		for(NodeLevelSets node: tree.getListNodes()) {
 			if(mapping[node.getId()])
 				list.add(node);

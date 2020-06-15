@@ -151,7 +151,7 @@ public class SimpleLinkedList<T> implements Iterable<T>, Flatten<T> {
 	}
 	
 	public SimpleLinkedList<T> copy(){
-		SimpleLinkedList<T> copy = new SimpleLinkedList<>();		
+		SimpleLinkedList<T> copy = new SimpleLinkedList<T>();		
 		NodeLL<T> iter = first;				
 		while(iter != null) {
 			T v = iter.value;
@@ -218,7 +218,7 @@ public class SimpleLinkedList<T> implements Iterable<T>, Flatten<T> {
 	}    	    		  
      
     public static void main(String args[]){
-    	 Stack<Integer> l = new Stack<>();
+    	 Stack<Integer> l = new Stack<Integer>();
     	 l.push(1);
     	 l.push(2);
     	 l.push(3);

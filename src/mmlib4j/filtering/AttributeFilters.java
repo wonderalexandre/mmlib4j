@@ -280,7 +280,7 @@ public class AttributeFilters {
 			}
 		} else {
 			// First compute offsets and update	
-			SimpleLinkedList<NodeLevelSets> nodesToMerge = new SimpleLinkedList<>();
+			SimpleLinkedList<NodeLevelSets> nodesToMerge = new SimpleLinkedList<NodeLevelSets>();
 			for(NodeMergedTree node_ : mTree.skipRoot()) {						
 				if(mTree.getAttribute(node_, type) < attributeValue) {	
 					offset[node_.getId()] = offset[node_.getParent().getId()] - node_.getLevel() + node_.getParent().getLevel();				

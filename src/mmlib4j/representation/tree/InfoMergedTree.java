@@ -124,7 +124,7 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	}
 	
 	public Iterable<NodeMergedTree> skipRoot() {		
-		Queue<NodeMergedTree> queue = new Queue<InfoMergedTree.NodeMergedTree>();
+		final Queue<NodeMergedTree> queue = new Queue<InfoMergedTree.NodeMergedTree>();
 		for(NodeMergedTree node : getRoot().getChildren()) {
 			queue.enqueue(node);
 		}
@@ -152,7 +152,7 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	
 	@Override
 	public Iterator<NodeMergedTree> iterator() {
-		Queue<NodeMergedTree> queue = new Queue<InfoMergedTree.NodeMergedTree>();
+		final Queue<NodeMergedTree> queue = new Queue<InfoMergedTree.NodeMergedTree>();
 		queue.enqueue(getRoot());
 		return new Iterator<NodeMergedTree>() {
 			NodeMergedTree node_;
@@ -191,7 +191,7 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 	public class NodeMergedTree {		
 				
 		SimpleLinkedList<NodeMergedTree> children = new SimpleLinkedList<NodeMergedTree>();		
-		FlattenList<Integer> pixels = new FlattenList<>();				
+		FlattenList<Integer> pixels = new FlattenList<Integer>();				
 		HashMap<Integer, Attribute> attributes;
 		boolean isAttrModified = false;
 		NodeMergedTree parent;
@@ -284,7 +284,7 @@ public abstract class InfoMergedTree implements Iterable<InfoMergedTree.NodeMerg
 		}
 		
 		public Iterable<NodeMergedTree> getNodesDescendants(){
-			final Queue<NodeMergedTree> fifo = new Queue<>();
+			final Queue<NodeMergedTree> fifo = new Queue<NodeMergedTree>();
 			fifo.enqueue(this);
 			
 			return new Iterable<NodeMergedTree>() {
