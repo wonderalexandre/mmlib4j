@@ -95,18 +95,31 @@ public class PruningBasedMSER extends FilteringBasedOnPruning{
 		Attribute stability[] = mser.getAttributeStability();
 		boolean result[] = new boolean[tree.getNumNode()];
 		for(NodeLevelSets node: tree.getListNodes()){
-			
-			if(selectedPruned[node.getId()] && stability[node.getId()] != null){ //node pruned
+			if(selectedPruned[node.getId()] && stability[node.getId()] != null && node.getAttributeValue(attributeType) <= attributeValue){ //node pruned
 				double min = stability[node.getId()].getValue();
-				NodeLevelSets nodeStabilityMin = node; 
-				for(NodeLevelSets nodeDesc: node.getNodesDescendants()) {
-					if(stability[nodeDesc.getId()] != null &&  Math.abs( nodeDesc.getLevel() - node.getLevel() ) < 10 && stability[nodeDesc.getId()].getValue() < min) {
-						min = stability[nodeDesc.getId()].getValue();
-						nodeStabilityMin = nodeDesc;
-					}
+				
+				NodeLevelSets descMinStabilityDesc = mser.descendantNodeWithMinStability(node);
+				NodeLevelSets ancMinStabilityAsc = mser.ascendantNodeWithMinStability(node);
+				double minDesc = Double.MIN_VALUE;
+				double minAnc = Double.MIN_VALUE;
+				if(descMinStabilityDesc != null) {
+					minDesc = stability[descMinStabilityDesc.getId()].getValue();
 				}
-				result[nodeStabilityMin.getId()] = true;
+				if(descMinStabilityDesc != null) {
+					minAnc = stability[ancMinStabilityAsc.getId()].getValue();
+				}
+				
+				if(min >= minDesc && min >= minAnc) {
+					result[node.getId()] = true;
+				}else if (minDesc >= min && minDesc >= minAnc) {
+					result[descMinStabilityDesc.getId()] = true;
+				}else {
+					result[ancMinStabilityAsc.getId()] = true;
+				}
+				
+				
 			}
+			
 		}
 		
 		
@@ -116,11 +129,10 @@ public class PruningBasedMSER extends FilteringBasedOnPruning{
 		InfoPrunedTree prunedTree = new InfoPrunedTree(tree, attributeType, attributeValue);
 		
 		for(NodeLevelSets node: tree.getListNodes()){
-			if(node.getAttributeValue(attributeType) <= attributeValue && result[node.getId()]){ //poda				
-				for(NodeLevelSets song: node.getChildren()){
-					for(NodeLevelSets n: song.getNodesDescendants())
-						resultPruning[n.getId()] = true;	 
-				}
+			if(result[node.getId()]){ //poda				
+				for(NodeLevelSets n: node.getNodesDescendants())
+					resultPruning[n.getId()] = true;	 
+				
 			}
 		}
 		

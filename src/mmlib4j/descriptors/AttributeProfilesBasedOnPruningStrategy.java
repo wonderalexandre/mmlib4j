@@ -21,6 +21,11 @@ public class AttributeProfilesBasedOnPruningStrategy {
 	public final static int PRUNING_BASED_ON_TBMR = 4;
 	public final static int PRUNING_BASED_ON_EXTINCTION_VALUE = 5;
 	
+	static double paramValue = 5;
+	
+	public static void setParameterValue(double param) {
+		paramValue = param;
+	}
 	
 	public static GrayScaleImage[] getAttributeProfile(GrayScaleImage img, int attributeType, double thresholds[]) {
 		return getAttributeProfile(img, attributeType, thresholds, AttributeFilters.PRUNING_MIN);
@@ -32,14 +37,15 @@ public class AttributeProfilesBasedOnPruningStrategy {
 			return new FilteringStrategyBasedOnPruning() {				
 				@Override
 				public GrayScaleImage filterBy(MorphologicalTree tree, int attributeType, double attributeValue) {
-					return new PruningBasedMSER(tree, attributeType, 5).getPrunedTree(attributeValue).reconstruction();
+					int delta = (int) paramValue;
+					return new PruningBasedMSER(tree, attributeType, delta).getPrunedTree(attributeValue).reconstruction();
 				}
 			};
 		case PRUNING_BASED_ON_MSER_ADAPTER:
 			return new FilteringStrategyBasedOnPruning() {				
 				@Override
 				public GrayScaleImage filterBy(MorphologicalTree tree, int attributeType, double attributeValue) {
-					int delta = 5;
+					int delta = (int) paramValue;
 					return new PruningBasedMSER(tree, attributeType, delta).getPrunedTreeByAdaptativeThreshold(attributeValue).reconstruction();
 				}
 			};
@@ -47,7 +53,7 @@ public class AttributeProfilesBasedOnPruningStrategy {
 			return new FilteringStrategyBasedOnPruning() {				
 				@Override
 				public GrayScaleImage filterBy(MorphologicalTree tree, int attributeType, double attributeValue) {
-					int delta = 5;
+					int delta = (int) paramValue;
 					return new PruningBasedGradualTransition(tree, attributeType, delta).getPrunedTree(attributeValue).reconstruction();
 				}
 			};

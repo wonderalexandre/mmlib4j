@@ -107,6 +107,20 @@ public class ComputerMSER {
 		return mser;
 		
 	}
+	
+	public NodeLevelSets descendantNodeWithMinStability(NodeLevelSets node) {
+		if( this.stability[this.descendants[node.getId()].getId() ] != null)
+			return this.descendants[node.getId()];
+		else
+			return null;
+	}
+	
+	public NodeLevelSets ascendantNodeWithMinStability(NodeLevelSets node) {
+		if( this.stability[this.ascendant[node.getId()].getId() ] != null)
+			return this.ascendant[node.getId()];
+		else
+			return null;
+	}
 
 	public int getNumNodes() {
 		return  num;

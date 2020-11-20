@@ -310,7 +310,7 @@ public class Attribute {
 			case Attribute.BIT_QUADS_HOLE_NUMBER:
 			case Attribute.BIT_QUADS_PERIMETER_CONTINUOUS:
 			case Attribute.BIT_QUADS_CIRCULARITY:
-			case Attribute.BIT_QUADS_AVERAGE_AREA:
+			case Attribute.BIT_QUADS_AVERAGE_AREA:	
 			case Attribute.BIT_QUADS_AVERAGE_PERIMETER:
 			case Attribute.BIT_QUADS_AVERAGE_LENGTH:
 			case Attribute.BIT_QUADS_AVERAGE_WIDTH:
